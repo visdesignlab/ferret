@@ -1,5 +1,6 @@
 import * as d3 from 'd3';
 import { Column } from './Column';
+import { ColumnFactory } from './ColumnFactory';
 
 export class TabularData
 {
@@ -19,7 +20,7 @@ export class TabularData
         let tabularData = new TabularData();
         for (let header of data.columns)
         {
-            let column = Column.FromDSVRowArray(data, header);
+            let column = ColumnFactory.FromDSVRowArray(data, header);
             tabularData.columnList.push(column);
         }
         tabularData._rowLength = d3.max(tabularData.columnList, d => d.values.length);
