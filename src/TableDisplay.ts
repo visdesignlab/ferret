@@ -52,13 +52,13 @@ export class TableDisplay
     private drawVizRows(): void
     {
         let tbody = d3.select(this.container).select('tbody');
-        let dataCell = tbody.append('tr')
+        let dataCell = tbody.html(null).append('tr')
             .selectAll('td')
             .data(this.data.columnList)
             .join('td')
             .classed('vizCell', true);
         
-            dataCell.append('div').attr('id', (d, i) => 'overallDist-' + i);
+         dataCell.append('div').attr('id', (d, i) => 'overallDist-' + i);
         dataCell.append('div').attr('id', (d, i) => 'benfordDist-' + i);
         dataCell.append('div').attr('id', (d, i) => 'duplicateCount-' + i);
 
