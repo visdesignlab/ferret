@@ -58,6 +58,7 @@ export class TableDisplay
             .join('td')
             .classed('vizCell', true);
         
+            dataCell.append('div').attr('id', (d, i) => 'overallDist-' + i);
         dataCell.append('div').attr('id', (d, i) => 'benfordDist-' + i);
         dataCell.append('div').attr('id', (d, i) => 'duplicateCount-' + i);
 
@@ -67,10 +68,38 @@ export class TableDisplay
             if (column.type === ColumnTypes.numeric)
             {
                 let colNum = column as ColumnNumeric;
+                this.drawOverallDist(colNum, 'overallDist-' + i);
                 this.drawLeadingDigitDist(colNum, 'benfordDist-' + i);
                 this.drawFrequentDuplicates(colNum, 'duplicateCount-' + i);
             }
         }
+    }
+
+    private drawOverallDist(column: ColumnNumeric, key: string): void
+    {
+        let dataValues = [];
+        for (let val of column.values)
+        {
+            dataValues.push({
+                'value': val
+            });
+        }
+
+        var yourVlSpec = {
+            width: 100,
+            height: 50,
+            $schema: 'https://vega.github.io/schema/vega-lite/v4.json',
+            description: 'Overall Distribution',
+            data: {
+              values: dataValues
+            },
+            mark: 'bar',
+            encoding: {
+              x: {field: 'value', type: 'quantitative', bin: true},
+              y: {field: 'value', aggregate: 'count', type: 'quantitative'}
+            }
+          };
+          vegaEmbed('#' + key, yourVlSpec, { actions: false });
     }
 
     private drawLeadingDigitDist(column: ColumnNumeric, key: string): void
@@ -101,7 +130,6 @@ export class TableDisplay
             }
           };
           vegaEmbed('#' + key, yourVlSpec, { actions: false });
-
     }
     
     private drawFrequentDuplicates(column: ColumnNumeric, key: string): void
@@ -136,7 +164,7 @@ export class TableDisplay
             width: 100,
             height: 50,
             $schema: 'https://vega.github.io/schema/vega-lite/v4.json',
-            description: 'A simple bar chart with embedded data.',
+            description: 'Duplicate Counts',
             data: {
               values: dataValues
             },
