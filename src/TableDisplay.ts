@@ -1,7 +1,7 @@
 import { TabularData } from "./TabularData";
 import * as d3 from "d3";
 // import * as vega from "vega";
-import vegaEmbed from 'vega-embed'
+import vegaEmbed from 'vega-embed';
 import { Column, ColumnTypes } from "./Column";
 import { ColumnNumeric } from "./ColumnNumeric";
 
@@ -55,7 +55,8 @@ export class TableDisplay
         let dataCell = tbody.append('tr')
             .selectAll('td')
             .data(this.data.columnList)
-            .join('td');
+            .join('td')
+            .classed('vizCell', true);
         
         dataCell.append('div').attr('id', (d, i) => 'benfordDist-' + i);
         dataCell.append('div').attr('id', (d, i) => 'duplicateCount-' + i);

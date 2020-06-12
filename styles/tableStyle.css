@@ -1,0 +1,18 @@
+.dataTable
+{
+    white-space: nowrap;
+    border-collapse: collapse;
+}
+
+.vizCell
+{
+    white-space: break-spaces;
+    border-top: solid #d0d0d0 1px;
+    border-bottom: solid #d0d0d0 1px;
+}
+
+td {
+    border-right: solid #d0d0d0 1px;
+    padding-right: 4px;
+    padding-left: 4px;
+}
