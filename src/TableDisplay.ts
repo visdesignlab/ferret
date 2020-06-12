@@ -43,7 +43,7 @@ export class TableDisplay
         let th = thead.html(null)
             .append('tr')
             .selectAll('th')
-            .data(this.data.columnList)
+            .data([{id: 'Row'}, ...this.data.columnList])
             .join('th');
 
         th.append('div').text(d => d.id); 
@@ -52,13 +52,15 @@ export class TableDisplay
     private drawVizRows(): void
     {
         let tbody = d3.select(this.container).select('tbody');
-        let dataCell = tbody.html(null).append('tr')
-            .selectAll('td')
+        let dataRow = tbody.html(null).append('tr')
+        // let dataCell = tbody.html(null).append('tr')
+        dataRow.append('th')
+        let dataCell = dataRow.selectAll('td')
             .data(this.data.columnList)
             .join('td')
             .classed('vizCell', true);
         
-         dataCell.append('div').attr('id', (d, i) => 'overallDist-' + i);
+        dataCell.append('div').attr('id', (d, i) => 'overallDist-' + i);
         dataCell.append('div').attr('id', (d, i) => 'benfordDist-' + i);
         dataCell.append('div').attr('id', (d, i) => 'duplicateCount-' + i);
 
@@ -199,11 +201,16 @@ export class TableDisplay
     {
         let indices: number[] = [...Array(this.data.rowLength).keys()];
         let tbody = d3.select(this.container).select('tbody');
-        tbody.selectAll('.dataRow')
+        let rowSelect = tbody.selectAll('.dataRow')
             .data(indices)
             .join('tr')
-            .classed('dataRow', true)
-            .selectAll('td')
+            .classed('dataRow', true);
+
+        rowSelect.html(null)
+            .append('th')
+            .text(d => d);
+
+        rowSelect.selectAll('td')
             .data(d => this.data.getRow(d))
             .join('td')
             .text(d => d);

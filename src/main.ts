@@ -11,6 +11,7 @@ let fileLoadButton = new UploadFileButton(toolbarContainer, (data: string, filen
 {
 	let tabularData: TabularData = TabularData.FromString(data);
 	tableDisplay.SetData(tabularData);
+	document.title = filename;
 	console.log(filename);
 	console.log(tabularData);
 });
