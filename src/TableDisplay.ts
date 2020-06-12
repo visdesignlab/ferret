@@ -88,6 +88,7 @@ export class TableDisplay
         }
 
         var yourVlSpec = {
+            title: 'Value Distribution',
             width: 100,
             height: 50,
             $schema: 'https://vega.github.io/schema/vega-lite/v4.json',
@@ -118,6 +119,7 @@ export class TableDisplay
         }
 
         var yourVlSpec = {
+            title: 'Leading Digit Frequency',
             width: 100,
             height: 50,
             $schema: 'https://vega.github.io/schema/vega-lite/v4.json',
@@ -136,12 +138,12 @@ export class TableDisplay
     
     private drawFrequentDuplicates(column: ColumnNumeric, key: string): void
     {
-        let leadingDupCounts = column.GetDuplicateCounts();
+        let dupCounts = column.GetDuplicateCounts();
 
 
         let dataValues = [];
         let index = 0;
-        for (let [val, count] of leadingDupCounts)
+        for (let [val, count] of dupCounts)
         {
             if (count === 1)
             {
@@ -157,12 +159,13 @@ export class TableDisplay
                 'count': count
             });
         }
-        if (dataValues.length === 0)
-        {
-            return;
-        }
+        // if (dataValues.length === 0)
+        // {
+        //     return;
+        // }
 
         var yourVlSpec = {
+            title: "Frequent Values (" + dupCounts.length + " unique)",
             width: 100,
             height: 50,
             $schema: 'https://vega.github.io/schema/vega-lite/v4.json',
@@ -208,7 +211,7 @@ export class TableDisplay
 
         rowSelect.html(null)
             .append('th')
-            .text(d => d);
+            .text(d => d + 1);
 
         rowSelect.selectAll('td')
             .data(d => this.data.getRow(d))
