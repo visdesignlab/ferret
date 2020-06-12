@@ -33,6 +33,7 @@ export class TableDisplay
     private onDataChanged(): void
     {
         this.drawHeader();
+        this.drawVizRows();
         this.drawBody();
     }
 
@@ -45,24 +46,33 @@ export class TableDisplay
             .data(this.data.columnList)
             .join('th');
 
-        th.append('div').text(d => d.id);
+        th.append('div').text(d => d.id); 
+    }
 
-        th.append('div')
-            .attr('id', (d, i) => 'benfordDist-' + i);
-
+    private drawVizRows(): void
+    {
+        let tbody = d3.select(this.container).select('tbody');
+        let dataCell = tbody.append('tr')
+            .selectAll('td')
+            .data(this.data.columnList)
+            .join('td');
+        
+        dataCell.append('div').attr('id', (d, i) => 'benfordDist-' + i);
+        dataCell.append('div').attr('id', (d, i) => 'duplicateCount-' + i);
 
         for (let i = 0; i < this.data.columnList.length; i++)
         {
             let column = this.data.columnList[i];
             if (column.type === ColumnTypes.numeric)
             {
-                this.drawLeadingDigitDist(column as ColumnNumeric, 'benfordDist-' + i);
+                let colNum = column as ColumnNumeric;
+                this.drawLeadingDigitDist(colNum, 'benfordDist-' + i);
+                this.drawFrequentDuplicates(colNum, 'duplicateCount-' + i);
             }
         }
- 
     }
 
-    private drawLeadingDigitDist(column: ColumnNumeric, key: string): any
+    private drawLeadingDigitDist(column: ColumnNumeric, key: string): void
     {
         let leadDictFreq = column.GetLeadingDigitFreqs();
 
@@ -78,8 +88,8 @@ export class TableDisplay
         var yourVlSpec = {
             width: 100,
             height: 50,
-            $schema: 'https://vega.github.io/schema/vega-lite/v4.12.2.json',
-            description: 'A simple bar chart with embedded data.',
+            $schema: 'https://vega.github.io/schema/vega-lite/v4.json',
+            description: 'Leading Digit frequencies',
             data: {
               values: dataValues
             },
@@ -89,17 +99,81 @@ export class TableDisplay
               y: {field: 'frequency', type: 'quantitative'}
             }
           };
-          vegaEmbed('#' + key, yourVlSpec);
+          vegaEmbed('#' + key, yourVlSpec, { actions: false });
 
     }
     
+    private drawFrequentDuplicates(column: ColumnNumeric, key: string): void
+    {
+        let leadingDupCounts = column.GetDuplicateCounts();
+
+
+        let dataValues = [];
+        let index = 0;
+        for (let [val, count] of leadingDupCounts)
+        {
+            if (count === 1)
+            {
+                break;
+            }
+            if (index >= 5)
+            {
+                break;
+            }
+            index++;
+            dataValues.push({
+                'value': val,
+                'count': count
+            });
+        }
+        if (dataValues.length === 0)
+        {
+            return;
+        }
+
+        var yourVlSpec = {
+            width: 100,
+            height: 50,
+            $schema: 'https://vega.github.io/schema/vega-lite/v4.json',
+            description: 'A simple bar chart with embedded data.',
+            data: {
+              values: dataValues
+            },
+            encoding: {
+                y: {field: 'value', type: 'ordinal', sort: '-x'},
+                x: {field: 'count', type: 'quantitative'}
+            },
+            layer: [
+                {
+                    mark: 'bar'
+                },
+                {
+                    mark:
+                    {
+                        type: 'text',
+                        align: 'left',
+                        baseline: 'middle',
+                        dx: 3
+                    },
+                    encoding:
+                    {
+                        text: {field: "count", type: "quantitative"}
+                    }
+                }
+            ],
+          };
+          vegaEmbed('#' + key, yourVlSpec, { actions: false });
+
+    }
+
     private drawBody(): void
     {
         let indices: number[] = [...Array(this.data.rowLength).keys()];
         let tbody = d3.select(this.container).select('tbody');
-        tbody.selectAll('tr')
+        tbody.selectAll('.dataRow')
             .data(indices)
             .join('tr')
+            .classed('dataRow', true)
             .selectAll('td')
             .data(d => this.data.getRow(d))
             .join('td')

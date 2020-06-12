@@ -8,7 +8,36 @@ export class ColumnNumeric extends Column<number>
         super();
         this._values = valList;
         this._type = ColumnTypes.numeric;
-        // console.log(this.GetLeadingDigitFreqs());
+    }
+
+    public GetDuplicateCounts(): [number, number][]
+    {
+        let duplicateCountMap: Map<number, number> = new Map<number, number>();
+        for (let val of this.values)
+        {
+            let currentCount = 0;
+            if (duplicateCountMap.has(val))
+            {
+                currentCount = duplicateCountMap.get(val);
+            }
+            duplicateCountMap.set(val, currentCount + 1);
+        }
+
+        let duplicateCounts = Array.from(duplicateCountMap);
+        
+        duplicateCounts.sort((a: [number, number], b: [number, number]) =>
+        {
+            if (a[1] > b[1])
+            {
+                return -1;
+            }
+            else if (a[1] < b[1])
+            {
+                return 1;
+            }
+            return 0;
+        })
+        return duplicateCounts;
     }
 
     public GetLeadingDigitFreqs(): Map<number, number>
@@ -27,7 +56,7 @@ export class ColumnNumeric extends Column<number>
     {
         let digitCounts = new Map<number, number>();
 
-        for (let i = 1; i <= 9; i++)
+        for (let i = 0; i <= 9; i++)
         {
             digitCounts.set(i, 0);
         }
@@ -42,8 +71,12 @@ export class ColumnNumeric extends Column<number>
         return digitCounts;
     }
 
-    private static getLeadingDigit(val: number): 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
+    private static getLeadingDigit(val: number): 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 0
     {
+        if (val === 0)
+        {
+            return 0;
+        }
         const validNums = new Set([1,2,3,4,5,6,7,8,9])
         let valString = val.toString();
         for (let char of valString)
