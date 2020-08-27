@@ -1,7 +1,7 @@
 import { TabularData } from "./TabularData";
 import * as d3 from "d3";
 // import * as vega from "vega";
-import vegaEmbed from 'vega-embed';
+import vegaEmbed, { VisualizationSpec } from 'vega-embed';
 import { Column, ColumnTypes } from "./Column";
 import { ColumnNumeric } from "./ColumnNumeric";
 
@@ -87,7 +87,7 @@ export class TableDisplay
             });
         }
 
-        var yourVlSpec = {
+        var yourVlSpec: VisualizationSpec = {
             title: 'Value Distribution',
             width: 100,
             height: 50,
@@ -118,7 +118,7 @@ export class TableDisplay
             });
         }
 
-        var yourVlSpec = {
+        var yourVlSpec: VisualizationSpec = {
             title: 'Leading Digit Frequency',
             width: 100,
             height: 50,
@@ -164,7 +164,7 @@ export class TableDisplay
         //     return;
         // }
 
-        var yourVlSpec = {
+        var yourVlSpec: VisualizationSpec = {
             title: "Frequent Values (" + dupCounts.length + " unique)",
             width: 100,
             height: 50,
