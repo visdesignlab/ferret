@@ -5,7 +5,7 @@ import vegaEmbed, { VisualizationSpec } from 'vega-embed';
 import { Column, ColumnTypes } from "./Column";
 import { ColumnNumeric } from "./ColumnNumeric";
 import { FilterUtil } from "./lib/FilterUtil";
-
+import * as filterNames from "./lib/constants/filter";
 
 
 export class TableDisplay
@@ -132,7 +132,7 @@ export class TableDisplay
     private drawLeadingDigitDist(column: ColumnNumeric, key: string): void
     {
         let leadDictFreq = column.GetLeadingDigitFreqs();
-
+        let selectionName = filterNames.LEADING_DIGIT_FREQ_SELECTION;
         let dataValues : Array<any> = [];
         for (let [digit, freq] of leadDictFreq)
         {
@@ -153,7 +153,7 @@ export class TableDisplay
             },
             mark: 'bar',
             selection: {
-                leadingDigitFrequencySelection: {
+                "LEADING_DIGIT_FREQ_SELECTION": {
                     type: "multi",
                     clear: "dblclick"
                 },
@@ -163,7 +163,7 @@ export class TableDisplay
               y: {field: 'frequency', type: 'quantitative'},
               opacity: {
                 condition: {
-                    selection: "leadingDigitFrequencySelection", 
+                    selection: selectionName, 
                     value: 1
                 },
                 value: 0.5
@@ -174,13 +174,13 @@ export class TableDisplay
         
         vegaEmbed('#' + key, yourVlSpec, { actions: false }
           ).then(result => {
-              result.view.addSignalListener('leadingDigitFrequencySelection', (name, value) => {
+              result.view.addSignalListener(selectionName, (name, value) => {
                 let selectedData : Array<number> = this.getSelectedData(value._vgsid_, dataValues, "digit");
                 new FilterUtil().highlightRows(name, selectedData, this._data, column)
               });
               result.view.addEventListener('dblclick', ((e) => {
                     let clearedData = dataValues;
-                    new FilterUtil().clearHighlight('leadingDigitFrequencyClear', clearedData, this._data, column)
+                    new FilterUtil().clearHighlight(filterNames.LEADING_DIGIT_FREQ_CLEAR_SELECTION, clearedData, this._data, column)
                 }
               ));
           })
@@ -190,7 +190,7 @@ export class TableDisplay
     private drawFrequentDuplicates(column: ColumnNumeric, key: string): void
     {
         let dupCounts = column.GetDuplicateCounts();
-
+        let selectionName = filterNames.FREQUENT_VALUES_SELECTION;
         let dataValues : Array<any> = [];
         let index = 0;
         for (let [val, count] of dupCounts)
@@ -224,7 +224,7 @@ export class TableDisplay
                 x: {field: 'count', type: 'quantitative'},
                 opacity: {
                     condition: {
-                        selection: "frequentValueSelection", 
+                        selection: selectionName, 
                         value: 1
                     },
                     value: 0.5
@@ -234,7 +234,7 @@ export class TableDisplay
                 {
                     mark: 'bar',
                     selection: {
-                        frequentValueSelection: {
+                        "FREQUENT_VALUES_SELECTION": {
                             type: "multi",
                             clear: "dblclick"
                         },
@@ -258,13 +258,13 @@ export class TableDisplay
           
           vegaEmbed('#' + key, yourVlSpec, { actions: false }
           ).then(result => {
-              result.view.addSignalListener('frequentValueSelection', (name, value) => {
+              result.view.addSignalListener(selectionName, (name, value) => {
                 let selectedData : Array<number> = this.getSelectedData(value._vgsid_, dataValues, "value");
                 new FilterUtil().highlightRows(name, selectedData, this._data, column);
               });
               result.view.addEventListener('dblclick', ((e) => {
                 let clearedData = dataValues.map(d => d.value);;
-                new FilterUtil().clearHighlight('frequentValueClear', clearedData, this._data, column)
+                new FilterUtil().clearHighlight(filterNames.FREQUENT_VALUES_CLEAR_SELECTION, clearedData, this._data, column)
                 }
               ));
           })
