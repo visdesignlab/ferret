@@ -4,6 +4,9 @@ import * as d3 from "d3";
 import vegaEmbed, { VisualizationSpec } from 'vega-embed';
 import { Column, ColumnTypes } from "./Column";
 import { ColumnNumeric } from "./ColumnNumeric";
+import { FilterUtil } from "./lib/FilterUtil";
+
+
 
 export class TableDisplay
 {
@@ -79,9 +82,10 @@ export class TableDisplay
 
     private drawOverallDist(column: ColumnNumeric, key: string): void
     {
-        let dataValues = [];
+        let dataValues : Array<any> = [];
         for (let val of column.values)
         {
+            console.log(val);
             dataValues.push({
                 'value': val
             });
@@ -97,19 +101,41 @@ export class TableDisplay
               values: dataValues
             },
             mark: 'bar',
+            selection: {
+                valueDistributionSelection: {
+                    type: "multi",
+                    clear: false
+                },
+            },
             encoding: {
               x: {field: 'value', type: 'quantitative', bin: true},
-              y: {field: 'value', aggregate: 'count', type: 'quantitative'}
-            }
+              y: {field: 'value', aggregate: 'count', type: 'quantitative'},
+              opacity: {
+                condition: {
+                    selection: "valueDistributionSelection", 
+                    value: 1
+                },
+                value: 0.5
+              },
+            }   
           };
-          vegaEmbed('#' + key, yourVlSpec, { actions: false });
+          vegaEmbed('#' + key, yourVlSpec, { actions: false }
+          ).then(result => {
+              result.view.addSignalListener('valueDistributionSelection', (name, value) => {
+                console.log(value);
+              });
+              result.view.addEventListener('dblclick', ((e) => {
+                    console.log(e);
+                }
+              ));
+          })
     }
 
     private drawLeadingDigitDist(column: ColumnNumeric, key: string): void
     {
         let leadDictFreq = column.GetLeadingDigitFreqs();
 
-        let dataValues = [];
+        let dataValues : Array<any> = [];
         for (let [digit, freq] of leadDictFreq)
         {
             dataValues.push({
@@ -128,20 +154,45 @@ export class TableDisplay
               values: dataValues
             },
             mark: 'bar',
+            selection: {
+                leadingDigitFrequencySelection: {
+                    type: "multi",
+                    clear: false
+                },
+            },
             encoding: {
               x: {field: 'digit', type: 'ordinal'},
-              y: {field: 'frequency', type: 'quantitative'}
+              y: {field: 'frequency', type: 'quantitative'},
+              opacity: {
+                condition: {
+                    selection: "leadingDigitFrequencySelection", 
+                    value: 1
+                },
+                value: 0.5
+              },
             }
           };
-          vegaEmbed('#' + key, yourVlSpec, { actions: false });
+        
+        
+        vegaEmbed('#' + key, yourVlSpec, { actions: false }
+          ).then(result => {
+              result.view.addSignalListener('leadingDigitFrequencySelection', (name, value) => {
+                let selectedData : Array<number> = this.getSelectedData(value._vgsid_, dataValues, "digit");
+                new FilterUtil().highlightRows(name, selectedData, this._data, column)
+              });
+              result.view.addEventListener('dblclick', ((e) => {
+                    console.log(e);
+                }
+              ));
+          })
+        .catch(console.warn); 
     }
     
     private drawFrequentDuplicates(column: ColumnNumeric, key: string): void
     {
         let dupCounts = column.GetDuplicateCounts();
 
-
-        let dataValues = [];
+        let dataValues : Array<any> = [];
         let index = 0;
         for (let [val, count] of dupCounts)
         {
@@ -159,10 +210,6 @@ export class TableDisplay
                 'count': count
             });
         }
-        // if (dataValues.length === 0)
-        // {
-        //     return;
-        // }
 
         var yourVlSpec: VisualizationSpec = {
             title: "Frequent Values (" + dupCounts.length + " unique)",
@@ -175,11 +222,24 @@ export class TableDisplay
             },
             encoding: {
                 y: {field: 'value', type: 'ordinal', sort: '-x'},
-                x: {field: 'count', type: 'quantitative'}
+                x: {field: 'count', type: 'quantitative'},
+                opacity: {
+                    condition: {
+                        selection: "frequentValueSelection", 
+                        value: 1
+                    },
+                    value: 0.5
+                },
             },
             layer: [
                 {
-                    mark: 'bar'
+                    mark: 'bar',
+                    selection: {
+                        frequentValueSelection: {
+                            type: "multi",
+                            clear: false
+                        },
+                    }
                 },
                 {
                     mark:
@@ -196,7 +256,14 @@ export class TableDisplay
                 }
             ],
           };
-          vegaEmbed('#' + key, yourVlSpec, { actions: false });
+          
+          vegaEmbed('#' + key, yourVlSpec, { actions: false }
+          ).then(result => {
+              result.view.addSignalListener('frequentValueSelection', (name, value) => {
+                let selectedData : Array<number> = this.getSelectedData(value._vgsid_, dataValues, "value");
+                new FilterUtil().highlightRows(name, selectedData, this._data, column);
+              });
+          })
 
     }
 
@@ -207,6 +274,7 @@ export class TableDisplay
         let rowSelect = tbody.selectAll('.dataRow')
             .data(indices)
             .join('tr')
+            .attr('id', (d) => "dataRow" + (d+1))
             .classed('dataRow', true);
 
         rowSelect.html(null)
@@ -218,4 +286,23 @@ export class TableDisplay
             .join('td')
             .text(d => d);
     }
+
+    private getSelectedData(selectedIndices: Array<number>, dataValues: Array<any>, prop: string) : Array<number> {
+
+        if(!dataValues || dataValues.length == 0 || !selectedIndices || selectedIndices.length == 0 ) return;
+        
+        let selectedData : Array<number> = [];
+        
+        dataValues.forEach((value, index) => {
+            if(selectedIndices.indexOf(index+1) > -1)
+                selectedData.push(value[prop]);
+        });
+
+        return selectedData;
+
+    }
+
+    
+
+    
 }

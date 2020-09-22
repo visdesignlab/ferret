@@ -63,7 +63,7 @@ export class ColumnNumeric extends Column<number>
 
         for (let val of this.values)
         {
-            let digit = ColumnNumeric.getLeadingDigit(val);
+            let digit = ColumnNumeric.getLeadingDigit(val, null);
             let oldVal = digitCounts.get(digit);
             digitCounts.set(digit, oldVal + 1);
         }
@@ -71,22 +71,31 @@ export class ColumnNumeric extends Column<number>
         return digitCounts;
     }
 
-    private static getLeadingDigit(val: number): 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 0
+    public static getLeadingDigit(val: number, nums: Set<Number> | null): 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 0
     {
         if (val === 0)
         {
             return 0;
         }
-        const validNums = new Set([1,2,3,4,5,6,7,8,9])
+
+        const validNums = (nums == null) ? new Set([1,2,3,4,5,6,7,8,9]) : nums;
         let valString = val.toString();
         for (let char of valString)
-        {
+        { 
+            let char = valString.charAt(0);
             let num = +char;
             if (validNums.has(num))
             {
                 return num as 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
             }
-        }
+        } 
+    }
+
+    public static isSelectedValue(val: number, nums: Set<Number> | null) : Boolean {
+
+        if(nums == null) return false;
+        return nums.has(val);
+
     }
 
 }

@@ -1,3 +1,7 @@
+import { TabularData } from "./TabularData";
+import { ColumnString } from "./ColumnString";
+import { ColumnNumeric } from "./ColumnNumeric";
+
 export enum ColumnTypes
 {
     "numeric",
@@ -34,5 +38,19 @@ export abstract class Column<T>
     public get length(): number
     {
         return this._values.length;
+    }
+
+    public static getColumnById(data: TabularData, id: string) : ColumnNumeric | ColumnString {
+
+        if(data == null || id == null) return null;
+        
+        let selectedColumn = null;
+
+        data.columnList.forEach((column) => {
+            if(column._id == id) 
+                selectedColumn = column;
+        });   
+
+        return selectedColumn;
     }
 }

@@ -5,13 +5,10 @@ import { TableDisplay } from './TableDisplay';
 
 let tableContainer = document.getElementById('tableContainer');
 let tableDisplay = new TableDisplay(tableContainer);
-
 let toolbarContainer = document.getElementById('toolbar');
 let fileLoadButton = new UploadFileButton(toolbarContainer, (data: string, filename: string) =>
 {
 	let tabularData: TabularData = TabularData.FromString(data);
 	tableDisplay.SetData(tabularData);
 	document.title = filename;
-	console.log(filename);
-	console.log(tabularData);
 });

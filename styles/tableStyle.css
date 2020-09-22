@@ -16,3 +16,16 @@ td {
     padding-right: 4px;
     padding-left: 4px;
 }
+
+@keyframes highlightEffect {
+    from {background-color: #ffffff;}
+    to {background-color: #71a2a0;}
+}
+
+.highlighted {
+    background-color: #71a2a0;
+    opacity: 75%;
+    animation-name: highlightEffect;
+    animation-duration: 3s;
+}
+
