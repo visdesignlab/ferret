@@ -40,8 +40,30 @@ export class FilterUtil {
 
     }
 
-    public clearFilter(name: string) {
-        console.log(name);
+    public clearHighlight(
+        name: string,
+        clearedData: Array<number>, 
+        data: TabularData,
+        column: ColumnNumeric) {
+
+        let selectedColumn : ColumnNumeric | ColumnString = Column.getColumnById(data, column.id);
+
+        if(name == "leadingDigitFrequencyClear") {
+            selectedColumn.values.forEach((value : any, index : number) => {
+                    let row = d3.select('#dataRow'+ (index+1));
+                    row.classed('highlighted', false);
+            });
+        } 
+
+        if(name == "frequentValueClear") {
+            selectedColumn.values.forEach((value : any, index : number) => {
+                if(ColumnNumeric.isSelectedValue(value, new Set(clearedData))) {
+                    let row = d3.select('#dataRow'+ (index+1));
+                    row.classed('highlighted', false);
+                }
+            });
+        } 
+
     }
 
 }

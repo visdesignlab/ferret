@@ -85,7 +85,6 @@ export class TableDisplay
         let dataValues : Array<any> = [];
         for (let val of column.values)
         {
-            console.log(val);
             dataValues.push({
                 'value': val
             });
@@ -122,7 +121,6 @@ export class TableDisplay
           vegaEmbed('#' + key, yourVlSpec, { actions: false }
           ).then(result => {
               result.view.addSignalListener('valueDistributionSelection', (name, value) => {
-                console.log(value);
               });
               result.view.addEventListener('dblclick', ((e) => {
                     console.log(e);
@@ -157,7 +155,7 @@ export class TableDisplay
             selection: {
                 leadingDigitFrequencySelection: {
                     type: "multi",
-                    clear: false
+                    clear: "dblclick"
                 },
             },
             encoding: {
@@ -181,7 +179,8 @@ export class TableDisplay
                 new FilterUtil().highlightRows(name, selectedData, this._data, column)
               });
               result.view.addEventListener('dblclick', ((e) => {
-                    console.log(e);
+                    let clearedData = dataValues;
+                    new FilterUtil().clearHighlight('leadingDigitFrequencyClear', clearedData, this._data, column)
                 }
               ));
           })
@@ -237,7 +236,7 @@ export class TableDisplay
                     selection: {
                         frequentValueSelection: {
                             type: "multi",
-                            clear: false
+                            clear: "dblclick"
                         },
                     }
                 },
@@ -263,6 +262,11 @@ export class TableDisplay
                 let selectedData : Array<number> = this.getSelectedData(value._vgsid_, dataValues, "value");
                 new FilterUtil().highlightRows(name, selectedData, this._data, column);
               });
+              result.view.addEventListener('dblclick', ((e) => {
+                let clearedData = dataValues.map(d => d.value);;
+                new FilterUtil().clearHighlight('frequentValueClear', clearedData, this._data, column)
+                }
+              ));
           })
 
     }
