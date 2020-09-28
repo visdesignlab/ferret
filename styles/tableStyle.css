@@ -4,6 +4,11 @@
     border-collapse: collapse;
 }
 
+.tableContainer {
+    transition: 0.5s;
+    margin-left: 0px;
+}
+
 .vizCell
 {
     white-space: break-spaces;
@@ -19,12 +24,11 @@ td {
 
 @keyframes highlightEffect {
     from {background-color: #ffffff;}
-    to {background-color: #71a2a0;}
+    to {background-color: #eeeeee;}
 }
 
 .highlighted {
-    background-color: #71a2a0;
-    opacity: 75%;
+    background-color: #eeeeee;
     animation-name: highlightEffect;
     animation-duration: 3s;
 }

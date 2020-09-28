@@ -91,7 +91,6 @@ export class TableDisplay
         }
 
         var yourVlSpec: VisualizationSpec = {
-            title: 'Value Distribution',
             width: 100,
             height: 50,
             $schema: 'https://vega.github.io/schema/vega-lite/v4.json',
@@ -108,6 +107,9 @@ export class TableDisplay
             },
             encoding: {
               x: {field: 'value', type: 'quantitative', bin: true},
+              color: {
+                  value: "#ffb726"
+              },
               y: {field: 'value', aggregate: 'count', type: 'quantitative'},
               opacity: {
                 condition: {
@@ -143,7 +145,6 @@ export class TableDisplay
         }
 
         var yourVlSpec: VisualizationSpec = {
-            title: 'Leading Digit Frequency',
             width: 100,
             height: 50,
             $schema: 'https://vega.github.io/schema/vega-lite/v4.json',
@@ -161,6 +162,9 @@ export class TableDisplay
             encoding: {
               x: {field: 'digit', type: 'ordinal'},
               y: {field: 'frequency', type: 'quantitative'},
+              color: {
+                value: "#4db6ac"
+              },
               opacity: {
                 condition: {
                     selection: selectionName, 
@@ -211,7 +215,7 @@ export class TableDisplay
         }
 
         var yourVlSpec: VisualizationSpec = {
-            title: "Frequent Values (" + dupCounts.length + " unique)",
+            //title: "Frequent Values (" + dupCounts.length + " unique)",
             width: 100,
             height: 50,
             $schema: 'https://vega.github.io/schema/vega-lite/v4.json',
@@ -222,6 +226,9 @@ export class TableDisplay
             encoding: {
                 y: {field: 'value', type: 'ordinal', sort: '-x'},
                 x: {field: 'count', type: 'quantitative'},
+                color: {
+                    value: "#e57373"
+                },
                 opacity: {
                     condition: {
                         selection: selectionName, 

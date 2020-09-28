@@ -1,0 +1,42 @@
+.controlsContainer {
+    position: absolute;
+    height: 100%;
+    width: 250px;
+    position: fixed;
+    z-index: 1;
+    top: 50;
+    left: 0;
+    border: 1px solid #eeeeee;
+    overflow-x: hidden;
+    transition: 0.5s;
+    margin-top: 20px;
+    padding-top: 10px;
+}
+
+.customButton {
+    border: solid black 1px;
+    margin: 2px;
+    flex-basis: 146px;
+    text-align: center;
+    cursor: pointer;
+    border-radius: 3px;
+    font-size: 12pt;
+    user-select: none;
+    padding: 5px;
+    font-family: 'Josefin Sans', sans-serif;
+}
+
+.customButton:active, .selected {
+    background: #212121;
+    color: white;
+}
+
+.customButtonIcon {
+    padding-right: 6px;
+}
+
+.buttonContainer {
+    display: flex;
+}
+
+
