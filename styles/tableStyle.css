@@ -13,13 +13,28 @@
 {
     white-space: break-spaces;
     border-top: solid #d0d0d0 1px;
-    border-bottom: solid #d0d0d0 1px;
+    height: 99px;
+    transition: 0.5s;
 }
 
-td {
+.chart-hidden
+{
+    height: 0px !important;
+    animation-name: heightEffect;
+    animation-duration: 1s;
+    overflow: hidden;
+}
+
+td 
+{
     border-left: solid #d0d0d0 1px;
     padding-right: 4px;
     padding-left: 4px;
+}
+
+@keyframes heightEffect {
+    from {height: 100px;}
+    to {height: 0px;}
 }
 
 @keyframes highlightEffect {

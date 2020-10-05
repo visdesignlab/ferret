@@ -5,7 +5,8 @@ import { TableDisplay } from './TableDisplay';
 import { ControlsDisplay } from './ControlsDisplay';
 
 let tableContainer = document.getElementById('tableContainer');
-let tableDisplay = new TableDisplay(tableContainer);
+let tableDisplay = new TableDisplay();
+tableDisplay.SetContainer(tableContainer);
 let toolbarContainer = document.getElementById('toolbar');
 let controlsContainer = document.getElementById('controlsContainer');
 let controlsDisplay = new ControlsDisplay(toolbarContainer, controlsContainer, tableContainer);
@@ -13,6 +14,7 @@ let fileLoadButton = new UploadFileButton(toolbarContainer, (data: string, filen
 {
 	let tabularData: TabularData = TabularData.FromString(data);
 	controlsDisplay.drawControls(tabularData);
+	controlsDisplay.SetData(tabularData);
 	tableDisplay.SetData(tabularData);
 	document.title = filename;
 });

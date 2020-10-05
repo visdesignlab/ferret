@@ -50,7 +50,7 @@ export class UploadFileButton {
 		let icon = document.createElement("i")
 		icon.classList.add("fas", "fa-upload", "customButtonIcon"); // font-awesome
 		labelEl.appendChild(icon);
-		labelEl.append("Upload Data");
+		labelEl.append("Data");
 		this.container.appendChild(this.fileInputElement);
 		this.container.appendChild(labelEl);
 	}

@@ -1,6 +1,6 @@
 import { TabularData } from "./TabularData";
-import { lavenderblush } from "color-name";
-
+import { TableDisplay } from "./TableDisplay";
+ 
 export class ControlsDisplay
 {
     public constructor(toolbarContainer: HTMLElement, controlsContainer: HTMLElement, tableContainer: HTMLElement)
@@ -26,6 +26,12 @@ export class ControlsDisplay
         return this._tableContainer;
     }
 
+    private _data : TabularData;
+    public SetData(data: TabularData) : void {
+        this._data = data;
+    }
+
+
     public drawControls(tabularData: TabularData): void {
 
          let columnList = tabularData.columnList.map(d => d.id);
@@ -47,7 +53,7 @@ export class ControlsDisplay
          this.toggleControlsPanel();
          this.drawDataColumnRows(columnList);
          this.drawSummaryRows(tabularData);
-
+         this.attachChartControls();
     }
 
 
@@ -69,7 +75,6 @@ export class ControlsDisplay
             div.appendChild(input);
             div.appendChild(label);
             parentDiv.appendChild(div);
-
         }
 
     }
@@ -88,5 +93,46 @@ export class ControlsDisplay
             document.getElementById("settingsButton").classList.add("selected");
 
         }
+    }
+
+    public attachChartControls(): void {
+        let leadingDigitSwitch = document.getElementById("leading-digit-switch");
+        let frequentValueSwitch = document.getElementById("freq-val-switch");
+        let valueDistSwitch = document.getElementById("val-dist-switch");
+
+        leadingDigitSwitch.addEventListener("click", e => this.toggleChartVisibility(e, "benfordDist"));
+        frequentValueSwitch.addEventListener("click", e => this.toggleChartVisibility(e, "duplicateCount"));
+        valueDistSwitch.addEventListener("click", e => this.toggleChartVisibility(e, "overallDist"));
+
+    }
+
+    private toggleChartVisibility(e: any, chartName: string): void {
+        let tableDisplay = new TableDisplay();
+        let eventTarget = e.target;
+
+        if(eventTarget.classList.contains("shown")) {
+            eventTarget.classList.remove("shown");
+            eventTarget.classList.add("hidden");
+            eventTarget.style.backgroundColor = "#eeeeee"; 
+            tableDisplay.hideVizRows(chartName, this._data);
+        }
+
+        else if(eventTarget.classList.contains("hidden")) {
+            eventTarget.classList.remove("hidden");
+            eventTarget.classList.add("shown");
+            tableDisplay.showVizRows(chartName, this._data);
+            switch(chartName) {
+                case "benfordDist": 
+                        eventTarget.style.backgroundColor = "#4db6ac"; 
+                        break;
+                case "duplicateCount":
+                        eventTarget.style.backgroundColor = "#e57373"; 
+                        break;
+                case "overallDist":
+                        eventTarget.style.backgroundColor = "#ffb726"; 
+                        break
+            }
+        }
+
     }
 }

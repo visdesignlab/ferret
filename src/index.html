@@ -24,13 +24,19 @@
                 <hr class="controlsHr">
                 <div class="item-group"> 
                     <div class="group-header">Analysis</div>
-                    <div class="item" style="background-color: #ffb726">Value Distribution</div>
+                    <div class="item yellow">
+                        <i id="val-dist-switch" class="fas fa-eye customButtonEyeIcon shown" style="background-color: #ffb726"></i>
+                            Value Distribution</div>
                         <div class="item-options">
                             <label for="binSize"  class="controlsLabel">Bin Size</label>
                             <input type="number" id="binSize" style="width: 80px"></input>
                         </div>
-                    <div class="item" style="background-color: #4db6ac">Leading Digit Frequency</div>
-                    <div class="item" style="background-color: #e57373">Frequent Values</div>
+                    <div class="item blue">
+                        <i id="leading-digit-switch" class="fas fa-eye customButtonEyeIcon shown" style="background-color: #4db6ac"></i>
+                        Leading Digit Frequency</div>
+                    <div class="item pink">
+                        <i id="freq-val-switch"  class="fas fa-eye customButtonEyeIcon shown" style="background-color: #e57373"></i>
+                        Frequent Values</div>
                     <div class="item-options">
                         <input type="checkbox" id="uniqueValues" ></input>
                         <label for="uniqueValues" class="controlsLabel">Show all unique values</label>

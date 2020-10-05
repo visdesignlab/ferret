@@ -10,15 +10,18 @@ import * as filterNames from "./lib/constants/filter";
 
 export class TableDisplay
 {
-    public constructor(container: HTMLElement)
-    {
-        this._container = container;
-    }
+
+    public constructor()
+    {}
 
     
     private _container : HTMLElement;
     public get container() : HTMLElement {
         return this._container;
+    }
+
+    public SetContainer(container: HTMLElement) : void {
+        this._container = container;
     }
 
     
@@ -36,7 +39,7 @@ export class TableDisplay
     private onDataChanged(): void
     {
         this.drawHeader();
-        this.drawVizRows();
+        this.drawVizRows(this._data);
         this.drawBody();
     }
 
@@ -52,14 +55,32 @@ export class TableDisplay
         th.append('div').text(d => d.id); 
     }
 
-    private drawVizRows(): void
+    public hideVizRows(key: String, data: TabularData): void 
+    {
+        for (let i = 0; i < data.columnList.length; i++)
+        {
+                let element = document.getElementById(key+"-"+ i);
+                element.classList.add("chart-hidden");
+        }
+    }
+
+    public showVizRows(key: String, data: TabularData): void 
+    {
+        for (let i = 0; i < data.columnList.length; i++)
+        {
+                let element = document.getElementById(key+"-"+ i);
+                element.classList.remove("chart-hidden");
+        }
+    }
+
+    public drawVizRows(data: TabularData): void
     {
         let tbody = d3.select(this.container).select('tbody');
         let dataRow = tbody.html(null).append('tr')
         // let dataCell = tbody.html(null).append('tr')
         dataRow.append('th')
         let dataCell = dataRow.selectAll('td')
-            .data(this.data.columnList)
+            .data(data.columnList)
             .join('td')
             .classed('vizCell', true);
         
@@ -67,9 +88,9 @@ export class TableDisplay
         dataCell.append('div').attr('id', (d, i) => 'benfordDist-' + i);
         dataCell.append('div').attr('id', (d, i) => 'duplicateCount-' + i);
 
-        for (let i = 0; i < this.data.columnList.length; i++)
+        for (let i = 0; i < data.columnList.length; i++)
         {
-            let column = this.data.columnList[i];
+            let column = data.columnList[i];
             if (column.type === ColumnTypes.numeric)
             {
                 let colNum = column as ColumnNumeric;
