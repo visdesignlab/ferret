@@ -1,0 +1,29 @@
+
+.customButton {
+    border: solid black 1px;
+    margin: 2px;
+    flex-basis: 146px;
+    text-align: center;
+    cursor: pointer;
+    border-radius: 3px;
+    font-size: 12pt;
+    user-select: none;
+    padding: 5px;
+    font-family: 'Josefin Sans', sans-serif;
+}
+
+.customButton:active, .selected {
+    background: #212121;
+    color: white;
+}
+
+
+.customButtonIcon {
+    padding-right: 6px;
+}
+
+.buttonContainer {
+    display: flex;
+}
+
+

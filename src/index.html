@@ -4,10 +4,10 @@
         <meta charset="UTF-8" />
         <title>Data Forensics</title>
         <link rel="stylesheet" type="text/css" href="../styles/DevlibUtil.css">
-        <link rel="stylesheet" type="text/css" href="../styles/UploadFileButton.css">
+        <link rel="stylesheet" type="text/css" href="../styles/controls.css">
         <link rel="stylesheet" type="text/css" href="../styles/tableStyle.css">
-        
-        <link href="https://fonts.googleapis.com/css?family=Montserrat&amp;display=swap" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="../styles/common.css">
+        <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans&display=swap" rel="stylesheet">
         <script src="https://kit.fontawesome.com/de8d467ef5.js"></script>
     </head>
     <body>
@@ -15,9 +15,43 @@
             <div class="toolbar" id="toolbar">
                 
             </div>
+            <div class="controlsContainer" id="controlsContainer" style="width: 0px">
+                <div class="item-group">  
+                        <div class="group-header">Summary</div>
+                        <div class="controlsLabel" id="numberOfRecords"></div>
+                        <div class="controlsLabel" id="numberOfColumns"></div>
+                </div>
+                <hr class="controlsHr">
+                <div class="item-group"> 
+                    <div class="group-header">Analysis</div>
+                    <div class="item yellow">
+                        <i id="val-dist-switch" class="fas fa-eye customButtonEyeIcon shown" style="background-color: #ffb726"></i>
+                            Value Distribution</div>
+                        <div class="item-options">
+                            <label for="binSize"  class="controlsLabel">Bin Size</label>
+                            <input type="number" id="binSize" style="width: 80px"></input>
+                        </div>
+                    <div class="item blue">
+                        <i id="leading-digit-switch" class="fas fa-eye customButtonEyeIcon shown" style="background-color: #4db6ac"></i>
+                        Leading Digit Frequency</div>
+                    <div class="item pink">
+                        <i id="freq-val-switch"  class="fas fa-eye customButtonEyeIcon shown" style="background-color: #e57373"></i>
+                        Frequent Values</div>
+                    <div class="item-options">
+                        <input type="checkbox" id="uniqueValues" ></input>
+                        <label for="uniqueValues" class="controlsLabel">Show all unique values</label>
+                    </div>
+                </div>
+                <hr class="controlsHr">
+                <div class="item-group" id="data-columns"> 
+                        <div class="group-header">Data</div>
+                </div>
+                <hr class="controlsHr">
+            </div>
             <div class="tableContainer" id="tableContainer">
                 <table class='dataTable'>
                     <thead>
+
                     </thead>
                     <tbody>
                     </tbody>

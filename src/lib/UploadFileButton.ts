@@ -6,7 +6,7 @@ export class UploadFileButton {
 	{
         this._container = container;
         this.draw();
-		this.container.classList.add("uploadFileButtonContainer");
+		this.container.classList.add("buttonContainer");
 		let fileLoader: FileLoadUtil = new FileLoadUtil(callback);
 		this.fileInputElement.onchange = (ev: Event) => fileLoader.OpenFile(ev);
 	}
@@ -44,13 +44,13 @@ export class UploadFileButton {
 		this.fileInputElement.accept = "text/plain, .csv";
 
 		let labelEl: HTMLLabelElement = document.createElement("label");
-		labelEl.classList.add("uploadFileButton");
+		labelEl.classList.add("customButton");
 		labelEl.htmlFor = uniqueId;
 
 		let icon = document.createElement("i")
-		icon.classList.add("fas", "fa-upload", "uploadFileButtonIcon"); // font-awesome
+		icon.classList.add("fas", "fa-upload", "customButtonIcon"); // font-awesome
 		labelEl.appendChild(icon);
-		labelEl.append("Upload File");
+		labelEl.append("Data");
 		this.container.appendChild(this.fileInputElement);
 		this.container.appendChild(labelEl);
 	}
