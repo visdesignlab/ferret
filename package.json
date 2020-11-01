@@ -21,10 +21,13 @@
   "dependencies": {
     "@types/d3": "^5.7.2",
     "@types/vega": "^3.2.0",
+    "@types/deep-diff": "^1.0.0",
+    "@visdesignlab/trrack": "^2.0.0-alpha.5",
+    "@visdesignlab/trrack-vis": "^2.0.0-alpha.5",
     "d3": "^5.12.0",
     "gulp-cli": "^2.3.0",
-    "vega": "^5.14.0",
-    "vega-embed": "^6.8.0",
-    "vega-lite": "^4.14.1"
+    "vega": "^5.17.0",
+    "vega-embed": "^6.12.2",
+    "vega-lite": "^4.17.0"
   }
 }
