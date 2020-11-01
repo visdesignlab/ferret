@@ -8,6 +8,7 @@ import { FilterUtil } from "./lib/FilterUtil";
 import * as filterNames from "./lib/constants/filter";
 import { hoverNodeUpdate } from "./ProvenanceSetup";
 import { ColumnCategorical } from "./ColumnCategorical";
+import { DUPLICATE_COUNT_TYPE } from "./lib/constants/filter";
 
 export class TableDisplay
 {
@@ -36,7 +37,7 @@ export class TableDisplay
     private onDataChanged(data: TabularData): void
     {
         this.drawHeader(data);
-        this.drawVizRows(data);
+        this.setupVizRows(data);
         this.drawBody(data);
     }
 
@@ -84,8 +85,7 @@ export class TableDisplay
         }
     }
 
-    public drawVizRows(data: TabularData): void
-    {
+    public setupVizRows(data: TabularData): void {
         let tbody = d3.select(this.container).select('tbody');
         let dataRow = tbody.html(null).append('tr')
         // let dataCell = tbody.html(null).append('tr')
@@ -98,7 +98,11 @@ export class TableDisplay
         dataCell.append('div').attr('id', (d, i) => 'overallDist-' + i);
         dataCell.append('div').attr('id', (d, i) => 'benfordDist-' + i);
         dataCell.append('div').attr('id', (d, i) => 'duplicateCount-' + i);
+        this.drawVizRows(data, 'TOP');
+    }
 
+    public drawVizRows(data: TabularData, dupCountType: DUPLICATE_COUNT_TYPE): void
+    {
         for (let i = 0; i < data.columnList.length; i++)
         {
             let column = data.columnList[i];
@@ -111,7 +115,7 @@ export class TableDisplay
                 let colNum = column as ColumnNumeric;
                 this.drawOverallDist(data, colNum, 'overallDist-' + i, true, 'quantitative');
                 this.drawLeadingDigitDist(data, colNum, 'benfordDist-' + i);
-                this.drawFrequentDuplicates(data, colNum, 'duplicateCount-' + i);
+                this.drawFrequentDuplicates(data, colNum, 'duplicateCount-' + i, dupCountType);
             }
         }
     }
@@ -227,19 +231,21 @@ export class TableDisplay
         .catch(console.warn); 
     }
     
-    private drawFrequentDuplicates(data: TabularData, column: ColumnNumeric, key: string): void
+    private drawFrequentDuplicates(data: TabularData, column: ColumnNumeric, key: string, dupCountType: DUPLICATE_COUNT_TYPE): void
     {
         let dupCounts = column.GetDuplicateCounts();
         let selectionName = filterNames.FREQUENT_VALUES_SELECTION;
         let dataValues : Array<any> = [];
         let index = 0;
+        let maxIndex = (dupCountType === 'ALL') ? dupCounts.length : 5;
+        let condition = (dupCountType === 'ALL') ? '' : 'height: 50'; 
         for (let [val, count] of dupCounts)
         {
             if (count === 1)
             {
                 break;
             }
-            if (index >= 5)
+            if (index >= maxIndex)
             {
                 break;
             }
@@ -253,7 +259,7 @@ export class TableDisplay
         var yourVlSpec: VisualizationSpec = {
             //title: "Frequent Values (" + dupCounts.length + " unique)",
             width: 100,
-            height: 50,
+            ...(dupCountType === 'TOP' && { height: '50' }),
             $schema: 'https://vega.github.io/schema/vega-lite/v4.json',
             description: 'Duplicate Counts',
             data: {
