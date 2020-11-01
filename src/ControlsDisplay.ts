@@ -1,5 +1,6 @@
 import { TabularData } from "./TabularData";
 import { TableDisplay } from "./TableDisplay";
+import { Column } from "./Column";
  
 export class ControlsDisplay
 {
@@ -34,8 +35,6 @@ export class ControlsDisplay
 
     public drawControls(tabularData: TabularData): void {
 
-         let columnList = tabularData.columnList.map(d => d.id);
-         
          let settingsButton = document.createElement("div");
 
          let icon = document.createElement("i")
@@ -51,7 +50,7 @@ export class ControlsDisplay
          settingsButton.addEventListener("click", e => this.toggleControlsPanel());
          this._toolbarContainer.appendChild(settingsButton);
          this.toggleControlsPanel();
-         this.drawDataColumnRows(columnList);
+         this.drawDataColumnRows(tabularData.columnList);
          this.drawSummaryRows(tabularData);
          this.attachChartControls();
     }
@@ -62,21 +61,30 @@ export class ControlsDisplay
         document.getElementById("numberOfColumns").innerHTML = "# of columns: "+tabularData.columnList.length;
     }
 
-    private drawDataColumnRows(columnList: any[]): void {
+    private drawDataColumnRows(columnList: Column<String | Number>[]): void {
         let parentDiv = document.getElementById("data-columns");
+        let columnName = columnList.map(d => d.id);
         for(let column of columnList) {
             let label = document.createElement("label");
-            label.innerHTML = column;
+            label.innerHTML = column.id;
             label.classList.add('controlsLabel');
             let input = document.createElement("input");
             input.type = "checkbox";
             input.checked = true;
+            input.id = column+"-COL";
+            input.addEventListener("click", e => this.toggleColumnDisplay(e, column, columnName.indexOf(column.id)));
             let div = document.createElement("div");
             div.appendChild(input);
             div.appendChild(label);
             parentDiv.appendChild(div);
         }
 
+    }
+
+    private toggleColumnDisplay(e: any, column: Column<Number | String>, index: number) {
+      let tableDisplay = new TableDisplay();
+      column.visible = !column.visible;
+      tableDisplay.changeColumnVisibilty(index, column.visible);
     }
 
     private toggleControlsPanel(): void {

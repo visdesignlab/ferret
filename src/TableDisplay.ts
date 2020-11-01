@@ -6,15 +6,11 @@ import { Column, ColumnTypes } from "./Column";
 import { ColumnNumeric } from "./ColumnNumeric";
 import { FilterUtil } from "./lib/FilterUtil";
 import * as filterNames from "./lib/constants/filter";
-
+import { hoverNodeUpdate } from "./ProvenanceSetup";
 
 export class TableDisplay
 {
 
-    public constructor()
-    {}
-
-    
     private _container : HTMLElement;
     public get container() : HTMLElement {
         return this._container;
@@ -33,26 +29,40 @@ export class TableDisplay
     public SetData(data: TabularData): void
     {
         this._data = data;
-        this.onDataChanged();
+        this.onDataChanged(this._data);
     }
 
-    private onDataChanged(): void
+    private onDataChanged(data: TabularData): void
     {
-        this.drawHeader();
-        this.drawVizRows(this._data);
-        this.drawBody();
+        this.drawHeader(data);
+        this.drawVizRows(data);
+        this.drawBody(data);
     }
 
-    private drawHeader(): void
+    private drawHeader(data: TabularData): void
     {
+
         let thead = d3.select(this.container).select('thead');
         let th = thead.html(null)
             .append('tr')
             .selectAll('th')
-            .data([{id: 'Row'}, ...this.data.columnList])
+            .data([{id: 'Row', type: ' ', visible: true}, ...data.columnList])
             .join('th');
 
-        th.append('div').text(d => d.id); 
+        th.append('div').text(d => d.id).attr('id', d => 'col-header-' + d.id);
+        th.append('div').text(d => d.type.toUpperCase()).attr('id', d => 'col-type-' + d.id).classed('columnType', true);
+    }
+
+    public changeColumnVisibilty(index: number, visible: Boolean) {
+        let table = document.getElementById('dataTable');
+        let rows = table.getElementsByTagName('tr');
+
+        for (let row = 0; row < rows.length; row++) {
+            let cols = rows[row].cells;
+            if (index >= 0 && index < cols.length) {
+                cols[index+1].style.display = visible ? '' : 'none';
+            }
+        }
     }
 
     public hideVizRows(key: String, data: TabularData): void 
@@ -60,7 +70,7 @@ export class TableDisplay
         for (let i = 0; i < data.columnList.length; i++)
         {
                 let element = document.getElementById(key+"-"+ i);
-                element.classList.add("chart-hidden");
+                element.classList.add("chartHidden");
         }
     }
 
@@ -69,7 +79,7 @@ export class TableDisplay
         for (let i = 0; i < data.columnList.length; i++)
         {
                 let element = document.getElementById(key+"-"+ i);
-                element.classList.remove("chart-hidden");
+                element.classList.remove("chartHidden");
         }
     }
 
@@ -91,17 +101,17 @@ export class TableDisplay
         for (let i = 0; i < data.columnList.length; i++)
         {
             let column = data.columnList[i];
-            if (column.type === ColumnTypes.numeric)
+            if (column.type === 'Number')
             {
                 let colNum = column as ColumnNumeric;
-                this.drawOverallDist(colNum, 'overallDist-' + i);
-                this.drawLeadingDigitDist(colNum, 'benfordDist-' + i);
-                this.drawFrequentDuplicates(colNum, 'duplicateCount-' + i);
+                this.drawOverallDist(data, colNum, 'overallDist-' + i);
+                this.drawLeadingDigitDist(data, colNum, 'benfordDist-' + i);
+                this.drawFrequentDuplicates(data, colNum, 'duplicateCount-' + i);
             }
         }
     }
 
-    private drawOverallDist(column: ColumnNumeric, key: string): void
+    private drawOverallDist(data: TabularData, column: ColumnNumeric, key: string): void
     {
         let dataValues : Array<any> = [];
         for (let val of column.values)
@@ -152,7 +162,7 @@ export class TableDisplay
           })
     }
 
-    private drawLeadingDigitDist(column: ColumnNumeric, key: string): void
+    private drawLeadingDigitDist(data: TabularData, column: ColumnNumeric, key: string): void
     {
         let leadDictFreq = column.GetLeadingDigitFreqs();
         let selectionName = filterNames.LEADING_DIGIT_FREQ_SELECTION;
@@ -201,18 +211,18 @@ export class TableDisplay
           ).then(result => {
               result.view.addSignalListener(selectionName, (name, value) => {
                 let selectedData : Array<number> = this.getSelectedData(value._vgsid_, dataValues, "digit");
-                new FilterUtil().highlightRows(name, selectedData, this._data, column)
+                new FilterUtil().highlightRows(name, selectedData, data, column)
               });
               result.view.addEventListener('dblclick', ((e) => {
                     let clearedData = dataValues;
-                    new FilterUtil().clearHighlight(filterNames.LEADING_DIGIT_FREQ_CLEAR_SELECTION, clearedData, this._data, column)
+                    new FilterUtil().clearHighlight(filterNames.LEADING_DIGIT_FREQ_CLEAR_SELECTION, clearedData, data, column)
                 }
               ));
           })
         .catch(console.warn); 
     }
     
-    private drawFrequentDuplicates(column: ColumnNumeric, key: string): void
+    private drawFrequentDuplicates(data: TabularData, column: ColumnNumeric, key: string): void
     {
         let dupCounts = column.GetDuplicateCounts();
         let selectionName = filterNames.FREQUENT_VALUES_SELECTION;
@@ -288,25 +298,26 @@ export class TableDisplay
           ).then(result => {
               result.view.addSignalListener(selectionName, (name, value) => {
                 let selectedData : Array<number> = this.getSelectedData(value._vgsid_, dataValues, "value");
-                new FilterUtil().highlightRows(name, selectedData, this._data, column);
+                new FilterUtil().highlightRows(name, selectedData, data, column);
               });
               result.view.addEventListener('dblclick', ((e) => {
                 let clearedData = dataValues.map(d => d.value);;
-                new FilterUtil().clearHighlight(filterNames.FREQUENT_VALUES_CLEAR_SELECTION, clearedData, this._data, column)
+                new FilterUtil().clearHighlight(filterNames.FREQUENT_VALUES_CLEAR_SELECTION, clearedData, data, column)
                 }
               ));
           })
 
     }
 
-    private drawBody(): void
+    private drawBody(data: TabularData): void
     {
-        let indices: number[] = [...Array(this.data.rowLength).keys()];
+        let indices: number[] = [...Array(data.rowLength).keys()];
         let tbody = d3.select(this.container).select('tbody');
         let rowSelect = tbody.selectAll('.dataRow')
             .data(indices)
             .join('tr')
             .attr('id', (d) => "dataRow" + (d+1))
+            .on("mouseover", (d) => hoverNodeUpdate(`node_dataRow${d+1}`))
             .classed('dataRow', true);
 
         rowSelect.html(null)
@@ -314,7 +325,7 @@ export class TableDisplay
             .text(d => d + 1);
 
         rowSelect.selectAll('td')
-            .data(d => this.data.getRow(d))
+            .data(d => data.getRow(d))
             .join('td')
             .text(d => d);
     }
@@ -332,6 +343,18 @@ export class TableDisplay
 
         return selectedData;
 
+    }
+
+    public hoverNode(hoverNode: string)
+    {
+      d3.select(".hoverNode")
+        .classed("hoverNode", false)
+  
+      if(hoverNode !== "")
+      {
+        d3.select("#" + hoverNode)
+          .classed("hoverNode", true)
+      }
     }
 
     

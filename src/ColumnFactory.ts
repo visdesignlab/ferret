@@ -1,15 +1,16 @@
 import { Column } from "./Column";
 import { ColumnNumeric } from "./ColumnNumeric";
-import { ColumnString } from "./ColumnString";
+import { ColumnCategorical } from "./ColumnCategorical";
+import { ColumnLabel } from "./ColumnLabel";
 import { ColumnMixed } from "./ColumnMixed";
+import { getColumnType } from "./ColumnType";
 
 export class ColumnFactory
 {
     public static FromDSVRowArray(data: d3.DSVRowArray<string>, key: string, noHeader = false): Column<string | number>
     {
         let valList: (string | number)[] = [];
-        let allString = true;
-        let allNumeric = true;
+     
         if (noHeader)
         {
             // todo
@@ -17,32 +18,27 @@ export class ColumnFactory
         for (let row of data)
         {
             let val: string | number = row[key];
-            if (ColumnFactory.isNumeric(val))
-            {
-                val = Number(val);
-                allString = false;
-            }
-            else
-            {
-                allNumeric = false;
-            }
             valList.push(val);
         }
-        let col: Column<string | number>;
-        if (allNumeric)
-        {
-            console.log(key);
-            col = new ColumnNumeric(valList as number[]);
-        }
-        else if (allString)
-        {
-            col = new ColumnString(valList as string[]);
-        }
-        else
-        {
-            col = new ColumnMixed(valList);
-        }
 
+        let col: Column<string | number>;
+
+        switch(getColumnType(valList)) {
+            
+            case "Categorical": 
+                col = new ColumnCategorical(valList as string[]);
+                break;
+            case "Number":
+                col = new ColumnNumeric(valList as number[]);
+                break;
+            case "Label":  
+                col = new ColumnLabel(valList as string[]);
+                break; 
+            default: 
+                col = new ColumnMixed(valList as string[]);
+                break;
+        }
+        
         col.id = key;
         return col;
     }

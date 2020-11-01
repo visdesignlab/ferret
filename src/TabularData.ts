@@ -32,9 +32,17 @@ export class TabularData
         return this._columnList;
     }
 
+    public SetColumnList(columnList: Column<string | number>[]) : void {
+        this._columnList = columnList;
+    }
+
     private _rowLength : number;
     public get rowLength() : number {
         return this._rowLength;
+    }
+
+    public SetRowLength(rowLength: number) : void {
+        this._rowLength = rowLength;
     }
 
     public getRow(index: number): (string | number)[]

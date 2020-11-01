@@ -3,8 +3,10 @@ import { ColumnNumeric } from "../ColumnNumeric";
 import { Column } from "../Column";
 import * as d3 from "d3";
 import { select } from "d3";
-import { ColumnString } from "../ColumnString";
 import * as filterNames from "./constants/filter";
+import { ColumnLabel } from "../ColumnLabel";
+import { ColumnCategorical } from "../ColumnCategorical";
+import { ColumnMixed } from "../ColumnMixed";
 
 export class FilterUtil {
 
@@ -15,7 +17,7 @@ export class FilterUtil {
             column: ColumnNumeric,
             ): void 
     {
-        let selectedColumn : ColumnNumeric | ColumnString = Column.getColumnById(data, column.id);
+        let selectedColumn : ColumnNumeric | ColumnLabel | ColumnCategorical | ColumnMixed = Column.getColumnById(data, column.id);
         
         if(name == filterNames.LEADING_DIGIT_FREQ_SELECTION) {
             selectedColumn.values.forEach((value : any, index : number) => {
@@ -43,7 +45,7 @@ export class FilterUtil {
         data: TabularData,
         column: ColumnNumeric) {
 
-        let selectedColumn : ColumnNumeric | ColumnString = Column.getColumnById(data, column.id);
+        let selectedColumn : ColumnNumeric | ColumnLabel | ColumnCategorical | ColumnMixed = Column.getColumnById(data, column.id);
 
         if(name == filterNames.LEADING_DIGIT_FREQ_CLEAR_SELECTION) {
             selectedColumn.values.forEach((value : any, index : number) => {

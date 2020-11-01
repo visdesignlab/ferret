@@ -1,12 +1,31 @@
 .dataTable
-{
+{   
+    margin-top: 20px;
     white-space: nowrap;
     border-collapse: collapse;
+}
+
+th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    color: #212121;
+    border-left: solid #d0d0d0 1px;
+    border-top: solid #d0d0d0 1px;
+    font-family: 'Josefin Sans', sans-serif;
 }
 
 .tableContainer {
     transition: 0.5s;
     margin-left: 0px;
+}
+
+.columnType {
+    font-size: 10px;
+    color: #757575;
+}
+
+.columnHidden {
+    visibility:hidden;
 }
 
 .vizCell
@@ -17,7 +36,7 @@
     transition: 0.5s;
 }
 
-.chart-hidden
+.chartHidden
 {
     height: 0px !important;
     animation-name: heightEffect;
@@ -29,6 +48,7 @@ td
 {
     border-left: solid #d0d0d0 1px;
     padding-right: 4px;
+    border-top: solid #d0d0d0 1px;
     padding-left: 4px;
 }
 
