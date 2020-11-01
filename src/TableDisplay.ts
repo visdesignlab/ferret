@@ -7,6 +7,7 @@ import { ColumnNumeric } from "./ColumnNumeric";
 import { FilterUtil } from "./lib/FilterUtil";
 import * as filterNames from "./lib/constants/filter";
 import { hoverNodeUpdate } from "./ProvenanceSetup";
+import { ColumnCategorical } from "./ColumnCategorical";
 
 export class TableDisplay
 {
@@ -91,7 +92,7 @@ export class TableDisplay
         dataRow.append('th')
         let dataCell = dataRow.selectAll('td')
             .data(data.columnList)
-            .join('td')
+            .join('td') 
             .classed('vizCell', true);
         
         dataCell.append('div').attr('id', (d, i) => 'overallDist-' + i);
@@ -101,17 +102,21 @@ export class TableDisplay
         for (let i = 0; i < data.columnList.length; i++)
         {
             let column = data.columnList[i];
-            if (column.type === 'Number')
+            if (column.type === 'Categorical') {
+                let colNum = column as ColumnCategorical;
+                this.drawOverallDist(data, colNum, 'overallDist-' + i, false, 'nominal');
+            }
+            else if (column.type === 'Number')
             {
                 let colNum = column as ColumnNumeric;
-                this.drawOverallDist(data, colNum, 'overallDist-' + i);
+                this.drawOverallDist(data, colNum, 'overallDist-' + i, true, 'quantitative');
                 this.drawLeadingDigitDist(data, colNum, 'benfordDist-' + i);
                 this.drawFrequentDuplicates(data, colNum, 'duplicateCount-' + i);
             }
         }
     }
 
-    private drawOverallDist(data: TabularData, column: ColumnNumeric, key: string): void
+    private drawOverallDist(data: TabularData, column: ColumnNumeric | ColumnCategorical, key: string, isBinned: boolean, columnType: string): void
     {
         let dataValues : Array<any> = [];
         for (let val of column.values)
@@ -137,7 +142,7 @@ export class TableDisplay
                 },
             },
             encoding: {
-              x: {field: 'value', type: 'quantitative', bin: true},
+              x: {field: 'value', type: columnType, bin: isBinned},
               color: {
                   value: "#ffb726"
               },
