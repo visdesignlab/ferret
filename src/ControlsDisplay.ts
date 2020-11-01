@@ -1,6 +1,7 @@
 import { TabularData } from "./TabularData";
 import { TableDisplay } from "./TableDisplay";
 import { Column } from "./Column";
+import { DUPLICATE_COUNT_TYPE } from "./lib/constants/filter";
  
 export class ControlsDisplay
 {
@@ -107,11 +108,12 @@ export class ControlsDisplay
         let leadingDigitSwitch = document.getElementById("leading-digit-switch");
         let frequentValueSwitch = document.getElementById("freq-val-switch");
         let valueDistSwitch = document.getElementById("val-dist-switch");
+        let uniqueValuesSwitch = document.getElementById("unique-values-switch");
 
         leadingDigitSwitch.addEventListener("click", e => this.toggleChartVisibility(e, "benfordDist"));
         frequentValueSwitch.addEventListener("click", e => this.toggleChartVisibility(e, "duplicateCount"));
         valueDistSwitch.addEventListener("click", e => this.toggleChartVisibility(e, "overallDist"));
-
+        uniqueValuesSwitch.addEventListener("click", e => this.setupDuplicateCount(e));
     }
 
     private toggleChartVisibility(e: any, chartName: string): void {
@@ -142,5 +144,12 @@ export class ControlsDisplay
             }
         }
 
+    }
+
+    private setupDuplicateCount(e: any) {
+        console.log("here");
+        let dupCountType: DUPLICATE_COUNT_TYPE = (e.target.checked) ? 'ALL' : 'TOP';
+        let tableDisplay = new TableDisplay();
+        tableDisplay.drawVizRows(this._data, dupCountType);
     }
 }
