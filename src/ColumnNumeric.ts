@@ -7,7 +7,7 @@ export class ColumnNumeric extends Column<number>
     {
         super();
         this._values = valList;
-        this._type = ColumnTypes.numeric;
+        this._type = 'Number';
     }
 
     public GetDuplicateCounts(): [number, number][]

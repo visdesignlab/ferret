@@ -37,7 +37,7 @@
     width: 200px;
     padding: 1px;
     border-radius: 3px;
-    font-size: 15px;
+    font-size: 14px;
     font-family: 'Josefin Sans', sans-serif;
 }
 
@@ -51,7 +51,7 @@
 }
 
 .controlsLabel {
-    font-size: 12px;
+    font-size: 14px;
     color: #757575;
     font-family: 'Josefin Sans', sans-serif;
 }

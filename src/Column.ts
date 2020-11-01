@@ -1,19 +1,21 @@
 import { TabularData } from "./TabularData";
-import { ColumnString } from "./ColumnString";
 import { ColumnNumeric } from "./ColumnNumeric";
+import { ColumnLabel } from "./ColumnLabel";
+import { ColumnCategorical } from "./ColumnCategorical";
+import { ColumnMixed } from "./ColumnMixed";
 
-export enum ColumnTypes
-{
-    "numeric",
-    "string",
-    "mixed"
-}
+export type ColumnTypes =
+  | 'Number'
+  | 'Label'
+  | 'Mixed'
+  | 'Categorical';
 
 export abstract class Column<T>
 {
     public constructor()
     {
         this._values = [];
+        this._visible = true;
     }
 
     private _id : string;
@@ -40,7 +42,16 @@ export abstract class Column<T>
         return this._values.length;
     }
 
-    public static getColumnById(data: TabularData, id: string) : ColumnNumeric | ColumnString {
+    protected _visible : Boolean;
+    public get visible() : Boolean {
+        return this._visible;
+    }
+
+    public set visible(visible: Boolean) {
+        this._visible = visible;
+    }
+
+    public static getColumnById(data: TabularData, id: string) : ColumnNumeric | ColumnMixed | ColumnCategorical | ColumnLabel {
 
         if(data == null || id == null) return null;
         
