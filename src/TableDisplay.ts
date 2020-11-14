@@ -103,9 +103,9 @@ export class TableDisplay
         
         dataCell.append('div').attr('id', (d, i) => 'overallDist-' + i);
         dataCell.append('div').attr('id', (d, i) => 'benfordDist-' + i);
-        dataCell.append('div').attr('id', (d, i) => 'duplicateCount-' + i);
+        dataCell.append('div').classed('chartDiv', true).classed('scrollbar', true).attr('id', (d, i) => 'duplicateCount-' + i);
         dataCell.append('div').attr('id', (d, i) => 'nGram-' + i);
-        this.drawVizRows(data, 'TOP', 3);
+        this.drawVizRows(data, 'TOP', 2);
     }
 
     public drawVizRows(data: TabularData, dupCountType: DUPLICATE_COUNT_TYPE, n: number): void

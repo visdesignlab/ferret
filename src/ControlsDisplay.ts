@@ -109,6 +109,8 @@ export class ControlsDisplay
         let frequentValueSwitch = document.getElementById("freq-val-switch");
         let valueDistSwitch = document.getElementById("val-dist-switch");
         let uniqueValuesSwitch = document.getElementById("unique-values-switch");
+        let twoGramSwitch = document.getElementById("2-gram-switch");
+        let threeGramSwitch = document.getElementById("3-gram-switch");
         let nGramSwitch = document.getElementById("n-gram-switch");
 
         leadingDigitSwitch.addEventListener("click", e => this.toggleChartVisibility(e, "benfordDist"));
@@ -117,6 +119,16 @@ export class ControlsDisplay
         nGramSwitch.addEventListener("click", e => this.toggleChartVisibility(e, "nGram"));
 
         uniqueValuesSwitch.addEventListener("click", e => this.setupDuplicateCount(e));
+        twoGramSwitch.addEventListener("click", e => this.toggleNGram(e, 2));
+        threeGramSwitch.addEventListener("click", e => this.toggleNGram(e, 3));
+    }
+
+    private toggleNGram(e: any, n: number) {
+        let uniqueValuesSwitch = document.getElementById("unique-values-switch") as HTMLInputElement;
+        let dupCountType: DUPLICATE_COUNT_TYPE = (uniqueValuesSwitch.checked) ? 'ALL' : 'TOP';
+        let tableDisplay = new TableDisplay();
+        n = (e.target.checked && n == 2) ? 2 : 3;
+        tableDisplay.drawVizRows(this._data, dupCountType, n);
     }
 
     private toggleChartVisibility(e: any, chartName: string): void {

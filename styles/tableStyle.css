@@ -44,6 +44,12 @@ th {
     overflow: hidden;
 }
 
+.chartDiv 
+{
+    height: 100px;
+    overflow: scroll;
+}
+
 td 
 {
     border-left: solid #d0d0d0 1px;
@@ -68,3 +74,13 @@ td
     animation-duration: 3s;
 }
 
+/* Hide scrollbar for Chrome, Safari and Opera */
+.scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  
+  /* Hide scrollbar for IE, Edge and Firefox */
+.scrollbar {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+}
