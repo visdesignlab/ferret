@@ -109,10 +109,13 @@ export class ControlsDisplay
         let frequentValueSwitch = document.getElementById("freq-val-switch");
         let valueDistSwitch = document.getElementById("val-dist-switch");
         let uniqueValuesSwitch = document.getElementById("unique-values-switch");
+        let nGramSwitch = document.getElementById("n-gram-switch");
 
         leadingDigitSwitch.addEventListener("click", e => this.toggleChartVisibility(e, "benfordDist"));
         frequentValueSwitch.addEventListener("click", e => this.toggleChartVisibility(e, "duplicateCount"));
         valueDistSwitch.addEventListener("click", e => this.toggleChartVisibility(e, "overallDist"));
+        nGramSwitch.addEventListener("click", e => this.toggleChartVisibility(e, "nGram"));
+
         uniqueValuesSwitch.addEventListener("click", e => this.setupDuplicateCount(e));
     }
 
@@ -140,16 +143,18 @@ export class ControlsDisplay
                         break;
                 case "overallDist":
                         eventTarget.style.backgroundColor = "#ffb726"; 
-                        break
+                        break;
+                case "nGram":
+                        eventTarget.style.backgroundColor = "#ff8f00"; 
+                        break;
             }
         }
 
     }
 
     private setupDuplicateCount(e: any) {
-        console.log("here");
         let dupCountType: DUPLICATE_COUNT_TYPE = (e.target.checked) ? 'ALL' : 'TOP';
         let tableDisplay = new TableDisplay();
-        tableDisplay.drawVizRows(this._data, dupCountType);
+        tableDisplay.drawVizRows(this._data, dupCountType, 3);
     }
 }

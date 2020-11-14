@@ -1,5 +1,6 @@
 import { TabularData } from "./TabularData";
 import * as d3 from "d3";
+import * as uuid from 'uuid';
 // import * as vega from "vega";
 import vegaEmbed, { VisualizationSpec } from 'vega-embed';
 import { Column, ColumnTypes } from "./Column";
@@ -9,9 +10,13 @@ import * as filterNames from "./lib/constants/filter";
 import { hoverNodeUpdate } from "./ProvenanceSetup";
 import { ColumnCategorical } from "./ColumnCategorical";
 import { DUPLICATE_COUNT_TYPE } from "./lib/constants/filter";
+import { FilterDisplay } from "./FilterDisplay";
+import { Filter } from "./Filter";
 
 export class TableDisplay
 {
+
+    private _filterDisplay: FilterDisplay;
 
     private _container : HTMLElement;
     public get container() : HTMLElement {
@@ -36,6 +41,7 @@ export class TableDisplay
 
     private onDataChanged(data: TabularData): void
     {
+        this._filterDisplay = new FilterDisplay();
         this.drawHeader(data);
         this.setupVizRows(data);
         this.drawBody(data);
@@ -98,10 +104,11 @@ export class TableDisplay
         dataCell.append('div').attr('id', (d, i) => 'overallDist-' + i);
         dataCell.append('div').attr('id', (d, i) => 'benfordDist-' + i);
         dataCell.append('div').attr('id', (d, i) => 'duplicateCount-' + i);
-        this.drawVizRows(data, 'TOP');
+        dataCell.append('div').attr('id', (d, i) => 'nGram-' + i);
+        this.drawVizRows(data, 'TOP', 3);
     }
 
-    public drawVizRows(data: TabularData, dupCountType: DUPLICATE_COUNT_TYPE): void
+    public drawVizRows(data: TabularData, dupCountType: DUPLICATE_COUNT_TYPE, n: number): void
     {
         for (let i = 0; i < data.columnList.length; i++)
         {
@@ -116,6 +123,7 @@ export class TableDisplay
                 this.drawOverallDist(data, colNum, 'overallDist-' + i, true, 'quantitative');
                 this.drawLeadingDigitDist(data, colNum, 'benfordDist-' + i);
                 this.drawFrequentDuplicates(data, colNum, 'duplicateCount-' + i, dupCountType);
+                this.drawNGramFrequency(data, colNum, 'nGram-' + i, n);
             }
         }
     }
@@ -221,6 +229,8 @@ export class TableDisplay
               result.view.addSignalListener(selectionName, (name, value) => {
                 let selectedData : Array<number> = this.getSelectedData(value._vgsid_, dataValues, "digit");
                 new FilterUtil().highlightRows(name, selectedData, data, column)
+                let filter: Filter = new Filter(uuid.v4(), column, selectionName, selectedData) 
+                this._filterDisplay.selectFilter(filter);
               });
               result.view.addEventListener('dblclick', ((e) => {
                     let clearedData = dataValues;
@@ -238,7 +248,6 @@ export class TableDisplay
         let dataValues : Array<any> = [];
         let index = 0;
         let maxIndex = (dupCountType === 'ALL') ? dupCounts.length : 5;
-        let condition = (dupCountType === 'ALL') ? '' : 'height: 50'; 
         for (let [val, count] of dupCounts)
         {
             if (count === 1)
@@ -259,7 +268,7 @@ export class TableDisplay
         var yourVlSpec: VisualizationSpec = {
             //title: "Frequent Values (" + dupCounts.length + " unique)",
             width: 100,
-            ...(dupCountType === 'TOP' && { height: '50' }),
+            ...(dupCountType === 'TOP' && { height: 50 }),
             $schema: 'https://vega.github.io/schema/vega-lite/v4.json',
             description: 'Duplicate Counts',
             data: {
@@ -310,6 +319,8 @@ export class TableDisplay
               result.view.addSignalListener(selectionName, (name, value) => {
                 let selectedData : Array<number> = this.getSelectedData(value._vgsid_, dataValues, "value");
                 new FilterUtil().highlightRows(name, selectedData, data, column);
+                let filter: Filter = new Filter(uuid.v4(), column, selectionName, selectedData) 
+                this._filterDisplay.selectFilter(filter);
               });
               result.view.addEventListener('dblclick', ((e) => {
                 let clearedData = dataValues.map(d => d.value);;
@@ -319,6 +330,75 @@ export class TableDisplay
           })
 
     }
+
+
+    private drawNGramFrequency(data: TabularData, column: ColumnNumeric, key: string, n: number): void
+    {
+        let nGramFrequency = column.GetNGramFrequency(n);
+        let dataValues : Array<any> = [];
+        let index = 0;
+        for (let [val, count] of nGramFrequency)
+        {
+            if (count === 1)
+            {
+                break;
+            }
+            if (index >= 5)
+            {
+                break;
+            }
+            index++;
+            dataValues.push({
+                'value': val,
+                'count': count
+            });
+        }
+
+        var yourVlSpec: VisualizationSpec = {
+            width: 100,
+            height: 50,
+            $schema: 'https://vega.github.io/schema/vega-lite/v4.json',
+            description: 'Duplicate Counts',
+            data: {
+              values: dataValues
+            },
+            encoding: {
+                y: {field: 'value', type: 'ordinal', sort: '-x'},
+                x: {field: 'count', type: 'quantitative'},
+                color: {
+                    value: "#ff8f00"
+                },
+            },
+            layer: [
+                {
+                    mark: 'bar',
+                    selection: {
+                        "FREQUENT_VALUES_SELECTION": {
+                            type: "multi",
+                            clear: "dblclick"
+                        },
+                    }
+                },
+                {
+                    mark:
+                    {
+                        type: 'text',
+                        align: 'left',
+                        baseline: 'middle',
+                        dx: 3
+                    },
+                    encoding:
+                    {
+                        text: {field: "count", type: "quantitative"}
+                    }
+                }
+            ],
+          };
+          
+          vegaEmbed('#' + key, yourVlSpec, { actions: false });
+
+    }
+
 
     private drawBody(data: TabularData): void
     {

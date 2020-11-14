@@ -26,4 +26,7 @@
     display: flex;
 }
 
-
+.filterContainer {
+    transition: 0.5s;
+    margin-left: 0px;
+}
