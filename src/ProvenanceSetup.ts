@@ -1,12 +1,15 @@
 import { initProvenance, NodeID, createAction } from '@visdesignlab/trrack';
 import { ProvVisCreator } from '@visdesignlab/trrack-vis';
 import { TableDisplay } from './TableDisplay';
+import { Filter } from './Filter';
 
 /**
  * interface representing the state of the application
  */
 export interface NodeState {
   hoveredNode: string;
+  appliedFilter: Filter | null;
+  removedFilter: Filter | null;
 }
 
 /**
@@ -15,9 +18,11 @@ export interface NodeState {
 
 const initialState: NodeState = {
   hoveredNode: 'none',
+  appliedFilter: null,
+  removedFilter: null,
 };
 
-type EventTypes = 'Hover Node';
+type EventTypes = 'Hover Node' | 'Applied Filter' | 'Removed Filter';
 
 // initialize provenance with the first state
 const prov = initProvenance<NodeState, EventTypes, string>(initialState, {
@@ -39,8 +44,38 @@ export const hoverNodeUpdate = function (newHover: string) {
   hoverAction
     .setLabel(newHover === '' ? 'Hover Removed' : `${newHover} Hovered`)
     .setEventType('Hover Node');
+    prov.apply(hoverAction(newHover));
+};
 
-  prov.apply(hoverAction(newHover));
+
+const applyFilterAction = createAction<NodeState, any, EventTypes>(
+  (state: NodeState, newFilter: Filter) => {
+    state.appliedFilter = newFilter;
+    return state;
+  },
+);
+
+export const applyFilterUpdate = function (newFilter: Filter) {
+  applyFilterAction
+    .setLabel(newFilter === null ? 'None' : `${newFilter.column.id} filtered`)
+    .setEventType('Applied Filter');
+
+  prov.apply(applyFilterAction(newFilter));
+};
+
+const removedFilterAction = createAction<NodeState, any, EventTypes>(
+  (state: NodeState, newFilter: Filter) => {
+    state.removedFilter = newFilter;
+    return state;
+  },
+);
+
+export const removedFilterUpdate = function (removedFilter: Filter) {
+  removedFilterAction
+    .setLabel(removedFilter === null ? 'None' : `${removedFilter.column.id} filter removed`)
+    .setEventType('Applied Filter');
+
+  prov.apply(removedFilterAction(removedFilter));
 };
 
 // Create function to pass to the ProvVis library for when a node is selected in the graph.

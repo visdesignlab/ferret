@@ -41,6 +41,15 @@
                         <input type="checkbox" id="unique-values-switch"></input>
                         <label for="unique-values-switch" class="controlsLabel">Show all unique values</label>
                     </div>
+                    <div class="item orange">
+                        <i id="n-gram-switch"  class="fas fa-eye customButtonEyeIcon shown" style="background-color: #ff8f00"></i>
+                        N Gram</div>
+                    <div class="item-options">
+                        <input type="radio" id="2-gram-switch" name="n-gram" value="2-gram" checked>
+                        <label for="2-gram-switch" class="controlsLabel">2-gram</label>
+                        <input type="radio" id="3-gram-switch" name="n-gram" value="3-gram">
+                        <label for="3-gram-switch" class="controlsLabel">3-gram</label>
+                    </div>
                 </div>
                 <hr class="controlsHr">
                 <div class="item-group" id="data-columns"> 
@@ -55,7 +64,6 @@
             <div class="tableContainer" id="tableContainer">
                 <table class='dataTable' id="dataTable">
                     <thead>
-
                     </thead>
                     <tbody>
                     </tbody>

@@ -1,10 +1,15 @@
-export abstract class Filter<T>
+import { Column } from './Column';
+
+export class Filter
 {
-    public constructor()
-    {
 
+    constructor(id: string, column: Column<string | number>, chart: string, selectedData: Array<string | number>) {
+        this._id = id;
+        this._column = column;
+        this._chart = chart;
+        this._selectedData = selectedData;
     }
-
+    
     private _id : string;
     public get id() : string {
         return this._id;
@@ -14,13 +19,30 @@ export abstract class Filter<T>
         this._id = v;
     }
 
-    private _type : string;
-    public get type() : string {
-        return this._type;
+    private _column : Column<string | number>;
+    public get column() : Column<string | number> {
+        return this._column;
     }
-    public set type(v: string)
+    public set column(v: Column<string | number>)
     {
-        this._type = v;
+        this._column = v;
     }
 
+    private _chart : string;
+    public get chart() : string {
+        return this._chart;
+    }
+    public set chart(v: string)
+    {
+        this._chart = v;
+    }
+
+    private _selectedData : Array<string | number>;
+    public get selectedData() : Array<string | number> {
+        return this._selectedData;
+    }
+    public set selectedData(v: Array<string | number>)
+    {
+        this._selectedData = v;
+    }
 }

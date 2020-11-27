@@ -98,4 +98,41 @@ export class ColumnNumeric extends Column<number>
 
     }
 
+    public GetNGramFrequency(n: number): [string, number][]
+    {
+        let nGramFrequencyMap: Map<string, number> = new Map<string, number>();
+        for (let val of this.values)
+        {
+            let valString = val.toString();
+            
+
+            if(valString.length < n) continue;
+
+            for(let i = 0; i < valString.length; i++) {
+                let currentCount = 0;
+                let nGram = valString.substr(i, n);
+                if(nGram.length < n) continue;
+                if (nGramFrequencyMap.has(nGram))
+                        currentCount = nGramFrequencyMap.get(nGram);
+                nGramFrequencyMap.set(nGram, currentCount + 1);
+            }
+        }
+
+        let nGramFrequency = Array.from(nGramFrequencyMap);
+        
+        nGramFrequency.sort((a: [string, number], b: [string, number]) =>
+        {
+            if (a[1] > b[1])
+            {
+                return -1;
+            }
+            else if (a[1] < b[1])
+            {
+                return 1;
+            }
+            return 0;
+        })
+        return nGramFrequency;
+    }
+
 }
