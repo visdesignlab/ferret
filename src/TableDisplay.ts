@@ -9,9 +9,10 @@ import { FilterUtil } from "./lib/FilterUtil";
 import * as filterNames from "./lib/constants/filter";
 import { hoverNodeUpdate } from "./ProvenanceSetup";
 import { ColumnCategorical } from "./ColumnCategorical";
-import { DUPLICATE_COUNT_TYPE } from "./lib/constants/filter";
+import { DuplicateCountType } from "./lib/constants/filter";
 import { FilterDisplay } from "./FilterDisplay";
 import { Filter } from "./Filter";
+import { ControlsDisplay } from "./ControlsDisplay";
 
 export class TableDisplay
 {
@@ -42,6 +43,7 @@ export class TableDisplay
     private onDataChanged(data: TabularData): void
     {
         this._filterDisplay = new FilterDisplay();
+        this._filterDisplay.SetData(data); // everytime the data changes, it updates the FilterDisplay's copy too.
         this.drawHeader(data);
         this.setupVizRows(data);
         this.drawBody(data);
@@ -108,7 +110,7 @@ export class TableDisplay
         this.drawVizRows(data, 'TOP', 2);
     }
 
-    public drawVizRows(data: TabularData, dupCountType: DUPLICATE_COUNT_TYPE, n: number): void
+    public drawVizRows(data: TabularData, dupCountType: DuplicateCountType, n: number): void
     {
         for (let i = 0; i < data.columnList.length; i++)
         {
@@ -228,9 +230,9 @@ export class TableDisplay
           ).then(result => {
               result.view.addSignalListener(selectionName, (name, value) => {
                 let selectedData : Array<number> = this.getSelectedData(value._vgsid_, dataValues, "digit");
-                new FilterUtil().highlightRows(name, selectedData, data, column)
+          //    new FilterUtil().highlightRows(name, selectedData, data, column)
                 let filter: Filter = new Filter(uuid.v4(), column, selectionName, selectedData) 
-                this._filterDisplay.selectFilter(filter);
+                this._filterDisplay.selectFilter(filter, this);
               });
               result.view.addEventListener('dblclick', ((e) => {
                     let clearedData = dataValues;
@@ -241,7 +243,7 @@ export class TableDisplay
         .catch(console.warn); 
     }
     
-    private drawFrequentDuplicates(data: TabularData, column: ColumnNumeric, key: string, dupCountType: DUPLICATE_COUNT_TYPE): void
+    private drawFrequentDuplicates(data: TabularData, column: ColumnNumeric, key: string, dupCountType: DuplicateCountType): void
     {
         let dupCounts = column.GetDuplicateCounts();
         let selectionName = filterNames.FREQUENT_VALUES_SELECTION;
@@ -318,9 +320,9 @@ export class TableDisplay
           ).then(result => {
               result.view.addSignalListener(selectionName, (name, value) => {
                 let selectedData : Array<number> = this.getSelectedData(value._vgsid_, dataValues, "value");
-                new FilterUtil().highlightRows(name, selectedData, data, column);
+              //  new FilterUtil().highlightRows(name, selectedData, data, column);
                 let filter: Filter = new Filter(uuid.v4(), column, selectionName, selectedData) 
-                this._filterDisplay.selectFilter(filter);
+                this._filterDisplay.selectFilter(filter, this);
               });
               result.view.addEventListener('dblclick', ((e) => {
                 let clearedData = dataValues.map(d => d.value);;
@@ -400,21 +402,21 @@ export class TableDisplay
     }
 
 
-    private drawBody(data: TabularData): void
+    public drawBody(data: TabularData): void
     {
+        ControlsDisplay.updateCurrentSummary(data);
         let indices: number[] = [...Array(data.rowLength).keys()];
-        let tbody = d3.select(this.container).select('tbody');
-        let rowSelect = tbody.selectAll('.dataRow')
+        let rowSelect = d3.select(this._container).select('tbody')
+            .selectAll('.dataRow')
             .data(indices)
             .join('tr')
             .attr('id', (d) => "dataRow" + (d+1))
-            .on("mouseover", (d) => hoverNodeUpdate(`node_dataRow${d+1}`))
             .classed('dataRow', true);
 
         rowSelect.html(null)
             .append('th')
             .text(d => d + 1);
-
+             
         rowSelect.selectAll('td')
             .data(d => data.getRow(d))
             .join('td')

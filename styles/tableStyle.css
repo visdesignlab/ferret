@@ -53,9 +53,8 @@ th {
 td 
 {
     border-left: solid #d0d0d0 1px;
-    padding-right: 4px;
+    padding: 12px 4px 12px 4px;
     border-top: solid #d0d0d0 1px;
-    padding-left: 4px;
 }
 
 @keyframes heightEffect {

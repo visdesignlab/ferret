@@ -71,7 +71,7 @@ export class ColumnNumeric extends Column<number>
         return digitCounts;
     }
 
-    public static getLeadingDigit(val: number, nums: Set<Number> | null): 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 0
+    public static getLeadingDigit(val: number, nums: Set<Number | string> | null): 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 0
     {
         if (val === 0)
         {
@@ -91,7 +91,7 @@ export class ColumnNumeric extends Column<number>
         } 
     }
 
-    public static isSelectedValue(val: number, nums: Set<Number> | null) : Boolean {
+    public static isSelectedValue(val: number, nums: Set<Number | string> | null) : Boolean {
 
         if(nums == null) return false;
         return nums.has(val);

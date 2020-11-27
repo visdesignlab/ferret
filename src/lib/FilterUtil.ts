@@ -18,25 +18,27 @@ export class FilterUtil {
             ): void 
     {
         let selectedColumn : ColumnNumeric | ColumnLabel | ColumnCategorical | ColumnMixed = Column.getColumnById(data, column.id);
-        
-        if(name == filterNames.LEADING_DIGIT_FREQ_SELECTION) {
-            selectedColumn.values.forEach((value : any, index : number) => {
-                if(ColumnNumeric.getLeadingDigit(value, new Set(selectedData)) != null) {
-                    let row = d3.select('#dataRow'+ (index+1));
-                    row.classed('highlighted', true);
-                }
-            });
-        } 
 
-        if(name == filterNames.FREQUENT_VALUES_SELECTION) {
-            selectedColumn.values.forEach((value : any, index : number) => {
-                if(ColumnNumeric.isSelectedValue(value, new Set(selectedData))) {
-                    let row = d3.select('#dataRow'+ (index+1));
-                    row.classed('highlighted', true);
-                }
-            });
-        } 
-
+        switch(name) {
+            
+            case filterNames.LEADING_DIGIT_FREQ_SELECTION:
+                    selectedColumn.values.forEach((value : any, index : number) => {
+                        if(ColumnNumeric.getLeadingDigit(value, new Set(selectedData)) != null) {
+                            let row = d3.select('#dataRow'+ (index+1));
+                            row.classed('highlighted', true);
+                        }
+                    });
+                    break;
+         
+            case filterNames.FREQUENT_VALUES_SELECTION:
+                    selectedColumn.values.forEach((value : any, index : number) => {
+                        if(ColumnNumeric.isSelectedValue(value, new Set(selectedData))) {
+                            let row = d3.select('#dataRow'+ (index+1));
+                            row.classed('highlighted', true);
+                        }
+                    });
+                    break;
+        }
     }
 
     public clearHighlight(
@@ -47,22 +49,24 @@ export class FilterUtil {
 
         let selectedColumn : ColumnNumeric | ColumnLabel | ColumnCategorical | ColumnMixed = Column.getColumnById(data, column.id);
 
-        if(name == filterNames.LEADING_DIGIT_FREQ_CLEAR_SELECTION) {
-            selectedColumn.values.forEach((value : any, index : number) => {
-                    let row = d3.select('#dataRow'+ (index+1));
-                    row.classed('highlighted', false);
-            });
-        } 
+        switch(name) {
+            
+            case filterNames.LEADING_DIGIT_FREQ_CLEAR_SELECTION:
+                    selectedColumn.values.forEach((value : any, index : number) => {
+                        let row = d3.select('#dataRow'+ (index+1));
+                        row.classed('highlighted', false);
+                    });
+                    break;
 
-        if(name == filterNames.FREQUENT_VALUES_CLEAR_SELECTION) {
-            selectedColumn.values.forEach((value : any, index : number) => {
-                if(ColumnNumeric.isSelectedValue(value, new Set(clearedData))) {
-                    let row = d3.select('#dataRow'+ (index+1));
-                    row.classed('highlighted', false);
-                }
-            });
-        } 
-
+            case filterNames.FREQUENT_VALUES_CLEAR_SELECTION:
+                    selectedColumn.values.forEach((value : any, index : number) => {
+                        if(ColumnNumeric.isSelectedValue(value, new Set(clearedData))) {
+                            let row = d3.select('#dataRow'+ (index+1));
+                            row.classed('highlighted', false);
+                        }
+                    });
+                    break;
+        }
     }
 
 }
