@@ -43,6 +43,7 @@ const hoverAction = createAction<NodeState, any, EventTypes>(
 export const hoverNodeUpdate = function (newHover: string) {
   hoverAction
     .setLabel(newHover === '' ? 'Hover Removed' : `${newHover} Hovered`)
+    .setActionType('Ephemeral')
     .setEventType('Hover Node');
     prov.apply(hoverAction(newHover));
 };

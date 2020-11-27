@@ -19,6 +19,6 @@ let fileLoadButton = new UploadFileButton(toolbarContainer, (data: string, filen
 	controlsDisplay.drawControls(tabularData);
 	controlsDisplay.SetData(tabularData);
 	tableDisplay.SetData(tabularData);
-	filterDisplay.SetData([]);
+	filterDisplay.SetFilters([]);
 	document.title = filename;
 });

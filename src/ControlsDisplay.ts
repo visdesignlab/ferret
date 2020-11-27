@@ -1,7 +1,7 @@
 import { TabularData } from "./TabularData";
 import { TableDisplay } from "./TableDisplay";
 import { Column } from "./Column";
-import { DUPLICATE_COUNT_TYPE } from "./lib/constants/filter";
+import { DuplicateCountType } from "./lib/constants/filter";
  
 export class ControlsDisplay
 {
@@ -60,6 +60,11 @@ export class ControlsDisplay
     private drawSummaryRows(tabularData: TabularData) {
         document.getElementById("numberOfRecords").innerHTML = "# of records: "+tabularData.rowLength;
         document.getElementById("numberOfColumns").innerHTML = "# of columns: "+tabularData.columnList.length;
+    }
+
+    public static updateCurrentSummary(data: TabularData) {
+        document.getElementById("currentNumberOfRecords").innerHTML = "# of records: "+data.rowLength;
+        document.getElementById("currentNumberOfColumns").innerHTML = "# of columns: "+data.columnList.length;
     }
 
     private drawDataColumnRows(columnList: Column<String | Number>[]): void {
@@ -125,7 +130,7 @@ export class ControlsDisplay
 
     private toggleNGram(e: any, n: number) {
         let uniqueValuesSwitch = document.getElementById("unique-values-switch") as HTMLInputElement;
-        let dupCountType: DUPLICATE_COUNT_TYPE = (uniqueValuesSwitch.checked) ? 'ALL' : 'TOP';
+        let dupCountType: DuplicateCountType = (uniqueValuesSwitch.checked) ? 'ALL' : 'TOP';
         let tableDisplay = new TableDisplay();
         n = (e.target.checked && n == 2) ? 2 : 3;
         tableDisplay.drawVizRows(this._data, dupCountType, n);
@@ -165,7 +170,7 @@ export class ControlsDisplay
     }
 
     private setupDuplicateCount(e: any) {
-        let dupCountType: DUPLICATE_COUNT_TYPE = (e.target.checked) ? 'ALL' : 'TOP';
+        let dupCountType: DuplicateCountType = (e.target.checked) ? 'ALL' : 'TOP';
         let tableDisplay = new TableDisplay();
         tableDisplay.drawVizRows(this._data, dupCountType, 3);
     }
