@@ -209,7 +209,7 @@ export class FilterDisplay
         }
 
         let localDataArray = TabularData.FromString(localDataString);
-        tableDisplay.drawVizRows(localDataArray, 'TOP', 2);
+        tableDisplay.drawVizRows(localDataArray);
         tableDisplay.drawBody(localDataArray);
     }
 }   

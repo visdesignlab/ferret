@@ -42,7 +42,7 @@ export class TableDisplay
 
     private onDataChanged(data: TabularData): void
     {
-        this._filterDisplay = new FilterDisplay();
+        this._filterDisplay = new FilterDisplay(); // figure out a way to save filters.
         this._filterDisplay.SetData(data); // everytime the data changes, it updates the FilterDisplay's copy too.
         this.drawHeader(data);
         this.setupVizRows(data);
@@ -107,11 +107,15 @@ export class TableDisplay
         dataCell.append('div').attr('id', (d, i) => 'benfordDist-' + i);
         dataCell.append('div').classed('chartDiv', true).classed('scrollbar', true).attr('id', (d, i) => 'duplicateCount-' + i);
         dataCell.append('div').attr('id', (d, i) => 'nGram-' + i);
-        this.drawVizRows(data, 'TOP', 2);
+        this.drawVizRows(data);
     }
 
-    public drawVizRows(data: TabularData, dupCountType: DuplicateCountType, n: number): void
+    public drawVizRows(data: TabularData): void
     {
+        let dupCountType: DuplicateCountType = ControlsDisplay.getDuplicateCountStatus();
+        let nGram: number = ControlsDisplay.getNGramStatus();
+        let lsd: boolean = ControlsDisplay.getLSDStatus();
+
         for (let i = 0; i < data.columnList.length; i++)
         {
             let column = data.columnList[i];
@@ -125,7 +129,7 @@ export class TableDisplay
                 this.drawOverallDist(data, colNum, 'overallDist-' + i, true, 'quantitative');
                 this.drawLeadingDigitDist(data, colNum, 'benfordDist-' + i);
                 this.drawFrequentDuplicates(data, colNum, 'duplicateCount-' + i, dupCountType);
-                this.drawNGramFrequency(data, colNum, 'nGram-' + i, n);
+                this.drawNGramFrequency(data, colNum, 'nGram-' + i, nGram, lsd);
             }
         }
     }
@@ -334,9 +338,9 @@ export class TableDisplay
     }
 
 
-    private drawNGramFrequency(data: TabularData, column: ColumnNumeric, key: string, n: number): void
+    private drawNGramFrequency(data: TabularData, column: ColumnNumeric, key: string, n: number, lsd: boolean): void
     {
-        let nGramFrequency = column.GetNGramFrequency(n);
+        let nGramFrequency = column.GetNGramFrequency(n, lsd);
         let dataValues : Array<any> = [];
         let index = 0;
         for (let [val, count] of nGramFrequency)
