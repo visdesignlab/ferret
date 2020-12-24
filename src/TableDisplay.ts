@@ -13,11 +13,14 @@ import { DuplicateCountType } from "./lib/constants/filter";
 import { FilterDisplay } from "./FilterDisplay";
 import { Filter } from "./Filter";
 import { ControlsDisplay } from "./ControlsDisplay";
+import { HighlightDisplay } from "./HighlightDisplay";
+import { FilterPicker } from "./components/filter-picker";
 
 export class TableDisplay
 {
 
     private _filterDisplay: FilterDisplay;
+    private _highlightDisplay: HighlightDisplay;
 
     private _container : HTMLElement;
     public get container() : HTMLElement {
@@ -43,7 +46,9 @@ export class TableDisplay
     private onDataChanged(data: TabularData): void
     {
         this._filterDisplay = new FilterDisplay(); // figure out a way to save filters.
-        this._filterDisplay.SetData(data); // everytime the data changes, it updates the FilterDisplay's copy too.
+        this._highlightDisplay = new HighlightDisplay();
+        this._filterDisplay.SetData(data); 
+        this._highlightDisplay.SetData(data);// everytime the data changes, it updates the FilterDisplay's copy too.
         this.drawHeader(data);
         this.setupVizRows(data);
         this.drawBody(data);
@@ -235,7 +240,7 @@ export class TableDisplay
               result.view.addSignalListener(selectionName, (name, value) => {
                 let selectedData : Array<number> = this.getSelectedData(value._vgsid_, dataValues, "digit");
           //    new FilterUtil().highlightRows(name, selectedData, data, column)
-                let filter: Filter = new Filter(uuid.v4(), column, selectionName, selectedData) 
+                let filter: Filter = new Filter(uuid.v4(), column, selectionName, selectedData); 
                 this._filterDisplay.selectFilter(filter, this);
               });
               result.view.addEventListener('dblclick', ((e) => {
@@ -324,15 +329,11 @@ export class TableDisplay
           ).then(result => {
               result.view.addSignalListener(selectionName, (name, value) => {
                 let selectedData : Array<number> = this.getSelectedData(value._vgsid_, dataValues, "value");
-              //  new FilterUtil().highlightRows(name, selectedData, data, column);
                 let filter: Filter = new Filter(uuid.v4(), column, selectionName, selectedData) 
-                this._filterDisplay.selectFilter(filter, this);
+                new FilterUtil().highlightRows(name, selectedData, data, column);
+                //this._filterDisplay.selectFilter(filter, this);
+                this._highlightDisplay.selectFilter(filter, this);
               });
-              result.view.addEventListener('dblclick', ((e) => {
-                let clearedData = dataValues.map(d => d.value);;
-                new FilterUtil().clearHighlight(filterNames.FREQUENT_VALUES_CLEAR_SELECTION, clearedData, data, column)
-                }
-              ));
           })
 
     }

@@ -2,6 +2,7 @@ import { initProvenance, NodeID, createAction } from '@visdesignlab/trrack';
 import { ProvVisCreator } from '@visdesignlab/trrack-vis';
 import { TableDisplay } from './TableDisplay';
 import { Filter } from './Filter';
+import { SelectionType } from './lib/constants/filter';
 
 /**
  * interface representing the state of the application
@@ -56,9 +57,10 @@ const applyFilterAction = createAction<NodeState, any, EventTypes>(
   },
 );
 
-export const applyFilterUpdate = function (newFilter: Filter) {
+export const applyFilterUpdate = function (newFilter: Filter, type: SelectionType) {
+  let label: string = type == 'Filter' ? 'filtered' : 'highlighted';
   applyFilterAction
-    .setLabel(newFilter === null ? 'None' : `${newFilter.column.id} filtered`)
+    .setLabel(newFilter === null ? 'None' : `${newFilter.column.id} ` +label)
     .setEventType('Applied Filter');
 
   prov.apply(applyFilterAction(newFilter));
@@ -71,9 +73,10 @@ const removedFilterAction = createAction<NodeState, any, EventTypes>(
   },
 );
 
-export const removedFilterUpdate = function (removedFilter: Filter) {
+export const removedFilterUpdate = function (removedFilter: Filter, type: SelectionType) {
+  let label: string = type == 'Filter' ? 'filter' : 'highlight';
   removedFilterAction
-    .setLabel(removedFilter === null ? 'None' : `${removedFilter.column.id} filter removed`)
+    .setLabel(removedFilter === null ? 'None' : `${removedFilter.column.id} `+ label +` removed`)
     .setEventType('Applied Filter');
 
   prov.apply(removedFilterAction(removedFilter));

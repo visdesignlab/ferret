@@ -2,6 +2,7 @@ import { TabularData } from "./TabularData";
 import { TableDisplay } from "./TableDisplay";
 import { Column } from "./Column";
 import { DuplicateCountType } from "./lib/constants/filter";
+import { FilterPicker } from "./components/filter-picker";
  
 export class ControlsDisplay
 {
@@ -186,5 +187,4 @@ export class ControlsDisplay
 
     }
 
-   
 }
