@@ -1,4 +1,3 @@
-import { applyFilterUpdate, removedFilterUpdate } from "./ProvenanceSetup";
 import { TabularData } from './TabularData';
 import { TableDisplay } from './TableDisplay';
 import { Column } from './Column';
@@ -9,7 +8,7 @@ import { ColumnNumeric } from './ColumnNumeric';
 import * as filterNames from "./lib/constants/filter";
 import { FilterDropdown } from "./FilterDropdown";
 import { Filter } from "./Filter";
-import d3 from 'd3';
+import * as d3 from "d3";
 
 export class HighlightDisplay extends FilterDropdown
 {
@@ -30,12 +29,17 @@ export class HighlightDisplay extends FilterDropdown
 
     protected filterData(filter: Filter | null, data: TabularData | null, tableDisplay: TableDisplay | null) { 
         
-        for(let f of this._filters) {
-            console.log(f);
-            console.log(data);
-            let selectedColumn : ColumnNumeric | ColumnLabel | ColumnCategorical | ColumnMixed = Column.getColumnById(data, f.column.id);
-            console.log(selectedColumn);
+        let rows = d3.selectAll('tr');
+        rows.classed('highlighted', false);
+ 
+        let cols = d3.selectAll('td');
+        cols.classed('gram-highlighted', false);
 
+        for(let f of this._filters) {
+            
+            let selectedColumn : ColumnNumeric | ColumnLabel | ColumnCategorical | ColumnMixed = Column.getColumnById(data, f.column.id);
+
+                  
             switch(f.chart) {
             
                 case filterNames.LEADING_DIGIT_FREQ_SELECTION:
@@ -52,6 +56,16 @@ export class HighlightDisplay extends FilterDropdown
                             if(ColumnNumeric.isSelectedValue(value, new Set(f.selectedData))) {
                                 let row = d3.select('#dataRow'+ (index+1));
                                 row.classed('highlighted', true);
+                            }
+                        });
+                        break;
+                
+                case filterNames.N_GRAM_SELECTION:
+                        selectedColumn.values.forEach((value : any, index : number) => {
+                            if(ColumnNumeric.containsNGram(value, new Set(f.selectedData))) {
+                                let row = d3.select('#dataRow'+ (index+1));
+                                let col = row.select('#col' + selectedColumn.position);
+                                col.classed('gram-highlighted', true);
                             }
                         });
                         break;

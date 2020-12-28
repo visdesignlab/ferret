@@ -137,4 +137,10 @@ export class ColumnNumeric extends Column<number>
         return nGramFrequency;
     }
 
+    public static containsNGram(val: number, nums: Set<Number | string> | null): boolean {
+        for(let num of nums) 
+            return (val.toString().indexOf(num.toString()) > -1);
+        
+    }
+
 }

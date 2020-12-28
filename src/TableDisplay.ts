@@ -1,20 +1,15 @@
 import { TabularData } from "./TabularData";
 import * as d3 from "d3";
 import * as uuid from 'uuid';
-// import * as vega from "vega";
 import vegaEmbed, { VisualizationSpec } from 'vega-embed';
-import { Column, ColumnTypes } from "./Column";
 import { ColumnNumeric } from "./ColumnNumeric";
-import { FilterUtil } from "./lib/FilterUtil";
 import * as filterNames from "./lib/constants/filter";
-import { hoverNodeUpdate } from "./ProvenanceSetup";
 import { ColumnCategorical } from "./ColumnCategorical";
 import { DuplicateCountType } from "./lib/constants/filter";
 import { FilterDisplay } from "./FilterDisplay";
 import { Filter } from "./Filter";
 import { ControlsDisplay } from "./ControlsDisplay";
 import { HighlightDisplay } from "./HighlightDisplay";
-import { FilterPicker } from "./components/filter-picker";
 
 export class TableDisplay
 {
@@ -175,7 +170,7 @@ export class TableDisplay
                     selection: "valueDistributionSelection", 
                     value: 1
                 },
-                value: 0.5
+                value: 1
               },
             }   
           };
@@ -229,7 +224,7 @@ export class TableDisplay
                     selection: selectionName, 
                     value: 1
                 },
-                value: 0.5
+                value: 1
               },
             }
           };
@@ -239,15 +234,9 @@ export class TableDisplay
           ).then(result => {
               result.view.addSignalListener(selectionName, (name, value) => {
                 let selectedData : Array<number> = this.getSelectedData(value._vgsid_, dataValues, "digit");
-          //    new FilterUtil().highlightRows(name, selectedData, data, column)
-                let filter: Filter = new Filter(uuid.v4(), column, selectionName, selectedData); 
-                this._filterDisplay.selectFilter(filter, this);
+                let filter: Filter = new Filter(uuid.v4(), column, selectionName, selectedData) 
+                this._highlightDisplay.selectFilter(filter, this);
               });
-              result.view.addEventListener('dblclick', ((e) => {
-                    let clearedData = dataValues;
-                    new FilterUtil().clearHighlight(filterNames.LEADING_DIGIT_FREQ_CLEAR_SELECTION, clearedData, data, column)
-                }
-              ));
           })
         .catch(console.warn); 
     }
@@ -296,7 +285,7 @@ export class TableDisplay
                         selection: selectionName, 
                         value: 1
                     },
-                    value: 0.5
+                    value: 1
                 },
             },
             layer: [
@@ -330,8 +319,6 @@ export class TableDisplay
               result.view.addSignalListener(selectionName, (name, value) => {
                 let selectedData : Array<number> = this.getSelectedData(value._vgsid_, dataValues, "value");
                 let filter: Filter = new Filter(uuid.v4(), column, selectionName, selectedData) 
-                new FilterUtil().highlightRows(name, selectedData, data, column);
-                //this._filterDisplay.selectFilter(filter, this);
                 this._highlightDisplay.selectFilter(filter, this);
               });
           })
@@ -344,6 +331,7 @@ export class TableDisplay
         let nGramFrequency = column.GetNGramFrequency(n, lsd);
         let dataValues : Array<any> = [];
         let index = 0;
+        let selectionName = filterNames.N_GRAM_SELECTION;
         for (let [val, count] of nGramFrequency)
         {
             if (count === 1)
@@ -375,12 +363,19 @@ export class TableDisplay
                 color: {
                     value: "#ff8f00"
                 },
+                opacity: {
+                    condition: {
+                        selection: selectionName, 
+                        value: 1
+                    },
+                    value: 1
+                },
             },
             layer: [
                 {
                     mark: 'bar',
                     selection: {
-                        "FREQUENT_VALUES_SELECTION": {
+                        "N_GRAM_SELECTION": {
                             type: "multi",
                             clear: "dblclick"
                         },
@@ -402,7 +397,15 @@ export class TableDisplay
             ],
           };
           
-          vegaEmbed('#' + key, yourVlSpec, { actions: false });
+          vegaEmbed('#' + key, yourVlSpec, { actions: false }
+          ).then(result => {
+              result.view.addSignalListener(selectionName, (name, value) => {
+                let selectedData : Array<number> = this.getSelectedData(value._vgsid_, dataValues, "value");
+                let filter: Filter = new Filter(uuid.v4(), column, selectionName, selectedData) 
+                this._highlightDisplay.selectFilter(filter, this);
+              });
+          })
+         
 
     }
 
@@ -425,6 +428,7 @@ export class TableDisplay
         rowSelect.selectAll('td')
             .data(d => data.getRow(d))
             .join('td')
+            .attr('id', (d, i) => "col" + (i+1))
             .text(d => d);
     }
 
@@ -438,7 +442,7 @@ export class TableDisplay
             if(selectedIndices.indexOf(index+1) > -1)
                 selectedData.push(value[prop]);
         });
-
+    
         return selectedData;
 
     }

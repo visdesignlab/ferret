@@ -128,6 +128,7 @@ export abstract class FilterDropdown
         switch(chart) {
             case filterNames.LEADING_DIGIT_FREQ_SELECTION: return '#4db6ac';
             case filterNames.FREQUENT_VALUES_SELECTION: return '#e57373';
+            case filterNames.N_GRAM_SELECTION: return '#ff8f00';
             default: return '#eeeeee';
         }
     }

@@ -51,15 +51,28 @@ export abstract class Column<T>
         this._visible = visible;
     }
 
+
+    protected _position : number;
+    public get position() : number {
+        return this._position;
+    }
+
+    public set position(position: number) {
+        this._position = position;
+    }
+
     public static getColumnById(data: TabularData, id: string) : ColumnNumeric | ColumnMixed | ColumnCategorical | ColumnLabel {
 
         if(data == null || id == null) return null;
         
         let selectedColumn = null;
-
+        let pos = 0;
         data.columnList.forEach((column) => {
-            if(column._id == id) 
+            pos++;
+            if(column._id == id) {
                 selectedColumn = column;
+                selectedColumn.position = pos;
+            }
         });   
 
         return selectedColumn;
