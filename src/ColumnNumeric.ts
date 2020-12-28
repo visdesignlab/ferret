@@ -98,24 +98,26 @@ export class ColumnNumeric extends Column<number>
 
     }
 
-    public GetNGramFrequency(n: number): [string, number][]
+    public GetNGramFrequency(n: number, lsd: boolean): [string, number][]
     {
         let nGramFrequencyMap: Map<string, number> = new Map<string, number>();
         for (let val of this.values)
         {
             let valString = val.toString();
-            
-
-            if(valString.length < n) continue;
+            if(valString.length < n || (lsd && valString.indexOf('.') == -1)) continue;
 
             for(let i = 0; i < valString.length; i++) {
                 let currentCount = 0;
+                valString = (lsd) ? valString.substr(valString.indexOf('.')) : valString;
                 let nGram = valString.substr(i, n);
-                if(nGram.length < n) continue;
+                nGram = nGram.indexOf('.') > -1 ? valString.substr(i, n+1) : nGram;  // n gram does not count decimal symbol.
+                if((nGram.indexOf('.') > -1 && nGram.length < n+1) || (nGram.indexOf('.') == -1 && nGram.length < n)) continue;
                 if (nGramFrequencyMap.has(nGram))
                         currentCount = nGramFrequencyMap.get(nGram);
                 nGramFrequencyMap.set(nGram, currentCount + 1);
+                if(valString.charAt(i) == '.') i++;
             }
+
         }
 
         let nGramFrequency = Array.from(nGramFrequencyMap);
@@ -133,6 +135,12 @@ export class ColumnNumeric extends Column<number>
             return 0;
         })
         return nGramFrequency;
+    }
+
+    public static containsNGram(val: number, nums: Set<Number | string> | null): boolean {
+        for(let num of nums) 
+            return (val.toString().indexOf(num.toString()) > -1);
+        
     }
 
 }

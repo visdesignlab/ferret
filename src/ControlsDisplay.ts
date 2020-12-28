@@ -2,6 +2,7 @@ import { TabularData } from "./TabularData";
 import { TableDisplay } from "./TableDisplay";
 import { Column } from "./Column";
 import { DuplicateCountType } from "./lib/constants/filter";
+import { FilterPicker } from "./components/filter-picker";
  
 export class ControlsDisplay
 {
@@ -117,25 +118,42 @@ export class ControlsDisplay
         let twoGramSwitch = document.getElementById("2-gram-switch");
         let threeGramSwitch = document.getElementById("3-gram-switch");
         let nGramSwitch = document.getElementById("n-gram-switch");
+        let lsdSwitch = document.getElementById("lsd-switch");
 
         leadingDigitSwitch.addEventListener("click", e => this.toggleChartVisibility(e, "benfordDist"));
         frequentValueSwitch.addEventListener("click", e => this.toggleChartVisibility(e, "duplicateCount"));
         valueDistSwitch.addEventListener("click", e => this.toggleChartVisibility(e, "overallDist"));
         nGramSwitch.addEventListener("click", e => this.toggleChartVisibility(e, "nGram"));
-
-        uniqueValuesSwitch.addEventListener("click", e => this.setupDuplicateCount(e));
-        twoGramSwitch.addEventListener("click", e => this.toggleNGram(e, 2));
-        threeGramSwitch.addEventListener("click", e => this.toggleNGram(e, 3));
+       
+        lsdSwitch.addEventListener("click", e => this.updateTable());
+        uniqueValuesSwitch.addEventListener("click", e => this.updateTable());
+        twoGramSwitch.addEventListener("click", e => this.updateTable());
+        threeGramSwitch.addEventListener("click", e => this.updateTable());
     }
 
-    private toggleNGram(e: any, n: number) {
+    public static getLSDStatus(): boolean {
+        let lsdSwitch = document.getElementById("lsd-switch") as HTMLInputElement;
+        let lowestSignificant = (lsdSwitch.checked) ? true : false;
+        return lowestSignificant;
+    }
+
+    public static getNGramStatus() : number {
+        let twoSwitch = document.getElementById("2-gram-switch") as HTMLInputElement;
+        let n: number = (twoSwitch.checked) ? 2 : 3;
+        return n;
+    }
+
+    public static getDuplicateCountStatus() : DuplicateCountType {
         let uniqueValuesSwitch = document.getElementById("unique-values-switch") as HTMLInputElement;
         let dupCountType: DuplicateCountType = (uniqueValuesSwitch.checked) ? 'ALL' : 'TOP';
-        let tableDisplay = new TableDisplay();
-        n = (e.target.checked && n == 2) ? 2 : 3;
-        tableDisplay.drawVizRows(this._data, dupCountType, n);
+        return dupCountType;
     }
 
+    private updateTable() {
+        let tableDisplay = new TableDisplay();
+        tableDisplay.SetData(this._data);
+    }
+    
     private toggleChartVisibility(e: any, chartName: string): void {
         let tableDisplay = new TableDisplay();
         let eventTarget = e.target;
@@ -169,9 +187,4 @@ export class ControlsDisplay
 
     }
 
-    private setupDuplicateCount(e: any) {
-        let dupCountType: DuplicateCountType = (e.target.checked) ? 'ALL' : 'TOP';
-        let tableDisplay = new TableDisplay();
-        tableDisplay.drawVizRows(this._data, dupCountType, 3);
-    }
 }

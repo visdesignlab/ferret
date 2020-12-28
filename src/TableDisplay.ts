@@ -1,23 +1,21 @@
 import { TabularData } from "./TabularData";
 import * as d3 from "d3";
 import * as uuid from 'uuid';
-// import * as vega from "vega";
 import vegaEmbed, { VisualizationSpec } from 'vega-embed';
-import { Column, ColumnTypes } from "./Column";
 import { ColumnNumeric } from "./ColumnNumeric";
-import { FilterUtil } from "./lib/FilterUtil";
 import * as filterNames from "./lib/constants/filter";
-import { hoverNodeUpdate } from "./ProvenanceSetup";
 import { ColumnCategorical } from "./ColumnCategorical";
 import { DuplicateCountType } from "./lib/constants/filter";
 import { FilterDisplay } from "./FilterDisplay";
 import { Filter } from "./Filter";
 import { ControlsDisplay } from "./ControlsDisplay";
+import { HighlightDisplay } from "./HighlightDisplay";
 
 export class TableDisplay
 {
 
     private _filterDisplay: FilterDisplay;
+    private _highlightDisplay: HighlightDisplay;
 
     private _container : HTMLElement;
     public get container() : HTMLElement {
@@ -42,8 +40,10 @@ export class TableDisplay
 
     private onDataChanged(data: TabularData): void
     {
-        this._filterDisplay = new FilterDisplay();
-        this._filterDisplay.SetData(data); // everytime the data changes, it updates the FilterDisplay's copy too.
+        this._filterDisplay = new FilterDisplay(); // figure out a way to save filters.
+        this._highlightDisplay = new HighlightDisplay();
+        this._filterDisplay.SetData(data); 
+        this._highlightDisplay.SetData(data);// everytime the data changes, it updates the FilterDisplay's copy too.
         this.drawHeader(data);
         this.setupVizRows(data);
         this.drawBody(data);
@@ -107,11 +107,15 @@ export class TableDisplay
         dataCell.append('div').attr('id', (d, i) => 'benfordDist-' + i);
         dataCell.append('div').classed('chartDiv', true).classed('scrollbar', true).attr('id', (d, i) => 'duplicateCount-' + i);
         dataCell.append('div').attr('id', (d, i) => 'nGram-' + i);
-        this.drawVizRows(data, 'TOP', 2);
+        this.drawVizRows(data);
     }
 
-    public drawVizRows(data: TabularData, dupCountType: DuplicateCountType, n: number): void
+    public drawVizRows(data: TabularData): void
     {
+        let dupCountType: DuplicateCountType = ControlsDisplay.getDuplicateCountStatus();
+        let nGram: number = ControlsDisplay.getNGramStatus();
+        let lsd: boolean = ControlsDisplay.getLSDStatus();
+
         for (let i = 0; i < data.columnList.length; i++)
         {
             let column = data.columnList[i];
@@ -125,7 +129,7 @@ export class TableDisplay
                 this.drawOverallDist(data, colNum, 'overallDist-' + i, true, 'quantitative');
                 this.drawLeadingDigitDist(data, colNum, 'benfordDist-' + i);
                 this.drawFrequentDuplicates(data, colNum, 'duplicateCount-' + i, dupCountType);
-                this.drawNGramFrequency(data, colNum, 'nGram-' + i, n);
+                this.drawNGramFrequency(data, colNum, 'nGram-' + i, nGram, lsd);
             }
         }
     }
@@ -166,7 +170,7 @@ export class TableDisplay
                     selection: "valueDistributionSelection", 
                     value: 1
                 },
-                value: 0.5
+                value: 1
               },
             }   
           };
@@ -220,7 +224,7 @@ export class TableDisplay
                     selection: selectionName, 
                     value: 1
                 },
-                value: 0.5
+                value: 1
               },
             }
           };
@@ -230,15 +234,9 @@ export class TableDisplay
           ).then(result => {
               result.view.addSignalListener(selectionName, (name, value) => {
                 let selectedData : Array<number> = this.getSelectedData(value._vgsid_, dataValues, "digit");
-          //    new FilterUtil().highlightRows(name, selectedData, data, column)
                 let filter: Filter = new Filter(uuid.v4(), column, selectionName, selectedData) 
-                this._filterDisplay.selectFilter(filter, this);
+                this._highlightDisplay.selectFilter(filter, this);
               });
-              result.view.addEventListener('dblclick', ((e) => {
-                    let clearedData = dataValues;
-                    new FilterUtil().clearHighlight(filterNames.LEADING_DIGIT_FREQ_CLEAR_SELECTION, clearedData, data, column)
-                }
-              ));
           })
         .catch(console.warn); 
     }
@@ -287,7 +285,7 @@ export class TableDisplay
                         selection: selectionName, 
                         value: 1
                     },
-                    value: 0.5
+                    value: 1
                 },
             },
             layer: [
@@ -320,25 +318,20 @@ export class TableDisplay
           ).then(result => {
               result.view.addSignalListener(selectionName, (name, value) => {
                 let selectedData : Array<number> = this.getSelectedData(value._vgsid_, dataValues, "value");
-              //  new FilterUtil().highlightRows(name, selectedData, data, column);
                 let filter: Filter = new Filter(uuid.v4(), column, selectionName, selectedData) 
-                this._filterDisplay.selectFilter(filter, this);
+                this._highlightDisplay.selectFilter(filter, this);
               });
-              result.view.addEventListener('dblclick', ((e) => {
-                let clearedData = dataValues.map(d => d.value);;
-                new FilterUtil().clearHighlight(filterNames.FREQUENT_VALUES_CLEAR_SELECTION, clearedData, data, column)
-                }
-              ));
           })
 
     }
 
 
-    private drawNGramFrequency(data: TabularData, column: ColumnNumeric, key: string, n: number): void
+    private drawNGramFrequency(data: TabularData, column: ColumnNumeric, key: string, n: number, lsd: boolean): void
     {
-        let nGramFrequency = column.GetNGramFrequency(n);
+        let nGramFrequency = column.GetNGramFrequency(n, lsd);
         let dataValues : Array<any> = [];
         let index = 0;
+        let selectionName = filterNames.N_GRAM_SELECTION;
         for (let [val, count] of nGramFrequency)
         {
             if (count === 1)
@@ -370,12 +363,19 @@ export class TableDisplay
                 color: {
                     value: "#ff8f00"
                 },
+                opacity: {
+                    condition: {
+                        selection: selectionName, 
+                        value: 1
+                    },
+                    value: 1
+                },
             },
             layer: [
                 {
                     mark: 'bar',
                     selection: {
-                        "FREQUENT_VALUES_SELECTION": {
+                        "N_GRAM_SELECTION": {
                             type: "multi",
                             clear: "dblclick"
                         },
@@ -397,7 +397,15 @@ export class TableDisplay
             ],
           };
           
-          vegaEmbed('#' + key, yourVlSpec, { actions: false });
+          vegaEmbed('#' + key, yourVlSpec, { actions: false }
+          ).then(result => {
+              result.view.addSignalListener(selectionName, (name, value) => {
+                let selectedData : Array<number> = this.getSelectedData(value._vgsid_, dataValues, "value");
+                let filter: Filter = new Filter(uuid.v4(), column, selectionName, selectedData) 
+                this._highlightDisplay.selectFilter(filter, this);
+              });
+          })
+         
 
     }
 
@@ -420,6 +428,7 @@ export class TableDisplay
         rowSelect.selectAll('td')
             .data(d => data.getRow(d))
             .join('td')
+            .attr('id', (d, i) => "col" + (i+1))
             .text(d => d);
     }
 
@@ -433,7 +442,7 @@ export class TableDisplay
             if(selectedIndices.indexOf(index+1) > -1)
                 selectedData.push(value[prop]);
         });
-
+    
         return selectedData;
 
     }
