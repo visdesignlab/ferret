@@ -61,12 +61,15 @@ export class HighlightDisplay extends FilterDropdown
                         break;
                 
                 case filterNames.N_GRAM_SELECTION:
-                        selectedColumn.values.forEach((value : any, index : number) => {
-                            if(ColumnNumeric.containsNGram(value, new Set(f.selectedData))) {
-                                let row = d3.select('#dataRow'+ (index+1));
-                                let col = row.select('#col' + selectedColumn.position);
-                                col.classed('gram-highlighted', true);
-                            }
+                        data.columnList.forEach((column: Column<String | Number>) => {
+                            let selectedColumn : ColumnNumeric | ColumnLabel | ColumnCategorical | ColumnMixed = Column.getColumnById(data, column.id);
+                            selectedColumn.values.forEach((value : any, index : number) => {
+                                if(ColumnNumeric.containsNGram(value, new Set(f.selectedData))) {
+                                    let row = d3.select('#dataRow'+ (index+1));
+                                    let col = row.select('#col' + selectedColumn.position);
+                                    col.classed('gram-highlighted', true);
+                                }
+                            });
                         });
                         break;
             }
