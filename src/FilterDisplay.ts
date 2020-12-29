@@ -17,6 +17,7 @@ export class FilterDisplay extends FilterDropdown
         super();
         super.SetId('filter');
         super.SetSelectionType('Filter');
+        document.addEventListener('addFilter', (e: CustomEvent) => this.selectFilter(e.detail.filter));
     }
 
     public drawDropdown(): void {
@@ -27,7 +28,7 @@ export class FilterDisplay extends FilterDropdown
         this.draw(filters, id, title, iconType);
     }
 
-    protected filterData(filter: Filter | null, data: TabularData | null, tableDisplay: TableDisplay | null) {
+    protected filterData(filter: Filter | null, data: TabularData | null) {
         let header = data.columnList.map(d => d.id).toString();
         let localData:any = [];
         
@@ -68,7 +69,7 @@ export class FilterDisplay extends FilterDropdown
         }
 
         let localDataArray = TabularData.FromString(localDataString);
-        tableDisplay.drawVizRows(localDataArray);
-        tableDisplay.drawBody(localDataArray);
+        document.dispatchEvent(new CustomEvent('drawVizRows', {detail: {data: localDataArray}}));
+        document.dispatchEvent(new CustomEvent('drawBody', {detail: {data: localDataArray}}));
     }
 }   

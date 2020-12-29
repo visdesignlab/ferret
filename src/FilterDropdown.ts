@@ -5,8 +5,13 @@ import { TabularData } from './TabularData';
 import { TableDisplay } from './TableDisplay';
 import * as filterNames from "./lib/constants/filter";
 
-export abstract class FilterDropdown
+export abstract class FilterDropdown extends EventTarget
 {
+
+    constructor() {
+        super();
+        document.addEventListener('onDataChange', (e: CustomEvent) => this.SetData(e.detail.data));
+    }
 
     private _toolbarContainer: HTMLElement;
     public get container(): HTMLElement {
@@ -55,7 +60,7 @@ export abstract class FilterDropdown
         this._selectionType = selectionType;
     }
 
-    protected filterData(filter: Filter | null, data: TabularData | null, tableDisplay: TableDisplay | null): void {}
+    protected filterData(filter: Filter | null, data: TabularData | null): void {}
 
     public draw(filters: Array<Filter>, id: string, title: string, iconType: string): void {
 
@@ -103,14 +108,17 @@ export abstract class FilterDropdown
             dropdownMenu.classList.add('show');
     }
 
-    private manageDropdown(filters: Array<Filter>, tableDisplay: TableDisplay) {
+    private manageDropdown(filters: Array<Filter>) {
         let dropdownMenu = document.getElementById(this._id+"DropdownMenu");
         dropdownMenu.innerHTML = null;
+        if(this._id == "highlight") 
+            this.addChangeToFilterOption(filters);
+
         for(let f of filters) {
             let filterItemDiv = document.createElement('div');
             filterItemDiv.classList.add('dropdown-item');
             filterItemDiv.id = f.id;
-            filterItemDiv.addEventListener("click", e => this.removeFilter(new Filter(f.id, f.column, f.chart, f.selectedData), tableDisplay));
+            filterItemDiv.addEventListener("click", e => this.removeFilter(new Filter(f.id, f.column, f.chart, f.selectedData)));
             let columnDiv = document.createElement('span');
             let selectedDataDiv = document.createElement('span');
             columnDiv.innerHTML = f.column.id;
@@ -122,6 +130,30 @@ export abstract class FilterDropdown
             filterItemDiv.appendChild(columnDiv);
             dropdownMenu.appendChild(filterItemDiv);
         }
+    }
+
+    private addChangeToFilterOption(filters: Array<Filter>) {
+        let icon = document.createElement("i")
+        icon.classList.add("fas", "fa-filter", "customButtonSubIcon");
+        let dropdownMenu = document.getElementById(this._id+"DropdownMenu");
+        let filterItemDiv = document.createElement('div');
+        filterItemDiv.classList.add('dropdown-item');
+        let selectedDataDiv = document.createElement('span');
+        selectedDataDiv.innerHTML = 'TRANSFORM TO FILTER';
+        selectedDataDiv.classList.add('data-div');
+        filterItemDiv.appendChild(icon);
+        filterItemDiv.appendChild(selectedDataDiv);
+        dropdownMenu.appendChild(filterItemDiv);
+        filterItemDiv.addEventListener("click", () => this.changeToFilter());
+    }
+
+    private changeToFilter() {
+        for(let f of this._filters) 
+            document.dispatchEvent(new CustomEvent('addFilter', {detail: {filter: f}}));
+        
+        for(let f of this._filters) 
+            document.dispatchEvent(new CustomEvent('addHighlight', {detail: {filter: f}}));
+        
     }
 
     private getBackgroundColor(chart: string): string {
@@ -138,16 +170,17 @@ export abstract class FilterDropdown
         filterCountText.innerHTML = "("+filters.length+")";
     }
     
-    public selectFilter(filter: Filter, tableDisplay: TableDisplay) : void
+    public selectFilter(filter: Filter) : void
     {
+        console.log(this._id);
         if(this._filters == null || this._filters.length == 0) 
             this._filters = [];
 
         let selectedFilter = this.find(filter, this._filters);
         if(selectedFilter != null) 
-            this.removeFilter(selectedFilter, tableDisplay);
+            this.removeFilter(selectedFilter);
         else 
-            this.addFilter(filter, tableDisplay);
+            this.addFilter(filter);
     }
 
     private find(filter: Filter, filters: Array<Filter>): Filter {
@@ -161,22 +194,22 @@ export abstract class FilterDropdown
         return null;
     }
 
-    private addFilter(filter: Filter, tableDisplay: TableDisplay): void 
+    private addFilter(filter: Filter): void 
     {
         this._filters.push(filter);
         applyFilterUpdate(filter, this._selectionType);
-        this.filterData(filter, this._data, tableDisplay);
+        this.filterData(filter, this._data);
         this.drawFilterCount(this._filters);
-        this.manageDropdown(this._filters, tableDisplay);
+        this.manageDropdown(this._filters);
     }
 
-    private removeFilter(filter: Filter, tableDisplay: TableDisplay): void 
+    private removeFilter(filter: Filter): void 
     {
         this._filters = this._filters.filter(f => { return f.id != filter.id});
         this.drawFilterCount(this._filters);
-        this.filterData(filter, this._data, tableDisplay);
+        this.filterData(filter, this._data);
         removedFilterUpdate(filter, this._selectionType);
-        this.manageDropdown(this._filters, tableDisplay);
+        this.manageDropdown(this._filters);
     }
 
     public clear() {

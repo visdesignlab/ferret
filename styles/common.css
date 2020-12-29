@@ -22,6 +22,12 @@
     padding-right: 6px;
 }
 
+.customButtonSubIcon {
+    padding-right: 6px;
+    color: #212121;
+    font-size: 10px;
+}
+
 .customButtonIconRight {
     padding-left: 40px;
     color: #4db6ac;

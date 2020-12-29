@@ -17,6 +17,7 @@ export class HighlightDisplay extends FilterDropdown
         super();
         super.SetId('highlight');
         super.SetSelectionType('Highlight');
+        document.addEventListener('addHighlight', (e: CustomEvent) => this.selectFilter(e.detail.filter));
     }
 
     public drawDropdown(): void {
@@ -27,7 +28,7 @@ export class HighlightDisplay extends FilterDropdown
         this.draw(filters, id, title, iconType);
     }
 
-    protected filterData(filter: Filter | null, data: TabularData | null, tableDisplay: TableDisplay | null) { 
+    protected filterData(filter: Filter | null, data: TabularData | null) { 
         
         let rows = d3.selectAll('tr');
         rows.classed('highlighted', false);
@@ -39,7 +40,6 @@ export class HighlightDisplay extends FilterDropdown
             
             let selectedColumn : ColumnNumeric | ColumnLabel | ColumnCategorical | ColumnMixed = Column.getColumnById(data, f.column.id);
 
-                  
             switch(f.chart) {
             
                 case filterNames.LEADING_DIGIT_FREQ_SELECTION:
@@ -74,7 +74,6 @@ export class HighlightDisplay extends FilterDropdown
                         break;
             }
         }
-
     }
 
 }   
