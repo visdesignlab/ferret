@@ -6,16 +6,17 @@ import { ColumnNumeric } from "./ColumnNumeric";
 import * as filterNames from "./lib/constants/filter";
 import { ColumnCategorical } from "./ColumnCategorical";
 import { DuplicateCountType } from "./lib/constants/filter";
-import { FilterDisplay } from "./FilterDisplay";
 import { Filter } from "./Filter";
 import { ControlsDisplay } from "./ControlsDisplay";
-import { HighlightDisplay } from "./HighlightDisplay";
 
-export class TableDisplay
+export class TableDisplay extends EventTarget
 {
 
-    private _filterDisplay: FilterDisplay;
-    private _highlightDisplay: HighlightDisplay;
+    constructor() {
+        super();
+        document.addEventListener("drawVizRows", (e: CustomEvent) => {this.drawVizRows(e.detail.data)});
+        document.addEventListener("drawBody", (e: CustomEvent) => {this.drawBody(e.detail.data)});
+    }
 
     private _container : HTMLElement;
     public get container() : HTMLElement {
@@ -40,10 +41,8 @@ export class TableDisplay
 
     private onDataChanged(data: TabularData): void
     {
-        this._filterDisplay = new FilterDisplay(); // figure out a way to save filters.
-        this._highlightDisplay = new HighlightDisplay();
-        this._filterDisplay.SetData(data); 
-        this._highlightDisplay.SetData(data);// everytime the data changes, it updates the FilterDisplay's copy too.
+        document.dispatchEvent(new CustomEvent('onDataChange', {detail: {data: data}}));
+        document.dispatchEvent(new CustomEvent('onLocalDataChange', {detail: {data: data}}));
         this.drawHeader(data);
         this.setupVizRows(data);
         this.drawBody(data);
@@ -137,6 +136,7 @@ export class TableDisplay
     private drawOverallDist(data: TabularData, column: ColumnNumeric | ColumnCategorical, key: string, isBinned: boolean, columnType: string): void
     {
         let dataValues : Array<any> = [];
+        let selectionName = filterNames.VALUE_DIST_SELECTION;
         for (let val of column.values)
         {
             dataValues.push({
@@ -154,7 +154,7 @@ export class TableDisplay
             },
             mark: 'bar',
             selection: {
-                valueDistributionSelection: {
+                "VALUE_DIST_SELECTION": {
                     type: "multi",
                     clear: false
                 },
@@ -167,7 +167,7 @@ export class TableDisplay
               y: {field: 'value', aggregate: 'count', type: 'quantitative'},
               opacity: {
                 condition: {
-                    selection: "valueDistributionSelection", 
+                    selection: selectionName, 
                     value: 1
                 },
                 value: 1
@@ -176,13 +176,13 @@ export class TableDisplay
           };
           vegaEmbed('#' + key, yourVlSpec, { actions: false }
           ).then(result => {
-              result.view.addSignalListener('valueDistributionSelection', (name, value) => {
+              result.view.addSignalListener(selectionName, (name, value) => {
+                console.log(value);
+                let selectedData : Array<number> = this.getSelectedData(value._vgsid_, dataValues, "value");
+                let filter: Filter = new Filter(uuid.v4(), column, selectionName, selectedData) 
+                document.dispatchEvent(new CustomEvent('addHighlight', {detail: {filter: filter}}));
               });
-              result.view.addEventListener('dblclick', ((e) => {
-                    console.log(e);
-                }
-              ));
-          })
+          });
     }
 
     private drawLeadingDigitDist(data: TabularData, column: ColumnNumeric, key: string): void
@@ -235,7 +235,7 @@ export class TableDisplay
               result.view.addSignalListener(selectionName, (name, value) => {
                 let selectedData : Array<number> = this.getSelectedData(value._vgsid_, dataValues, "digit");
                 let filter: Filter = new Filter(uuid.v4(), column, selectionName, selectedData) 
-                this._highlightDisplay.selectFilter(filter, this);
+                document.dispatchEvent(new CustomEvent('addHighlight', {detail: {filter: filter}}));
               });
           })
         .catch(console.warn); 
@@ -319,9 +319,9 @@ export class TableDisplay
               result.view.addSignalListener(selectionName, (name, value) => {
                 let selectedData : Array<number> = this.getSelectedData(value._vgsid_, dataValues, "value");
                 let filter: Filter = new Filter(uuid.v4(), column, selectionName, selectedData) 
-                this._highlightDisplay.selectFilter(filter, this);
+                document.dispatchEvent(new CustomEvent('addHighlight', {detail: {filter: filter}}));
               });
-          })
+          });
 
     }
 
@@ -402,7 +402,7 @@ export class TableDisplay
               result.view.addSignalListener(selectionName, (name, value) => {
                 let selectedData : Array<number> = this.getSelectedData(value._vgsid_, dataValues, "value");
                 let filter: Filter = new Filter(uuid.v4(), column, selectionName, selectedData) 
-                this._highlightDisplay.selectFilter(filter, this);
+                document.dispatchEvent(new CustomEvent('addHighlight', {detail: {filter: filter}}));
               });
           })
          
@@ -442,7 +442,7 @@ export class TableDisplay
             if(selectedIndices.indexOf(index+1) > -1)
                 selectedData.push(value[prop]);
         });
-    
+        
         return selectedData;
 
     }
