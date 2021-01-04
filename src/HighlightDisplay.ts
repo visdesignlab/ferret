@@ -1,5 +1,4 @@
 import { TabularData } from './TabularData';
-import { TableDisplay } from './TableDisplay';
 import { Column } from './Column';
 import { ColumnMixed } from './ColumnMixed';
 import { ColumnCategorical } from './ColumnCategorical';
@@ -18,6 +17,10 @@ export class HighlightDisplay extends FilterDropdown
         super.SetId('highlight');
         super.SetSelectionType('Highlight');
         document.addEventListener('addHighlight', (e: CustomEvent) => this.selectFilter(e.detail.filter));
+        document.addEventListener('onLocalDataChange', (e: CustomEvent) => {
+            this.SetLocalData(e.detail.data)
+            this.filterData(null, this._data, this._localData);
+        });
     }
 
     public drawDropdown(): void {
@@ -28,8 +31,10 @@ export class HighlightDisplay extends FilterDropdown
         this.draw(filters, id, title, iconType);
     }
 
-    protected filterData(filter: Filter | null, data: TabularData | null) { 
-        
+    protected filterData(filter: Filter | null, data: TabularData | null, localData: TabularData | null) { 
+
+        if(!this._filters) return;
+
         let rows = d3.selectAll('tr');
         rows.classed('highlighted', false);
  
@@ -38,13 +43,14 @@ export class HighlightDisplay extends FilterDropdown
 
         for(let f of this._filters) {
             
-            let selectedColumn : ColumnNumeric | ColumnLabel | ColumnCategorical | ColumnMixed = Column.getColumnById(data, f.column.id);
+            let selectedColumn : ColumnNumeric | ColumnLabel | ColumnCategorical | ColumnMixed = Column.getColumnById(localData, f.column.id);
 
             switch(f.chart) {
             
                 case filterNames.LEADING_DIGIT_FREQ_SELECTION:
                         selectedColumn.values.forEach((value : any, index : number) => {
                             if(ColumnNumeric.getLeadingDigit(value, new Set(f.selectedData)) != null) {
+                                console.log(index, value);
                                 let row = d3.select('#dataRow'+ (index+1));
                                 row.classed('highlighted', true);
                             }
@@ -61,8 +67,8 @@ export class HighlightDisplay extends FilterDropdown
                         break;
                 
                 case filterNames.N_GRAM_SELECTION:
-                        data.columnList.forEach((column: Column<String | Number>) => {
-                            let selectedColumn : ColumnNumeric | ColumnLabel | ColumnCategorical | ColumnMixed = Column.getColumnById(data, column.id);
+                        localData.columnList.forEach((column: Column<String | Number>) => {
+                            let selectedColumn : ColumnNumeric | ColumnLabel | ColumnCategorical | ColumnMixed = Column.getColumnById(localData, column.id);
                             selectedColumn.values.forEach((value : any, index : number) => {
                                 if(ColumnNumeric.containsNGram(value, new Set(f.selectedData))) {
                                     let row = d3.select('#dataRow'+ (index+1));

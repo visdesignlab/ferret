@@ -6,11 +6,8 @@ import { ColumnNumeric } from "./ColumnNumeric";
 import * as filterNames from "./lib/constants/filter";
 import { ColumnCategorical } from "./ColumnCategorical";
 import { DuplicateCountType } from "./lib/constants/filter";
-import { FilterDisplay } from "./FilterDisplay";
 import { Filter } from "./Filter";
 import { ControlsDisplay } from "./ControlsDisplay";
-import { HighlightDisplay } from "./HighlightDisplay";
-import { TEvent } from "./lib/EventLib";
 
 export class TableDisplay extends EventTarget
 {
@@ -45,6 +42,7 @@ export class TableDisplay extends EventTarget
     private onDataChanged(data: TabularData): void
     {
         document.dispatchEvent(new CustomEvent('onDataChange', {detail: {data: data}}));
+        document.dispatchEvent(new CustomEvent('onLocalDataChange', {detail: {data: data}}));
         this.drawHeader(data);
         this.setupVizRows(data);
         this.drawBody(data);

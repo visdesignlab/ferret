@@ -1,8 +1,6 @@
 import { Filter } from './Filter';
-import _ from 'lodash';
 import { applyFilterUpdate, removedFilterUpdate } from "./ProvenanceSetup";
 import { TabularData } from './TabularData';
-import { TableDisplay } from './TableDisplay';
 import * as filterNames from "./lib/constants/filter";
 
 export abstract class FilterDropdown extends EventTarget
@@ -31,17 +29,23 @@ export abstract class FilterDropdown extends EventTarget
         this._filters = filters;
     }
 
-
-    private _data: TabularData;
+    protected _data: TabularData;
     public get data(): TabularData {
         return this._data;
     }
 
-    public SetData(data: TabularData): void
-    {
+    public SetData(data: TabularData): void{
         this._data = data;
     }
 
+    protected _localData: TabularData;
+    public get localData(): TabularData {
+        return this._localData;
+    }
+
+    public SetLocalData(localData: TabularData): void{
+        this._localData = localData;
+    }
     private _id: string;
     public get id(): string {
         return this._id;
@@ -60,7 +64,7 @@ export abstract class FilterDropdown extends EventTarget
         this._selectionType = selectionType;
     }
 
-    protected filterData(filter: Filter | null, data: TabularData | null): void {}
+    protected filterData(filter: Filter | null, data: TabularData | null, localData: TabularData | null): void {}
 
     public draw(filters: Array<Filter>, id: string, title: string, iconType: string): void {
 
@@ -171,8 +175,7 @@ export abstract class FilterDropdown extends EventTarget
     }
     
     public selectFilter(filter: Filter) : void
-    {
-        console.log(this._id);
+    { 
         if(this._filters == null || this._filters.length == 0) 
             this._filters = [];
 
@@ -198,7 +201,7 @@ export abstract class FilterDropdown extends EventTarget
     {
         this._filters.push(filter);
         applyFilterUpdate(filter, this._selectionType);
-        this.filterData(filter, this._data);
+        this.filterData(filter, this._data, this._localData);
         this.drawFilterCount(this._filters);
         this.manageDropdown(this._filters);
     }
@@ -207,7 +210,7 @@ export abstract class FilterDropdown extends EventTarget
     {
         this._filters = this._filters.filter(f => { return f.id != filter.id});
         this.drawFilterCount(this._filters);
-        this.filterData(filter, this._data);
+        this.filterData(filter, this._data, this._localData);
         removedFilterUpdate(filter, this._selectionType);
         this.manageDropdown(this._filters);
     }

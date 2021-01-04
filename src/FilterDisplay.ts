@@ -1,7 +1,5 @@
 import { Filter } from './Filter';
-import _ from 'lodash';
 import { TabularData } from './TabularData';
-import { TableDisplay } from './TableDisplay';
 import { Column } from './Column';
 import { ColumnMixed } from './ColumnMixed';
 import { ColumnCategorical } from './ColumnCategorical';
@@ -18,6 +16,7 @@ export class FilterDisplay extends FilterDropdown
         super.SetId('filter');
         super.SetSelectionType('Filter');
         document.addEventListener('addFilter', (e: CustomEvent) => this.selectFilter(e.detail.filter));
+        document.addEventListener('onLocalDataChange', (e: CustomEvent) => this.SetLocalData(e.detail.data));
     }
 
     public drawDropdown(): void {
@@ -28,14 +27,14 @@ export class FilterDisplay extends FilterDropdown
         this.draw(filters, id, title, iconType);
     }
 
-    protected filterData(filter: Filter | null, data: TabularData | null) {
+    protected filterData(filter: Filter | null, data: TabularData | null, localData: TabularData | null) {
         let header = data.columnList.map(d => d.id).toString();
-        let localData:any = [];
+        let locData:any = [];
         
         for(let i = 0; i < data.rowLength; i++) {
-            localData[i] = {};
-            localData[i].data = data.getRow(i).toString();
-            localData[i].include = true;
+            locData[i] = {};
+            locData[i].data = data.getRow(i).toString();
+            locData[i].include = true;
         }
 
         for(let f of this._filters) {
@@ -46,14 +45,14 @@ export class FilterDisplay extends FilterDropdown
                 case filterNames.LEADING_DIGIT_FREQ_SELECTION:
                         selectedColumn.values.forEach((value : any, index : number) => {
                             if(ColumnNumeric.getLeadingDigit(value, new Set(f.selectedData)) != null) {
-                                localData[index].include = false;
+                                locData[index].include = false;
                             }
                         });
                         break;
                 case filterNames.FREQUENT_VALUES_SELECTION:
                         selectedColumn.values.forEach((value : any, index : number) => {
                             if(ColumnNumeric.isSelectedValue(value, new Set(f.selectedData))) {
-                                localData[index].include = false;
+                                locData[index].include = false;
                             }
                         });
                         break;
@@ -65,11 +64,12 @@ export class FilterDisplay extends FilterDropdown
         localDataString = localDataString.concat(header);
 
         for(let i = 0; i < data.rowLength; i++) {
-            localDataString = (localData[i].include) ? localDataString.concat("\n"+localData[i].data) : localDataString;
+            localDataString = (locData[i].include) ? localDataString.concat("\n"+locData[i].data) : localDataString;
         }
 
         let localDataArray = TabularData.FromString(localDataString);
         document.dispatchEvent(new CustomEvent('drawVizRows', {detail: {data: localDataArray}}));
         document.dispatchEvent(new CustomEvent('drawBody', {detail: {data: localDataArray}}));
+        document.dispatchEvent(new CustomEvent('onLocalDataChange', {detail: {data: localDataArray}}));
     }
 }   
