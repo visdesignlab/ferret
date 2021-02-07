@@ -8,6 +8,7 @@ import { ColumnCategorical } from "./ColumnCategorical";
 import { DuplicateCountType } from "./lib/constants/filter";
 import { Filter } from "./Filter";
 import { ControlsDisplay } from "./ControlsDisplay";
+import { FilterPicker } from "./components/filter-picker";
 
 export class TableDisplay extends EventTarget
 {
@@ -105,13 +106,16 @@ export class TableDisplay extends EventTarget
         dataCell.append('div').attr('id', (d, i) => 'overallDist-' + i);
         dataCell.append('div').attr('id', (d, i) => 'benfordDist-' + i);
         dataCell.append('div').classed('chartDiv', true).classed('scrollbar', true).attr('id', (d, i) => 'duplicateCount-' + i);
-        dataCell.append('div').attr('id', (d, i) => 'nGram-' + i);
+        dataCell.append('div').classed('chartDiv', true).classed('scrollbar', true).attr('id', (d, i) => 'nGram-' + i);
+        dataCell.append('div').classed('chartDiv', true).classed('scrollbar', true).attr('id', (d, i) => 'replicates-' + i);
         this.drawVizRows(data);
     }
 
     public drawVizRows(data: TabularData): void
     {
-        let dupCountType: DuplicateCountType = ControlsDisplay.getDuplicateCountStatus();
+        let dupCountType: DuplicateCountType = ControlsDisplay.getCountStatus("unique-values-switch");                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
+        let repCountType: DuplicateCountType = ControlsDisplay.getCountStatus("rep-count-switch");
+        let nGramCountType: DuplicateCountType = ControlsDisplay.getCountStatus("ngram-count-switch");
         let nGram: number = ControlsDisplay.getNGramStatus();
         let lsd: boolean = ControlsDisplay.getLSDStatus();
 
@@ -128,7 +132,8 @@ export class TableDisplay extends EventTarget
                 this.drawOverallDist(data, colNum, 'overallDist-' + i, true, 'quantitative');
                 this.drawLeadingDigitDist(data, colNum, 'benfordDist-' + i);
                 this.drawFrequentDuplicates(data, colNum, 'duplicateCount-' + i, dupCountType);
-                this.drawNGramFrequency(data, colNum, 'nGram-' + i, nGram, lsd);
+                this.drawNGramFrequency(data, colNum, 'nGram-' + i, nGram, lsd, nGramCountType);
+                this.drawReplicates(data, colNum, 'replicates-' + i, repCountType);
             }
         }
     }
@@ -206,23 +211,34 @@ export class TableDisplay extends EventTarget
             data: {
               values: dataValues
             },
-            mark: 'bar',
+            mark: 'rect',
             selection: {
-                "LEADING_DIGIT_FREQ_SELECTION": {
-                    type: "multi",
-                    clear: "dblclick"
+                "highlightBar": {
+                    type: "single", 
+                    empty: "none", 
+                    on: "mouseover"
                 },
+                "LEADING_DIGIT_FREQ_SELECTION": {
+                        type: "multi",
+                        clear: "dblclick"
+                }
             },
             encoding: {
-              x: {field: 'digit', type: 'ordinal'},
+              x: {
+                  field: 'digit', 
+                  type: 'ordinal', 
+                  axis: {
+                    labels: false,
+                  }
+              },
               y: {field: 'frequency', type: 'quantitative'},
               color: {
                 value: "#4db6ac"
               },
               opacity: {
                 condition: {
-                    selection: selectionName, 
-                    value: 1
+                    selection: 'highlightBar', 
+                    value: 0.7
                 },
                 value: 1
               },
@@ -230,14 +246,106 @@ export class TableDisplay extends EventTarget
           };
         
         
-        vegaEmbed('#' + key, yourVlSpec, { actions: false }
-          ).then(result => {
+        vegaEmbed('#' + key, yourVlSpec, { 
+            actions: false,
+            patch: (spec) => {
+                spec.signals.push({
+                    "name": "barHover",
+                    "value": {},
+                    "on": [
+                        {"events": {"type": "mouseover", "marktype": "rect"}, "update": "datum"}
+                    ]
+                },
+                {
+                    "name": "barHoverOut",
+                    "value": {},
+                    "on": [
+                        {"events": {"type": "mouseout", "marktype": "bar"}, "update": "datum"}
+                    ]
+                },
+                )
+                return spec;
+          } 
+        }).then(result => {
+              result.view.addSignalListener('barHover', (n,value) => {
+                let selectedIndices: Array<number> = [];
+                selectedIndices.push(value._vgsid_);
+                let selectedData : Array<number> = this.getSelectedData(selectedIndices, dataValues, "digit");
+                let filter: Filter = new Filter(uuid.v4(), column, selectionName, selectedData);
+                let e = window.event;
+                let filterPickerId = selectionName+column.id+value.digit;
+                let filterPicker: HTMLElement = FilterPicker.create(filterPickerId, filter, e, document.getElementById('benfordDist-3'));
+                document.getElementById('benfordDist-3').appendChild(filterPicker);
+            });
+              result.view.addSignalListener('barHoverOut', (n,v) => {
+                let filterPickerId = selectionName+column.id+v.digit;
+                document.getElementById(filterPickerId).remove();
+              });
               result.view.addSignalListener(selectionName, (name, value) => {
                 let selectedData : Array<number> = this.getSelectedData(value._vgsid_, dataValues, "digit");
-                let filter: Filter = new Filter(uuid.v4(), column, selectionName, selectedData) 
+                let filter: Filter = new Filter(uuid.v4(), column, selectionName, selectedData);
                 document.dispatchEvent(new CustomEvent('addHighlight', {detail: {filter: filter}}));
               });
           })
+        .catch(console.warn); 
+    }
+    
+    private drawReplicates(data: TabularData, column: ColumnNumeric, key: string, dupCountType: DuplicateCountType): void
+    {
+        let replicateCount = column.GetReplicates();
+        let dataValues : Array<any> = [];
+        let maxIndex = (dupCountType === 'ALL') ? replicateCount.length : 5;
+        let index = 0;
+        for (let [frequency, count] of replicateCount)
+        {
+            if (index >= maxIndex)
+            {
+                break;
+            }
+            index++;
+            dataValues.push({
+                'frequency': frequency,
+                'count': count
+            });
+        }
+
+        var yourVlSpec: VisualizationSpec = {
+            width: 100,
+            ...(dupCountType === 'TOP' && { height: 50 }),
+            $schema: 'https://vega.github.io/schema/vega-lite/v4.json',
+            description: 'Replicate Count',
+            data: {
+              values: dataValues
+            },
+            encoding: {
+                x: {field: "count", type: "quantitative"},
+                color: {
+                    value: "#0277BD"
+                },
+                y: {field: "frequency", type: "nominal"}
+              },
+              layer: [
+                {
+                    mark: 'bar',
+                },
+                {
+                    mark:
+                    {
+                        type: 'text',
+                        align: 'left',
+                        baseline: 'middle',
+                        dx: 3
+                    },
+                    encoding:
+                    {
+                        text: {field: "count", type: "quantitative"}
+                    }
+                }
+            ],
+            view: {stroke: null}
+        };
+        
+        vegaEmbed('#' + key, yourVlSpec, { actions: false })
         .catch(console.warn); 
     }
     
@@ -326,11 +434,12 @@ export class TableDisplay extends EventTarget
     }
 
 
-    private drawNGramFrequency(data: TabularData, column: ColumnNumeric, key: string, n: number, lsd: boolean): void
+    private drawNGramFrequency(data: TabularData, column: ColumnNumeric, key: string, n: number, lsd: boolean, dupCountType: DuplicateCountType): void
     {
         let nGramFrequency = column.GetNGramFrequency(n, lsd);
         let dataValues : Array<any> = [];
         let index = 0;
+        let maxIndex = (dupCountType === 'ALL') ? nGramFrequency.length : 5;
         let selectionName = filterNames.N_GRAM_SELECTION;
         for (let [val, count] of nGramFrequency)
         {
@@ -338,7 +447,7 @@ export class TableDisplay extends EventTarget
             {
                 break;
             }
-            if (index >= 5)
+            if (index >= maxIndex)
             {
                 break;
             }
@@ -351,7 +460,7 @@ export class TableDisplay extends EventTarget
 
         var yourVlSpec: VisualizationSpec = {
             width: 100,
-            height: 50,
+            ...(dupCountType === 'TOP' && { height: 50 }),
             $schema: 'https://vega.github.io/schema/vega-lite/v4.json',
             description: 'Duplicate Counts',
             data: {
@@ -433,7 +542,7 @@ export class TableDisplay extends EventTarget
     }
 
     private getSelectedData(selectedIndices: Array<number>, dataValues: Array<any>, prop: string) : Array<number> {
-
+    
         if(!dataValues || dataValues.length == 0 || !selectedIndices || selectedIndices.length == 0 ) return;
         
         let selectedData : Array<number> = [];

@@ -98,6 +98,38 @@ export class ColumnNumeric extends Column<number>
 
     }
 
+    public GetReplicates(): [number, number][]
+    {
+        let duplicateCountMap: [number, number][];
+        duplicateCountMap = this.GetDuplicateCounts();
+        let replicateCountMap: Map<number, number> = new Map<number, number>();
+        for(let duplicateCount of duplicateCountMap) {
+            if(duplicateCount[1] > 1) {
+                if(replicateCountMap.has(duplicateCount[1]))
+                    replicateCountMap.set(duplicateCount[1], replicateCountMap.get(duplicateCount[1])+1);
+                else
+                    replicateCountMap.set(duplicateCount[1], 1);
+            }
+        }
+
+        let replicateCounts = Array.from(replicateCountMap);
+        
+        replicateCounts.sort((a: [number, number], b: [number, number]) =>
+        {
+            if (a[1] > b[1])
+            {
+                return -1;
+            }
+            else if (a[1] < b[1])
+            {
+                return 1;
+            }
+            return 0;
+        });
+
+        return replicateCounts;
+    }
+
     public GetNGramFrequency(n: number, lsd: boolean): [string, number][]
     {
         let nGramFrequencyMap: Map<string, number> = new Map<string, number>();
@@ -140,7 +172,6 @@ export class ColumnNumeric extends Column<number>
     public static containsNGram(val: number, nums: Set<Number | string> | null): boolean {
         for(let num of nums) 
             return (val.toString().indexOf(num.toString()) > -1);
-        
     }
 
 }

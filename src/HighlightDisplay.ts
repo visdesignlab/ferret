@@ -50,7 +50,6 @@ export class HighlightDisplay extends FilterDropdown
                 case filterNames.LEADING_DIGIT_FREQ_SELECTION:
                         selectedColumn.values.forEach((value : any, index : number) => {
                             if(ColumnNumeric.getLeadingDigit(value, new Set(f.selectedData)) != null) {
-                                console.log(index, value);
                                 let row = d3.select('#dataRow'+ (index+1));
                                 row.classed('highlighted', true);
                             }

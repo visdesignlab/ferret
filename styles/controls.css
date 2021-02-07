@@ -91,6 +91,10 @@
     border: 1px solid #ff8f00;
 }
 
+.sea-blue {
+    border: 1px solid #0277BD;
+}
+
 .dropdown-content {
     display: none;
     position: absolute;

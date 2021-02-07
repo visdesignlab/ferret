@@ -1,7 +1,14 @@
-.filter-picker-parent {
-
+.filter-picker-icon {
+    color: #212121;
+    font-size: 12px;
+    padding: 2px;
 }
 
-.filter-picker-icon {
-    
+.filter-picker {
+    position: absolute;
+    z-index: 200;
+    border: 1px solid #bdbdbd;
+    padding: 2px;
+    background: #fff;
+    border-radius: 1px;
 }
