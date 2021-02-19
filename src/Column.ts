@@ -11,7 +11,7 @@ export type ColumnTypes =
   | 'Categorical';
 
 export abstract class Column<T>
-{
+{                                                                                                                                                                                                                                                                                   
     public constructor()
     {
         this._values = [];

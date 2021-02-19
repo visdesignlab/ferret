@@ -1,3 +1,4 @@
+import { vals } from "vega-lite";
 import { Column, ColumnTypes } from "./Column";
 
 export class ColumnNumeric extends Column<number>
@@ -73,20 +74,22 @@ export class ColumnNumeric extends Column<number>
 
     public static getLeadingDigit(val: number, nums: Set<Number | string> | null): 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 0
     {
-        if (val === 0)
-        {
-            return 0;
+        if (val === 0) return 0;
+        val = (val < 0) ? val*-1 : val;
+    
+        const validNums = (nums == null) ? new Set([1,2,3,4,5,6,7,8,9,0]) : nums;
+        let valString = val.toString();
+        while(valString.charAt(0) == '0') {
+            valString = valString.substr(1); // stripping off leading zeros  
         }
 
-        const validNums = (nums == null) ? new Set([1,2,3,4,5,6,7,8,9]) : nums;
-        let valString = val.toString();
         for (let char of valString)
         { 
-            let char = valString.charAt(0);
-            let num = +char;
+            //let char = valString.charAt(0);
+            let num = (char >= '0' && char <= '9') ? +char : char;
             if (validNums.has(num))
             {
-                return num as 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
+                return num as 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 0;
             }
         } 
     }
@@ -96,6 +99,38 @@ export class ColumnNumeric extends Column<number>
         if(nums == null) return false;
         return nums.has(val);
 
+    }
+
+    public GetReplicates(): [number, number][]
+    {
+        let duplicateCountMap: [number, number][];
+        duplicateCountMap = this.GetDuplicateCounts();
+        let replicateCountMap: Map<number, number> = new Map<number, number>();
+        for(let duplicateCount of duplicateCountMap) {
+            if(duplicateCount[1] > 1) {
+                if(replicateCountMap.has(duplicateCount[1]))
+                    replicateCountMap.set(duplicateCount[1], replicateCountMap.get(duplicateCount[1])+1);
+                else
+                    replicateCountMap.set(duplicateCount[1], 1);
+            }
+        }
+
+        let replicateCounts = Array.from(replicateCountMap);
+        
+        replicateCounts.sort((a: [number, number], b: [number, number]) =>
+        {
+            if (a[0] > b[0])
+            {
+                return -1;
+            }
+            else if (a[0] < b[0])
+            {
+                return 1;
+            }
+            return 0;
+        });
+
+        return replicateCounts;
     }
 
     public GetNGramFrequency(n: number, lsd: boolean): [string, number][]
@@ -140,7 +175,6 @@ export class ColumnNumeric extends Column<number>
     public static containsNGram(val: number, nums: Set<Number | string> | null): boolean {
         for(let num of nums) 
             return (val.toString().indexOf(num.toString()) > -1);
-        
     }
 
 }

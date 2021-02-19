@@ -115,6 +115,8 @@ export class ControlsDisplay
         let frequentValueSwitch = document.getElementById("freq-val-switch");
         let valueDistSwitch = document.getElementById("val-dist-switch");
         let uniqueValuesSwitch = document.getElementById("unique-values-switch");
+        let ngramCountSwitch = document.getElementById("ngram-count-switch");
+        let repCountSwitch = document.getElementById("rep-count-switch");
         let twoGramSwitch = document.getElementById("2-gram-switch");
         let threeGramSwitch = document.getElementById("3-gram-switch");
         let nGramSwitch = document.getElementById("n-gram-switch");
@@ -127,6 +129,8 @@ export class ControlsDisplay
        
         lsdSwitch.addEventListener("click", e => this.updateTable());
         uniqueValuesSwitch.addEventListener("click", e => this.updateTable());
+        ngramCountSwitch.addEventListener("click", e => this.updateTable());
+        repCountSwitch.addEventListener("click", e => this.updateTable());
         twoGramSwitch.addEventListener("click", e => this.updateTable());
         threeGramSwitch.addEventListener("click", e => this.updateTable());
     }
@@ -143,9 +147,9 @@ export class ControlsDisplay
         return n;
     }
 
-    public static getDuplicateCountStatus() : DuplicateCountType {
-        let uniqueValuesSwitch = document.getElementById("unique-values-switch") as HTMLInputElement;
-        let dupCountType: DuplicateCountType = (uniqueValuesSwitch.checked) ? 'ALL' : 'TOP';
+    public static getCountStatus(id: string) : DuplicateCountType {
+        let countSwitch = document.getElementById(id) as HTMLInputElement;
+        let dupCountType: DuplicateCountType = (countSwitch.checked) ? 'ALL' : 'TOP';
         return dupCountType;
     }
 
