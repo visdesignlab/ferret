@@ -7,6 +7,8 @@
         "target": "es2016",
         "allowSyntheticDefaultImports": true,
         "moduleResolution": "node",
-        "resolveJsonModule": true
+        "resolveJsonModule": true,
+        "types": ["jquery"],
+        "downlevelIteration": true
     }
 }

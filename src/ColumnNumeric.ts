@@ -1,3 +1,4 @@
+import { vals } from "vega-lite";
 import { Column, ColumnTypes } from "./Column";
 
 export class ColumnNumeric extends Column<number>
@@ -73,20 +74,22 @@ export class ColumnNumeric extends Column<number>
 
     public static getLeadingDigit(val: number, nums: Set<Number | string> | null): 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 0
     {
-        if (val === 0)
-        {
-            return 0;
+        if (val === 0) return 0;
+        val = (val < 0) ? val*-1 : val;
+    
+        const validNums = (nums == null) ? new Set([1,2,3,4,5,6,7,8,9,0]) : nums;
+        let valString = val.toString();
+        while(valString.charAt(0) == '0') {
+            valString = valString.substr(1); // stripping off leading zeros  
         }
 
-        const validNums = (nums == null) ? new Set([1,2,3,4,5,6,7,8,9]) : nums;
-        let valString = val.toString();
         for (let char of valString)
         { 
-            let char = valString.charAt(0);
-            let num = +char;
+            //let char = valString.charAt(0);
+            let num = (char >= '0' && char <= '9') ? +char : char;
             if (validNums.has(num))
             {
-                return num as 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
+                return num as 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 0;
             }
         } 
     }
@@ -116,11 +119,11 @@ export class ColumnNumeric extends Column<number>
         
         replicateCounts.sort((a: [number, number], b: [number, number]) =>
         {
-            if (a[1] > b[1])
+            if (a[0] > b[0])
             {
                 return -1;
             }
-            else if (a[1] < b[1])
+            else if (a[0] < b[0])
             {
                 return 1;
             }

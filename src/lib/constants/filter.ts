@@ -7,3 +7,5 @@ export type DuplicateCountType = 'ALL' | 'TOP';
 export type FilterAction = 'FILTER_ADDED' | 'FILTER_REMOVED';
 export type SelectionType = 'Filter' | 'Highlight';
 export type FilterRange = 'GLOBAL' | 'LOCAL';
+
+export type chartType = 'nominal' | 'quantitative';

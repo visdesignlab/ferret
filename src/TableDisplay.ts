@@ -5,10 +5,11 @@ import vegaEmbed, { VisualizationSpec } from 'vega-embed';
 import { ColumnNumeric } from "./ColumnNumeric";
 import * as filterNames from "./lib/constants/filter";
 import { ColumnCategorical } from "./ColumnCategorical";
-import { DuplicateCountType } from "./lib/constants/filter";
+import { DuplicateCountType, chartType } from "./lib/constants/filter";
 import { Filter } from "./Filter";
 import { ControlsDisplay } from "./ControlsDisplay";
 import { FilterPicker } from "./components/filter-picker";
+import * as $ from 'jquery';
 
 export class TableDisplay extends EventTarget
 {
@@ -138,7 +139,7 @@ export class TableDisplay extends EventTarget
         }
     }
 
-    private drawOverallDist(data: TabularData, column: ColumnNumeric | ColumnCategorical, key: string, isBinned: boolean, columnType: string): void
+    private drawOverallDist(data: TabularData, column: ColumnNumeric | ColumnCategorical, key: string, isBinned: boolean, columnType: chartType): void
     {
         let dataValues : Array<any> = [];
         let selectionName = filterNames.VALUE_DIST_SELECTION;
@@ -211,7 +212,7 @@ export class TableDisplay extends EventTarget
             data: {
               values: dataValues
             },
-            mark: 'rect',
+            mark: 'bar',
             selection: {
                 "highlightBar": {
                     type: "single", 
@@ -226,10 +227,7 @@ export class TableDisplay extends EventTarget
             encoding: {
               x: {
                   field: 'digit', 
-                  type: 'ordinal', 
-                  axis: {
-                    labels: false,
-                  }
+                  type: 'ordinal'
               },
               y: {field: 'frequency', type: 'quantitative'},
               color: {
@@ -246,46 +244,37 @@ export class TableDisplay extends EventTarget
           };
         
         
-        vegaEmbed('#' + key, yourVlSpec, { 
-            actions: false,
-            patch: (spec) => {
-                spec.signals.push({
-                    "name": "barHover",
-                    "value": {},
-                    "on": [
-                        {"events": {"type": "mouseover", "marktype": "rect"}, "update": "datum"}
-                    ]
-                },
-                {
-                    "name": "barHoverOut",
-                    "value": {},
-                    "on": [
-                        {"events": {"type": "mouseout", "marktype": "bar"}, "update": "datum"}
-                    ]
-                },
-                )
-                return spec;
-          } 
-        }).then(result => {
-              result.view.addSignalListener('barHover', (n,value) => {
-                let selectedIndices: Array<number> = [];
-                selectedIndices.push(value._vgsid_);
-                let selectedData : Array<number> = this.getSelectedData(selectedIndices, dataValues, "digit");
-                let filter: Filter = new Filter(uuid.v4(), column, selectionName, selectedData);
-                let e = window.event;
-                let filterPickerId = selectionName+column.id+value.digit;
-                let filterPicker: HTMLElement = FilterPicker.create(filterPickerId, filter, e, document.getElementById('benfordDist-3'));
-                document.getElementById('benfordDist-3').appendChild(filterPicker);
+        vegaEmbed('#' + key, yourVlSpec, { actions: false }
+            ).then(result => {
+              result.view.addEventListener('mouseover', (event, value) => {
+                if(value != null && value.datum != null) {
+                    let selectedIndices: Array<number> = [];
+                    selectedIndices.push(value.datum._vgsid_);
+                    let selectedData : Array<number> = this.getSelectedData(selectedIndices, dataValues, "digit");
+                    let filter: Filter = new Filter(uuid.v4(), column, selectionName, selectedData);
+                    let e = window.event;
+                    let filterPickerId = selectionName+column.id+value.datum.digit;
+                    let filterPicker: HTMLElement = FilterPicker.create(filterPickerId, filter, e, document.getElementById('benfordDist-3'));
+                    document.getElementById('benfordDist-3').appendChild(filterPicker);
+                }
             });
-              result.view.addSignalListener('barHoverOut', (n,v) => {
-                let filterPickerId = selectionName+column.id+v.digit;
-                document.getElementById(filterPickerId).remove();
-              });
+            result.view.addEventListener('mouseout', (event, value) => {
+                if(value != null && value.datum != null) {
+                    let filterPickerId = selectionName+column.id+value.datum.digit;
+                    let filterPicker = document.getElementById(filterPickerId);
+                    $(document).on('mousemove', () => {
+                        if($('#'+filterPickerId+":hover").length == 0) {
+                                if(filterPickerId!=null) filterPicker.remove();
+                            }
+                    });
+                    
+                }
+            });
               result.view.addSignalListener(selectionName, (name, value) => {
                 let selectedData : Array<number> = this.getSelectedData(value._vgsid_, dataValues, "digit");
                 let filter: Filter = new Filter(uuid.v4(), column, selectionName, selectedData);
                 document.dispatchEvent(new CustomEvent('addHighlight', {detail: {filter: filter}}));
-              });
+            });
           })
         .catch(console.warn); 
     }
@@ -322,7 +311,7 @@ export class TableDisplay extends EventTarget
                 color: {
                     value: "#0277BD"
                 },
-                y: {field: "frequency", type: "nominal"}
+                y: {field: "frequency", type: "nominal", sort: '-y'}
               },
               layer: [
                 {
