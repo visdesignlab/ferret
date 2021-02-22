@@ -183,7 +183,6 @@ export class TableDisplay extends EventTarget
           vegaEmbed('#' + key, yourVlSpec, { actions: false }
           ).then(result => {
               result.view.addSignalListener(selectionName, (name, value) => {
-                console.log(value);
                 let selectedData : Array<number> = this.getSelectedData(value._vgsid_, dataValues, "value");
                 let filter: Filter = new Filter(uuid.v4(), column, selectionName, selectedData) 
                 document.dispatchEvent(new CustomEvent('addHighlight', {detail: {filter: filter}}));
@@ -311,7 +310,11 @@ export class TableDisplay extends EventTarget
                 color: {
                     value: "#0277BD"
                 },
-                y: {field: "frequency", type: "nominal", sort: '-y'}
+                y: {field: "frequency", type: "nominal", sort: '-y'},
+                tooltip: [
+                    {field: "frequency", type: "nominal", title: "Repetitions:"},
+                    {field: "count", type: "quantitative", title: "Number of values repeated:"}
+                ]
               },
               layer: [
                 {
