@@ -1,41 +1,10 @@
-import { FilterRange } from '../lib/constants/filter';
 import { Filter } from '../Filter';
 
 export class FilterPicker extends EventTarget
 {
 
-    constructor(id: string, filter: Filter, filterRange: FilterRange) {
-        super();
-        this._id = id;
-        this._filter = filter;
-        this._filterRange = filterRange;
-    }
-
-    public _id: string;
-    public get id() : string {
-        return this._id;
-    }
-    public set id(v: string)
-    {
-        this._id = v;
-    }
-
-    protected _filter: Filter;
-    public get filter() : Filter {
-        return this._filter;
-    }
-    public set filter(v: Filter)
-    {
-        this._filter = v;
-    }
-
-    private _filterRange: FilterRange;
-    public get filterRange() : FilterRange {
-        return this._filterRange;
-    }
-    public set filterRange(v: FilterRange)
-    {
-        this._filterRange = v;
+    constructor() {
+        super(); 
     }
 
     public static create(id: string, filter: Filter, e: any, parent: HTMLElement) {

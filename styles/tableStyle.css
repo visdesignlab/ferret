@@ -48,6 +48,7 @@ th {
 
 .chartDiv 
 {
+    margin-top: 3px; 
     height: 100px;
     overflow: scroll;
 }

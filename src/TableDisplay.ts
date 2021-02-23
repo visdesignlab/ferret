@@ -9,7 +9,9 @@ import { DuplicateCountType, chartType } from "./lib/constants/filter";
 import { Filter } from "./Filter";
 import { ControlsDisplay } from "./ControlsDisplay";
 import { FilterPicker } from "./components/filter-picker";
+import { ItemTail } from "./components/item-tail";
 import * as $ from 'jquery';
+import { first } from "lodash";
 
 export class TableDisplay extends EventTarget
 {
@@ -18,6 +20,17 @@ export class TableDisplay extends EventTarget
         super();
         document.addEventListener("drawVizRows", (e: CustomEvent) => {this.drawVizRows(e.detail.data)});
         document.addEventListener("drawBody", (e: CustomEvent) => {this.drawBody(e.detail.data)});
+        document.addEventListener("itemTailClicked", (e: CustomEvent) => {
+            let dupCountType: DuplicateCountType = (e.detail.state == 'open') ? 'ALL' : 'TOP';
+            switch(e.detail.key) {
+                case 'duplicateCount-': 
+                    this.drawFrequentDuplicates(null, e.detail.column, e.detail.key, e.detail.i, dupCountType);
+                    break;
+                case 'replicates-': 
+                    this.drawReplicates(null, e.detail.column, e.detail.key, e.detail.i, dupCountType);
+                    break;
+            }
+        });
     }
 
     private _container : HTMLElement;
@@ -97,20 +110,38 @@ export class TableDisplay extends EventTarget
     public setupVizRows(data: TabularData): void {
         let tbody = d3.select(this.container).select('tbody');
         let dataRow = tbody.html(null).append('tr')
-        // let dataCell = tbody.html(null).append('tr')
         dataRow.append('th')
         let dataCell = dataRow.selectAll('td')
             .data(data.columnList)
             .join('td') 
             .classed('vizCell', true);
-        
         dataCell.append('div').attr('id', (d, i) => 'overallDist-' + i);
         dataCell.append('div').attr('id', (d, i) => 'benfordDist-' + i);
         dataCell.append('div').classed('chartDiv', true).classed('scrollbar', true).attr('id', (d, i) => 'duplicateCount-' + i);
         dataCell.append('div').classed('chartDiv', true).classed('scrollbar', true).attr('id', (d, i) => 'nGram-' + i);
         dataCell.append('div').classed('chartDiv', true).classed('scrollbar', true).attr('id', (d, i) => 'replicates-' + i);
+        this.attachChildren(data.columnList.length);
         this.drawVizRows(data);
     }
+
+    private attachChildren(length: number) {
+        let charts = ['overallDist', 'benfordDist', 'duplicateCount', 'nGram', 'replicates'];
+        charts.forEach((chart) => {
+            let index = 0;
+
+            while(index < length) {
+                let parent = document.getElementById(chart+'-'+index);
+                let chartDiv = document.createElement('div');
+                chartDiv.setAttribute('id', chart+'-chart-'+index); 
+                let itemTailDiv = document.createElement('div');
+                itemTailDiv.setAttribute('id', chart+'-tail-'+index); 
+                parent.appendChild(itemTailDiv);
+                parent.appendChild(chartDiv);
+                index++;
+            }
+        });
+    }
+
 
     public drawVizRows(data: TabularData): void
     {
@@ -125,21 +156,21 @@ export class TableDisplay extends EventTarget
             let column = data.columnList[i];
             if (column.type === 'Categorical') {
                 let colNum = column as ColumnCategorical;
-                this.drawOverallDist(data, colNum, 'overallDist-' + i, false, 'nominal');
+                this.drawOverallDist(data, colNum, 'overallDist-', i, false, 'nominal');
             }
             else if (column.type === 'Number')
             {
                 let colNum = column as ColumnNumeric;
-                this.drawOverallDist(data, colNum, 'overallDist-' + i, true, 'quantitative');
-                this.drawLeadingDigitDist(data, colNum, 'benfordDist-' + i);
-                this.drawFrequentDuplicates(data, colNum, 'duplicateCount-' + i, dupCountType);
-                this.drawNGramFrequency(data, colNum, 'nGram-' + i, nGram, lsd, nGramCountType);
-                this.drawReplicates(data, colNum, 'replicates-' + i, repCountType);
+                this.drawOverallDist(data, colNum, 'overallDist-', i, true, 'quantitative');
+                this.drawLeadingDigitDist(data, colNum, 'benfordDist-', i);
+                this.drawFrequentDuplicates(data, colNum, 'duplicateCount-', i, dupCountType);
+                this.drawNGramFrequency(data, colNum, 'nGram-', i, nGram, lsd, nGramCountType);
+                this.drawReplicates(data, colNum, 'replicates-', i, repCountType);
             }
         }
     }
 
-    private drawOverallDist(data: TabularData, column: ColumnNumeric | ColumnCategorical, key: string, isBinned: boolean, columnType: chartType): void
+    private drawOverallDist(data: TabularData, column: ColumnNumeric | ColumnCategorical, key: string, i: number, isBinned: boolean, columnType: chartType): void
     {
         let dataValues : Array<any> = [];
         let selectionName = filterNames.VALUE_DIST_SELECTION;
@@ -180,7 +211,7 @@ export class TableDisplay extends EventTarget
               },
             }   
           };
-          vegaEmbed('#' + key, yourVlSpec, { actions: false }
+          vegaEmbed('#' + key + 'chart-' + i, yourVlSpec, { actions: false }
           ).then(result => {
               result.view.addSignalListener(selectionName, (name, value) => {
                 let selectedData : Array<number> = this.getSelectedData(value._vgsid_, dataValues, "value");
@@ -190,7 +221,7 @@ export class TableDisplay extends EventTarget
           });
     }
 
-    private drawLeadingDigitDist(data: TabularData, column: ColumnNumeric, key: string): void
+    private drawLeadingDigitDist(data: TabularData, column: ColumnNumeric, key: string,  i: number): void
     {
         let leadDictFreq = column.GetLeadingDigitFreqs();
         let selectionName = filterNames.LEADING_DIGIT_FREQ_SELECTION;
@@ -242,8 +273,7 @@ export class TableDisplay extends EventTarget
             }
           };
         
-        
-        vegaEmbed('#' + key, yourVlSpec, { actions: false }
+        vegaEmbed('#' + key + 'chart-' + i, yourVlSpec, { actions: false }
             ).then(result => {
               result.view.addEventListener('mouseover', (event, value) => {
                 if(value != null && value.datum != null) {
@@ -253,8 +283,8 @@ export class TableDisplay extends EventTarget
                     let filter: Filter = new Filter(uuid.v4(), column, selectionName, selectedData);
                     let e = window.event;
                     let filterPickerId = selectionName+column.id+value.datum.digit;
-                    let filterPicker: HTMLElement = FilterPicker.create(filterPickerId, filter, e, document.getElementById('benfordDist-3'));
-                    document.getElementById('benfordDist-3').appendChild(filterPicker);
+                    let filterPicker: HTMLElement = FilterPicker.create(filterPickerId, filter, e, document.getElementById(key + 'chart-' + i));
+                    document.getElementById(key + 'chart-' + i).appendChild(filterPicker);
                 }
             });
             result.view.addEventListener('mouseout', (event, value) => {
@@ -278,18 +308,17 @@ export class TableDisplay extends EventTarget
         .catch(console.warn); 
     }
     
-    private drawReplicates(data: TabularData, column: ColumnNumeric, key: string, dupCountType: DuplicateCountType): void
+    private drawReplicates(data: TabularData, column: ColumnNumeric, key: string, i: number, dupCountType: DuplicateCountType): void
     {
         let replicateCount = column.GetReplicates();
         let dataValues : Array<any> = [];
-        let maxIndex = (dupCountType === 'ALL') ? replicateCount.length : 5;
         let index = 0;
+        let [maxIndex, itemTail] = this.getItemTail(dupCountType, replicateCount);
         for (let [frequency, count] of replicateCount)
         {
             if (index >= maxIndex)
-            {
                 break;
-            }
+
             index++;
             dataValues.push({
                 'frequency': frequency,
@@ -337,27 +366,27 @@ export class TableDisplay extends EventTarget
             view: {stroke: null}
         };
         
-        vegaEmbed('#' + key, yourVlSpec, { actions: false })
+        this.attachItemTail(itemTail, column, key, i);
+  
+        vegaEmbed('#' + key + 'chart-' + i, yourVlSpec, { actions: false })
         .catch(console.warn); 
+        
     }
     
-    private drawFrequentDuplicates(data: TabularData, column: ColumnNumeric, key: string, dupCountType: DuplicateCountType): void
+    private drawFrequentDuplicates(data: TabularData, column: ColumnNumeric, key: string, i: number, dupCountType: DuplicateCountType): void
     {
         let dupCounts = column.GetDuplicateCounts();
         let selectionName = filterNames.FREQUENT_VALUES_SELECTION;
         let dataValues : Array<any> = [];
         let index = 0;
-        let maxIndex = (dupCountType === 'ALL') ? dupCounts.length : 5;
+        let [maxIndex, itemTail] = this.getItemTail(dupCountType, dupCounts);
         for (let [val, count] of dupCounts)
         {
             if (count === 1)
-            {
                 break;
-            }
+            
             if (index >= maxIndex)
-            {
                 break;
-            }
             index++;
             dataValues.push({
                 'value': val,
@@ -375,7 +404,7 @@ export class TableDisplay extends EventTarget
               values: dataValues
             },
             encoding: {
-                y: {field: 'value', type: 'ordinal', sort: '-x'},
+                y: {field: 'value', type: 'ordinal', sort: '-x', axis: {labelBound: 20}},
                 x: {field: 'count', type: 'quantitative'},
                 color: {
                     value: "#e57373"
@@ -414,7 +443,9 @@ export class TableDisplay extends EventTarget
             ],
           };
           
-          vegaEmbed('#' + key, yourVlSpec, { actions: false }
+          this.attachItemTail(itemTail, column, key, i);
+    
+          vegaEmbed('#' + key + 'chart-' + i, yourVlSpec, { actions: false }
           ).then(result => {
               result.view.addSignalListener(selectionName, (name, value) => {
                 let selectedData : Array<number> = this.getSelectedData(value._vgsid_, dataValues, "value");
@@ -426,23 +457,21 @@ export class TableDisplay extends EventTarget
     }
 
 
-    private drawNGramFrequency(data: TabularData, column: ColumnNumeric, key: string, n: number, lsd: boolean, dupCountType: DuplicateCountType): void
+    private drawNGramFrequency(data: TabularData, column: ColumnNumeric, key: string, i: number, n: number, lsd: boolean, dupCountType: DuplicateCountType): void
     {
         let nGramFrequency = column.GetNGramFrequency(n, lsd);
         let dataValues : Array<any> = [];
         let index = 0;
-        let maxIndex = (dupCountType === 'ALL') ? nGramFrequency.length : 5;
+        let [maxIndex, itemTail] = this.getItemTail(dupCountType, nGramFrequency);
         let selectionName = filterNames.N_GRAM_SELECTION;
         for (let [val, count] of nGramFrequency)
         {
             if (count === 1)
-            {
                 break;
-            }
+            
             if (index >= maxIndex)
-            {
                 break;
-            }
+            
             index++;
             dataValues.push({
                 'value': val,
@@ -497,8 +526,10 @@ export class TableDisplay extends EventTarget
                 }
             ],
           };
-          
-          vegaEmbed('#' + key, yourVlSpec, { actions: false }
+
+          this.attachItemTail(itemTail, column, key, i);
+    
+          vegaEmbed('#' + key + 'chart-' + i, yourVlSpec, { actions: false }
           ).then(result => {
               result.view.addSignalListener(selectionName, (name, value) => {
                 let selectedData : Array<number> = this.getSelectedData(value._vgsid_, dataValues, "value");
@@ -507,7 +538,6 @@ export class TableDisplay extends EventTarget
               });
           })
          
-
     }
 
 
@@ -560,7 +590,29 @@ export class TableDisplay extends EventTarget
       }
     }
 
-    
+    private getItemTail(dupCountType: DuplicateCountType, data: any) {
+        let maxIndex = (dupCountType === 'ALL') ? data.length : 5;
+        let itemTail = data.length - maxIndex;
+        return [maxIndex, itemTail];
+    }
 
+    private attachItemTail(count: number, column: ColumnNumeric, key: string, i: number) {
+        let itemTailDiv = document.getElementById(key + 'tail-' + i);
+        let itemTailExist = (itemTailDiv.hasChildNodes()) ? true : false;
+        let text = itemTailExist ? itemTailDiv.firstChild.textContent : null;
+        let itemTailComponent : HTMLElement;
+
+        while(itemTailDiv.firstChild) 
+            itemTailDiv.removeChild(itemTailDiv.firstChild);
+
+        if(text == null) 
+            itemTailComponent = ItemTail.create(count, key, 'close', column, i);
+        else if(text == 'close')
+            itemTailComponent = ItemTail.create(count, key, 'open', column, i);
+        else 
+            itemTailComponent = ItemTail.create(count, key, 'close', column, i);
+
+        document.getElementById(key + 'tail-' + i).appendChild(itemTailComponent);
+    }
     
 }
