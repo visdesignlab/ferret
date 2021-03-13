@@ -379,14 +379,16 @@ export class TableDisplay extends EventTarget
         let selectionName = filterNames.FREQUENT_VALUES_SELECTION;
         let dataValues : Array<any> = [];
         let index = 0;
-        let [maxIndex, itemTail] = this.getItemTail(dupCountType, dupCounts);
-        for (let [val, count] of dupCounts)
-        {
-            if (count === 1)
-                break;
-            
-            if (index >= maxIndex)
-                break;
+        let multiFrequentValues : Array<any> = [];
+        for (let [val, count] of dupCounts) {
+            if (count === 1) continue;
+            multiFrequentValues.push([val, count]);
+        }
+
+        let [maxIndex, itemTail] = this.getItemTail(dupCountType, multiFrequentValues);
+
+        for(let [val, count] of multiFrequentValues) {
+            if (index >= maxIndex) break;
             index++;
             dataValues.push({
                 'value': val,
@@ -395,7 +397,6 @@ export class TableDisplay extends EventTarget
         }
 
         var yourVlSpec: VisualizationSpec = {
-            //title: "Frequent Values (" + dupCounts.length + " unique)",
             width: 100,
             ...(dupCountType === 'TOP' && { height: 50 }),
             $schema: 'https://vega.github.io/schema/vega-lite/v4.json',
@@ -462,16 +463,18 @@ export class TableDisplay extends EventTarget
         let nGramFrequency = column.GetNGramFrequency(n, lsd);
         let dataValues : Array<any> = [];
         let index = 0;
-        let [maxIndex, itemTail] = this.getItemTail(dupCountType, nGramFrequency);
+        let multiFrequentGrams : Array<any> = [];
         let selectionName = filterNames.N_GRAM_SELECTION;
-        for (let [val, count] of nGramFrequency)
-        {
-            if (count === 1)
-                break;
-            
-            if (index >= maxIndex)
-                break;
-            
+        
+        for (let [val, count] of nGramFrequency) {
+            if (count === 1) continue;
+            multiFrequentGrams.push([val, count]);
+        }
+
+        let [maxIndex, itemTail] = this.getItemTail(dupCountType, multiFrequentGrams);
+
+        for(let [val, count] of multiFrequentGrams) {
+            if (index >= maxIndex) break;
             index++;
             dataValues.push({
                 'value': val,
@@ -590,13 +593,14 @@ export class TableDisplay extends EventTarget
       }
     }
 
-    private getItemTail(dupCountType: DuplicateCountType, data: any) {
+    private  getItemTail(dupCountType: DuplicateCountType, data: any) {
         let maxIndex = (dupCountType === 'ALL') ? data.length : 5;
-        let itemTail = data.length - maxIndex;
+        let itemTail = data.length - maxIndex > 0 ? data.length - maxIndex : 0;
         return [maxIndex, itemTail];
     }
 
     private attachItemTail(count: number, column: ColumnNumeric, key: string, i: number) {
+        if(count <= 0) return;
         let itemTailDiv = document.getElementById(key + 'tail-' + i);
         let itemTailExist = (itemTailDiv.hasChildNodes()) ? true : false;
         let text = itemTailExist ? itemTailDiv.firstChild.textContent : null;
