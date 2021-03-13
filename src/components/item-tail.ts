@@ -27,7 +27,8 @@ export class ItemTail extends EventTarget
 
     // create should always start with closed state
 
-    public static create(count: number, key: string, state: 'open' | 'close', column: ColumnNumeric, i: number) {
+    public static create(count: number, key: string, state: 'open' | 'close', 
+        column: ColumnNumeric, i: number, nGram? : number, lsd?: boolean) {
         let element = document.createElement('div');
 
         this.setContent(state, count, element);
@@ -35,7 +36,15 @@ export class ItemTail extends EventTarget
         element.addEventListener('click', (e) => {
             state = (state == 'open') ? 'close' : 'open';
             this.setContent(state, count, element);
-            document.dispatchEvent(new CustomEvent('itemTailClicked', {detail: {state: state, key: key, i: i, column: column}}))
+            document.dispatchEvent(new CustomEvent('itemTailClicked', {
+                detail: {
+                    state: state, 
+                    key: key, 
+                    i: i, 
+                    column: column,
+                    nGram: nGram,
+                    lsd: lsd
+                }}))
         });
         
         element.classList.add('item-tail-parent');

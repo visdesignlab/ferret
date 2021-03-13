@@ -179,7 +179,8 @@ export class ColumnNumeric extends Column<number>
                 return 1;
             }
             return 0;
-        })
+        });
+
         return nGramFrequency;
     }
 

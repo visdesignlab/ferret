@@ -29,6 +29,8 @@ export class TableDisplay extends EventTarget
                 case 'replicates-': 
                     this.drawReplicates(null, e.detail.column, e.detail.key, e.detail.i, dupCountType);
                     break;
+                case 'nGram-':
+                    this.drawNGramFrequency(null, e.detail.column, e.detail.key, e.detail.i, e.detail.nGram, e.detail.lsd, dupCountType)
             }
         });
     }
@@ -470,6 +472,7 @@ export class TableDisplay extends EventTarget
             if (count === 1) continue;
             multiFrequentGrams.push([val, count]);
         }
+        console.log(multiFrequentGrams.length);
 
         let [maxIndex, itemTail] = this.getItemTail(dupCountType, multiFrequentGrams);
 
@@ -530,7 +533,7 @@ export class TableDisplay extends EventTarget
             ],
           };
 
-          this.attachItemTail(itemTail, column, key, i);
+          this.attachItemTail(itemTail, column, key, i, n, lsd);
     
           vegaEmbed('#' + key + 'chart-' + i, yourVlSpec, { actions: false }
           ).then(result => {
@@ -599,8 +602,7 @@ export class TableDisplay extends EventTarget
         return [maxIndex, itemTail];
     }
 
-    private attachItemTail(count: number, column: ColumnNumeric, key: string, i: number) {
-        if(count <= 0) return;
+    private attachItemTail(count: number, column: ColumnNumeric, key: string, i: number, nGram?: number, lsd?: boolean) {
         let itemTailDiv = document.getElementById(key + 'tail-' + i);
         let itemTailExist = (itemTailDiv.hasChildNodes()) ? true : false;
         let text = itemTailExist ? itemTailDiv.firstChild.textContent : null;
@@ -608,13 +610,13 @@ export class TableDisplay extends EventTarget
 
         while(itemTailDiv.firstChild) 
             itemTailDiv.removeChild(itemTailDiv.firstChild);
-
+        
         if(text == null) 
-            itemTailComponent = ItemTail.create(count, key, 'close', column, i);
+            itemTailComponent = ItemTail.create(count, key, 'close', column, i, nGram, lsd);
         else if(text == 'close')
-            itemTailComponent = ItemTail.create(count, key, 'open', column, i);
+            itemTailComponent = ItemTail.create(count, key, 'open', column, i, nGram, lsd);
         else 
-            itemTailComponent = ItemTail.create(count, key, 'close', column, i);
+            itemTailComponent = ItemTail.create(count, key, 'close', column, i, nGram, lsd);
 
         document.getElementById(key + 'tail-' + i).appendChild(itemTailComponent);
     }
