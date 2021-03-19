@@ -17,6 +17,7 @@ export class TabularData
 
     public static FromDSVRowArray(data: d3.DSVRowArray<string>): TabularData
     {
+        console.log(data);
         let tabularData = new TabularData();
         for (let header of data.columns)
         {

@@ -180,18 +180,17 @@ export abstract class FilterDropdown extends EventTarget
             this._filters = [];
 
         let selectedFilter = this.find(filter, this._filters);
-        if(selectedFilter != null) 
-            this.removeFilter(selectedFilter);
-        else 
+        if(selectedFilter == null) 
             this.addFilter(filter);
+
     }
 
     private find(filter: Filter, filters: Array<Filter>): Filter {
-        if(filters == null || filters.length == null || filter == null) return null;
+        if(filters == null || filters.length == 0 || filter == null) return null;
         for(let f of filters) {
             let selectedFilterData = filter.selectedData.map((x) => x).sort().toString();
             let iterableFilterData = f.selectedData.map((x) => x).sort().toString();
-            if(f.chart == filter.chart && f.column == filter.column && selectedFilterData == iterableFilterData)
+            if(f.chart == filter.chart && f.column.id == filter.column.id && selectedFilterData == iterableFilterData)
                 return f;
         }
         return null;

@@ -472,7 +472,6 @@ export class TableDisplay extends EventTarget
             if (count === 1) continue;
             multiFrequentGrams.push([val, count]);
         }
-        console.log(multiFrequentGrams.length);
 
         let [maxIndex, itemTail] = this.getItemTail(dupCountType, multiFrequentGrams);
 
