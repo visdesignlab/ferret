@@ -6,12 +6,19 @@
 
 .filter-picker {
     position: absolute;
+}
+
+.filter-picker-content {
     z-index: 200;
     border: 1px solid #bdbdbd;
     padding: 2px;
     background: #fff;
     border-radius: 1px;
 }
+
+.filter-picker:hover {display: block;}
+
+.filter-picker:hover .filter-picker-content {display: block;}
 
 .item-tail-parent {
     float: right;

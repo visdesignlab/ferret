@@ -284,21 +284,20 @@ export class TableDisplay extends EventTarget
                     let selectedData : Array<number> = this.getSelectedData(selectedIndices, dataValues, "digit");
                     let filter: Filter = new Filter(uuid.v4(), column, selectionName, selectedData);
                     let e = window.event;
-                    let filterPickerId = selectionName+column.id+value.datum.digit;
+                    let filterPickerId = selectionName+column.id.replace('.', '_')+value.datum.digit;
                     let filterPicker: HTMLElement = FilterPicker.create(filterPickerId, filter, e, document.getElementById(key + 'chart-' + i));
                     document.getElementById(key + 'chart-' + i).appendChild(filterPicker);
-                }
+                }   
             });
             result.view.addEventListener('mouseout', (event, value) => {
                 if(value != null && value.datum != null) {
-                    let filterPickerId = selectionName+column.id+value.datum.digit;
+                    let filterPickerId = selectionName+column.id.replace('.', '_')+value.datum.digit;
                     let filterPicker = document.getElementById(filterPickerId);
                     $(document).on('mousemove', () => {
                         if($('#'+filterPickerId+":hover").length == 0) {
                                 if(filterPickerId!=null) filterPicker.remove();
                             }
                     });
-                    
                 }
             });
               result.view.addSignalListener(selectionName, (name, value) => {
