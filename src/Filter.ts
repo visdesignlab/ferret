@@ -4,7 +4,7 @@ import { FilterRange } from './lib/constants/filter';
 export class Filter
 {
 
-    constructor(id: string, column: Column<string | number>, chart: string, selectedData: Array<string | number>, filterRange: FilterRange | null) {
+    constructor(id: string, column: Column<string | number>, chart: string, selectedData: Array<string | number>, filterRange: FilterRange) {
         this._id = id;
         this._column = column;
         this._chart = chart;

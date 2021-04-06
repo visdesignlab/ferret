@@ -125,7 +125,7 @@ export abstract class FilterDropdown extends EventTarget
             filterItemDiv.addEventListener("click", e => this.removeFilter(new Filter(f.id, f.column, f.chart, f.selectedData, f.filterRange)));
             let columnDiv = document.createElement('span');
             let selectedDataDiv = document.createElement('span');
-            columnDiv.innerHTML = f.column.id;
+            columnDiv.innerHTML = f.filterRange == 'LOCAL' ? f.column.id : 'GLOBAL';
             columnDiv.classList.add('group-sub-header');
             selectedDataDiv.innerHTML = f.selectedData.toString();
             selectedDataDiv.style.backgroundColor = this.getBackgroundColor(f.chart);

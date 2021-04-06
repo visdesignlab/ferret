@@ -40,7 +40,12 @@ export class FilterDisplay extends FilterDropdown
 
         for(let f of this._filters) {
             
-            let selectedColumn : ColumnNumeric | ColumnLabel | ColumnCategorical | ColumnMixed = Column.getColumnById(data, f.column.id);
+            let selectedColumn: ColumnNumeric | ColumnCategorical | ColumnLabel | ColumnMixed;
+            
+            for(let column of data.columnList) {
+                if(f.filterRange == 'LOCAL' && column.id != f.column.id) continue;
+                if(f.filterRange == 'GLOBAL' || column.id == f.column.id) 
+                    selectedColumn = (Column.getColumnById(data, column.id));
 
             switch(f.chart) {
                 case filterNames.LEADING_DIGIT_FREQ_SELECTION:
@@ -64,7 +69,8 @@ export class FilterDisplay extends FilterDropdown
                         }
                     });
                     break;
-            }
+                }
+            }   
         }
 
         
