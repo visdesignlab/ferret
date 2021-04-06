@@ -11,7 +11,6 @@ import { ControlsDisplay } from "./ControlsDisplay";
 import { FilterPicker } from "./components/filter-picker";
 import { ItemTail } from "./components/item-tail";
 import * as $ from 'jquery';
-import { first } from "lodash";
 
 export class TableDisplay extends EventTarget
 {
@@ -278,33 +277,14 @@ export class TableDisplay extends EventTarget
         vegaEmbed('#' + key + 'chart-' + i, yourVlSpec, { actions: false }
             ).then(result => {
               result.view.addEventListener('mouseover', (event, value) => {
-                if(value != null && value.datum != null) {
-                    let selectedIndices: Array<number> = [];
-                    selectedIndices.push(value.datum._vgsid_);
-                    let selectedData : Array<number> = this.getSelectedData(selectedIndices, dataValues, "digit");
-                    let filter: Filter = new Filter(uuid.v4(), column, selectionName, selectedData);
-                    let e = window.event;
-                    let filterPickerId = selectionName+column.id.replace('.', '_')+value.datum.digit;
-                    let filterPicker: HTMLElement = FilterPicker.create(filterPickerId, filter, e, document.getElementById(key + 'chart-' + i));
-                    document.getElementById(key + 'chart-' + i).appendChild(filterPicker);
-                }   
-            });
-            result.view.addEventListener('mouseout', (event, value) => {
-                if(value != null && value.datum != null) {
-                    let filterPickerId = selectionName+column.id.replace('.', '_')+value.datum.digit;
-                    let filterPicker = document.getElementById(filterPickerId);
-                    $(document).on('mousemove', () => {
-                        if($('#'+filterPickerId+":hover").length == 0) {
-                                if(filterPickerId!=null) filterPicker.remove();
-                            }
-                    });
-                }
-            });
+                    this.attachFilterPicker(value, selectionName, column, key, dataValues, i, "digit");
+                });
+              result.view.addEventListener('mouseout', (event, value) => {
+                    this.removeFilterPicker(value, selectionName, column);
+                });
               result.view.addSignalListener(selectionName, (name, value) => {
-                let selectedData : Array<number> = this.getSelectedData(value._vgsid_, dataValues, "digit");
-                let filter: Filter = new Filter(uuid.v4(), column, selectionName, selectedData);
-                document.dispatchEvent(new CustomEvent('addHighlight', {detail: {filter: filter}}));
-            });
+                    this.attachSignalListener(value, dataValues, "digit", column, selectionName);
+                });
           })
         .catch(console.warn); 
     }
@@ -449,10 +429,14 @@ export class TableDisplay extends EventTarget
     
           vegaEmbed('#' + key + 'chart-' + i, yourVlSpec, { actions: false }
           ).then(result => {
+              result.view.addEventListener('mouseover', (event, value) => {
+                this.attachFilterPicker(value, selectionName, column, key, dataValues, i, "value");
+                 });
+              result.view.addEventListener('mouseout', (event, value) => {
+                this.removeFilterPicker(value, selectionName, column);
+                 });
               result.view.addSignalListener(selectionName, (name, value) => {
-                let selectedData : Array<number> = this.getSelectedData(value._vgsid_, dataValues, "value");
-                let filter: Filter = new Filter(uuid.v4(), column, selectionName, selectedData) 
-                document.dispatchEvent(new CustomEvent('addHighlight', {detail: {filter: filter}}));
+                this.attachSignalListener(value, dataValues, "value", column, selectionName);
               });
           });
 
@@ -535,11 +519,15 @@ export class TableDisplay extends EventTarget
     
           vegaEmbed('#' + key + 'chart-' + i, yourVlSpec, { actions: false }
           ).then(result => {
+            result.view.addEventListener('mouseover', (event, value) => {
+                this.attachFilterPicker(value, selectionName, column, key, dataValues, i, "value");
+                 });
+              result.view.addEventListener('mouseout', (event, value) => {
+                this.removeFilterPicker(value, selectionName, column);
+                 });
               result.view.addSignalListener(selectionName, (name, value) => {
-                let selectedData : Array<number> = this.getSelectedData(value._vgsid_, dataValues, "value");
-                let filter: Filter = new Filter(uuid.v4(), column, selectionName, selectedData) 
-                document.dispatchEvent(new CustomEvent('addHighlight', {detail: {filter: filter}}));
-              });
+                this.attachSignalListener(value, dataValues, "value", column, selectionName);
+                 });
           })
          
     }
@@ -619,4 +607,35 @@ export class TableDisplay extends EventTarget
         document.getElementById(key + 'tail-' + i).appendChild(itemTailComponent);
     }
     
+    private attachFilterPicker(value: any, selectionName: string, column: ColumnNumeric, key: string, dataValues: any[], i: number, selectDataType: string) {
+        if(value != null && value.datum != null) {
+            let selectedIndices: Array<number> = [];
+            selectedIndices.push(value.datum._vgsid_);
+            let selectedData : Array<number> = this.getSelectedData(selectedIndices, dataValues, selectDataType);
+            let filter: Filter = new Filter(uuid.v4(), column, selectionName, selectedData);
+            let e = window.event;
+            let filterPickerId = selectionName+column.id.replace('.', '_')+value.datum.digit;
+            let filterPicker: HTMLElement = FilterPicker.create(filterPickerId, filter, e, document.getElementById(key + 'chart-' + i));
+            document.getElementById(key + 'chart-' + i).appendChild(filterPicker);
+            } 
+        }
+    
+    private removeFilterPicker(value: any, selectionName: string, column: ColumnNumeric) {
+        if(value != null && value.datum != null) {
+            let filterPickerId = selectionName+column.id.replace('.', '_')+value.datum.digit;
+            let filterPicker = document.getElementById(filterPickerId);
+            $(document).on('mousemove', () => {
+                if($('#'+filterPickerId+":hover").length == 0) {
+                        if(filterPickerId!=null) filterPicker.remove();
+                    }
+            });
+        }
+    }
+
+    private attachSignalListener(value: any, dataValues: any[], selectDataType: string, column: ColumnNumeric | ColumnCategorical, selectionName: string) {
+        console.log("gere0");
+        let selectedData : Array<number> = this.getSelectedData(value._vgsid_, dataValues, selectDataType);
+        let filter: Filter = new Filter(uuid.v4(), column, selectionName, selectedData) 
+        document.dispatchEvent(new CustomEvent('addHighlight', {detail: {filter: filter}}));
+    }
 }
