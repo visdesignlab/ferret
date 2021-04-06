@@ -216,7 +216,7 @@ export class TableDisplay extends EventTarget
           ).then(result => {
               result.view.addSignalListener(selectionName, (name, value) => {
                 let selectedData : Array<number> = this.getSelectedData(value._vgsid_, dataValues, "value");
-                let filter: Filter = new Filter(uuid.v4(), column, selectionName, selectedData) 
+                let filter: Filter = new Filter(uuid.v4(), column, selectionName, selectedData, 'LOCAL') 
                 document.dispatchEvent(new CustomEvent('addHighlight', {detail: {filter: filter}}));
               });
           });
@@ -612,7 +612,7 @@ export class TableDisplay extends EventTarget
             let selectedIndices: Array<number> = [];
             selectedIndices.push(value.datum._vgsid_);
             let selectedData : Array<number> = this.getSelectedData(selectedIndices, dataValues, selectDataType);
-            let filter: Filter = new Filter(uuid.v4(), column, selectionName, selectedData);
+            let filter: Filter = new Filter(uuid.v4(), column, selectionName, selectedData,'LOCAL');
             let e = window.event;
             let filterPickerId = selectionName+column.id.replace('.', '_')+value.datum.digit;
             let filterPicker: HTMLElement = FilterPicker.create(filterPickerId, filter, e, document.getElementById(key + 'chart-' + i));
@@ -635,7 +635,7 @@ export class TableDisplay extends EventTarget
     private attachSignalListener(value: any, dataValues: any[], selectDataType: string, column: ColumnNumeric | ColumnCategorical, selectionName: string) {
         console.log("gere0");
         let selectedData : Array<number> = this.getSelectedData(value._vgsid_, dataValues, selectDataType);
-        let filter: Filter = new Filter(uuid.v4(), column, selectionName, selectedData) 
+        let filter: Filter = new Filter(uuid.v4(), column, selectionName, selectedData, 'LOCAL') 
         document.dispatchEvent(new CustomEvent('addHighlight', {detail: {filter: filter}}));
     }
 }

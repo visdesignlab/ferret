@@ -8,6 +8,8 @@ export class FilterPicker extends EventTarget
     }
 
     public static create(id: string, filter: Filter, e: any, parent: HTMLElement) {
+        let localFilter = new Filter(filter.id, filter.column, filter.chart, filter.selectedData, 'LOCAL');
+        let globalFilter = new Filter(filter.id, filter.column, filter.chart, filter.selectedData, 'GLOBAL');
         let picker = document.createElement('div');
         let pickerContent = document.createElement('div');
         let iconGlobal = document.createElement('i');
@@ -16,8 +18,9 @@ export class FilterPicker extends EventTarget
         iconGlobal.classList.add('fas','fa-filter','filter-picker-icon');
         iconLocal.classList.add('fas','fa-strikethrough','filter-picker-icon');
         iconHighlight.classList.add('fas','fa-highlighter','filter-picker-icon');
-        iconLocal.addEventListener('click', (e) => document.dispatchEvent(new CustomEvent('addFilter', {detail: {filter: filter}})));
-        iconHighlight.addEventListener('click', (e) => document.dispatchEvent(new CustomEvent('addHighlight', {detail: {filter: filter}})));
+        iconGlobal.addEventListener('click', (e) => document.dispatchEvent(new CustomEvent('addGlobalFilter', {detail: {filter: globalFilter}})));
+        iconLocal.addEventListener('click', (e) => document.dispatchEvent(new CustomEvent('addFilter', {detail: {filter: localFilter}})));
+        iconHighlight.addEventListener('click', (e) => document.dispatchEvent(new CustomEvent('addHighlight', {detail: {filter: localFilter}})));
         pickerContent.appendChild(iconGlobal);
         pickerContent.appendChild(iconLocal);
         pickerContent.appendChild(iconHighlight);

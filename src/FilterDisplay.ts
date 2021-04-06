@@ -16,6 +16,7 @@ export class FilterDisplay extends FilterDropdown
         super.SetId('filter');
         super.SetSelectionType('Filter');
         document.addEventListener('addFilter', (e: CustomEvent) => this.selectFilter(e.detail.filter));
+        document.addEventListener('addGlobalFilter', (e: CustomEvent) => this.selectFilter(e.detail.filter));
         document.addEventListener('onLocalDataChange', (e: CustomEvent) => this.SetLocalData(e.detail.data));
     }
 
@@ -56,6 +57,13 @@ export class FilterDisplay extends FilterDropdown
                             }
                         });
                         break;
+                case filterNames.N_GRAM_SELECTION:
+                    selectedColumn.values.forEach((value : any, index : number) => {
+                        if(ColumnNumeric.containsNGram(value, new Set(f.selectedData))) {
+                            locData[index].include = false;
+                        }
+                    });
+                    break;
             }
         }
 

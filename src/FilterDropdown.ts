@@ -122,7 +122,7 @@ export abstract class FilterDropdown extends EventTarget
             let filterItemDiv = document.createElement('div');
             filterItemDiv.classList.add('dropdown-item');
             filterItemDiv.id = f.id;
-            filterItemDiv.addEventListener("click", e => this.removeFilter(new Filter(f.id, f.column, f.chart, f.selectedData)));
+            filterItemDiv.addEventListener("click", e => this.removeFilter(new Filter(f.id, f.column, f.chart, f.selectedData, f.filterRange)));
             let columnDiv = document.createElement('span');
             let selectedDataDiv = document.createElement('span');
             columnDiv.innerHTML = f.column.id;
