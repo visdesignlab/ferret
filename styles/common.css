@@ -54,3 +54,22 @@
     font-size: 9pt;
     font-family: 'Josefin Sans', sans-serif;
 }
+
+.description {
+    margin-top: 5px;
+    padding: 5px;
+    font-family: 'Josefin Sans', sans-serif;
+    border: 1px solid #eeeeee;
+}
+
+.des-header {
+    font-size: 12pt;
+    color: #212121 !important;
+}
+
+.des-define, .des-use, .des-caveat {
+    font-size: 11pt;
+    margin-top: 3px;
+    margin-bottom: 3px;
+    color: #757575;
+}

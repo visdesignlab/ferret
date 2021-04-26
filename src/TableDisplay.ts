@@ -11,14 +11,38 @@ import { ControlsDisplay } from "./ControlsDisplay";
 import { FilterPicker } from "./components/filter-picker";
 import { ItemTail } from "./components/item-tail";
 import * as $ from 'jquery';
+import { filter } from "lodash";
+
 
 export class TableDisplay extends EventTarget
 {
-
+    charts = ['overallDist', 'duplicateCount', 'replicates', 'nGram', 'benfordDist'];
+    chartNames = ['Value Distribution', 'Frequent Values', 'Replicates', 'N Grams', 'Leading Digit Frequency'];
+    chartIndex : number = 0;
     constructor() {
         super();
         document.addEventListener("drawVizRows", (e: CustomEvent) => {this.drawVizRows(e.detail.data)});
         document.addEventListener("drawBody", (e: CustomEvent) => {this.drawBody(e.detail.data)});
+        document.addEventListener("goToNext", (e: CustomEvent) => {
+            if(this.chartIndex == this.charts.length-1) return;
+            let currentChart = document.getElementById(this.charts[this.chartIndex]);
+            currentChart.classList.remove('show');
+            this.hideVizRows(this.charts[this.chartIndex], e.detail.data);
+            this.chartIndex++;
+            let nextChart = document.getElementById(this.charts[this.chartIndex]);
+            nextChart.classList.add('show');
+            this.showVizRows(this.charts[this.chartIndex], e.detail.data);
+        });
+        document.addEventListener("goToPrevious", (e: CustomEvent) => {
+            if(this.chartIndex == 0) return;
+            let currentChart = document.getElementById(this.charts[this.chartIndex]);
+            currentChart.classList.remove('show');
+            this.hideVizRows(this.charts[this.chartIndex], e.detail.data);
+            this.chartIndex--;
+            let nextChart = document.getElementById(this.charts[this.chartIndex]);
+            nextChart.classList.add('show');
+            this.showVizRows(this.charts[this.chartIndex], e.detail.data);
+        });
         document.addEventListener("itemTailClicked", (e: CustomEvent) => {
             let dupCountType: DuplicateCountType = (e.detail.state == 'open') ? 'ALL' : 'TOP';
             switch(e.detail.key) {
@@ -106,6 +130,39 @@ export class TableDisplay extends EventTarget
                 let element = document.getElementById(key+"-"+ i);
                 element.classList.remove("chartHidden");
         }
+        let header = document.getElementById("des-header");
+        let define = document.getElementById("des-define");
+        let use = document.getElementById("des-use");
+        let caveat = document.getElementById("des-caveat");
+        while(caveat.firstChild) 
+            caveat.removeChild(caveat.firstChild);
+        let caveatHeader = document.createElement('div');
+        caveatHeader.classList.add('des-header');
+        caveatHeader.innerHTML = "Caveats";
+        let br = document.createElement('br');
+        caveat.appendChild(br);
+        caveat.appendChild(caveatHeader);
+        header.innerHTML = this.chartNames[this.chartIndex];
+        define.innerHTML = filterNames.define[this.chartIndex];
+        use.innerHTML = filterNames.use[this.chartIndex];
+        let caveats = filterNames.caveats[this.chartIndex];
+        for(let c of caveats) {
+            let el = document.createElement("div");
+            let caption = document.createElement("div");
+            let imgDiv = document.createElement('div');
+            let img = document.createElement("img");
+            img.src = c.image;
+            imgDiv.appendChild(img);
+            el.innerHTML = c.text;
+            caption.innerHTML = c.imageCaption;
+            el.appendChild(br);
+            el.appendChild(imgDiv);
+            el.appendChild(br);
+            el.appendChild(caption);
+            caveat.appendChild(el);
+            caveat.appendChild(br);
+            caveat.appendChild(br);
+        }
     }
 
     public setupVizRows(data: TabularData): void {
@@ -119,17 +176,19 @@ export class TableDisplay extends EventTarget
         dataCell.append('div').attr('id', (d, i) => 'overallDist-' + i);
         dataCell.append('div').attr('id', (d, i) => 'benfordDist-' + i);
         dataCell.append('div').classed('chartDiv', true).classed('scrollbar', true).attr('id', (d, i) => 'duplicateCount-' + i);
-        dataCell.append('div').classed('chartDiv', true).classed('scrollbar', true).attr('id', (d, i) => 'nGram-' + i);
         dataCell.append('div').classed('chartDiv', true).classed('scrollbar', true).attr('id', (d, i) => 'replicates-' + i);
+        dataCell.append('div').classed('chartDiv', true).classed('scrollbar', true).attr('id', (d, i) => 'nGram-' + i);
         this.attachChildren(data.columnList.length);
         this.drawVizRows(data);
+        this.hideVizRows('benfordDist', data);
+        this.hideVizRows('duplicateCount', data);
+        this.hideVizRows('nGram', data);
+        this.hideVizRows('replicates', data);
     }
 
     private attachChildren(length: number) {
-        let charts = ['overallDist', 'benfordDist', 'duplicateCount', 'nGram', 'replicates'];
-        charts.forEach((chart) => {
+        this.charts.forEach((chart) => {
             let index = 0;
-
             while(index < length) {
                 let parent = document.getElementById(chart+'-'+index);
                 let chartDiv = document.createElement('div');
@@ -166,7 +225,9 @@ export class TableDisplay extends EventTarget
                 this.drawLeadingDigitDist(data, colNum, 'benfordDist-', i);
                 this.drawFrequentDuplicates(data, colNum, 'duplicateCount-', i, dupCountType);
                 this.drawNGramFrequency(data, colNum, 'nGram-', i, nGram, lsd, nGramCountType);
-                this.drawReplicates(data, colNum, 'replicates-', i, repCountType);
+                this.drawReplicates(data, colNum, 'replicates-', i, repCountType); 
+
+        
             }
         }
     }

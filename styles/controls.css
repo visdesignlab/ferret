@@ -50,6 +50,11 @@
 
 .item-options {
     margin-top: 5px;
+    display: none;
+}
+
+.show .item-options {
+    display: block;
 }
 
 .controlsHr {
