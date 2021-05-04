@@ -122,10 +122,10 @@ export abstract class FilterDropdown extends EventTarget
             let filterItemDiv = document.createElement('div');
             filterItemDiv.classList.add('dropdown-item');
             filterItemDiv.id = f.id;
-            filterItemDiv.addEventListener("click", e => this.removeFilter(new Filter(f.id, f.column, f.chart, f.selectedData)));
+            filterItemDiv.addEventListener("click", e => this.removeFilter(new Filter(f.id, f.column, f.chart, f.selectedData, f.filterRange)));
             let columnDiv = document.createElement('span');
             let selectedDataDiv = document.createElement('span');
-            columnDiv.innerHTML = f.column.id;
+            columnDiv.innerHTML = f.filterRange == 'LOCAL' ? f.column.id : 'GLOBAL';
             columnDiv.classList.add('group-sub-header');
             selectedDataDiv.innerHTML = f.selectedData.toString();
             selectedDataDiv.style.backgroundColor = this.getBackgroundColor(f.chart);
@@ -180,18 +180,17 @@ export abstract class FilterDropdown extends EventTarget
             this._filters = [];
 
         let selectedFilter = this.find(filter, this._filters);
-        if(selectedFilter != null) 
-            this.removeFilter(selectedFilter);
-        else 
+        if(selectedFilter == null) 
             this.addFilter(filter);
+
     }
 
     private find(filter: Filter, filters: Array<Filter>): Filter {
-        if(filters == null || filters.length == null || filter == null) return null;
+        if(filters == null || filters.length == 0 || filter == null) return null;
         for(let f of filters) {
             let selectedFilterData = filter.selectedData.map((x) => x).sort().toString();
             let iterableFilterData = f.selectedData.map((x) => x).sort().toString();
-            if(f.chart == filter.chart && f.column == filter.column && selectedFilterData == iterableFilterData)
+            if(f.chart == filter.chart && f.column.id == filter.column.id && selectedFilterData == iterableFilterData)
                 return f;
         }
         return null;

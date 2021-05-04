@@ -16,6 +16,7 @@ export class FilterDisplay extends FilterDropdown
         super.SetId('filter');
         super.SetSelectionType('Filter');
         document.addEventListener('addFilter', (e: CustomEvent) => this.selectFilter(e.detail.filter));
+        document.addEventListener('addGlobalFilter', (e: CustomEvent) => this.selectFilter(e.detail.filter));
         document.addEventListener('onLocalDataChange', (e: CustomEvent) => this.SetLocalData(e.detail.data));
     }
 
@@ -39,7 +40,12 @@ export class FilterDisplay extends FilterDropdown
 
         for(let f of this._filters) {
             
-            let selectedColumn : ColumnNumeric | ColumnLabel | ColumnCategorical | ColumnMixed = Column.getColumnById(data, f.column.id);
+            let selectedColumn: ColumnNumeric | ColumnCategorical | ColumnLabel | ColumnMixed;
+            
+            for(let column of data.columnList) {
+                if(f.filterRange == 'LOCAL' && column.id != f.column.id) continue;
+                if(f.filterRange == 'GLOBAL' || column.id == f.column.id) 
+                    selectedColumn = (Column.getColumnById(data, column.id));
 
             switch(f.chart) {
                 case filterNames.LEADING_DIGIT_FREQ_SELECTION:
@@ -56,7 +62,15 @@ export class FilterDisplay extends FilterDropdown
                             }
                         });
                         break;
-            }
+                case filterNames.N_GRAM_SELECTION:
+                    selectedColumn.values.forEach((value : any, index : number) => {
+                        if(ColumnNumeric.containsNGram(value, new Set(f.selectedData))) {
+                            locData[index].include = false;
+                        }
+                    });
+                    break;
+                }
+            }   
         }
 
         

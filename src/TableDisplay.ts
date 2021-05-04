@@ -9,15 +9,53 @@ import { DuplicateCountType, chartType } from "./lib/constants/filter";
 import { Filter } from "./Filter";
 import { ControlsDisplay } from "./ControlsDisplay";
 import { FilterPicker } from "./components/filter-picker";
+import { ItemTail } from "./components/item-tail";
 import * as $ from 'jquery';
+import { filter } from "lodash";
+
 
 export class TableDisplay extends EventTarget
 {
-
+    charts = ['overallDist', 'duplicateCount', 'replicates', 'nGram', 'benfordDist'];
+    chartNames = ['Value Distribution', 'Frequent Values', 'Replicates', 'N Grams', 'Leading Digit Frequency'];
+    chartIndex : number = 0;
     constructor() {
         super();
         document.addEventListener("drawVizRows", (e: CustomEvent) => {this.drawVizRows(e.detail.data)});
         document.addEventListener("drawBody", (e: CustomEvent) => {this.drawBody(e.detail.data)});
+        document.addEventListener("goToNext", (e: CustomEvent) => {
+            if(this.chartIndex == this.charts.length-1) return;
+            let currentChart = document.getElementById(this.charts[this.chartIndex]);
+            currentChart.classList.remove('show');
+            this.hideVizRows(this.charts[this.chartIndex], e.detail.data);
+            this.chartIndex++;
+            let nextChart = document.getElementById(this.charts[this.chartIndex]);
+            nextChart.classList.add('show');
+            this.showVizRows(this.charts[this.chartIndex], e.detail.data);
+        });
+        document.addEventListener("goToPrevious", (e: CustomEvent) => {
+            if(this.chartIndex == 0) return;
+            let currentChart = document.getElementById(this.charts[this.chartIndex]);
+            currentChart.classList.remove('show');
+            this.hideVizRows(this.charts[this.chartIndex], e.detail.data);
+            this.chartIndex--;
+            let nextChart = document.getElementById(this.charts[this.chartIndex]);
+            nextChart.classList.add('show');
+            this.showVizRows(this.charts[this.chartIndex], e.detail.data);
+        });
+        document.addEventListener("itemTailClicked", (e: CustomEvent) => {
+            let dupCountType: DuplicateCountType = (e.detail.state == 'open') ? 'ALL' : 'TOP';
+            switch(e.detail.key) {
+                case 'duplicateCount-': 
+                    this.drawFrequentDuplicates(null, e.detail.column, e.detail.key, e.detail.i, dupCountType);
+                    break;
+                case 'replicates-': 
+                    this.drawReplicates(null, e.detail.column, e.detail.key, e.detail.i, dupCountType);
+                    break;
+                case 'nGram-':
+                    this.drawNGramFrequency(null, e.detail.column, e.detail.key, e.detail.i, e.detail.nGram, e.detail.lsd, dupCountType)
+            }
+        });
     }
 
     private _container : HTMLElement;
@@ -92,25 +130,78 @@ export class TableDisplay extends EventTarget
                 let element = document.getElementById(key+"-"+ i);
                 element.classList.remove("chartHidden");
         }
+        let header = document.getElementById("des-header");
+        let define = document.getElementById("des-define");
+        let use = document.getElementById("des-use");
+        let caveat = document.getElementById("des-caveat");
+        while(caveat.firstChild) 
+            caveat.removeChild(caveat.firstChild);
+        let caveatHeader = document.createElement('div');
+        caveatHeader.classList.add('des-header');
+        caveatHeader.innerHTML = "Caveats";
+        let br = document.createElement('br');
+        caveat.appendChild(br);
+        caveat.appendChild(caveatHeader);
+        header.innerHTML = this.chartNames[this.chartIndex];
+        define.innerHTML = filterNames.define[this.chartIndex];
+        use.innerHTML = filterNames.use[this.chartIndex];
+        let caveats = filterNames.caveats[this.chartIndex];
+        for(let c of caveats) {
+            let el = document.createElement("div");
+            let caption = document.createElement("div");
+            let imgDiv = document.createElement('div');
+            let img = document.createElement("img");
+            img.src = c.image;
+            imgDiv.appendChild(img);
+            el.innerHTML = c.text;
+            caption.innerHTML = c.imageCaption;
+            el.appendChild(br);
+            el.appendChild(imgDiv);
+            el.appendChild(br);
+            el.appendChild(caption);
+            caveat.appendChild(el);
+            caveat.appendChild(br);
+            caveat.appendChild(br);
+        }
     }
 
     public setupVizRows(data: TabularData): void {
         let tbody = d3.select(this.container).select('tbody');
         let dataRow = tbody.html(null).append('tr')
-        // let dataCell = tbody.html(null).append('tr')
         dataRow.append('th')
         let dataCell = dataRow.selectAll('td')
             .data(data.columnList)
             .join('td') 
             .classed('vizCell', true);
-        
         dataCell.append('div').attr('id', (d, i) => 'overallDist-' + i);
         dataCell.append('div').attr('id', (d, i) => 'benfordDist-' + i);
         dataCell.append('div').classed('chartDiv', true).classed('scrollbar', true).attr('id', (d, i) => 'duplicateCount-' + i);
-        dataCell.append('div').classed('chartDiv', true).classed('scrollbar', true).attr('id', (d, i) => 'nGram-' + i);
         dataCell.append('div').classed('chartDiv', true).classed('scrollbar', true).attr('id', (d, i) => 'replicates-' + i);
+        dataCell.append('div').classed('chartDiv', true).classed('scrollbar', true).attr('id', (d, i) => 'nGram-' + i);
+        this.attachChildren(data.columnList.length);
         this.drawVizRows(data);
+        this.hideVizRows('benfordDist', data);
+        this.hideVizRows('duplicateCount', data);
+        this.hideVizRows('nGram', data);
+        this.hideVizRows('replicates', data);
     }
+
+    private attachChildren(length: number) {
+        this.charts.forEach((chart) => {
+            let index = 0;
+            while(index < length) {
+                let parent = document.getElementById(chart+'-'+index);
+                let chartDiv = document.createElement('div');
+                chartDiv.setAttribute('id', chart+'-chart-'+index); 
+                let itemTailDiv = document.createElement('div');
+                itemTailDiv.setAttribute('id', chart+'-tail-'+index); 
+                parent.appendChild(itemTailDiv);
+                parent.appendChild(chartDiv);
+                index++;
+            }
+        });
+    }
+
 
     public drawVizRows(data: TabularData): void
     {
@@ -125,21 +216,23 @@ export class TableDisplay extends EventTarget
             let column = data.columnList[i];
             if (column.type === 'Categorical') {
                 let colNum = column as ColumnCategorical;
-                this.drawOverallDist(data, colNum, 'overallDist-' + i, false, 'nominal');
+                this.drawOverallDist(data, colNum, 'overallDist-', i, false, 'nominal');
             }
             else if (column.type === 'Number')
             {
                 let colNum = column as ColumnNumeric;
-                this.drawOverallDist(data, colNum, 'overallDist-' + i, true, 'quantitative');
-                this.drawLeadingDigitDist(data, colNum, 'benfordDist-' + i);
-                this.drawFrequentDuplicates(data, colNum, 'duplicateCount-' + i, dupCountType);
-                this.drawNGramFrequency(data, colNum, 'nGram-' + i, nGram, lsd, nGramCountType);
-                this.drawReplicates(data, colNum, 'replicates-' + i, repCountType);
+                this.drawOverallDist(data, colNum, 'overallDist-', i, true, 'quantitative');
+                this.drawLeadingDigitDist(data, colNum, 'benfordDist-', i);
+                this.drawFrequentDuplicates(data, colNum, 'duplicateCount-', i, dupCountType);
+                this.drawNGramFrequency(data, colNum, 'nGram-', i, nGram, lsd, nGramCountType);
+                this.drawReplicates(data, colNum, 'replicates-', i, repCountType); 
+
+        
             }
         }
     }
 
-    private drawOverallDist(data: TabularData, column: ColumnNumeric | ColumnCategorical, key: string, isBinned: boolean, columnType: chartType): void
+    private drawOverallDist(data: TabularData, column: ColumnNumeric | ColumnCategorical, key: string, i: number, isBinned: boolean, columnType: chartType): void
     {
         let dataValues : Array<any> = [];
         let selectionName = filterNames.VALUE_DIST_SELECTION;
@@ -180,18 +273,17 @@ export class TableDisplay extends EventTarget
               },
             }   
           };
-          vegaEmbed('#' + key, yourVlSpec, { actions: false }
+          vegaEmbed('#' + key + 'chart-' + i, yourVlSpec, { actions: false }
           ).then(result => {
               result.view.addSignalListener(selectionName, (name, value) => {
-                console.log(value);
                 let selectedData : Array<number> = this.getSelectedData(value._vgsid_, dataValues, "value");
-                let filter: Filter = new Filter(uuid.v4(), column, selectionName, selectedData) 
+                let filter: Filter = new Filter(uuid.v4(), column, selectionName, selectedData, 'LOCAL') 
                 document.dispatchEvent(new CustomEvent('addHighlight', {detail: {filter: filter}}));
               });
           });
     }
 
-    private drawLeadingDigitDist(data: TabularData, column: ColumnNumeric, key: string): void
+    private drawLeadingDigitDist(data: TabularData, column: ColumnNumeric, key: string,  i: number): void
     {
         let leadDictFreq = column.GetLeadingDigitFreqs();
         let selectionName = filterNames.LEADING_DIGIT_FREQ_SELECTION;
@@ -243,54 +335,32 @@ export class TableDisplay extends EventTarget
             }
           };
         
-        
-        vegaEmbed('#' + key, yourVlSpec, { actions: false }
+        vegaEmbed('#' + key + 'chart-' + i, yourVlSpec, { actions: false }
             ).then(result => {
               result.view.addEventListener('mouseover', (event, value) => {
-                if(value != null && value.datum != null) {
-                    let selectedIndices: Array<number> = [];
-                    selectedIndices.push(value.datum._vgsid_);
-                    let selectedData : Array<number> = this.getSelectedData(selectedIndices, dataValues, "digit");
-                    let filter: Filter = new Filter(uuid.v4(), column, selectionName, selectedData);
-                    let e = window.event;
-                    let filterPickerId = selectionName+column.id+value.datum.digit;
-                    let filterPicker: HTMLElement = FilterPicker.create(filterPickerId, filter, e, document.getElementById('benfordDist-3'));
-                    document.getElementById('benfordDist-3').appendChild(filterPicker);
-                }
-            });
-            result.view.addEventListener('mouseout', (event, value) => {
-                if(value != null && value.datum != null) {
-                    let filterPickerId = selectionName+column.id+value.datum.digit;
-                    let filterPicker = document.getElementById(filterPickerId);
-                    $(document).on('mousemove', () => {
-                        if($('#'+filterPickerId+":hover").length == 0) {
-                                if(filterPickerId!=null) filterPicker.remove();
-                            }
-                    });
-                    
-                }
-            });
+                    this.attachFilterPicker(value, selectionName, column, key, dataValues, i, "digit");
+                });
+              result.view.addEventListener('mouseout', (event, value) => {
+                    this.removeFilterPicker(value, selectionName, column);
+                });
               result.view.addSignalListener(selectionName, (name, value) => {
-                let selectedData : Array<number> = this.getSelectedData(value._vgsid_, dataValues, "digit");
-                let filter: Filter = new Filter(uuid.v4(), column, selectionName, selectedData);
-                document.dispatchEvent(new CustomEvent('addHighlight', {detail: {filter: filter}}));
-            });
+                    this.attachSignalListener(value, dataValues, "digit", column, selectionName);
+                });
           })
         .catch(console.warn); 
     }
     
-    private drawReplicates(data: TabularData, column: ColumnNumeric, key: string, dupCountType: DuplicateCountType): void
+    private drawReplicates(data: TabularData, column: ColumnNumeric, key: string, i: number, dupCountType: DuplicateCountType): void
     {
         let replicateCount = column.GetReplicates();
         let dataValues : Array<any> = [];
-        let maxIndex = (dupCountType === 'ALL') ? replicateCount.length : 5;
         let index = 0;
+        let [maxIndex, itemTail] = this.getItemTail(dupCountType, replicateCount);
         for (let [frequency, count] of replicateCount)
         {
             if (index >= maxIndex)
-            {
                 break;
-            }
+
             index++;
             dataValues.push({
                 'frequency': frequency,
@@ -311,7 +381,11 @@ export class TableDisplay extends EventTarget
                 color: {
                     value: "#0277BD"
                 },
-                y: {field: "frequency", type: "nominal", sort: '-y'}
+                y: {field: "frequency", type: "nominal", sort: '-y'},
+                tooltip: [
+                    {field: "frequency", type: "nominal", title: "Repetitions:"},
+                    {field: "count", type: "quantitative", title: "Number of values repeated:"}
+                ]
               },
               layer: [
                 {
@@ -334,27 +408,29 @@ export class TableDisplay extends EventTarget
             view: {stroke: null}
         };
         
-        vegaEmbed('#' + key, yourVlSpec, { actions: false })
+        this.attachItemTail(itemTail, column, key, i);
+  
+        vegaEmbed('#' + key + 'chart-' + i, yourVlSpec, { actions: false })
         .catch(console.warn); 
+        
     }
     
-    private drawFrequentDuplicates(data: TabularData, column: ColumnNumeric, key: string, dupCountType: DuplicateCountType): void
+    private drawFrequentDuplicates(data: TabularData, column: ColumnNumeric, key: string, i: number, dupCountType: DuplicateCountType): void
     {
         let dupCounts = column.GetDuplicateCounts();
         let selectionName = filterNames.FREQUENT_VALUES_SELECTION;
         let dataValues : Array<any> = [];
         let index = 0;
-        let maxIndex = (dupCountType === 'ALL') ? dupCounts.length : 5;
-        for (let [val, count] of dupCounts)
-        {
-            if (count === 1)
-            {
-                break;
-            }
-            if (index >= maxIndex)
-            {
-                break;
-            }
+        let multiFrequentValues : Array<any> = [];
+        for (let [val, count] of dupCounts) {
+            if (count === 1) continue;
+            multiFrequentValues.push([val, count]);
+        }
+
+        let [maxIndex, itemTail] = this.getItemTail(dupCountType, multiFrequentValues);
+
+        for(let [val, count] of multiFrequentValues) {
+            if (index >= maxIndex) break;
             index++;
             dataValues.push({
                 'value': val,
@@ -363,7 +439,6 @@ export class TableDisplay extends EventTarget
         }
 
         var yourVlSpec: VisualizationSpec = {
-            //title: "Frequent Values (" + dupCounts.length + " unique)",
             width: 100,
             ...(dupCountType === 'TOP' && { height: 50 }),
             $schema: 'https://vega.github.io/schema/vega-lite/v4.json',
@@ -372,7 +447,7 @@ export class TableDisplay extends EventTarget
               values: dataValues
             },
             encoding: {
-                y: {field: 'value', type: 'ordinal', sort: '-x'},
+                y: {field: 'value', type: 'ordinal', sort: '-x', axis: {labelBound: 20}},
                 x: {field: 'count', type: 'quantitative'},
                 color: {
                     value: "#e57373"
@@ -411,35 +486,41 @@ export class TableDisplay extends EventTarget
             ],
           };
           
-          vegaEmbed('#' + key, yourVlSpec, { actions: false }
+          this.attachItemTail(itemTail, column, key, i);
+    
+          vegaEmbed('#' + key + 'chart-' + i, yourVlSpec, { actions: false }
           ).then(result => {
+              result.view.addEventListener('mouseover', (event, value) => {
+                this.attachFilterPicker(value, selectionName, column, key, dataValues, i, "value");
+                 });
+              result.view.addEventListener('mouseout', (event, value) => {
+                this.removeFilterPicker(value, selectionName, column);
+                 });
               result.view.addSignalListener(selectionName, (name, value) => {
-                let selectedData : Array<number> = this.getSelectedData(value._vgsid_, dataValues, "value");
-                let filter: Filter = new Filter(uuid.v4(), column, selectionName, selectedData) 
-                document.dispatchEvent(new CustomEvent('addHighlight', {detail: {filter: filter}}));
+                this.attachSignalListener(value, dataValues, "value", column, selectionName);
               });
           });
 
     }
 
 
-    private drawNGramFrequency(data: TabularData, column: ColumnNumeric, key: string, n: number, lsd: boolean, dupCountType: DuplicateCountType): void
+    private drawNGramFrequency(data: TabularData, column: ColumnNumeric, key: string, i: number, n: number, lsd: boolean, dupCountType: DuplicateCountType): void
     {
         let nGramFrequency = column.GetNGramFrequency(n, lsd);
         let dataValues : Array<any> = [];
         let index = 0;
-        let maxIndex = (dupCountType === 'ALL') ? nGramFrequency.length : 5;
+        let multiFrequentGrams : Array<any> = [];
         let selectionName = filterNames.N_GRAM_SELECTION;
-        for (let [val, count] of nGramFrequency)
-        {
-            if (count === 1)
-            {
-                break;
-            }
-            if (index >= maxIndex)
-            {
-                break;
-            }
+        
+        for (let [val, count] of nGramFrequency) {
+            if (count === 1) continue;
+            multiFrequentGrams.push([val, count]);
+        }
+
+        let [maxIndex, itemTail] = this.getItemTail(dupCountType, multiFrequentGrams);
+
+        for(let [val, count] of multiFrequentGrams) {
+            if (index >= maxIndex) break;
             index++;
             dataValues.push({
                 'value': val,
@@ -494,17 +575,22 @@ export class TableDisplay extends EventTarget
                 }
             ],
           };
-          
-          vegaEmbed('#' + key, yourVlSpec, { actions: false }
+
+          this.attachItemTail(itemTail, column, key, i, n, lsd);
+    
+          vegaEmbed('#' + key + 'chart-' + i, yourVlSpec, { actions: false }
           ).then(result => {
+            result.view.addEventListener('mouseover', (event, value) => {
+                this.attachFilterPicker(value, selectionName, column, key, dataValues, i, "value");
+                 });
+              result.view.addEventListener('mouseout', (event, value) => {
+                this.removeFilterPicker(value, selectionName, column);
+                 });
               result.view.addSignalListener(selectionName, (name, value) => {
-                let selectedData : Array<number> = this.getSelectedData(value._vgsid_, dataValues, "value");
-                let filter: Filter = new Filter(uuid.v4(), column, selectionName, selectedData) 
-                document.dispatchEvent(new CustomEvent('addHighlight', {detail: {filter: filter}}));
-              });
+                this.attachSignalListener(value, dataValues, "value", column, selectionName);
+                 });
           })
          
-
     }
 
 
@@ -557,7 +643,60 @@ export class TableDisplay extends EventTarget
       }
     }
 
-    
+    private  getItemTail(dupCountType: DuplicateCountType, data: any) {
+        let maxIndex = (dupCountType === 'ALL') ? data.length : 5;
+        let itemTail = data.length - maxIndex > 0 ? data.length - maxIndex : 0;
+        return [maxIndex, itemTail];
+    }
 
+    private attachItemTail(count: number, column: ColumnNumeric, key: string, i: number, nGram?: number, lsd?: boolean) {
+        let itemTailDiv = document.getElementById(key + 'tail-' + i);
+        let itemTailExist = (itemTailDiv.hasChildNodes()) ? true : false;
+        let text = itemTailExist ? itemTailDiv.firstChild.textContent : null;
+        let itemTailComponent : HTMLElement;
+
+        while(itemTailDiv.firstChild) 
+            itemTailDiv.removeChild(itemTailDiv.firstChild);
+        
+        if(text == null) 
+            itemTailComponent = ItemTail.create(count, key, 'close', column, i, nGram, lsd);
+        else if(text == 'close')
+            itemTailComponent = ItemTail.create(count, key, 'open', column, i, nGram, lsd);
+        else 
+            itemTailComponent = ItemTail.create(count, key, 'close', column, i, nGram, lsd);
+
+        document.getElementById(key + 'tail-' + i).appendChild(itemTailComponent);
+    }
     
+    private attachFilterPicker(value: any, selectionName: string, column: ColumnNumeric, key: string, dataValues: any[], i: number, selectDataType: string) {
+        if(value != null && value.datum != null) {
+            let selectedIndices: Array<number> = [];
+            selectedIndices.push(value.datum._vgsid_);
+            let selectedData : Array<number> = this.getSelectedData(selectedIndices, dataValues, selectDataType);
+            let filter: Filter = new Filter(uuid.v4(), column, selectionName, selectedData,'LOCAL');
+            let e = window.event;
+            let filterPickerId = selectionName+column.id.replace('.', '_')+value.datum.digit;
+            let filterPicker: HTMLElement = FilterPicker.create(filterPickerId, filter, e, document.getElementById(key + 'chart-' + i));
+            document.getElementById(key + 'chart-' + i).appendChild(filterPicker);
+            } 
+        }
+    
+    private removeFilterPicker(value: any, selectionName: string, column: ColumnNumeric) {
+        if(value != null && value.datum != null) {
+            let filterPickerId = selectionName+column.id.replace('.', '_')+value.datum.digit;
+            let filterPicker = document.getElementById(filterPickerId);
+            $(document).on('mousemove', () => {
+                if($('#'+filterPickerId+":hover").length == 0) {
+                        if(filterPickerId!=null) filterPicker.remove();
+                    }
+            });
+        }
+    }
+
+    private attachSignalListener(value: any, dataValues: any[], selectDataType: string, column: ColumnNumeric | ColumnCategorical, selectionName: string) {
+        console.log("gere0");
+        let selectedData : Array<number> = this.getSelectedData(value._vgsid_, dataValues, selectDataType);
+        let filter: Filter = new Filter(uuid.v4(), column, selectionName, selectedData, 'LOCAL') 
+        document.dispatchEvent(new CustomEvent('addHighlight', {detail: {filter: filter}}));
+    }
 }

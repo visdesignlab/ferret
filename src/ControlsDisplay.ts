@@ -111,9 +111,12 @@ export class ControlsDisplay
     }
 
     public attachChartControls(): void {
+        let nextSwitch = document.getElementById("next-switch");
+        let prevSwitch = document.getElementById("prev-switch");
         let leadingDigitSwitch = document.getElementById("leading-digit-switch");
         let frequentValueSwitch = document.getElementById("freq-val-switch");
         let valueDistSwitch = document.getElementById("val-dist-switch");
+        let repSwitch = document.getElementById("rep-switch");
         let uniqueValuesSwitch = document.getElementById("unique-values-switch");
         let ngramCountSwitch = document.getElementById("ngram-count-switch");
         let repCountSwitch = document.getElementById("rep-count-switch");
@@ -126,6 +129,7 @@ export class ControlsDisplay
         frequentValueSwitch.addEventListener("click", e => this.toggleChartVisibility(e, "duplicateCount"));
         valueDistSwitch.addEventListener("click", e => this.toggleChartVisibility(e, "overallDist"));
         nGramSwitch.addEventListener("click", e => this.toggleChartVisibility(e, "nGram"));
+        repSwitch.addEventListener("click", e => this.toggleChartVisibility(e, 'replicates'));
        
         lsdSwitch.addEventListener("click", e => this.updateTable());
         uniqueValuesSwitch.addEventListener("click", e => this.updateTable());
@@ -133,6 +137,16 @@ export class ControlsDisplay
         repCountSwitch.addEventListener("click", e => this.updateTable());
         twoGramSwitch.addEventListener("click", e => this.updateTable());
         threeGramSwitch.addEventListener("click", e => this.updateTable());
+
+        nextSwitch.addEventListener("click", e =>  
+            document.dispatchEvent(new CustomEvent('goToNext', {detail: {data: this._data}}))
+        );
+        
+        prevSwitch.addEventListener("click", e =>  
+            document.dispatchEvent(new CustomEvent('goToPrevious', {detail: {data: this._data}}))
+        );
+
+
     }
 
     public static getLSDStatus(): boolean {
@@ -161,7 +175,6 @@ export class ControlsDisplay
     private toggleChartVisibility(e: any, chartName: string): void {
         let tableDisplay = new TableDisplay();
         let eventTarget = e.target;
-
         if(eventTarget.classList.contains("shown")) {
             eventTarget.classList.remove("shown");
             eventTarget.classList.add("hidden");
