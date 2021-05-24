@@ -1,11 +1,10 @@
-import * as d3 from 'd3';
+import * as d3 from "d3";
 import { UploadFileButton } from './lib/UploadFileButton';
 import { TabularData } from './TabularData';
 import { TableDisplay } from './TableDisplay';
 import { ControlsDisplay } from './ControlsDisplay';
 import { FilterDisplay } from './FilterDisplay';
 import { HighlightDisplay } from './HighlightDisplay';
-import { filter } from 'minimatch';
 
 let tableContainer = document.getElementById('tableContainer');
 let tableDisplay = new TableDisplay();
@@ -17,7 +16,14 @@ let controlsContainer = document.getElementById('controlsContainer');
 let controlsDisplay = new ControlsDisplay(toolbarContainer, controlsContainer, tableContainer);
 filterDisplay.SetContainer(toolbarContainer);
 highlightDisplay.SetContainer(toolbarContainer);
-let fileLoadButton = new UploadFileButton(toolbarContainer, (data: string, filename: string) =>
+
+
+let clear = () : void => {
+	filterDisplay.clear();
+	highlightDisplay.clear();
+}
+
+let init = (data: string, filename: string) =>
 {
 	clear();		// clearing all the existing elements.
 	let tabularData: TabularData = TabularData.FromString(data);
@@ -27,9 +33,19 @@ let fileLoadButton = new UploadFileButton(toolbarContainer, (data: string, filen
 	filterDisplay.drawDropdown();
 	highlightDisplay.drawDropdown();
 	document.title = filename;
-});
-
-let clear = () : void => {
-	filterDisplay.clear();
-	highlightDisplay.clear();
 }
+
+let urlParams = new URLSearchParams(document.location.search)
+if (urlParams.has('data_path'))
+{
+	let filename = urlParams.get('data_path');
+	d3.text(filename).then(data =>
+	{
+		init(data, filename)
+	})
+}
+else
+{
+}
+let fileLoadButton = new UploadFileButton(toolbarContainer, init);
+
