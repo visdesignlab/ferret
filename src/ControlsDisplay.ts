@@ -11,6 +11,7 @@ export class ControlsDisplay
         this._toolbarContainer = toolbarContainer;
         this._controlsContainer = controlsContainer;
         this._tableContainer = tableContainer;
+        this._show = false;
     }
 
     
@@ -34,6 +35,10 @@ export class ControlsDisplay
         this._data = data;
     }
 
+    private _show : boolean;
+    public get show() : boolean {
+        return this._show;
+    }
 
     public drawControls(tabularData: TabularData): void {
 
@@ -51,7 +56,7 @@ export class ControlsDisplay
          settingsButton.classList.add("customButton", "customButtonIcon");
          settingsButton.addEventListener("click", e => this.toggleControlsPanel());
          this._toolbarContainer.appendChild(settingsButton);
-         this.toggleControlsPanel();
+         this.showControlsPanel();
          this.drawDataColumnRows(tabularData.columnList);
          this.drawSummaryRows(tabularData);
          this.attachChartControls();
@@ -95,19 +100,28 @@ export class ControlsDisplay
     }
 
     private toggleControlsPanel(): void {
-
-        let containerWidth = this._controlsContainer.style.width;
-        if(containerWidth == "250px") {
-            this._controlsContainer.style.width = "0px";
-            this._tableContainer.style.marginLeft = "0px";
-            document.getElementById("settingsButton").classList.remove("selected");
+        if(this.show) {
+            this.hideControlsPanel();
         }
         else {
-            this._controlsContainer.style.width = "250px";
-            this._tableContainer.style.marginLeft = "250px";
-            document.getElementById("settingsButton").classList.add("selected");
-
+            this.showControlsPanel();
         }
+    }
+
+    private showControlsPanel(): void
+    {
+        this._controlsContainer.style.width = "250px";
+        this._tableContainer.style.marginLeft = "250px";
+        document.getElementById("settingsButton").classList.add("selected");
+        this._show = true;
+    }
+
+    private hideControlsPanel(): void
+    {
+        this._controlsContainer.style.width = "0px";
+        this._tableContainer.style.marginLeft = "0px";
+        document.getElementById("settingsButton").classList.remove("selected");
+        this._show = false;
     }
 
     public attachChartControls(): void {

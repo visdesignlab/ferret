@@ -212,13 +212,5 @@ export abstract class FilterDropdown extends EventTarget
         this.filterData(filter, this._data, this._localData);
         removedFilterUpdate(filter, this._selectionType);
         this.manageDropdown(this._filters);
-    }
-
-    public clear() {
-        let elements = document.getElementsByClassName('dropdown');
-        for(let element of elements) {
-            element.innerHTML = "";
-        }
-    }
-    
+    }    
 }   

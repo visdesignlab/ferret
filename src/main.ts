@@ -21,14 +21,16 @@ filterDisplay.SetContainer(toolbarContainer);
 highlightDisplay.SetContainer(toolbarContainer);
 
 
-let clear = () : void => {
-	filterDisplay.clear();
-	highlightDisplay.clear();
+let clear = () : void =>
+{
+	toolbarContainer.innerHTML = '';
 }
 
 let init = (data: string, filename: string) =>
 {
 	clear();		// clearing all the existing elements.
+	const bigStyle = false;
+	let fileLoadButton = new UploadFileButton(toolbarContainer, init, bigStyle);
 	let tabularData: TabularData = TabularData.FromString(data);
 	controlsDisplay.drawControls(tabularData);
 	controlsDisplay.SetData(tabularData);
@@ -38,11 +40,10 @@ let init = (data: string, filename: string) =>
 	document.title = filename;
 	uploadOnlyContainerOuter.classList.add('noDisp');
 	outerContainer.classList.remove('noDisp');
+
 }
 
 let urlParams = new URLSearchParams(document.location.search)
-let uploadContainer: HTMLElement;
-let bigStyle: boolean;
 if (urlParams.has('data_path'))
 {
 	let filename = urlParams.get('data_path');
@@ -50,13 +51,10 @@ if (urlParams.has('data_path'))
 	{
 		init(data, filename)
 	});
-	uploadContainer = toolbarContainer;
-	bigStyle = false;
 }
 else
 {
-	uploadContainer = uploadOnlyContainerInner;
-	bigStyle = true;
+	const bigStyle = true;
+	const fileLoadButton = new UploadFileButton(uploadOnlyContainerInner, init, bigStyle);
 }
-let fileLoadButton = new UploadFileButton(uploadContainer, init, bigStyle);
 
