@@ -105,9 +105,18 @@ p {
     width: calc(100% - 40px);
 }
 
-.big-link > .description {
+.upload-link {
+    border: dashed black 2px;
+    padding: 20px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    display: flex;
+    border-radius: 16px;
+    width: calc(100% - 40px);
+}
+
+.big-link > .description,.upload-link > .description {
     flex-grow: 1;
-    padding-right: 10px;
 }
 
 .grid {
@@ -184,6 +193,13 @@ p {
         This is the second example dataset, it has ABC attributes.
     </p>
     <a class="big button-link" href='/'>Launch<i class="fas fa-external-link-alt"></i></a>
+    </div>
+
+    <div class='upload-link'>
+    <p class='description'>
+        Upload dataset.
+    </p>
+    <a class="big button-link" href='/'>Upload<i class="fas fa-upload"></i></a>
     </div>
 
 </div>
