@@ -26,10 +26,21 @@ let clear = () : void =>
 	toolbarContainer.innerHTML = '';
 }
 
+
+
 let init = (data: string, filename: string) =>
 {
 	clear();		// clearing all the existing elements.
 	const bigStyle = false;
+
+	let navigateHomeDiv = document.createElement('div');
+	navigateHomeDiv.classList.add('customButton');
+	let navigateHomeLink = document.createElement('a');
+	navigateHomeLink.href = './';
+	navigateHomeLink.innerHTML = '<i class="fas fa-home"></i> Home'
+	navigateHomeDiv.appendChild(navigateHomeLink);
+	toolbarContainer.appendChild(navigateHomeDiv);
+
 	let fileLoadButton = new UploadFileButton(toolbarContainer, init, bigStyle);
 	let tabularData: TabularData = TabularData.FromString(data);
 	controlsDisplay.drawControls(tabularData);
