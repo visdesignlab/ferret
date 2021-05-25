@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <title>Data Forensics</title>
+        <link rel="stylesheet" type="text/css" href="../styles/DevlibUtil.css">
+        <link rel="stylesheet" type="text/css" href="../styles/controls.css">
+        <link rel="stylesheet" type="text/css" href="../styles/tableStyle.css">
+        <link rel="stylesheet" type="text/css" href="../styles/common.css">
+        <link rel="stylesheet" type="text/css" href="../src/components/components.css">
+        <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans&display=swap" rel="stylesheet">
+        <script src="https://kit.fontawesome.com/de8d467ef5.js"></script>
+    </head>
+    <body>
+        <div class="uploadOnlyContainerOuter"  id="uploadOnlyContainerOuter">
+            <div class="uploadOnlyContainerInner" id="uploadOnlyContainerInner">
+
+            </div>
+        </div>
+        <div class="outerContainer noDisp" id="outerContainer">
+            <div class="toolbar" id="toolbar">
+            </div>
+            <div class="controlsContainer" id="controlsContainer" style="width: 0px">
+                <div class="item-group"> 
+                    <div class="group-header">Analysis
+                        <button id="prev-switch">Previous</button>
+                        <button id="next-switch">Next</button>
+                    </div>
+                    <div id="overallDist">
+                        <div class="item yellow">
+                            <i id="val-dist-switch" class="fas fa-eye customButtonEyeIcon" style="background-color: #ffb726"></i>
+                                Value Distribution</div>
+                    </div>
+                    <div id="duplicateCount">
+                        <div class="item pink">
+                            <i id="freq-val-switch"  class="fas fa-eye customButtonEyeIcon hidden" style="background-color: #eeeeee"></i>
+                            Frequent Values</div>
+                        <div class="item-options">
+                            <input type="checkbox" id="unique-values-switch"></input>
+                            <label for="unique-values-switch" class="controlsLabel">Show all unique values</label>
+                        </div>
+                        
+                    </div>
+                    <div id="replicates">
+                        <div class="item sea-blue">
+                            <i id="rep-switch"  class="fas fa-eye customButtonEyeIcon hidden" style="background-color: #eeeeee"></i>
+                            Replicates</div>
+                        <div class="item-options">
+                            <input type="checkbox" id="rep-count-switch"></input>
+                            <label for="rep-count-switch" class="controlsLabel">Show all unique values</label>
+                        </div>
+                        
+                    </div>
+                    <div id="nGram">
+                        <div class="item orange">
+                            <i id="n-gram-switch"  class="fas fa-eye customButtonEyeIcon hidden" style="background-color: #eeeeee"></i>
+                            N Gram</div>
+                        <div class="item-options">
+                            <input type="radio" id="2-gram-switch" name="n-gram" value="2-gram" checked>
+                            <label for="2-gram-switch" class="controlsLabel">2-gram</label>
+                            <input type="radio" id="3-gram-switch" name="n-gram" value="3-gram">
+                            <label for="3-gram-switch" class="controlsLabel">3-gram</label>
+                        </div>
+                        <div class="item-options">
+                            <input type="checkbox" id="ngram-count-switch"></input>
+                            <label for="ngram-count-switch" class="controlsLabel">Show all unique values</label>
+                        </div>
+                        <div class="item-options">
+                            <input type="checkbox" id="lsd-switch"></input>
+                            <label for="lsd-switch" class="controlsLabel">Least Significant Digits</label>
+                        </div>
+                        <div class="item-options">
+                            <input type="checkbox" id="threshold-switch"></input>
+                            <label for="threshold-switch" class="controlsLabel">Show threshold analysis</label>
+                        </div>
+                    </div>
+                    <div id="benfordDist">
+                        <div class="item blue">
+                            <i id="leading-digit-switch" class="fas fa-eye customButtonEyeIcon hidden" style="background-color: #eeeeee"></i>
+                            Leading Digit Frequency</div>
+                    </div>
+                </div>
+                <hr class="controlsHr">
+                <div class="item-group">  
+                    <div class="group-header">Summary</div>
+                    <div class="group-sub-header">Original</div>
+                    <div class="controlsLabel" id="numberOfRecords"></div>
+                    <div class="controlsLabel" id="numberOfColumns"></div>
+                    <div class="group-sub-header">Current Selection</div>
+                    <div class="controlsLabel" id="currentNumberOfRecords"></div>
+                    <div class="controlsLabel" id="currentNumberOfColumns"></div>
+                </div>
+                <hr class="controlsHr">
+                <div class="item-group" id="data-columns">                  
+                        <div class="group-header" id="data-cols">Data</div>
+                </div>
+                <hr class="controlsHr">
+                <div class="item-group"> 
+                    <div class="group-header">History</div>
+                    <div id="provDiv"> </div>
+                </div>
+            </div>    
+            <div class="description" id="description" style="margin-left: 250px">
+                <div id="des-header" class="des-header"></div>
+                <div id="des-define" class="des-define"></div>
+                <div id="des-use" class="des-use"></div>
+                <div id="des-caveat" class="des-caveat"></div>
+            </div>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
+            <div class="tableContainer" id="tableContainer">
+                <table class='dataTable' id="dataTable">
+                    <thead>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <script src="bundle.js"></script>
+    </body>
+</html>

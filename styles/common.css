@@ -1,3 +1,16 @@
+* {
+    margin: 0px;
+    padding: 0px;
+}
+
+.uploadOnlyContainerOuter {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
 
 .customButton {
     border: solid #212121 1px;
@@ -10,6 +23,14 @@
     user-select: none;
     padding: 5px;
     font-family: 'Josefin Sans', sans-serif;
+}
+
+
+.big .customButton {
+    border-style: dashed;
+    padding: 200px;
+    font-size: 32pt;
+
 }
 
 .customButton:active, .selected {
@@ -34,6 +55,11 @@
 
 .buttonContainer {
     display: flex;
+}
+
+.buttonContainer.big {
+    flex-direction: row;
+    justify-content: center;
 }
 
 .filterContainer {

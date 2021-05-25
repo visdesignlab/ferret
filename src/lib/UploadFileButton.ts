@@ -2,11 +2,15 @@ import { FileLoadUtil, CallbackFunction } from "./FileLoadUtil";
 
 export class UploadFileButton {
 	
-	constructor(container: Element, callback: CallbackFunction)
+	constructor(container: Element, callback: CallbackFunction, big = false)
 	{
         this._container = container;
         this.draw();
 		this.container.classList.add("buttonContainer");
+		if (big)
+		{
+			this.container.classList.add("big");
+		}
 		let fileLoader: FileLoadUtil = new FileLoadUtil(callback);
 		this.fileInputElement.onchange = (ev: Event) => fileLoader.OpenFile(ev);
 	}
