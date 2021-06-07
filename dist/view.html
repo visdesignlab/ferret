@@ -10,6 +10,9 @@
         <link rel="stylesheet" type="text/css" href="../src/components/components.css">
         <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans&display=swap" rel="stylesheet">
         <script src="https://kit.fontawesome.com/de8d467ef5.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@webcomponents/webcomponentsjs@2/webcomponents-loader.min.js"></script>
+        <script type="module" src="https://cdn.jsdelivr.net/gh/zerodevx/zero-md@1/src/zero-md.min.js"></script>
+
     </head>
     <body>
         <div class="uploadOnlyContainerOuter"  id="uploadOnlyContainerOuter">
@@ -101,10 +104,17 @@
                 </div>
             </div>    
             <div class="description" id="description" style="margin-left: 250px">
+                
                 <div id="des-header" class="des-header"></div>
-                <div id="des-define" class="des-define"></div>
+                <zero-md src="./assets/descriptions/value-distribution.md"></zero-md>
+                <zero-md class='noDisp' src="./assets/descriptions/frequent-values.md"></zero-md>
+                <zero-md class='noDisp' src="./assets/descriptions/replicates.md"></zero-md>
+                <zero-md class='noDisp' src="./assets/descriptions/n-gram.md"></zero-md>
+                <zero-md class='noDisp' src="./assets/descriptions/leading-digit-frequency.md"></zero-md>
+
+                <!-- <div id="des-define" class="des-define"></div>
                 <div id="des-use" class="des-use"></div>
-                <div id="des-caveat" class="des-caveat"></div>
+                <div id="des-caveat" class="des-caveat"></div> -->
             </div>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
             <div class="tableContainer" id="tableContainer">
                 <table class='dataTable' id="dataTable">

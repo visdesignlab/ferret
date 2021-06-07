@@ -16,8 +16,23 @@ interface caveat {
     imageCaption?: string;
 
 }
-export const define = ['','This chart shows the repeated values (occurring two or more times) in each column along with their frequencies. It is sorted by frequency and shows the most repeated values at the top. \n The chart, by default, shows the top five frequent values in each column with an option to expand and see all.','','',''];
-export const use = ['','This can be helpful in detecting duplicate or copied values.','','',''];
+export const define = [
+    'This chart shows the distribution of values for each column as histograms.',
+    'This chart shows the repeated values (occurring two or more times) in each column along with their frequencies. It is sorted by frequency and shows the most repeated values at the top. \n The chart, by default, shows the top five frequent values in each column with an option to expand and see all.',
+    'This chart shows how many unique values are replicated a given number of times.',
+    'This chart shows the most frequent 2-grams and 3-grams of the column text.',
+    'This chart shows the distribution of the leading digit frequency.'
+];
+
+export const use = [
+    '',
+    'This can be helpful in detecting duplicate or copied values.',
+    '',
+    '',
+    ''
+];
+
+
 const frequentValueCaveats : caveat[] = [{text: "1) Be careful to take into account any limiting values, for eg. maximum time allowed for an experiment, which might be a frequent value as a consequence of the nature of the experiment.", image: "caveat1.png", imageCaption: "Fig 1. 600 seconds is the maximum value possible"},
 {text: "2) The chart may indicate uncommon values occurring frequently but it might be a case of conversion from different units, for eg. from seconds to minutes." , image: "caveat2.png", imageCaption: "Fig 2. 23 seconds = ~0.38333333333336 minutes" }];
 const todoCaveat : caveat[] = []; 
