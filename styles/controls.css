@@ -47,6 +47,8 @@
     border-radius: 3px;
     font-size: 14px;
     font-family: 'Josefin Sans', sans-serif;
+    display: flex;
+    align-items: center;
 }
 
 .item-options {
@@ -118,3 +120,15 @@
 .dropdown-content a:hover {background-color: #ddd}
 
 .show {display:block;}
+
+
+.current-index {
+    background: red;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%
+}
+
+.hide {
+    visibility: hidden;
+}

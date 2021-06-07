@@ -24,24 +24,27 @@ export class TableDisplay extends EventTarget
         document.addEventListener("drawVizRows", (e: CustomEvent) => {this.drawVizRows(e.detail.data)});
         document.addEventListener("drawBody", (e: CustomEvent) => {this.drawBody(e.detail.data)});
         document.addEventListener("goToNext", (e: CustomEvent) => {
-            if(this.chartIndex == this.charts.length-1) return;
-            let currentChart = document.getElementById(this.charts[this.chartIndex]);
-            currentChart.classList.remove('show');
-            this.hideVizRows(this.charts[this.chartIndex], e.detail.data);
-            this.chartIndex++;
-            let nextChart = document.getElementById(this.charts[this.chartIndex]);
-            nextChart.classList.add('show');
-            this.showVizRows(this.charts[this.chartIndex], e.detail.data);
+
+            // let currentChart = document.getElementById(this.charts[this.chartIndex]);
+            // currentChart.classList.remove('show');
+            // this.hideVizRows(this.charts[this.chartIndex], e.detail.data);
+            this.setChartIndex(this.chartIndex + 1);
+
+            // let nextChart = document.getElementById(this.charts[this.chartIndex]);
+            // nextChart.classList.add('show');
+            // this.showVizRows(this.charts[this.chartIndex], e.detail.data);
         });
         document.addEventListener("goToPrevious", (e: CustomEvent) => {
-            if(this.chartIndex == 0) return;
-            let currentChart = document.getElementById(this.charts[this.chartIndex]);
-            currentChart.classList.remove('show');
-            this.hideVizRows(this.charts[this.chartIndex], e.detail.data);
-            this.chartIndex--;
-            let nextChart = document.getElementById(this.charts[this.chartIndex]);
-            nextChart.classList.add('show');
-            this.showVizRows(this.charts[this.chartIndex], e.detail.data);
+
+            this.setChartIndex(this.chartIndex - 1);
+            
+            // let currentChart = document.getElementById(this.charts[this.chartIndex]);
+            // currentChart.classList.remove('show');
+            // this.hideVizRows(this.charts[this.chartIndex], e.detail.data);
+            // this.chartIndex--;
+            // let nextChart = document.getElementById(this.charts[this.chartIndex]);
+            // nextChart.classList.add('show');
+            // this.showVizRows(this.charts[this.chartIndex], e.detail.data);
         });
         document.addEventListener("itemTailClicked", (e: CustomEvent) => {
             let dupCountType: DuplicateCountType = (e.detail.state == 'open') ? 'ALL' : 'TOP';
@@ -112,6 +115,21 @@ export class TableDisplay extends EventTarget
                 cols[index+1].style.display = visible ? '' : 'none';
             }
         }
+    }
+
+    public setChartIndex(index: number): void
+    {
+        if (index < 0 || index >= this.charts.length)
+        {
+            return
+        }
+
+        this.chartIndex = index;
+        d3.selectAll('.current-index')
+            .classed('hide', (d,i) => 
+            {
+                return i !== index
+            });
     }
 
     public hideVizRows(key: String, data: TabularData): void 
