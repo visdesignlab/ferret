@@ -10,6 +10,7 @@ export class ControlsDisplay
 
     charts = ['overallDist', 'duplicateCount', 'replicates', 'nGram', 'benfordDist'];
     chartNames = ['Value Distribution', 'Frequent Values', 'Replicates', 'N Grams', 'Leading Digit Frequency'];
+    chartsShown = [true, false, false, false, false];
     chartIndex : number = 0;
 
     public constructor(toolbarContainer: HTMLElement, controlsContainer: HTMLElement, tableContainer: HTMLElement)
@@ -145,11 +146,11 @@ export class ControlsDisplay
         let nGramSwitch = document.getElementById("n-gram-switch");
         let lsdSwitch = document.getElementById("lsd-switch");
 
-        leadingDigitSwitch.addEventListener("click", e => this.toggleChartVisibility(e, "benfordDist"));
-        frequentValueSwitch.addEventListener("click", e => this.toggleChartVisibility(e, "duplicateCount"));
-        valueDistSwitch.addEventListener("click", e => this.toggleChartVisibility(e, "overallDist"));
-        nGramSwitch.addEventListener("click", e => this.toggleChartVisibility(e, "nGram"));
-        repSwitch.addEventListener("click", e => this.toggleChartVisibility(e, 'replicates'));
+        valueDistSwitch.addEventListener("click", e => this.toggleChart(0));
+        frequentValueSwitch.addEventListener("click", e => this.toggleChart(1));
+        repSwitch.addEventListener("click", e => this.toggleChart(2));
+        nGramSwitch.addEventListener("click", e => this.toggleChart(3));
+        leadingDigitSwitch.addEventListener("click", e => this.toggleChart(4));
        
         lsdSwitch.addEventListener("click", e => this.updateTable());
         uniqueValuesSwitch.addEventListener("click", e => this.updateTable());
@@ -209,13 +210,40 @@ export class ControlsDisplay
         {
             return
         }
-
         this.chartIndex = index;
+        this.showOnly(this.chartIndex);
+    }
+
+    private showOnly(index: number): void
+    {
+        this.chartsShown.fill(false);
+        this.chartsShown[index] = true;
+        this.drawChartSelectRowsRows();
+    }
+
+    private drawChartSelectRowsRows(): void
+    {
+        const showCount: number = this.chartsShown.filter(Boolean).length;
+        const disableIndexIndicator: boolean = showCount != 1;
+        if (showCount === 1)
+        {
+            this.chartIndex = this.chartsShown.findIndex(Boolean);
+        }
+
         d3.selectAll('.current-index')
-            .classed('hide', (d,i) => 
-            {
-                return i !== index
-            });
+            .classed('hide', (d,i) => i !== this.chartIndex)
+            .classed('disable', disableIndexIndicator);
+
+        d3.selectAll('.customButtonEyeIcon')
+            .data(this.chartsShown)
+            .classed('hidden', d => !d);
+    }
+
+    private toggleChart(index: number): void
+    {
+        this.chartsShown[index] = !this.chartsShown[index];
+        const showCount: number = this.chartsShown.filter(Boolean).length;
+        this.drawChartSelectRowsRows();
     }
 
     private toggleChartVisibility(e: any, chartName: string): void {

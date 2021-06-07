@@ -75,31 +75,42 @@
     padding: 4px;
     cursor: pointer;
     margin-right: 2px;
-    border-radius: 3px;
+    border-radius: 3px;   
 }
 
-.customButtonEyeIconGray {
-    cursor: pointer;
-    background-color: #eeeeee;
+.customButtonEyeIcon.yellow {
+    background-color: #ffb726;
+}
+.customButtonEyeIcon.pink {
+    background-color: #e57373;
+}
+.customButtonEyeIcon.blue {
+    background-color: #4db6ac;
+}
+.customButtonEyeIcon.orange {
+    background-color: #ff8f00;
+}
+.customButtonEyeIcon.sea-blue {
+    background-color: #0277BD;
 }
 
-.yellow {
+.customButtonEyeIcon.hidden {
+    background-color: #eeeeee !important;
+}
+
+.item.yellow {
     border: 1px solid #ffb726;
 }
-
-.blue {
-    border: 1px solid #4db6ac;
-}
-
-.pink {
+.item.pink {
     border: 1px solid #e57373;
 }
-
-.orange {
+.item.blue {
+    border: 1px solid #4db6ac;
+}
+.item.orange {
     border: 1px solid #ff8f00;
 }
-
-.sea-blue {
+.item.sea-blue {
     border: 1px solid #0277BD;
 }
 
@@ -123,10 +134,15 @@
 
 
 .current-index {
-    background: red;
-    width: 24px;
-    height: 24px;
-    border-radius: 50%
+    background: black;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: solid black 3px;
+}
+
+.current-index.disable {
+    background: white;
 }
 
 .hide {
