@@ -18,34 +18,34 @@ export class TableDisplay extends EventTarget
 {
     charts = ['overallDist', 'duplicateCount', 'replicates', 'nGram', 'benfordDist'];
     chartNames = ['Value Distribution', 'Frequent Values', 'Replicates', 'N Grams', 'Leading Digit Frequency'];
-    chartIndex : number = 0;
+    // chartIndex : number = 0;
     constructor() {
         super();
         document.addEventListener("drawVizRows", (e: CustomEvent) => {this.drawVizRows(e.detail.data)});
         document.addEventListener("drawBody", (e: CustomEvent) => {this.drawBody(e.detail.data)});
-        document.addEventListener("goToNext", (e: CustomEvent) => {
+        // document.addEventListener("goToNext", (e: CustomEvent) => {
 
-            // let currentChart = document.getElementById(this.charts[this.chartIndex]);
-            // currentChart.classList.remove('show');
-            // this.hideVizRows(this.charts[this.chartIndex], e.detail.data);
-            this.setChartIndex(this.chartIndex + 1);
+        //     // let currentChart = document.getElementById(this.charts[this.chartIndex]);
+        //     // currentChart.classList.remove('show');
+        //     // this.hideVizRows(this.charts[this.chartIndex], e.detail.data);
+        //     this.setChartIndex(this.chartIndex + 1);
 
-            // let nextChart = document.getElementById(this.charts[this.chartIndex]);
-            // nextChart.classList.add('show');
-            // this.showVizRows(this.charts[this.chartIndex], e.detail.data);
-        });
-        document.addEventListener("goToPrevious", (e: CustomEvent) => {
+        //     // let nextChart = document.getElementById(this.charts[this.chartIndex]);
+        //     // nextChart.classList.add('show');
+        //     // this.showVizRows(this.charts[this.chartIndex], e.detail.data);
+        // });
+        // document.addEventListener("goToPrevious", (e: CustomEvent) => {
 
-            this.setChartIndex(this.chartIndex - 1);
+        //     this.setChartIndex(this.chartIndex - 1);
             
-            // let currentChart = document.getElementById(this.charts[this.chartIndex]);
-            // currentChart.classList.remove('show');
-            // this.hideVizRows(this.charts[this.chartIndex], e.detail.data);
-            // this.chartIndex--;
-            // let nextChart = document.getElementById(this.charts[this.chartIndex]);
-            // nextChart.classList.add('show');
-            // this.showVizRows(this.charts[this.chartIndex], e.detail.data);
-        });
+        //     // let currentChart = document.getElementById(this.charts[this.chartIndex]);
+        //     // currentChart.classList.remove('show');
+        //     // this.hideVizRows(this.charts[this.chartIndex], e.detail.data);
+        //     // this.chartIndex--;
+        //     // let nextChart = document.getElementById(this.charts[this.chartIndex]);
+        //     // nextChart.classList.add('show');
+        //     // this.showVizRows(this.charts[this.chartIndex], e.detail.data);
+        // });
         document.addEventListener("itemTailClicked", (e: CustomEvent) => {
             let dupCountType: DuplicateCountType = (e.detail.state == 'open') ? 'ALL' : 'TOP';
             switch(e.detail.key) {
@@ -117,21 +117,6 @@ export class TableDisplay extends EventTarget
         }
     }
 
-    public setChartIndex(index: number): void
-    {
-        if (index < 0 || index >= this.charts.length)
-        {
-            return
-        }
-
-        this.chartIndex = index;
-        d3.selectAll('.current-index')
-            .classed('hide', (d,i) => 
-            {
-                return i !== index
-            });
-    }
-
     public hideVizRows(key: String, data: TabularData): void 
     {
         for (let i = 0; i < data.columnList.length; i++)
@@ -160,27 +145,27 @@ export class TableDisplay extends EventTarget
         let br = document.createElement('br');
         caveat.appendChild(br);
         caveat.appendChild(caveatHeader);
-        header.innerHTML = this.chartNames[this.chartIndex];
-        define.innerHTML = filterNames.define[this.chartIndex];
-        use.innerHTML = filterNames.use[this.chartIndex];
-        let caveats = filterNames.caveats[this.chartIndex];
-        for(let c of caveats) {
-            let el = document.createElement("div");
-            let caption = document.createElement("div");
-            let imgDiv = document.createElement('div');
-            let img = document.createElement("img");
-            img.src = c.image;
-            imgDiv.appendChild(img);
-            el.innerHTML = c.text;
-            caption.innerHTML = c.imageCaption;
-            el.appendChild(br);
-            el.appendChild(imgDiv);
-            el.appendChild(br);
-            el.appendChild(caption);
-            caveat.appendChild(el);
-            caveat.appendChild(br);
-            caveat.appendChild(br);
-        }
+        // header.innerHTML = this.chartNames[this.chartIndex];
+        // define.innerHTML = filterNames.define[this.chartIndex];
+        // use.innerHTML = filterNames.use[this.chartIndex];
+        // let caveats = filterNames.caveats[this.chartIndex];
+        // for(let c of caveats) {
+        //     let el = document.createElement("div");
+        //     let caption = document.createElement("div");
+        //     let imgDiv = document.createElement('div');
+        //     let img = document.createElement("img");
+        //     img.src = c.image;
+        //     imgDiv.appendChild(img);
+        //     el.innerHTML = c.text;
+        //     caption.innerHTML = c.imageCaption;
+        //     el.appendChild(br);
+        //     el.appendChild(imgDiv);
+        //     el.appendChild(br);
+        //     el.appendChild(caption);
+        //     caveat.appendChild(el);
+        //     caveat.appendChild(br);
+        //     caveat.appendChild(br);
+        // }
     }
 
     public setupVizRows(data: TabularData): void {

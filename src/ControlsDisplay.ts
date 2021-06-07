@@ -1,3 +1,4 @@
+import * as d3 from "d3";
 import { TabularData } from "./TabularData";
 import { TableDisplay } from "./TableDisplay";
 import { Column } from "./Column";
@@ -6,6 +7,11 @@ import { FilterPicker } from "./components/filter-picker";
  
 export class ControlsDisplay
 {
+
+    charts = ['overallDist', 'duplicateCount', 'replicates', 'nGram', 'benfordDist'];
+    chartNames = ['Value Distribution', 'Frequent Values', 'Replicates', 'N Grams', 'Leading Digit Frequency'];
+    chartIndex : number = 0;
+
     public constructor(toolbarContainer: HTMLElement, controlsContainer: HTMLElement, tableContainer: HTMLElement)
     {
         this._toolbarContainer = toolbarContainer;
@@ -153,11 +159,21 @@ export class ControlsDisplay
         threeGramSwitch.addEventListener("click", e => this.updateTable());
 
         nextSwitch.addEventListener("click", e =>  
-            document.dispatchEvent(new CustomEvent('goToNext', {detail: {data: this._data}}))
+        {
+            this.setChartIndex(this.chartIndex + 1);
+            // document.dispatchEvent(new CustomEvent('goToNext', {detail: {data: this._data}}))
+        }
+
+
         );
         
         prevSwitch.addEventListener("click", e =>  
-            document.dispatchEvent(new CustomEvent('goToPrevious', {detail: {data: this._data}}))
+        {
+            this.setChartIndex(this.chartIndex - 1);
+            // document.dispatchEvent(new CustomEvent('goToPrevious', {detail: {data: this._data}}))
+        }
+
+
         );
 
 
@@ -186,6 +202,22 @@ export class ControlsDisplay
         tableDisplay.SetData(this._data);
     }
     
+
+    private setChartIndex(index: number): void
+    {
+        if (index < 0 || index >= this.charts.length)
+        {
+            return
+        }
+
+        this.chartIndex = index;
+        d3.selectAll('.current-index')
+            .classed('hide', (d,i) => 
+            {
+                return i !== index
+            });
+    }
+
     private toggleChartVisibility(e: any, chartName: string): void {
         let tableDisplay = new TableDisplay();
         let eventTarget = e.target;
