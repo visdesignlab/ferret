@@ -146,11 +146,17 @@ export class ControlsDisplay
         let nGramSwitch = document.getElementById("n-gram-switch");
         let lsdSwitch = document.getElementById("lsd-switch");
 
-        valueDistSwitch.addEventListener("click", e => this.toggleChart(0));
-        frequentValueSwitch.addEventListener("click", e => this.toggleChart(1));
-        repSwitch.addEventListener("click", e => this.toggleChart(2));
-        nGramSwitch.addEventListener("click", e => this.toggleChart(3));
-        leadingDigitSwitch.addEventListener("click", e => this.toggleChart(4));
+        d3.selectAll('.item')
+            .on('click', (_d, i) =>
+            {
+                this.showOnly(i);
+            });
+
+        valueDistSwitch.addEventListener("click", e => this.toggleChart(0, e));
+        frequentValueSwitch.addEventListener("click", e => this.toggleChart(1, e));
+        repSwitch.addEventListener("click", e => this.toggleChart(2, e));
+        nGramSwitch.addEventListener("click", e => this.toggleChart(3, e));
+        leadingDigitSwitch.addEventListener("click", e => this.toggleChart(4, e));
        
         lsdSwitch.addEventListener("click", e => this.updateTable());
         uniqueValuesSwitch.addEventListener("click", e => this.updateTable());
@@ -239,11 +245,12 @@ export class ControlsDisplay
             .classed('hidden', d => !d);
     }
 
-    private toggleChart(index: number): void
+    private toggleChart(index: number, e: Event): void
     {
         this.chartsShown[index] = !this.chartsShown[index];
         const showCount: number = this.chartsShown.filter(Boolean).length;
         this.drawChartSelectRowsRows();
+        e.stopPropagation();
     }
 
     private toggleChartVisibility(e: any, chartName: string): void {
