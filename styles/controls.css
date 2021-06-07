@@ -49,6 +49,8 @@
     font-family: 'Josefin Sans', sans-serif;
     display: flex;
     align-items: center;
+    cursor: pointer;
+    user-select: none;
 }
 
 .item-options {
@@ -76,42 +78,72 @@
     cursor: pointer;
     margin-right: 2px;
     border-radius: 3px;   
+    border: solid #eeeeee 2px;
 }
 
 .customButtonEyeIcon.yellow {
     background-color: #ffb726;
+    border-color: #ffb726;
 }
 .customButtonEyeIcon.pink {
     background-color: #e57373;
+    border-color: #e57373;
 }
 .customButtonEyeIcon.blue {
     background-color: #4db6ac;
+    border-color: #4db6ac;
 }
 .customButtonEyeIcon.orange {
     background-color: #ff8f00;
+    border-color: #ff8f00;
 }
 .customButtonEyeIcon.sea-blue {
     background-color: #0277BD;
+    border-color: #0277BD;
 }
 
 .customButtonEyeIcon.hidden {
     background-color: #eeeeee !important;
+    border-color: #eeeeee !important;
+}
+
+.customButtonEyeIcon:hover {
+    border-color: grey;
+}
+
+.customButtonEyeIcon.hidden:hover {
+    border-color: grey !important;
 }
 
 .item.yellow {
-    border: 1px solid #ffb726;
+    border: 1px solid hsl(40, 100%, 57%);
+}
+.item.yellow:hover {
+    background-color: hsl(40, 100%, 95%);
 }
 .item.pink {
-    border: 1px solid #e57373;
+    border: 1px solid hsl(0, 69%, 67%);
+}
+.item.pink:hover {
+    background-color: hsl(0, 69%, 97%);
 }
 .item.blue {
-    border: 1px solid #4db6ac;
+    border: 1px solid hsl(174, 42%, 51%);
+}
+.item.blue:hover {
+    background-color: hsl(174, 42%, 91%);
 }
 .item.orange {
-    border: 1px solid #ff8f00;
+    border: 1px solid hsl(34, 100%, 50%);
+}
+.item.orange:hover {
+    background-color: hsl(34, 100%, 90%);
 }
 .item.sea-blue {
-    border: 1px solid #0277BD;
+    border: 1px solid hsl(202, 98%, 37%);
+}
+.item.sea-blue:hover {
+    background-color: hsl(202, 98%, 87%);
 }
 
 .dropdown-content {
@@ -134,15 +166,16 @@
 
 
 .current-index {
-    background: black;
-    width: 12px;
-    height: 12px;
+    background: #272727;
+    width: 6px;
+    height: 6px;
     border-radius: 50%;
-    border: solid black 3px;
+    margin: 6px;
+    border: solid black 1px;
 }
 
 .current-index.disable {
-    background: white;
+    background: #eeeeee;
 }
 
 .hide {
