@@ -272,6 +272,10 @@ export class ControlsDisplay
                 d3.select(`#${chartKey}-${j}`).classed('noDisp', !visible);
             }
         }
+
+        d3.selectAll('zero-md')
+            .data(this.chartsShown)
+            .classed('noDisp', d => !d);
     }
 
     private toggleChartVisibility(e: any, chartName: string): void {
