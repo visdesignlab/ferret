@@ -4,6 +4,7 @@ import { TableDisplay } from "./TableDisplay";
 import { Column } from "./Column";
 import { DuplicateCountType } from "./lib/constants/filter";
 import { FilterPicker } from "./components/filter-picker";
+import { range } from "lodash";
  
 export class ControlsDisplay
 {
@@ -38,6 +39,10 @@ export class ControlsDisplay
     }
 
     private _data : TabularData;
+    public get data(): TabularData {
+        return this._data;
+    }
+
     public SetData(data: TabularData) : void {
         this._data = data;
     }
@@ -243,6 +248,8 @@ export class ControlsDisplay
         d3.selectAll('.customButtonEyeIcon')
             .data(this.chartsShown)
             .classed('hidden', d => !d);
+
+        this.updateChartVisibility();
     }
 
     private toggleChart(index: number, e: Event): void
@@ -251,6 +258,20 @@ export class ControlsDisplay
         const showCount: number = this.chartsShown.filter(Boolean).length;
         this.drawChartSelectRowsRows();
         e.stopPropagation();
+    }
+
+    private updateChartVisibility(): void
+    {
+        // this would maybe be better in TableDisplay.ts semantically.
+        for (let i = 0; i < this.charts.length; i++)
+        {
+            const chartKey = this.charts[i];
+            const visible = this.chartsShown[i];
+            for (let j = 0; j < this.data.columnList.length; j++)
+            {
+                d3.select(`#${chartKey}-${j}`).classed('noDisp', !visible);
+            }
+        }
     }
 
     private toggleChartVisibility(e: any, chartName: string): void {

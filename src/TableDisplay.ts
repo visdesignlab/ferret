@@ -183,10 +183,10 @@ export class TableDisplay extends EventTarget
         dataCell.append('div').classed('chartDiv', true).classed('scrollbar', true).attr('id', (d, i) => 'nGram-' + i);
         this.attachChildren(data.columnList.length);
         this.drawVizRows(data);
-        this.hideVizRows('benfordDist', data);
-        this.hideVizRows('duplicateCount', data);
-        this.hideVizRows('nGram', data);
-        this.hideVizRows('replicates', data);
+        // this.hideVizRows('benfordDist', data);
+        // this.hideVizRows('duplicateCount', data);
+        // this.hideVizRows('nGram', data);
+        // this.hideVizRows('replicates', data);
     }
 
     private attachChildren(length: number) {
