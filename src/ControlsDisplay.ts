@@ -55,6 +55,7 @@ export class ControlsDisplay
 
     public SetData(data: TabularData) : void {
         this._data = data;
+        this.updateChartVisibility();
     }
 
     private _show : boolean;
@@ -190,20 +191,12 @@ export class ControlsDisplay
         nextSwitch.addEventListener("click", e =>  
         {
             this.setChartIndex(this.chartIndex + 1);
-            // document.dispatchEvent(new CustomEvent('goToNext', {detail: {data: this._data}}))
-        }
-
-
-        );
+        });
         
         prevSwitch.addEventListener("click", e =>  
         {
             this.setChartIndex(this.chartIndex - 1);
-            // document.dispatchEvent(new CustomEvent('goToPrevious', {detail: {data: this._data}}))
-        }
-
-
-        );
+        });
 
 
     }

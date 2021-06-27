@@ -229,8 +229,6 @@ export class TableDisplay extends EventTarget
                 this.drawFrequentDuplicates(data, colNum, 'duplicateCount-', i, dupCountType);
                 this.drawNGramFrequency(data, colNum, 'nGram-', i, nGram, lsd, nGramCountType);
                 this.drawReplicates(data, colNum, 'replicates-', i, repCountType); 
-
-        
             }
         }
     }
