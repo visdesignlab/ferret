@@ -67,13 +67,12 @@
     user-select: none;
 }
 
-.item-options {
-    margin-top: 5px;
-    display: none;
+.item-option-container {
+    
 }
 
-.show .item-options {
-    display: block;
+.item-option {
+    margin-top: 5px;
 }
 
 .controlsHr {
