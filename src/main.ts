@@ -16,7 +16,8 @@ let uploadOnlyContainerOuter = document.getElementById('uploadOnlyContainerOuter
 let uploadOnlyContainerInner = document.getElementById('uploadOnlyContainerInner');
 let toolbarContainer = document.getElementById('toolbar');
 let controlsContainer = document.getElementById('controlsContainer');
-let controlsDisplay = new ControlsDisplay(toolbarContainer, controlsContainer, tableContainer);
+let descriptionContainer = document.getElementById('description');
+let controlsDisplay = new ControlsDisplay(toolbarContainer, controlsContainer, tableContainer, descriptionContainer);
 filterDisplay.SetContainer(toolbarContainer);
 highlightDisplay.SetContainer(toolbarContainer);
 

@@ -88,9 +88,11 @@ body {
 
 .description {
     margin-top: 5px;
+    transition: 0.5s;
+    margin-left: 0px;
     padding: 5px;
     font-family: 'Josefin Sans', sans-serif;
-    border: 1px solid #eeeeee;
+    border: 1px solid #d0d0d0;
     background: white;
 }
 

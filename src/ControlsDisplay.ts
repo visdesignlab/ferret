@@ -14,11 +14,16 @@ export class ControlsDisplay
     chartsShown = [true, false, false, false, false];
     chartIndex : number = 0;
 
-    public constructor(toolbarContainer: HTMLElement, controlsContainer: HTMLElement, tableContainer: HTMLElement)
+    public constructor(
+        toolbarContainer: HTMLElement,
+        controlsContainer: HTMLElement,
+        tableContainer: HTMLElement,
+        descriptionContainer: HTMLElement)
     {
         this._toolbarContainer = toolbarContainer;
         this._controlsContainer = controlsContainer;
         this._tableContainer = tableContainer;
+        this._descriptionContainer = descriptionContainer;
         this._show = false;
     }
 
@@ -38,6 +43,11 @@ export class ControlsDisplay
         return this._tableContainer;
     }
 
+    private _descriptionContainer : HTMLElement;
+    public get descriptionContainer() : HTMLElement {
+        return this._descriptionContainer;
+    }
+    
     private _data : TabularData;
     public get data(): TabularData {
         return this._data;
@@ -122,16 +132,23 @@ export class ControlsDisplay
 
     private showControlsPanel(): void
     {
-        this._controlsContainer.style.width = "250px";
-        this._tableContainer.style.marginLeft = "250px";
+        const settingsContainerWidth = 250;
+        const padding = 10;
+        this._controlsContainer.style.width = `${settingsContainerWidth}px`;
+        this._controlsContainer.style.borderWidth = '1px';
+        this._tableContainer.style.marginLeft = `${settingsContainerWidth + padding}px`;
+        this._descriptionContainer.style.marginLeft = `${settingsContainerWidth + padding}px`;
         document.getElementById("settingsButton").classList.add("selected");
         this._show = true;
     }
 
     private hideControlsPanel(): void
     {
+        const padding = 10;
         this._controlsContainer.style.width = "0px";
-        this._tableContainer.style.marginLeft = "0px";
+        this._controlsContainer.style.borderWidth = '0px';
+        this._tableContainer.style.marginLeft = `${padding}px`;
+        this._descriptionContainer.style.marginLeft = `${padding}px`;
         document.getElementById("settingsButton").classList.remove("selected");
         this._show = false;
     }
