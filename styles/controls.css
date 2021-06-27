@@ -15,6 +15,19 @@
     padding-top: 10px;
 }
 
+.button-grouper {
+    display: flex;
+}
+
+.step {
+    flex-grow: 1;
+    padding: 8px !important;
+    box-shadow: #a7a7a7 1px 1px 2px 0px;
+}
+
+.step.prev {
+    margin-right: 4px;
+}
 
 .group-header {
     text-transform: uppercase;
@@ -34,6 +47,7 @@
 
 .item-group {
     padding-left: 10px;
+    padding-right: 10px;
     margin-bottom: 20px;
 }
 
@@ -43,7 +57,6 @@
 
 .item {
     margin-top: 10px;
-    width: 200px;
     padding: 1px;
     border-radius: 3px;
     font-size: 14px;
@@ -77,7 +90,7 @@
 .customButtonEyeIcon {
     padding: 4px;
     cursor: pointer;
-    margin-right: 2px;
+    margin-right: 5px;
     border-radius: 3px;   
     border: solid #eeeeee 2px;
 }

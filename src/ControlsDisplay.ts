@@ -155,8 +155,8 @@ export class ControlsDisplay
     }
 
     public attachChartControls(): void {
-        let nextSwitch = document.getElementById("next-switch");
-        let prevSwitch = document.getElementById("prev-switch");
+        let nextSwitch = document.getElementById("next-step");
+        let prevSwitch = document.getElementById("prev-step");
         let leadingDigitSwitch = document.getElementById("leading-digit-switch");
         let frequentValueSwitch = document.getElementById("freq-val-switch");
         let valueDistSwitch = document.getElementById("val-dist-switch");

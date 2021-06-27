@@ -25,9 +25,9 @@
             </div>
             <div class="controlsContainer" id="controlsContainer" style="width: 0px">
                 <div class="item-group"> 
-                    <div class="group-header">Analysis
-                        <button id="prev-switch">Previous</button>
-                        <button id="next-switch">Next</button>
+                    <div class="button-grouper">
+                        <button id='prev-step' class="prev step customButton"><i class="fas fa-chevron-left"></i> Previous</button>
+                        <button id='next-step' class="next step customButton">Next <i class="fas fa-chevron-right"></i></button>
                     </div>
                     <div id="overallDist">
                         <div class="item yellow">
@@ -108,7 +108,7 @@
                     <div id="provDiv"> </div>
                 </div>
             </div>    
-            <div class="description" id="description" style="margin-left: 250px">
+            <div class="description" id="description" style="margin-left: 260px">
                 <h1 class="des-header yellow">Value Distribution</h1>
                 <zero-md src="./assets/descriptions/value-distribution.md"></zero-md>
                 <h1 class="des-header pink noDisp">Frequent Values</h1>
@@ -119,10 +119,6 @@
                 <zero-md class='noDisp' src="./assets/descriptions/n-gram.md"></zero-md>
                 <h1 class="des-header blue noDisp">Leading Digit Frequency</h1>
                 <zero-md class='noDisp' src="./assets/descriptions/leading-digit-frequency.md"></zero-md>
-
-                <!-- <div id="des-define" class="des-define"></div>
-                <div id="des-use" class="des-use"></div>
-                <div id="des-caveat" class="des-caveat"></div> -->
             </div>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
             <div class="tableContainer" id="tableContainer">
                 <table class='dataTable' id="dataTable">
