@@ -3,6 +3,10 @@
     padding: 0px;
 }
 
+body {
+    background: #ece7e7;
+}
+
 .uploadOnlyContainerOuter {
     width: 100vw;
     height: 100vh;
@@ -23,6 +27,7 @@
     user-select: none;
     padding: 5px;
     font-family: 'Josefin Sans', sans-serif;
+    background: white;
 }
 
 
@@ -86,16 +91,27 @@
     padding: 5px;
     font-family: 'Josefin Sans', sans-serif;
     border: 1px solid #eeeeee;
+    background: white;
 }
 
 .des-header {
-    font-size: 12pt;
-    color: #212121 !important;
+    font-size: 14pt;
+    margin-top: 12px;
+    border-bottom: solid 1px;
 }
 
-.des-define, .des-use, .des-caveat {
-    font-size: 11pt;
-    margin-top: 3px;
-    margin-bottom: 3px;
-    color: #757575;
+.des-header.yellow {
+    color: #ffb726;
+}
+.des-header.pink {
+    color: #e57373;
+}
+.des-header.blue {
+    color: #4db6ac;
+}
+.des-header.orange {
+    color: #ff8f00;
+}
+.des-header.sea-blue {
+    color: #0277BD;
 }

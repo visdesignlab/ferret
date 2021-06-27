@@ -276,6 +276,10 @@ export class ControlsDisplay
         d3.selectAll('zero-md')
             .data(this.chartsShown)
             .classed('noDisp', d => !d);
+
+        d3.selectAll('.des-header')
+            .data(this.chartsShown)
+            .classed('noDisp', d => !d);
     }
 
     private toggleChartVisibility(e: any, chartName: string): void {
