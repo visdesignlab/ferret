@@ -11,38 +11,15 @@ import { ControlsDisplay } from "./ControlsDisplay";
 import { FilterPicker } from "./components/filter-picker";
 import { ItemTail } from "./components/item-tail";
 import * as $ from 'jquery';
-import { filter } from "lodash";
-
 
 export class TableDisplay extends EventTarget
 {
     charts = ['overallDist', 'duplicateCount', 'replicates', 'nGram', 'benfordDist'];
     chartNames = ['Value Distribution', 'Frequent Values', 'Replicates', 'N Grams', 'Leading Digit Frequency'];
-    chartIndex : number = 0;
     constructor() {
         super();
         document.addEventListener("drawVizRows", (e: CustomEvent) => {this.drawVizRows(e.detail.data)});
         document.addEventListener("drawBody", (e: CustomEvent) => {this.drawBody(e.detail.data)});
-        document.addEventListener("goToNext", (e: CustomEvent) => {
-            if(this.chartIndex == this.charts.length-1) return;
-            let currentChart = document.getElementById(this.charts[this.chartIndex]);
-            currentChart.classList.remove('show');
-            this.hideVizRows(this.charts[this.chartIndex], e.detail.data);
-            this.chartIndex++;
-            let nextChart = document.getElementById(this.charts[this.chartIndex]);
-            nextChart.classList.add('show');
-            this.showVizRows(this.charts[this.chartIndex], e.detail.data);
-        });
-        document.addEventListener("goToPrevious", (e: CustomEvent) => {
-            if(this.chartIndex == 0) return;
-            let currentChart = document.getElementById(this.charts[this.chartIndex]);
-            currentChart.classList.remove('show');
-            this.hideVizRows(this.charts[this.chartIndex], e.detail.data);
-            this.chartIndex--;
-            let nextChart = document.getElementById(this.charts[this.chartIndex]);
-            nextChart.classList.add('show');
-            this.showVizRows(this.charts[this.chartIndex], e.detail.data);
-        });
         document.addEventListener("itemTailClicked", (e: CustomEvent) => {
             let dupCountType: DuplicateCountType = (e.detail.state == 'open') ? 'ALL' : 'TOP';
             switch(e.detail.key) {
@@ -73,18 +50,18 @@ export class TableDisplay extends EventTarget
         return this._data;
     }
 
-    public SetData(data: TabularData): void
+    public SetData(data: TabularData, defaultVizShown: boolean[]): void
     {
         this._data = data;
-        this.onDataChanged(this._data);
+        this.onDataChanged(this._data, defaultVizShown);
     }
 
-    private onDataChanged(data: TabularData): void
+    private onDataChanged(data: TabularData, defaultVizShown: boolean[]): void
     {
         document.dispatchEvent(new CustomEvent('onDataChange', {detail: {data: data}}));
         document.dispatchEvent(new CustomEvent('onLocalDataChange', {detail: {data: data}}));
         this.drawHeader(data);
-        this.setupVizRows(data);
+        this.setupVizRows(data, defaultVizShown);
         this.drawBody(data);
     }
 
@@ -142,30 +119,9 @@ export class TableDisplay extends EventTarget
         let br = document.createElement('br');
         caveat.appendChild(br);
         caveat.appendChild(caveatHeader);
-        header.innerHTML = this.chartNames[this.chartIndex];
-        define.innerHTML = filterNames.define[this.chartIndex];
-        use.innerHTML = filterNames.use[this.chartIndex];
-        let caveats = filterNames.caveats[this.chartIndex];
-        for(let c of caveats) {
-            let el = document.createElement("div");
-            let caption = document.createElement("div");
-            let imgDiv = document.createElement('div');
-            let img = document.createElement("img");
-            img.src = c.image;
-            imgDiv.appendChild(img);
-            el.innerHTML = c.text;
-            caption.innerHTML = c.imageCaption;
-            el.appendChild(br);
-            el.appendChild(imgDiv);
-            el.appendChild(br);
-            el.appendChild(caption);
-            caveat.appendChild(el);
-            caveat.appendChild(br);
-            caveat.appendChild(br);
-        }
     }
 
-    public setupVizRows(data: TabularData): void {
+    public setupVizRows(data: TabularData, defaultVizShown: boolean[]): void {
         let tbody = d3.select(this.container).select('tbody');
         let dataRow = tbody.html(null).append('tr')
         dataRow.append('th')
@@ -173,17 +129,14 @@ export class TableDisplay extends EventTarget
             .data(data.columnList)
             .join('td') 
             .classed('vizCell', true);
-        dataCell.append('div').attr('id', (d, i) => 'overallDist-' + i);
-        dataCell.append('div').attr('id', (d, i) => 'benfordDist-' + i);
-        dataCell.append('div').classed('chartDiv', true).classed('scrollbar', true).attr('id', (d, i) => 'duplicateCount-' + i);
-        dataCell.append('div').classed('chartDiv', true).classed('scrollbar', true).attr('id', (d, i) => 'replicates-' + i);
-        dataCell.append('div').classed('chartDiv', true).classed('scrollbar', true).attr('id', (d, i) => 'nGram-' + i);
+        let vizIndex = 0;
+        dataCell.append('div').attr('id', (d, i) => 'overallDist-' + i).classed('noDisp', !defaultVizShown[vizIndex++]);
+        dataCell.append('div').attr('id', (d, i) => 'benfordDist-' + i).classed('noDisp', !defaultVizShown[vizIndex++]);
+        dataCell.append('div').classed('chartDiv', true).classed('scrollbar', true).attr('id', (d, i) => 'duplicateCount-' + i).classed('noDisp', !defaultVizShown[vizIndex++]);
+        dataCell.append('div').classed('chartDiv', true).classed('scrollbar', true).attr('id', (d, i) => 'replicates-' + i).classed('noDisp', !defaultVizShown[vizIndex++]);
+        dataCell.append('div').classed('chartDiv', true).classed('scrollbar', true).attr('id', (d, i) => 'nGram-' + i).classed('noDisp', !defaultVizShown[vizIndex++]);
         this.attachChildren(data.columnList.length);
         this.drawVizRows(data);
-        this.hideVizRows('benfordDist', data);
-        this.hideVizRows('duplicateCount', data);
-        this.hideVizRows('nGram', data);
-        this.hideVizRows('replicates', data);
     }
 
     private attachChildren(length: number) {
@@ -201,7 +154,6 @@ export class TableDisplay extends EventTarget
             }
         });
     }
-
 
     public drawVizRows(data: TabularData): void
     {
@@ -226,8 +178,6 @@ export class TableDisplay extends EventTarget
                 this.drawFrequentDuplicates(data, colNum, 'duplicateCount-', i, dupCountType);
                 this.drawNGramFrequency(data, colNum, 'nGram-', i, nGram, lsd, nGramCountType);
                 this.drawReplicates(data, colNum, 'replicates-', i, repCountType); 
-
-        
             }
         }
     }

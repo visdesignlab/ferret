@@ -16,7 +16,8 @@ let uploadOnlyContainerOuter = document.getElementById('uploadOnlyContainerOuter
 let uploadOnlyContainerInner = document.getElementById('uploadOnlyContainerInner');
 let toolbarContainer = document.getElementById('toolbar');
 let controlsContainer = document.getElementById('controlsContainer');
-let controlsDisplay = new ControlsDisplay(toolbarContainer, controlsContainer, tableContainer);
+let descriptionContainer = document.getElementById('description');
+let controlsDisplay = new ControlsDisplay(toolbarContainer, controlsContainer, tableContainer, descriptionContainer);
 filterDisplay.SetContainer(toolbarContainer);
 highlightDisplay.SetContainer(toolbarContainer);
 
@@ -44,8 +45,9 @@ let init = (data: string, filename: string) =>
 	let fileLoadButton = new UploadFileButton(toolbarContainer, init, bigStyle);
 	let tabularData: TabularData = TabularData.FromString(data);
 	controlsDisplay.drawControls(tabularData);
-	controlsDisplay.SetData(tabularData);
-	tableDisplay.SetData(tabularData);
+	const defaultVizShown = [true, false, false, false, false];
+	controlsDisplay.SetData(tabularData, defaultVizShown);
+	tableDisplay.SetData(tabularData, defaultVizShown);
 	filterDisplay.drawDropdown();
 	highlightDisplay.drawDropdown();
 	document.title = filename;

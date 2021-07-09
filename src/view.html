@@ -10,6 +10,9 @@
         <link rel="stylesheet" type="text/css" href="../src/components/components.css">
         <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans&display=swap" rel="stylesheet">
         <script src="https://kit.fontawesome.com/de8d467ef5.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@webcomponents/webcomponentsjs@2/webcomponents-loader.min.js"></script>
+        <script type="module" src="https://cdn.jsdelivr.net/gh/zerodevx/zero-md@1/src/zero-md.min.js"></script>
+
     </head>
     <body>
         <div class="uploadOnlyContainerOuter"  id="uploadOnlyContainerOuter">
@@ -22,62 +25,78 @@
             </div>
             <div class="controlsContainer" id="controlsContainer" style="width: 0px">
                 <div class="item-group"> 
-                    <div class="group-header">Analysis
-                        <button id="prev-switch">Previous</button>
-                        <button id="next-switch">Next</button>
+                    <div class="button-grouper">
+                        <button id='prev-step' class="prev step customButton"><i class="fas fa-chevron-left"></i> Previous</button>
+                        <button id='next-step' class="next step customButton">Next <i class="fas fa-chevron-right"></i></button>
                     </div>
                     <div id="overallDist">
                         <div class="item yellow">
-                            <i id="val-dist-switch" class="fas fa-eye customButtonEyeIcon" style="background-color: #ffb726"></i>
-                                Value Distribution</div>
+                            <div class="current-index"></div>
+                            <i id="val-dist-switch" class="fas fa-eye customButtonEyeIcon yellow"></i>
+                            Value Distribution
+                        </div>
+                        <div class="item-option-container"></div>
                     </div>
                     <div id="duplicateCount">
                         <div class="item pink">
-                            <i id="freq-val-switch"  class="fas fa-eye customButtonEyeIcon hidden" style="background-color: #eeeeee"></i>
-                            Frequent Values</div>
-                        <div class="item-options">
-                            <input type="checkbox" id="unique-values-switch"></input>
-                            <label for="unique-values-switch" class="controlsLabel">Show all unique values</label>
+                            <div class="current-index hide"></div>
+                            <i id="freq-val-switch" class="fas fa-eye customButtonEyeIcon pink hidden"></i>
+                            Frequent Values
                         </div>
-                        
+                        <div class="item-option-container">
+                            <div class="item-option">
+                                <input type="checkbox" id="unique-values-switch"></input>
+                                <label for="unique-values-switch" class="controlsLabel">Show all unique values</label>
+                            </div>
+                        </div>
                     </div>
                     <div id="replicates">
                         <div class="item sea-blue">
-                            <i id="rep-switch"  class="fas fa-eye customButtonEyeIcon hidden" style="background-color: #eeeeee"></i>
-                            Replicates</div>
-                        <div class="item-options">
-                            <input type="checkbox" id="rep-count-switch"></input>
-                            <label for="rep-count-switch" class="controlsLabel">Show all unique values</label>
+                            <div class="current-index hide"></div>
+                            <i id="rep-switch"  class="fas fa-eye customButtonEyeIcon sea-blue hidden"></i>
+                            Replicates
                         </div>
-                        
+                        <div class="item-option-container">
+                            <div class="item-option">
+                                <input type="checkbox" id="rep-count-switch"></input>
+                                <label for="rep-count-switch" class="controlsLabel">Show all unique values</label>
+                            </div>
+                        </div>
                     </div>
                     <div id="nGram">
                         <div class="item orange">
-                            <i id="n-gram-switch"  class="fas fa-eye customButtonEyeIcon hidden" style="background-color: #eeeeee"></i>
-                            N Gram</div>
-                        <div class="item-options">
-                            <input type="radio" id="2-gram-switch" name="n-gram" value="2-gram" checked>
-                            <label for="2-gram-switch" class="controlsLabel">2-gram</label>
-                            <input type="radio" id="3-gram-switch" name="n-gram" value="3-gram">
-                            <label for="3-gram-switch" class="controlsLabel">3-gram</label>
+                            <div class="current-index hide"></div>
+                            <i id="n-gram-switch"  class="fas fa-eye customButtonEyeIcon orange hidden"></i>
+                            N-Grams
                         </div>
-                        <div class="item-options">
-                            <input type="checkbox" id="ngram-count-switch"></input>
-                            <label for="ngram-count-switch" class="controlsLabel">Show all unique values</label>
-                        </div>
-                        <div class="item-options">
-                            <input type="checkbox" id="lsd-switch"></input>
-                            <label for="lsd-switch" class="controlsLabel">Least Significant Digits</label>
-                        </div>
-                        <div class="item-options">
-                            <input type="checkbox" id="threshold-switch"></input>
-                            <label for="threshold-switch" class="controlsLabel">Show threshold analysis</label>
+                        <div class="item-option-container">
+                            <div class="item-option">
+                                <input type="radio" id="2-gram-switch" name="n-gram" value="2-gram" checked>
+                                <label for="2-gram-switch" class="controlsLabel">2-gram</label>
+                                <input type="radio" id="3-gram-switch" name="n-gram" value="3-gram">
+                                <label for="3-gram-switch" class="controlsLabel">3-gram</label>
+                            </div>
+                            <div class="item-option">
+                                <input type="checkbox" id="ngram-count-switch"></input>
+                                <label for="ngram-count-switch" class="controlsLabel">Show all unique values</label>
+                            </div>
+                            <div class="item-option">
+                                <input type="checkbox" id="lsd-switch"></input>
+                                <label for="lsd-switch" class="controlsLabel">Least Significant Digits</label>
+                            </div>
+                            <!-- <div class="item-option">
+                                <input type="checkbox" id="threshold-switch"></input>
+                                <label for="threshold-switch" class="controlsLabel">Show threshold analysis</label>
+                            </div> -->
                         </div>
                     </div>
                     <div id="benfordDist">
                         <div class="item blue">
-                            <i id="leading-digit-switch" class="fas fa-eye customButtonEyeIcon hidden" style="background-color: #eeeeee"></i>
-                            Leading Digit Frequency</div>
+                            <div class="current-index hide"></div>
+                            <i id="leading-digit-switch" class="fas fa-eye customButtonEyeIcon blue hidden"></i>
+                            Leading Digit Frequency
+                        </div>
+                        <div class="item-option-container"></div>
                     </div>
                 </div>
                 <hr class="controlsHr">
@@ -100,11 +119,17 @@
                     <div id="provDiv"> </div>
                 </div>
             </div>    
-            <div class="description" id="description" style="margin-left: 250px">
-                <div id="des-header" class="des-header"></div>
-                <div id="des-define" class="des-define"></div>
-                <div id="des-use" class="des-use"></div>
-                <div id="des-caveat" class="des-caveat"></div>
+            <div class="description" id="description" style="margin-left: 260px">
+                <h1 class="des-header yellow">Value Distribution</h1>
+                <zero-md src="./assets/descriptions/value-distribution.md"></zero-md>
+                <h1 class="des-header pink noDisp">Frequent Values</h1>
+                <zero-md class='noDisp' src="./assets/descriptions/frequent-values.md"></zero-md>
+                <h1 class="des-header sea-blue noDisp">Replicates</h1>
+                <zero-md class='noDisp' src="./assets/descriptions/replicates.md"></zero-md>
+                <h1 class="des-header orange noDisp">N-Grams</h1>
+                <zero-md class='noDisp' src="./assets/descriptions/n-gram.md"></zero-md>
+                <h1 class="des-header blue noDisp">Leading Digit Frequency</h1>
+                <zero-md class='noDisp' src="./assets/descriptions/leading-digit-frequency.md"></zero-md>
             </div>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
             <div class="tableContainer" id="tableContainer">
                 <table class='dataTable' id="dataTable">

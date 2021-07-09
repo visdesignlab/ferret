@@ -1,7 +1,7 @@
 .dataTable
 {   
     table-layout:fixed;
-    margin-top: 20px;
+    margin-top: 10px;
     white-space: nowrap;
     border-collapse: collapse;
 }
@@ -20,6 +20,7 @@ th {
 .tableContainer {
     transition: 0.5s;
     margin-left: 0px;
+    background: white;
 }
 
 .columnType {
