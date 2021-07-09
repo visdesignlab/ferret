@@ -76,18 +76,18 @@ export class TableDisplay extends EventTarget
         return this._data;
     }
 
-    public SetData(data: TabularData): void
+    public SetData(data: TabularData, defaultVizShown: boolean[]): void
     {
         this._data = data;
-        this.onDataChanged(this._data);
+        this.onDataChanged(this._data, defaultVizShown);
     }
 
-    private onDataChanged(data: TabularData): void
+    private onDataChanged(data: TabularData, defaultVizShown: boolean[]): void
     {
         document.dispatchEvent(new CustomEvent('onDataChange', {detail: {data: data}}));
         document.dispatchEvent(new CustomEvent('onLocalDataChange', {detail: {data: data}}));
         this.drawHeader(data);
-        this.setupVizRows(data);
+        this.setupVizRows(data, defaultVizShown);
         this.drawBody(data);
     }
 
@@ -168,7 +168,7 @@ export class TableDisplay extends EventTarget
         // }
     }
 
-    public setupVizRows(data: TabularData): void {
+    public setupVizRows(data: TabularData, defaultVizShown: boolean[]): void {
         let tbody = d3.select(this.container).select('tbody');
         let dataRow = tbody.html(null).append('tr')
         dataRow.append('th')
@@ -176,11 +176,12 @@ export class TableDisplay extends EventTarget
             .data(data.columnList)
             .join('td') 
             .classed('vizCell', true);
-        dataCell.append('div').attr('id', (d, i) => 'overallDist-' + i);
-        dataCell.append('div').attr('id', (d, i) => 'benfordDist-' + i);
-        dataCell.append('div').classed('chartDiv', true).classed('scrollbar', true).attr('id', (d, i) => 'duplicateCount-' + i);
-        dataCell.append('div').classed('chartDiv', true).classed('scrollbar', true).attr('id', (d, i) => 'replicates-' + i);
-        dataCell.append('div').classed('chartDiv', true).classed('scrollbar', true).attr('id', (d, i) => 'nGram-' + i);
+        let vizIndex = 0;
+        dataCell.append('div').attr('id', (d, i) => 'overallDist-' + i).classed('noDisp', !defaultVizShown[vizIndex++]);
+        dataCell.append('div').attr('id', (d, i) => 'benfordDist-' + i).classed('noDisp', !defaultVizShown[vizIndex++]);
+        dataCell.append('div').classed('chartDiv', true).classed('scrollbar', true).attr('id', (d, i) => 'duplicateCount-' + i).classed('noDisp', !defaultVizShown[vizIndex++]);
+        dataCell.append('div').classed('chartDiv', true).classed('scrollbar', true).attr('id', (d, i) => 'replicates-' + i).classed('noDisp', !defaultVizShown[vizIndex++]);
+        dataCell.append('div').classed('chartDiv', true).classed('scrollbar', true).attr('id', (d, i) => 'nGram-' + i).classed('noDisp', !defaultVizShown[vizIndex++]);
         this.attachChildren(data.columnList.length);
         this.drawVizRows(data);
         // this.hideVizRows('benfordDist', data);

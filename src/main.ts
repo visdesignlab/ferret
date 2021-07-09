@@ -45,8 +45,9 @@ let init = (data: string, filename: string) =>
 	let fileLoadButton = new UploadFileButton(toolbarContainer, init, bigStyle);
 	let tabularData: TabularData = TabularData.FromString(data);
 	controlsDisplay.drawControls(tabularData);
-	controlsDisplay.SetData(tabularData);
-	tableDisplay.SetData(tabularData);
+	const defaultVizShown = [true, false, false, false, false];
+	controlsDisplay.SetData(tabularData, defaultVizShown);
+	tableDisplay.SetData(tabularData, defaultVizShown);
 	filterDisplay.drawDropdown();
 	highlightDisplay.drawDropdown();
 	document.title = filename;

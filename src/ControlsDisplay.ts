@@ -11,7 +11,12 @@ export class ControlsDisplay
 
     charts = ['overallDist', 'duplicateCount', 'replicates', 'nGram', 'benfordDist'];
     chartNames = ['Value Distribution', 'Frequent Values', 'Replicates', 'N Grams', 'Leading Digit Frequency'];
-    chartsShown = [true, false, false, false, false];
+    
+    private _chartsShown : boolean[];
+    public get chartsShown() : boolean[] {
+        return this._chartsShown;
+    }
+    
     chartIndex : number = 0;
 
     public constructor(
@@ -53,8 +58,9 @@ export class ControlsDisplay
         return this._data;
     }
 
-    public SetData(data: TabularData) : void {
+    public SetData(data: TabularData, chartsShown: boolean[]) : void {
         this._data = data;
+        this._chartsShown = chartsShown;
         this.updateChartVisibility();
     }
 
@@ -221,7 +227,7 @@ export class ControlsDisplay
 
     private updateTable() {
         let tableDisplay = new TableDisplay();
-        tableDisplay.SetData(this._data);
+        tableDisplay.SetData(this._data, this.chartsShown);
     }
     
 
