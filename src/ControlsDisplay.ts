@@ -226,8 +226,9 @@ export class ControlsDisplay
     }
 
     private updateTable() {
-        let tableDisplay = new TableDisplay();
-        tableDisplay.SetData(this._data, this.chartsShown);
+        // let tableDisplay = new TableDisplay();
+        // tableDisplay.SetData(this._data, this.chartsShown);
+        document.dispatchEvent(new CustomEvent('drawVizRows', {detail: {data: this.data}}));
     }
     
 
