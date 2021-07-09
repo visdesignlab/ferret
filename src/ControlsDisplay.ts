@@ -3,8 +3,6 @@ import { TabularData } from "./TabularData";
 import { TableDisplay } from "./TableDisplay";
 import { Column } from "./Column";
 import { DuplicateCountType } from "./lib/constants/filter";
-import { FilterPicker } from "./components/filter-picker";
-import { range } from "lodash";
  
 export class ControlsDisplay
 {
@@ -226,8 +224,6 @@ export class ControlsDisplay
     }
 
     private updateTable() {
-        // let tableDisplay = new TableDisplay();
-        // tableDisplay.SetData(this._data, this.chartsShown);
         document.dispatchEvent(new CustomEvent('drawVizRows', {detail: {data: this.data}}));
     }
     
@@ -301,38 +297,6 @@ export class ControlsDisplay
         d3.selectAll('.item-option-container')
             .data(this.chartsShown)
             .classed('noDisp', d => !d);
-    }
-
-    private toggleChartVisibility(e: any, chartName: string): void {
-        let tableDisplay = new TableDisplay();
-        let eventTarget = e.target;
-        if(eventTarget.classList.contains("shown")) {
-            eventTarget.classList.remove("shown");
-            eventTarget.classList.add("hidden");
-            eventTarget.style.backgroundColor = "#eeeeee"; 
-            tableDisplay.hideVizRows(chartName, this._data);
-        }
-
-        else if(eventTarget.classList.contains("hidden")) {
-            eventTarget.classList.remove("hidden");
-            eventTarget.classList.add("shown");
-            tableDisplay.showVizRows(chartName, this._data);
-            switch(chartName) {
-                case "benfordDist": 
-                        eventTarget.style.backgroundColor = "#4db6ac"; 
-                        break;
-                case "duplicateCount":
-                        eventTarget.style.backgroundColor = "#e57373"; 
-                        break;
-                case "overallDist":
-                        eventTarget.style.backgroundColor = "#ffb726"; 
-                        break;
-                case "nGram":
-                        eventTarget.style.backgroundColor = "#ff8f00"; 
-                        break;
-            }
-        }
-
     }
 
 }

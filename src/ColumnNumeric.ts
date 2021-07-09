@@ -152,9 +152,9 @@ export class ColumnNumeric extends Column<number>
             let valString = val.toString();
             if(valString.length < n || (lsd && valString.indexOf('.') == -1)) continue;
 
+            valString = lsd ? valString.substr(valString.indexOf('.')) : valString;
             for(let i = 0; i < valString.length; i++) {
                 let currentCount = 0;
-                valString = (lsd) ? valString.substr(valString.indexOf('.')) : valString;
                 let nGram = valString.substr(i, n);
                 nGram = nGram.indexOf('.') > -1 ? valString.substr(i, n+1) : nGram;  // n gram does not count decimal symbol.
                 if((nGram.indexOf('.') > -1 && nGram.length < n+1) || (nGram.indexOf('.') == -1 && nGram.length < n)) continue;
