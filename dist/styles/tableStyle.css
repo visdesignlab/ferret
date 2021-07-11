@@ -1,7 +1,7 @@
 .vizTable
 {   
     table-layout:fixed;
-    margin-top: 10px;
+    /* margin-top: 10px; */
     white-space: nowrap;
     border-collapse: collapse;
 }
@@ -24,7 +24,8 @@ th {
     flex: 1 0 auto;
     position: relative;
     margin-top: 8px;
-    border: solid #d0d0d0 1px;
+    /* border: solid #d0d0d0 1px; */
+    overflow: scroll;
 }
 
 .lineupContainerOuter {
@@ -33,9 +34,10 @@ th {
     background: white;
     flex: 1 0 auto;
     position: relative;
-    margin-top: 8px;
+    /* margin-top: 8px; */
     border: solid #d0d0d0 1px;
     min-height: 50vh;
+    border-top: 0px;
 }
 
 .lineupContainer {
