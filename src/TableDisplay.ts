@@ -12,6 +12,7 @@ import { ControlsDisplay } from "./ControlsDisplay";
 import { FilterPicker } from "./components/filter-picker";
 import { ItemTail } from "./components/item-tail";
 import * as $ from 'jquery';
+import { ColumnBuilder } from "lineupjs";
 
 export class TableDisplay extends EventTarget
 {
@@ -554,13 +555,25 @@ export class TableDisplay extends EventTarget
         console.log(rowFirstData);
         const builder = LineUpJS.builder(rowFirstData);
 
-
-        // manually define columns
         for (let i = 0; i < data.columnList.length; i++)
         {
             const key = i.toString();
-            const label = data.columnList[i].id;
-            builder.column(LineUpJS.buildStringColumn(key).label(label))
+            const column = data.columnList[i];
+            const label = column.id;
+            let columnBuilder: ColumnBuilder;
+            // if (column.type === 'Number')
+            // {
+            //     columnBuilder = LineUpJS.buildNumberColumn(key);
+            // }
+            if (column.type === 'Categorical')
+            {
+                columnBuilder = LineUpJS.buildCategoricalColumn(key);
+            }
+            else
+            {
+                columnBuilder = LineUpJS.buildStringColumn(key);
+            }
+            builder.column(columnBuilder.label(label))
         }
         // builder
         //     .column(LineUpJS.buildStringColumn('vizLinkHtml').label('Viz Link').width(100).html())
@@ -582,6 +595,7 @@ export class TableDisplay extends EventTarget
         builder.disableAdvancedModelFeatures()
         const lineup = builder.build(lineupContainer);
         
+
         // let rowSelect = d3.select(this._container).select('tbody')
         //     .selectAll('.dataRow')
         //     .data(indices)
