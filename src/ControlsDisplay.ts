@@ -20,13 +20,16 @@ export class ControlsDisplay
     public constructor(
         toolbarContainer: HTMLElement,
         controlsContainer: HTMLElement,
-        tableContainer: HTMLElement,
-        descriptionContainer: HTMLElement)
+        descriptionContainer: HTMLElement,
+        vizTableContainer: HTMLElement,
+        dataTableContainer: HTMLElement
+        )
     {
         this._toolbarContainer = toolbarContainer;
         this._controlsContainer = controlsContainer;
-        this._tableContainer = tableContainer;
         this._descriptionContainer = descriptionContainer;
+        this._vizTableContainer = vizTableContainer;
+        this._dataTableContainer = dataTableContainer;
         this._show = false;
     }
 
@@ -41,10 +44,15 @@ export class ControlsDisplay
         return this._controlsContainer;
     }
 
-    private _tableContainer : HTMLElement;
-    public get tableContainer() : HTMLElement {
-        return this._tableContainer;
+    private _vizTableContainer : HTMLElement;
+    public get vizTableContainer() : HTMLElement {
+        return this._vizTableContainer;
     }
+    
+    private _dataTableContainer : HTMLElement;
+    public get dataTableContainer() : HTMLElement {
+        return this._dataTableContainer;
+    }    
 
     private _descriptionContainer : HTMLElement;
     public get descriptionContainer() : HTMLElement {
@@ -141,8 +149,9 @@ export class ControlsDisplay
         const padding = 10;
         this._controlsContainer.style.width = `${settingsContainerWidth}px`;
         this._controlsContainer.style.borderWidth = '1px';
-        this._tableContainer.style.marginLeft = `${settingsContainerWidth + padding}px`;
         this._descriptionContainer.style.marginLeft = `${settingsContainerWidth + padding}px`;
+        this._vizTableContainer.style.marginLeft = `${settingsContainerWidth + padding}px`;
+        this._dataTableContainer.style.marginLeft = `${settingsContainerWidth + padding}px`;
         document.getElementById("settingsButton").classList.add("selected");
         this._show = true;
     }
@@ -152,8 +161,9 @@ export class ControlsDisplay
         const padding = 10;
         this._controlsContainer.style.width = "0px";
         this._controlsContainer.style.borderWidth = '0px';
-        this._tableContainer.style.marginLeft = `${padding}px`;
         this._descriptionContainer.style.marginLeft = `${padding}px`;
+        this._vizTableContainer.style.marginLeft = `${padding}px`;
+        this._dataTableContainer.style.marginLeft = `${padding}px`;
         document.getElementById("settingsButton").classList.remove("selected");
         this._show = false;
     }

@@ -1,4 +1,4 @@
-.dataTable
+.vizTable
 {   
     table-layout:fixed;
     margin-top: 10px;
@@ -21,6 +21,29 @@ th {
     transition: 0.5s;
     margin-left: 0px;
     background: white;
+    flex: 1 0 auto;
+    position: relative;
+    margin-top: 8px;
+    border: solid #d0d0d0 1px;
+}
+
+.lineupContainerOuter {
+    transition: 0.5s;
+    /* margin-left: 0px; */
+    background: white;
+    flex: 1 0 auto;
+    position: relative;
+    margin-top: 8px;
+    border: solid #d0d0d0 1px;
+    min-height: 50vh;
+}
+
+.lineupContainer {
+    position: absolute !important;
+    left: 5px;
+    right: 5px;
+    top: 5px;
+    bottom: 5px;
 }
 
 .columnType {

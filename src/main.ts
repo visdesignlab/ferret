@@ -6,18 +6,20 @@ import { ControlsDisplay } from './ControlsDisplay';
 import { FilterDisplay } from './FilterDisplay';
 import { HighlightDisplay } from './HighlightDisplay';
 
-let tableContainer = document.getElementById('tableContainer');
+// let tableContainer = document.getElementById('tableContainer');
+let vizTableContainer = document.getElementById('tableContainer');
+let dataTableContainer = document.getElementById('lineupContainerOuter');
 let tableDisplay = new TableDisplay();
 let filterDisplay = new FilterDisplay();
 let highlightDisplay = new HighlightDisplay();
-tableDisplay.SetContainer(tableContainer);
+tableDisplay.SetContainer(vizTableContainer);
 let outerContainer = document.getElementById('outerContainer');
 let uploadOnlyContainerOuter = document.getElementById('uploadOnlyContainerOuter');
 let uploadOnlyContainerInner = document.getElementById('uploadOnlyContainerInner');
 let toolbarContainer = document.getElementById('toolbar');
 let controlsContainer = document.getElementById('controlsContainer');
 let descriptionContainer = document.getElementById('description');
-let controlsDisplay = new ControlsDisplay(toolbarContainer, controlsContainer, tableContainer, descriptionContainer);
+let controlsDisplay = new ControlsDisplay(toolbarContainer, controlsContainer, descriptionContainer, vizTableContainer, dataTableContainer);
 filterDisplay.SetContainer(toolbarContainer);
 highlightDisplay.SetContainer(toolbarContainer);
 

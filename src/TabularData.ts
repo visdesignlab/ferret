@@ -41,8 +41,24 @@ export class TabularData
         return this._rowLength;
     }
 
-    public SetRowLength(rowLength: number) : void {
-        this._rowLength = rowLength;
+    public getRowList() : Record<string, (string | number)>[]
+    {
+        const rowList: Record<string, (string | number)>[] = [];
+        for (let i = 0; i < this.rowLength; i++)
+        {
+            rowList.push(this.getRowRecord(i));
+        }
+        return rowList;
+    }
+
+    public getRowRecord(index: number): Record<string, (string | number)>
+    {
+        let rowRecord: Record<string, (string | number)> = {};
+        for (let i = 0; i < this.columnList.length; i++)
+        {
+            rowRecord[i.toString()] = this.columnList[i].values[index];
+        }
+        return rowRecord;
     }
 
     public getRow(index: number): (string | number)[]

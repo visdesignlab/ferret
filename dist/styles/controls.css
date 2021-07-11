@@ -10,7 +10,8 @@
     overflow-x: hidden;
     transition: 0.5s;
     background: #fff;
-    margin-top: 5px;
+    /* margin-top: 5px; */
+    margin-top: 39px;
     margin-left: 4px;
     padding-top: 10px;
 }

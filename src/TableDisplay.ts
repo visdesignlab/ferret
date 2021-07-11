@@ -1,6 +1,7 @@
 import { TabularData } from "./TabularData";
 import * as d3 from "d3";
 import * as uuid from 'uuid';
+import * as LineUpJS from 'lineupjs';
 import vegaEmbed, { VisualizationSpec } from 'vega-embed';
 import { ColumnNumeric } from "./ColumnNumeric";
 import * as filterNames from "./lib/constants/filter";
@@ -80,7 +81,7 @@ export class TableDisplay extends EventTarget
     }
 
     public changeColumnVisibilty(index: number, visible: Boolean) {
-        let table = document.getElementById('dataTable');
+        let table = document.getElementById('vizTable');
         let rows = table.getElementsByTagName('tr');
 
         for (let row = 0; row < rows.length; row++) {
@@ -548,22 +549,54 @@ export class TableDisplay extends EventTarget
     {
         ControlsDisplay.updateCurrentSummary(data);
         let indices: number[] = [...Array(data.rowLength).keys()];
-        let rowSelect = d3.select(this._container).select('tbody')
-            .selectAll('.dataRow')
-            .data(indices)
-            .join('tr')
-            .attr('id', (d) => "dataRow" + (d+1))
-            .classed('dataRow', true);
+        
+        const rowFirstData = data.getRowList();
+        console.log(rowFirstData);
+        const builder = LineUpJS.builder(rowFirstData);
 
-        rowSelect.html(null)
-            .append('th')
-            .text(d => d + 1);
+
+        // manually define columns
+        for (let i = 0; i < data.columnList.length; i++)
+        {
+            const key = i.toString();
+            const label = data.columnList[i].id;
+            builder.column(LineUpJS.buildStringColumn(key).label(label))
+        }
+        // builder
+        //     .column(LineUpJS.buildStringColumn('vizLinkHtml').label('Viz Link').width(100).html())
+        //     .column(LineUpJS.buildStringColumn('displayName').label('Name').width(260))
+        //     .column(LineUpJS.buildCategoricalColumn('author', data.authorList).width(100))
+        //     .column(LineUpJS.buildStringColumn('folder').label('Folder Path').width(350))
+        //     .column(LineUpJS.buildStringColumn('driveLinkHtml').label('Google Drive Link').width(120).html())
+        //     .column(LineUpJS.buildNumberColumn('fileSize', data.sizeRange).label('size (mb)').width(120))
+        //     .column(LineUpJS.buildDateColumn('modifiedDate').label('Last Modified Date').width(120).format("%b %d, %Y",'%Y-%m-%d'));
+
+        // const ranking = LineUpJS.buildRanking()
+        //     .supportTypes()
+        //     .allColumns()
+        //     .groupBy('author')
+        //     .sortBy('modifiedDate', 'desc');
+
+        // builder.ranking(ranking);
+        const lineupContainer = document.getElementById('lineupContainer');
+        const lineup = builder.buildTaggle(lineupContainer);
+        
+        // let rowSelect = d3.select(this._container).select('tbody')
+        //     .selectAll('.dataRow')
+        //     .data(indices)
+        //     .join('tr')
+        //     .attr('id', (d) => "dataRow" + (d+1))
+        //     .classed('dataRow', true);
+
+        // rowSelect.html(null)
+        //     .append('th')
+        //     .text(d => d + 1);
              
-        rowSelect.selectAll('td')
-            .data(d => data.getRow(d))
-            .join('td')
-            .attr('id', (d, i) => "col" + (i+1))
-            .text(d => d);
+        // rowSelect.selectAll('td')
+        //     .data(d => data.getRow(d))
+        //     .join('td')
+        //     .attr('id', (d, i) => "col" + (i+1))
+        //     .text(d => d);
     }
 
     private getSelectedData(selectedIndices: Array<number>, dataValues: Array<any>, prop: string) : Array<number> {
