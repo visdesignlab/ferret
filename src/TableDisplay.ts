@@ -579,6 +579,7 @@ export class TableDisplay extends EventTarget
 
         // builder.ranking(ranking);
         const lineupContainer = document.getElementById('lineupContainer');
+        builder.disableAdvancedModelFeatures()
         const lineup = builder.buildTaggle(lineupContainer);
         
         // let rowSelect = d3.select(this._container).select('tbody')
