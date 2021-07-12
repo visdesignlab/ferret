@@ -52,6 +52,11 @@ export class TableDisplay extends EventTarget
         return this._data;
     }
 
+    private _lineup : LineUpJS.LineUp;
+    public get lineup() : LineUpJS.LineUp {
+        return this._lineup;
+    }    
+
     public SetData(data: TabularData, defaultVizShown: boolean[]): void
     {
         this._data = data;
@@ -561,20 +566,21 @@ export class TableDisplay extends EventTarget
             const column = data.columnList[i];
             const label = column.id;
             let columnBuilder: ColumnBuilder;
-            // if (column.type === 'Number')
-            // {
-            //     columnBuilder = LineUpJS.buildNumberColumn(key);
-            // }
-            if (column.type === 'Categorical')
+            if (column.type === 'Number')
+            {
+                columnBuilder = LineUpJS.buildNumberColumn(key);
+                columnBuilder.renderer('', '', 'ValueDistRenderer');
+            }
+            else if (column.type === 'Categorical')
             {
                 columnBuilder = LineUpJS.buildCategoricalColumn(key);
+                columnBuilder.renderer('', '', 'ValueDistRenderer');
             }
             else
             {
                 columnBuilder = LineUpJS.buildStringColumn(key);
             }
-            columnBuilder.renderer('', '', 'ValueDistRenderer');
-            builder.column(columnBuilder.label(label));
+            builder.column(columnBuilder.label(label).width(140));
         }
         // builder
         //     .column(LineUpJS.buildStringColumn('vizLinkHtml').label('Viz Link').width(100).html())
@@ -595,11 +601,9 @@ export class TableDisplay extends EventTarget
         const lineupContainer = document.getElementById('lineupContainer');
 
         builder.disableAdvancedModelFeatures()
-        builder.sidePanel(true, true)
+        builder.sidePanel(false, true)
         builder.registerRenderer('ValueDistRenderer', new ValueDistRenderer());
-
-        const lineup = builder.build(lineupContainer);
-        
+        this._lineup = builder.build(lineupContainer);
 
 
         // let rowSelect = d3.select(this._container).select('tbody')

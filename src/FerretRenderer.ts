@@ -1,142 +1,120 @@
-import { Column, IDataRow, IImposer, IOrderedGroup, ISetColumn, isSetColumn } from 'lineupjs';
-// import { CANVAS_HEIGHT, cssClass, UPSET } from 'lineupjs';
+import { Column, IImposer, INumberColumn, ValueColumn } from 'lineupjs';
 import type {
-  ICellRendererFactory,
-  IRenderContext,
-  ISummaryRenderer,
-  IGroupCellRenderer,
-  ICellRenderer,
+    ICellRendererFactory,
+    IRenderContext,
+    ISummaryRenderer
 } from 'lineupjs';
-import { renderMissingCanvas, renderMissingDOM } from 'lineupjs';
+import { TabularData } from './TabularData';
+import { ColumnNumeric } from './ColumnNumeric';
+import { ColumnCategorical } from './ColumnCategorical';
+import { chartType } from './lib/constants/filter';
+import * as filterNames from "./lib/constants/filter";
+import vegaEmbed, { VisualizationSpec } from 'vega-embed';
+export default class ValueDistRenderer implements ICellRendererFactory
+{
+    readonly title: string = 'Value Distribution';
 
-export default class ValueDistRenderer implements ICellRendererFactory {
-  readonly title: string = 'Value Distribution';
-
-  canRender(col: Column) {
-    return true;
-  }
-
-//   private static calculateSetPath(setData: boolean[], cellDimension: number) {
-//     const catindexes: number[] = [];
-//     setData.forEach((d: boolean, i: number) => (d ? catindexes.push(i) : -1));
-
-//     const left = catindexes[0] * cellDimension + cellDimension / 2;
-//     const right = catindexes[catindexes.length - 1] * cellDimension + cellDimension / 2;
-
-//     return { left, right };
-//   }
-
-  private static createDOMContext(col: ISetColumn) {
-    const categories = col.categories;
-    let templateRows = '';
-    for (const cat of categories) {
-      templateRows += `<div class="test" title="${cat.label}"></div>`;
+    public canRender(col: Column)
+    {
+        return col.desc.type === 'number' || col.desc.type === 'categorical';
     }
-    return {
-      template: `<div><div class="test"></div>${templateRows}</div>`,
-      render: (n: HTMLElement, value: boolean[]) => {
-        Array.from(n.children)
-          .slice(1)
-          .forEach((d, i) => {
-            const v = value[i];
-            // d.classList.toggle(cssClass('enabled'), v);
-          });
 
-        const line = n.firstElementChild as HTMLElement;
-        const left = value.findIndex((d) => d);
-        const right = value.length - 1 - value.reverse().findIndex((d) => d);
+    public createSummary
+    (
+        col: ValueColumn<string | number>,
+        context: IRenderContext,
+        interactive: boolean,
+        imposer?: IImposer
+    ): ISummaryRenderer
+    {
+        return {
+            template: '<div class="vizContainer"></div>',
+            update: (n: HTMLElement) =>
+            {
+                console.log('update');
+                console.log(n);
+                // context.provider.data
+                this.drawOverallDist(
+                    n,
+                    col,
+                    context,
+                    interactive,
+                    'newOverallDist-',
+                    col.id
+                    )
+            },
+        };
+    }
 
-        if (left < 0 || left === right) {
-          line.style.display = 'none';
-          return;
+    private async drawOverallDist
+    (
+        container: HTMLElement,
+        column: ValueColumn<string | number>,
+        context: IRenderContext,
+        interactive: boolean,
+        chartKey: string,
+        colKey: string
+    ): Promise<void>
+    {
+        let dataValues : Array<any> = [];
+        let selectionName = filterNames.VALUE_DIST_SELECTION;
+
+        const N = context.provider.getTotalNumberOfRows();
+        for (let i = 0; i < N; i++)
+        {
+            const dataRow = await context.provider.getRow(i);
+            if (column.filter(dataRow))
+            {
+                // todo - this filter function is column-wise, not global
+                const dataValue = column.getRaw(dataRow);
+                dataValues.push({'value': dataValue});
+            }
         }
-        line.style.display = null;
-        line.style.left = `${Math.round((100 * (left + 0.5)) / value.length)}%`;
-        line.style.width = `${Math.round((100 * (right - left)) / value.length)}%`;
-      },
-    };
-  }
 
-//   create(col: ISetColumn, context: IRenderContext): ICellRenderer {
-//     const { template, render } = ValueDistRenderer.createDOMContext(col);
-//     const width = context.colWidth(col);
-//     const cellDimension = width / col.categories.length;
+        const elementID = chartKey + 'col-' + colKey;
+        container.id = elementID;
+        // type: 'string' | 'number' | 'categorical'
+        const isNumeric = column.desc.type === 'number';
+        const xAxisType = isNumeric ? 'quantitative' : 'nominal';
 
-//     return {
-//       template,
-//       update: (n: HTMLElement, d: IDataRow) => {
-//         if (renderMissingDOM(n, col, d)) {
-//           return;
-//         }
-//         render(n, col.getValues(d));
-//       },
-//       render: (ctx: CanvasRenderingContext2D, d: IDataRow) => {
-//         if (renderMissingCanvas(ctx, col, d, width)) {
-//           return;
-//         }
-//         // Circle
-//         const data = col.getValues(d);
 
-//         const hasTrueValues = data.some((d) => d); //some values are true?
-
-//         ctx.save();
-//         ctx.fillStyle = 'green';
-//         ctx.strokeStyle = 'blue';
-//         if (hasTrueValues) {
-//           const { left, right } = ValueDistRenderer.calculateSetPath(data, cellDimension);
-//           ctx.beginPath();
-//           ctx.moveTo(left, 4 / 2);
-//           ctx.lineTo(right, 4 / 2);
-//           ctx.stroke();
-//         }
-
-//         data.forEach((d, j) => {
-//           const posX = j * cellDimension;
-//           ctx.beginPath();
-//           ctx.globalAlpha = d ? 1 : 0;
-//           ctx.fillRect(posX, 0, cellDimension, 4);
-//           ctx.fill();
-//         });
-
-//         ctx.restore();
-//       },
-//     };
-//   }
-
-//   createGroup(col: ISetColumn, context: IRenderContext): IGroupCellRenderer {
-//     const { template, render } = ValueDistRenderer.createDOMContext(col);
-//     return {
-//       template,
-//       update: (n: HTMLElement, group: IOrderedGroup) => {
-//         return context.tasks.groupCategoricalStats(col, group).then((r) => {
-//           if (typeof r === 'symbol') {
-//             return;
-//           }
-//           render(
-//             n,
-//             r.group.hist.map((d) => d.count > 0)
-//           );
-//         });
-//       },
-//     };
-//   }
-
-  createSummary(col: Column, context: IRenderContext, interactive: boolean, imposer?: IImposer): ISummaryRenderer {
-    // const { template, render } = ValueDistRenderer.createDOMContext(col);
-    return {
-      template: '<b>test</b>',
-      update: (n: HTMLElement) => {
-        //   n.innerHTML = '<b>bold</b> Test';
-        // return context.tasks.summaryCategoricalStats(col).then((r) => {
-        //   if (typeof r === 'symbol') {
-        //     return;
-        //   }
-        //   render(
-        //     n,
-        //     r.summary.hist.map((d) => d.count > 0)
-        //   );
-        // });
-      },
-    };
-  }
+        var yourVlSpec: VisualizationSpec = {
+            width: 100,
+            height: 50,
+            $schema: 'https://vega.github.io/schema/vega-lite/v4.json',
+            description: 'Overall Distribution',
+            data: {
+              values: dataValues
+            },
+            mark: 'bar',
+            selection: {
+                "VALUE_DIST_SELECTION": {
+                    type: "multi",
+                    clear: false
+                },
+            },
+            encoding: {
+              x: {field: 'value', type: xAxisType, bin: isNumeric, title: null},
+              color: {
+                  value: "#ffb726"
+              },
+              y: {field: 'value', aggregate: 'count', type: 'quantitative', title: null},
+              opacity: {
+                condition: {
+                    selection: selectionName, 
+                    value: 1
+                },
+                value: 1
+              },
+            }   
+          };
+          vegaEmbed('#' + elementID, yourVlSpec, { actions: false }
+          ).then(result => {
+            //   result.view.addSignalListener(selectionName, (name, value) => {
+            //     let selectedData : Array<number> = this.getSelectedData(value._vgsid_, dataValues, "value");
+            //     let filter: Filter = new Filter(uuid.v4(), column, selectionName, selectedData, 'LOCAL') 
+            //     document.dispatchEvent(new CustomEvent('addHighlight', {detail: {filter: filter}}));
+            //   });
+          });
+    }
 }

@@ -29,7 +29,7 @@ export class ColumnFactory
                 col = new ColumnCategorical(valList as string[]);
                 break;
             case "Number":
-                col = new ColumnNumeric(valList as number[]);
+                col = new ColumnNumeric(valList.map(Number));
                 break;
             case "Label":  
                 col = new ColumnLabel(valList as string[]);

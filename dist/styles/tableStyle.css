@@ -123,3 +123,10 @@ td
     -ms-overflow-style: none;  /* IE and Edge */
     scrollbar-width: none;  /* Firefox */
 }
+
+.vizContainer {
+    height: auto !important;
+    display: flex !important;
+    flex-direction: column;
+    align-items: center;
+}
