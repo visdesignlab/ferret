@@ -13,7 +13,7 @@ import { FilterPicker } from "./components/filter-picker";
 import { ItemTail } from "./components/item-tail";
 import * as $ from 'jquery';
 import { ColumnBuilder } from "lineupjs";
-
+import ValueDistRenderer from "./FerretRenderer"
 export class TableDisplay extends EventTarget
 {
     charts = ['overallDist', 'duplicateCount', 'replicates', 'nGram', 'benfordDist'];
@@ -573,7 +573,8 @@ export class TableDisplay extends EventTarget
             {
                 columnBuilder = LineUpJS.buildStringColumn(key);
             }
-            builder.column(columnBuilder.label(label))
+            columnBuilder.renderer('', '', 'ValueDistRenderer');
+            builder.column(columnBuilder.label(label));
         }
         // builder
         //     .column(LineUpJS.buildStringColumn('vizLinkHtml').label('Viz Link').width(100).html())
@@ -592,9 +593,14 @@ export class TableDisplay extends EventTarget
 
         // builder.ranking(ranking);
         const lineupContainer = document.getElementById('lineupContainer');
+
         builder.disableAdvancedModelFeatures()
+        builder.sidePanel(true, true)
+        builder.registerRenderer('ValueDistRenderer', new ValueDistRenderer());
+
         const lineup = builder.build(lineupContainer);
         
+
 
         // let rowSelect = d3.select(this._container).select('tbody')
         //     .selectAll('.dataRow')
