@@ -569,12 +569,12 @@ export class TableDisplay extends EventTarget
             if (column.type === 'Number')
             {
                 columnBuilder = LineUpJS.buildNumberColumn(key);
-                columnBuilder.renderer('', '', 'ValueDistRenderer');
+                columnBuilder.renderer('brightness', '', 'ValueDistRenderer');
             }
             else if (column.type === 'Categorical')
             {
                 columnBuilder = LineUpJS.buildCategoricalColumn(key);
-                columnBuilder.renderer('', '', 'ValueDistRenderer');
+                columnBuilder.renderer('string', '', '');
             }
             else
             {

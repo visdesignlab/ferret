@@ -34,7 +34,7 @@ th {
     background: white;
     flex: 1 0 auto;
     position: relative;
-    /* margin-top: 8px; */
+    margin-top: 8px;
     border: solid #d0d0d0 1px;
     min-height: 50vh;
     border-top: 0px;
