@@ -7,9 +7,11 @@ import type {
 import { TabularData } from './TabularData';
 import { ColumnNumeric } from './ColumnNumeric';
 import { ColumnCategorical } from './ColumnCategorical';
-import { chartType } from './lib/constants/filter';
+import { ChartCalculations } from './components/ChartCalculations';
+import { chartType, DuplicateCountType } from './lib/constants/filter';
 import * as filterNames from "./lib/constants/filter";
 import vegaEmbed, { VisualizationSpec } from 'vega-embed';
+import { ItemTail } from './components/item-tail';
 export default class ValueDistRenderer implements ICellRendererFactory
 {
     readonly title: string = 'Value Distribution';
@@ -21,7 +23,7 @@ export default class ValueDistRenderer implements ICellRendererFactory
 
     public createSummary
     (
-        col: ValueColumn<string | number>,
+        col: ValueColumn<number>,
         context: IRenderContext,
         interactive: boolean,
         imposer?: IImposer
@@ -29,19 +31,30 @@ export default class ValueDistRenderer implements ICellRendererFactory
     {
         return {
             template: '<div class="vizContainer"></div>',
-            update: (n: HTMLElement) =>
+            update: (container: HTMLElement) =>
             {
                 console.log('update');
-                console.log(n);
+                container.innerHTML = null;
+                // console.log(n);
                 // context.provider.data
+                let vizContainer = document.createElement('div');
+                container.appendChild(vizContainer);
                 this.drawOverallDist(
-                    n,
+                    vizContainer,
                     col,
                     context,
                     interactive,
                     'newOverallDist-',
                     col.id
                     )
+
+                vizContainer = document.createElement('div');
+                container.appendChild(vizContainer);
+                this.drawLeadingDigitDist(vizContainer, col, context, 'newBenfordDist-', col.id);
+                // this.drawFrequentDuplicates(data, colNum, 'duplicateCount-', i, dupCountType);
+                // this.drawNGramFrequency(data, colNum, 'nGram-', i, nGram, lsd, nGramCountType);
+                // this.drawReplicates(data, colNum, 'replicates-', i, repCountType); 
+
             },
         };
     }
@@ -49,7 +62,7 @@ export default class ValueDistRenderer implements ICellRendererFactory
     private async drawOverallDist
     (
         container: HTMLElement,
-        column: ValueColumn<string | number>,
+        column: ValueColumn<number>,
         context: IRenderContext,
         interactive: boolean,
         chartKey: string,
@@ -71,7 +84,7 @@ export default class ValueDistRenderer implements ICellRendererFactory
             }
         }
 
-        const elementID = chartKey + 'col-' + colKey;
+        const elementID = chartKey + colKey;
         container.id = elementID;
         // type: 'string' | 'number' | 'categorical'
         const isNumeric = column.desc.type === 'number';
@@ -117,4 +130,350 @@ export default class ValueDistRenderer implements ICellRendererFactory
             //   });
           });
     }
+
+    private async drawLeadingDigitDist(
+        container: HTMLElement,
+        column: ValueColumn<number>,
+        context: IRenderContext,
+        chartKey: string,
+        colKey: string
+    ): Promise<void>
+    {
+        let leadDictFreq = await ChartCalculations.GetLeadingDigitFreqs(column, context);
+        let selectionName = filterNames.LEADING_DIGIT_FREQ_SELECTION;
+        let dataValues : Array<any> = [];
+        for (let [digit, freq] of leadDictFreq)
+        {
+            dataValues.push({
+                'digit': digit,
+                'frequency': freq
+            });
+        }
+
+        const elementID = chartKey + colKey;
+        container.id = elementID;
+
+        var yourVlSpec: VisualizationSpec = {
+            width: 100,
+            height: 50,
+            $schema: 'https://vega.github.io/schema/vega-lite/v4.json',
+            description: 'Leading Digit frequencies',
+            data: {
+              values: dataValues
+            },
+            mark: 'bar',
+            selection: {
+                "highlightBar": {
+                    type: "single", 
+                    empty: "none", 
+                    on: "mouseover"
+                },
+                "LEADING_DIGIT_FREQ_SELECTION": {
+                        type: "multi",
+                        clear: "dblclick"
+                }
+            },
+            encoding: {
+              x: {
+                  field: 'digit', 
+                  type: 'ordinal'
+              },
+              y: {field: 'frequency', type: 'quantitative'},
+              color: {
+                value: "#4db6ac"
+              },
+              opacity: {
+                condition: {
+                    selection: 'highlightBar', 
+                    value: 0.7
+                },
+                value: 1
+              },
+            }
+          };
+        
+        vegaEmbed('#' + elementID, yourVlSpec, { actions: false }
+            ).then(result => {
+            //   result.view.addEventListener('mouseover', (event, value) => {
+            //         this.attachFilterPicker(value, selectionName, column, key, dataValues, i, "digit");
+            //     });
+            //   result.view.addEventListener('mouseout', (event, value) => {
+            //         this.removeFilterPicker(value, selectionName, column);
+            //     });
+            //   result.view.addSignalListener(selectionName, (name, value) => {
+            //         this.attachSignalListener(value, dataValues, "digit", column, selectionName);
+            //     });
+          })
+        .catch(console.warn); 
+    }
+    
+    private drawReplicates(data: TabularData, column: ColumnNumeric, key: string, i: number, dupCountType: DuplicateCountType): void
+    {
+        let replicateCount = column.GetReplicates();
+        let dataValues : Array<any> = [];
+        let index = 0;
+        let [maxIndex, itemTail] = this.getItemTail(dupCountType, replicateCount);
+        for (let [frequency, count] of replicateCount)
+        {
+            if (index >= maxIndex)
+                break;
+
+            index++;
+            dataValues.push({
+                'frequency': frequency,
+                'count': count
+            });
+        }
+
+        var yourVlSpec: VisualizationSpec = {
+            width: 100,
+            ...(dupCountType === 'TOP' && { height: 50 }),
+            $schema: 'https://vega.github.io/schema/vega-lite/v4.json',
+            description: 'Replicate Count',
+            data: {
+              values: dataValues
+            },
+            encoding: {
+                x: {field: "count", type: "quantitative"},
+                color: {
+                    value: "#0277BD"
+                },
+                y: {field: "frequency", type: "nominal", sort: '-y'},
+                tooltip: [
+                    {field: "frequency", type: "nominal", title: "Repetitions:"},
+                    {field: "count", type: "quantitative", title: "Number of values repeated:"}
+                ]
+              },
+              layer: [
+                {
+                    mark: 'bar',
+                },
+                {
+                    mark:
+                    {
+                        type: 'text',
+                        align: 'left',
+                        baseline: 'middle',
+                        dx: 3
+                    },
+                    encoding:
+                    {
+                        text: {field: "count", type: "quantitative"}
+                    }
+                }
+            ],
+            view: {stroke: null}
+        };
+        
+        this.attachItemTail(itemTail, column, key, i);
+  
+        vegaEmbed('#' + key + 'chart-' + i, yourVlSpec, { actions: false })
+        .catch(console.warn); 
+        
+    }
+    
+    private drawFrequentDuplicates(data: TabularData, column: ColumnNumeric, key: string, i: number, dupCountType: DuplicateCountType): void
+    {
+        let dupCounts = column.GetDuplicateCounts();
+        let selectionName = filterNames.FREQUENT_VALUES_SELECTION;
+        let dataValues : Array<any> = [];
+        let index = 0;
+        let multiFrequentValues : Array<any> = [];
+        for (let [val, count] of dupCounts) {
+            if (count === 1) continue;
+            multiFrequentValues.push([val, count]);
+        }
+
+        let [maxIndex, itemTail] = this.getItemTail(dupCountType, multiFrequentValues);
+
+        for(let [val, count] of multiFrequentValues) {
+            if (index >= maxIndex) break;
+            index++;
+            dataValues.push({
+                'value': val,
+                'count': count
+            });
+        }
+
+        var yourVlSpec: VisualizationSpec = {
+            width: 100,
+            ...(dupCountType === 'TOP' && { height: 50 }),
+            $schema: 'https://vega.github.io/schema/vega-lite/v4.json',
+            description: 'Duplicate Counts',
+            data: {
+              values: dataValues
+            },
+            encoding: {
+                y: {field: 'value', type: 'ordinal', sort: '-x', axis: {labelBound: 20}},
+                x: {field: 'count', type: 'quantitative'},
+                color: {
+                    value: "#e57373"
+                },
+                opacity: {
+                    condition: {
+                        selection: selectionName, 
+                        value: 1
+                    },
+                    value: 1
+                },
+            },
+            layer: [
+                {
+                    mark: 'bar',
+                    selection: {
+                        "FREQUENT_VALUES_SELECTION": {
+                            type: "multi",
+                            clear: "dblclick"
+                        },
+                    }
+                },
+                {
+                    mark:
+                    {
+                        type: 'text',
+                        align: 'left',
+                        baseline: 'middle',
+                        dx: 3
+                    },
+                    encoding:
+                    {
+                        text: {field: "count", type: "quantitative"}
+                    }
+                }
+            ],
+          };
+          
+          this.attachItemTail(itemTail, column, key, i);
+    
+          vegaEmbed('#' + key + 'chart-' + i, yourVlSpec, { actions: false }
+          ).then(result => {
+            //   result.view.addEventListener('mouseover', (event, value) => {
+            //     this.attachFilterPicker(value, selectionName, column, key, dataValues, i, "value");
+            //      });
+            //   result.view.addEventListener('mouseout', (event, value) => {
+            //     this.removeFilterPicker(value, selectionName, column);
+            //      });
+            //   result.view.addSignalListener(selectionName, (name, value) => {
+            //     this.attachSignalListener(value, dataValues, "value", column, selectionName);
+            //   });
+          });
+
+    }
+
+
+    private drawNGramFrequency(data: TabularData, column: ColumnNumeric, key: string, i: number, n: number, lsd: boolean, dupCountType: DuplicateCountType): void
+    {
+        let nGramFrequency = column.GetNGramFrequency(n, lsd);
+        let dataValues : Array<any> = [];
+        let index = 0;
+        let multiFrequentGrams : Array<any> = [];
+        let selectionName = filterNames.N_GRAM_SELECTION;
+        
+        for (let [val, count] of nGramFrequency) {
+            if (count === 1) continue;
+            multiFrequentGrams.push([val, count]);
+        }
+
+        let [maxIndex, itemTail] = this.getItemTail(dupCountType, multiFrequentGrams);
+
+        for(let [val, count] of multiFrequentGrams) {
+            if (index >= maxIndex) break;
+            index++;
+            dataValues.push({
+                'value': val,
+                'count': count
+            });
+        }
+
+        var yourVlSpec: VisualizationSpec = {
+            width: 100,
+            ...(dupCountType === 'TOP' && { height: 50 }),
+            $schema: 'https://vega.github.io/schema/vega-lite/v4.json',
+            description: 'Duplicate Counts',
+            data: {
+              values: dataValues
+            },
+            encoding: {
+                y: {field: 'value', type: 'ordinal', sort: '-x'},
+                x: {field: 'count', type: 'quantitative'},
+                color: {
+                    value: "#ff8f00"
+                },
+                opacity: {
+                    condition: {
+                        selection: selectionName, 
+                        value: 1
+                    },
+                    value: 1
+                },
+            },
+            layer: [
+                {
+                    mark: 'bar',
+                    selection: {
+                        "N_GRAM_SELECTION": {
+                            type: "multi",
+                            clear: "dblclick"
+                        },
+                    }
+                },
+                {
+                    mark:
+                    {
+                        type: 'text',
+                        align: 'left',
+                        baseline: 'middle',
+                        dx: 3
+                    },
+                    encoding:
+                    {
+                        text: {field: "count", type: "quantitative"}
+                    }
+                }
+            ],
+          };
+
+          this.attachItemTail(itemTail, column, key, i, n, lsd);
+    
+          vegaEmbed('#' + key + 'chart-' + i, yourVlSpec, { actions: false }
+          ).then(result => {
+            // result.view.addEventListener('mouseover', (event, value) => {
+            //     this.attachFilterPicker(value, selectionName, column, key, dataValues, i, "value");
+            //      });
+            //   result.view.addEventListener('mouseout', (event, value) => {
+            //     this.removeFilterPicker(value, selectionName, column);
+            //      });
+            //   result.view.addSignalListener(selectionName, (name, value) => {
+            //     this.attachSignalListener(value, dataValues, "value", column, selectionName);
+            //      });
+          })
+         
+    }
+
+
+    private  getItemTail(dupCountType: DuplicateCountType, data: any) {
+        let maxIndex = (dupCountType === 'ALL') ? data.length : 5;
+        let itemTail = data.length - maxIndex > 0 ? data.length - maxIndex : 0;
+        return [maxIndex, itemTail];
+    }
+
+    private attachItemTail(count: number, column: ColumnNumeric, key: string, i: number, nGram?: number, lsd?: boolean) {
+        let itemTailDiv = document.getElementById(key + 'tail-' + i);
+        let itemTailExist = (itemTailDiv.hasChildNodes()) ? true : false;
+        let text = itemTailExist ? itemTailDiv.firstChild.textContent : null;
+        let itemTailComponent : HTMLElement;
+
+        while(itemTailDiv.firstChild) 
+            itemTailDiv.removeChild(itemTailDiv.firstChild);
+        
+        if(text == null) 
+            itemTailComponent = ItemTail.create(count, key, 'close', column, i, nGram, lsd);
+        else if(text == 'close')
+            itemTailComponent = ItemTail.create(count, key, 'open', column, i, nGram, lsd);
+        else 
+            itemTailComponent = ItemTail.create(count, key, 'close', column, i, nGram, lsd);
+
+        document.getElementById(key + 'tail-' + i).appendChild(itemTailComponent);
+    }
+
 }

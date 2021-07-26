@@ -7,7 +7,7 @@ import { DuplicateCountType } from "./lib/constants/filter";
 export class ControlsDisplay
 {
 
-    charts = ['overallDist', 'duplicateCount', 'replicates', 'nGram', 'benfordDist'];
+    charts = ['newOverallDist', 'newDuplicateCount', 'newReplicates', 'newNGram', 'newBenfordDist'];
     chartNames = ['Value Distribution', 'Frequent Values', 'Replicates', 'N Grams', 'Leading Digit Frequency'];
     
     private _chartsShown : boolean[];
@@ -292,7 +292,7 @@ export class ControlsDisplay
             const visible = this.chartsShown[i];
             for (let j = 0; j < this.data.columnList.length; j++)
             {
-                d3.select(`#${chartKey}-${j}`).classed('noDisp', !visible);
+                d3.select(`#${chartKey}-col${j}`).classed('noDisp', !visible);
             }
         }
 

@@ -652,7 +652,7 @@ export class TableDisplay extends EventTarget
       }
     }
 
-    private  getItemTail(dupCountType: DuplicateCountType, data: any) {
+    private getItemTail(dupCountType: DuplicateCountType, data: any) {
         let maxIndex = (dupCountType === 'ALL') ? data.length : 5;
         let itemTail = data.length - maxIndex > 0 ? data.length - maxIndex : 0;
         return [maxIndex, itemTail];
