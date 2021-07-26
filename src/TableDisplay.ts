@@ -12,7 +12,7 @@ import { ControlsDisplay } from "./ControlsDisplay";
 import { FilterPicker } from "./components/filter-picker";
 import { ItemTail } from "./components/item-tail";
 import * as $ from 'jquery';
-import { ColumnBuilder } from "lineupjs";
+import { ColumnBuilder, ICategory } from "lineupjs";
 import ValueDistRenderer from "./FerretRenderer"
 export class TableDisplay extends EventTarget
 {
@@ -574,7 +574,16 @@ export class TableDisplay extends EventTarget
             }
             else if (column.type === 'Categorical')
             {
-                columnBuilder = LineUpJS.buildCategoricalColumn(key);
+                const categoryList: (string | Partial<ICategory>)[] = [];
+                for (let val of new Set(column.values))
+                {
+                    const category: Partial<ICategory> = {
+                        name: val.toString(),
+                        color: '#C1C1C1'
+                    }
+                    categoryList.push(category);
+                }
+                columnBuilder = LineUpJS.buildCategoricalColumn(key, categoryList);
                 columnBuilder.renderer('string', '', '');
             }
             else
