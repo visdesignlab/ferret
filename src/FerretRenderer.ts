@@ -50,7 +50,8 @@ export default class ValueDistRenderer implements ICellRendererFactory
       
                 vizContainer = document.createElement('div');
                 container.appendChild(vizContainer);
-                // this.drawFrequentDuplicates(vizContainer, col, context, 'newDuplicateCount-', col.id, dupCountType);
+                const dupCountType = 'TOP'; // todo
+                this.drawFrequentDuplicates(vizContainer, col, context, 'newDuplicateCount-', col.id, dupCountType);
                 
                 vizContainer = document.createElement('div');
                 container.appendChild(vizContainer);
@@ -59,7 +60,10 @@ export default class ValueDistRenderer implements ICellRendererFactory
 
                 vizContainer = document.createElement('div');
                 container.appendChild(vizContainer);
-                // this.drawNGramFrequency(data, colNum, 'newNGram-', i, nGram, lsd, nGramCountType);
+                const nGram = 2; // todo
+                const lsd = false; // todo
+                const nGramCountType = 'TOP'; // todo
+                this.drawNGramFrequency(vizContainer, col, context, 'newNGram-', col.id, nGram, lsd, nGramCountType);
 
                 vizContainer = document.createElement('div');
                 container.appendChild(vizContainer);
@@ -292,9 +296,16 @@ export default class ValueDistRenderer implements ICellRendererFactory
         
     }
     
-    private drawFrequentDuplicates(data: TabularData, column: ColumnNumeric, key: string, i: number, dupCountType: DuplicateCountType): void
+    private async drawFrequentDuplicates(
+        container: HTMLElement,
+        column: ValueColumn<number>,
+        context: IRenderContext,
+        chartKey: string,
+        colKey: string,
+        dupCountType: DuplicateCountType): Promise<void>
     {
-        let dupCounts = column.GetDuplicateCounts();
+        // let dupCounts = column.GetDuplicateCounts();
+        let dupCounts = await ChartCalculations.GetDuplicateCounts(column, context);
         let selectionName = filterNames.FREQUENT_VALUES_SELECTION;
         let dataValues : Array<any> = [];
         let index = 0;
@@ -314,6 +325,9 @@ export default class ValueDistRenderer implements ICellRendererFactory
                 'count': count
             });
         }
+
+        const elementID = chartKey + colKey;
+        container.id = elementID;
 
         var yourVlSpec: VisualizationSpec = {
             width: 100,
@@ -365,7 +379,7 @@ export default class ValueDistRenderer implements ICellRendererFactory
           
         //   this.attachItemTail(itemTail, column, key, i);
     
-          vegaEmbed('#' + key + 'chart-' + i, yourVlSpec, { actions: false }
+          vegaEmbed('#' + elementID, yourVlSpec, { actions: false }
           ).then(result => {
             //   result.view.addEventListener('mouseover', (event, value) => {
             //     this.attachFilterPicker(value, selectionName, column, key, dataValues, i, "value");
@@ -381,9 +395,18 @@ export default class ValueDistRenderer implements ICellRendererFactory
     }
 
 
-    private drawNGramFrequency(data: TabularData, column: ColumnNumeric, key: string, i: number, n: number, lsd: boolean, dupCountType: DuplicateCountType): void
+    private async drawNGramFrequency(
+        container: HTMLElement,
+        column: ValueColumn<number>,
+        context: IRenderContext,
+        chartKey: string,
+        colKey: string,
+        n: number,
+        lsd: boolean,
+        dupCountType: DuplicateCountType): Promise<void>
     {
-        let nGramFrequency = column.GetNGramFrequency(n, lsd);
+        // let nGramFrequency = column.GetNGramFrequency(n, lsd);
+        let nGramFrequency = await ChartCalculations.GetNGramFrequency(column, context, n, lsd);
         let dataValues : Array<any> = [];
         let index = 0;
         let multiFrequentGrams : Array<any> = [];
@@ -404,6 +427,9 @@ export default class ValueDistRenderer implements ICellRendererFactory
                 'count': count
             });
         }
+
+        const elementID = chartKey + colKey;
+        container.id = elementID;
 
         var yourVlSpec: VisualizationSpec = {
             width: 100,
@@ -455,7 +481,7 @@ export default class ValueDistRenderer implements ICellRendererFactory
 
         //   this.attachItemTail(itemTail, column, key, i, n, lsd);
     
-          vegaEmbed('#' + key + 'chart-' + i, yourVlSpec, { actions: false }
+          vegaEmbed('#' + elementID, yourVlSpec, { actions: false }
           ).then(result => {
             // result.view.addEventListener('mouseover', (event, value) => {
             //     this.attachFilterPicker(value, selectionName, column, key, dataValues, i, "value");

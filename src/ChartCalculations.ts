@@ -146,4 +146,51 @@ export class ChartCalculations
         return replicateCounts;
     }
 
+    public static async GetNGramFrequency(column: ValueColumn<number>, context: IRenderContext, n: number, lsd: boolean): Promise<[string, number][]>
+    {
+        let nGramFrequencyMap: Map<string, number> = new Map<string, number>();
+        const N = context.provider.getTotalNumberOfRows();
+        for (let i = 0; i < N; i++)
+        {
+            const dataRow = await context.provider.getRow(i);
+            if (column.filter(dataRow))
+            {
+                // todo - this filter function is column-wise, not global
+                const val = column.getRaw(dataRow);
+
+                let valString = val.toString();
+                if(valString.length < n || (lsd && valString.indexOf('.') == -1)) continue;
+    
+                valString = lsd ? valString.substr(valString.indexOf('.')) : valString;
+                for(let i = 0; i < valString.length; i++) {
+                    let currentCount = 0;
+                    let nGram = valString.substr(i, n);
+                    nGram = nGram.indexOf('.') > -1 ? valString.substr(i, n+1) : nGram;  // n gram does not count decimal symbol.
+                    if((nGram.indexOf('.') > -1 && nGram.length < n+1) || (nGram.indexOf('.') == -1 && nGram.length < n)) continue;
+                    if (nGramFrequencyMap.has(nGram))
+                            currentCount = nGramFrequencyMap.get(nGram);
+                    nGramFrequencyMap.set(nGram, currentCount + 1);
+                    if(valString.charAt(i) == '.') i++;
+                }
+            }
+        }
+
+        let nGramFrequency = Array.from(nGramFrequencyMap);
+        
+        nGramFrequency.sort((a: [string, number], b: [string, number]) =>
+        {
+            if (a[1] > b[1])
+            {
+                return -1;
+            }
+            else if (a[1] < b[1])
+            {
+                return 1;
+            }
+            return 0;
+        });
+
+        return nGramFrequency;
+    }
+
 }
