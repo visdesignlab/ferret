@@ -49,16 +49,19 @@ export default class ValueDistRenderer implements ICellRendererFactory
 
       
                 vizContainer = document.createElement('div');
+                vizContainer.classList.add('noDisp');
                 container.appendChild(vizContainer);
                 const dupCountType = 'TOP'; // todo
                 this.drawFrequentDuplicates(vizContainer, col, context, 'newDuplicateCount-', col.id, dupCountType);
                 
                 vizContainer = document.createElement('div');
+                vizContainer.classList.add('noDisp');
                 container.appendChild(vizContainer);
                 const repCountType = 'TOP'; // todo
                 this.drawReplicates(vizContainer, col, context, 'newReplicates-', col.id, repCountType); 
 
                 vizContainer = document.createElement('div');
+                vizContainer.classList.add('noDisp');
                 container.appendChild(vizContainer);
                 const nGram = 2; // todo
                 const lsd = false; // todo
@@ -66,6 +69,7 @@ export default class ValueDistRenderer implements ICellRendererFactory
                 this.drawNGramFrequency(vizContainer, col, context, 'newNGram-', col.id, nGram, lsd, nGramCountType);
 
                 vizContainer = document.createElement('div');
+                vizContainer.classList.add('noDisp');
                 container.appendChild(vizContainer);
                 this.drawLeadingDigitDist(vizContainer, col, context, 'newBenfordDist-', col.id);
 
