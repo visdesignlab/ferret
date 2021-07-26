@@ -570,6 +570,7 @@ export class TableDisplay extends EventTarget
             {
                 columnBuilder = LineUpJS.buildNumberColumn(key);
                 columnBuilder.renderer('brightness', '', 'ValueDistRenderer');
+                columnBuilder.custom('numberFormat', d3.format('.8~f'));
             }
             else if (column.type === 'Categorical')
             {
