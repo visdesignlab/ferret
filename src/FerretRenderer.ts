@@ -105,7 +105,7 @@ export default class ValueDistRenderer implements ICellRendererFactory
         const xAxisType = isNumeric ? 'quantitative' : 'nominal';
 
         var yourVlSpec: VisualizationSpec = {
-            width: 100,
+            width: 85,
             height: 50,
             $schema: 'https://vega.github.io/schema/vega-lite/v4.json',
             description: 'Overall Distribution',
@@ -167,7 +167,7 @@ export default class ValueDistRenderer implements ICellRendererFactory
         container.id = elementID;
 
         var yourVlSpec: VisualizationSpec = {
-            width: 100,
+            width: 85,
             height: 50,
             $schema: 'https://vega.github.io/schema/vega-lite/v4.json',
             description: 'Leading Digit frequencies',
@@ -189,9 +189,10 @@ export default class ValueDistRenderer implements ICellRendererFactory
             encoding: {
               x: {
                   field: 'digit', 
-                  type: 'ordinal'
+                  type: 'ordinal',
+                  title: null
               },
-              y: {field: 'frequency', type: 'quantitative'},
+              y: {field: 'frequency', type: 'quantitative', title: null},
               color: {
                 value: "#4db6ac"
               },
@@ -250,7 +251,7 @@ export default class ValueDistRenderer implements ICellRendererFactory
         }
 
         var yourVlSpec: VisualizationSpec = {
-            width: 100,
+            width: 85,
             ...(dupCountType === 'TOP' && { height: 50 }),
             $schema: 'https://vega.github.io/schema/vega-lite/v4.json',
             description: 'Replicate Count',
@@ -258,11 +259,11 @@ export default class ValueDistRenderer implements ICellRendererFactory
               values: dataValues
             },
             encoding: {
-                x: {field: "count", type: "quantitative"},
+                x: {field: "count", type: "quantitative", title: null},
                 color: {
                     value: "#0277BD"
                 },
-                y: {field: "frequency", type: "nominal", sort: '-y'},
+                y: {field: "frequency", type: "nominal", sort: '-y', title: null},
                 tooltip: [
                     {field: "frequency", type: "nominal", title: "Repetitions:"},
                     {field: "count", type: "quantitative", title: "Number of values repeated:"}
@@ -330,7 +331,7 @@ export default class ValueDistRenderer implements ICellRendererFactory
         container.id = elementID;
 
         var yourVlSpec: VisualizationSpec = {
-            width: 100,
+            width: 85,
             ...(dupCountType === 'TOP' && { height: 50 }),
             $schema: 'https://vega.github.io/schema/vega-lite/v4.json',
             description: 'Duplicate Counts',
@@ -338,8 +339,8 @@ export default class ValueDistRenderer implements ICellRendererFactory
               values: dataValues
             },
             encoding: {
-                y: {field: 'value', type: 'ordinal', sort: '-x', axis: {labelBound: 20}},
-                x: {field: 'count', type: 'quantitative'},
+                y: {field: 'value', type: 'ordinal', sort: '-x', axis: {labelBound: 20}, title: null},
+                x: {field: 'count', type: 'quantitative', title: null},
                 color: {
                     value: "#e57373"
                 },
@@ -432,7 +433,7 @@ export default class ValueDistRenderer implements ICellRendererFactory
         container.id = elementID;
 
         var yourVlSpec: VisualizationSpec = {
-            width: 100,
+            width: 85,
             ...(dupCountType === 'TOP' && { height: 50 }),
             $schema: 'https://vega.github.io/schema/vega-lite/v4.json',
             description: 'Duplicate Counts',
@@ -440,8 +441,8 @@ export default class ValueDistRenderer implements ICellRendererFactory
               values: dataValues
             },
             encoding: {
-                y: {field: 'value', type: 'ordinal', sort: '-x'},
-                x: {field: 'count', type: 'quantitative'},
+                y: {field: 'value', type: 'ordinal', sort: '-x', title: null},
+                x: {field: 'count', type: 'quantitative', title: null},
                 color: {
                     value: "#ff8f00"
                 },
