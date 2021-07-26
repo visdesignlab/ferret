@@ -75,4 +75,75 @@ export class ChartCalculations
         } 
     }
 
+    public static async GetDuplicateCounts(column: ValueColumn<number>, context: IRenderContext): Promise<[number, number][]>
+    {
+        let duplicateCountMap: Map<number, number> = new Map<number, number>();
+
+        const N = context.provider.getTotalNumberOfRows();
+        for (let i = 0; i < N; i++)
+        {
+            const dataRow = await context.provider.getRow(i);
+            if (column.filter(dataRow))
+            {
+                // todo - this filter function is column-wise, not global
+                const val = column.getRaw(dataRow);
+
+                let currentCount = 0;
+                if (duplicateCountMap.has(val))
+                {
+                    currentCount = duplicateCountMap.get(val);
+                }
+                duplicateCountMap.set(val, currentCount + 1);
+            }
+        }
+
+        let duplicateCounts = Array.from(duplicateCountMap);
+        
+        duplicateCounts.sort((a: [number, number], b: [number, number]) =>
+        {
+            if (a[1] > b[1])
+            {
+                return -1;
+            }
+            else if (a[1] < b[1])
+            {
+                return 1;
+            }
+            return 0;
+        })
+        return duplicateCounts;
+    }
+
+    public static async GetReplicates(column: ValueColumn<number>, context: IRenderContext): Promise<[number, number][]>
+    {
+        let duplicateCountMap: [number, number][];
+        duplicateCountMap = await ChartCalculations.GetDuplicateCounts(column, context);
+        let replicateCountMap: Map<number, number> = new Map<number, number>();
+        for(let duplicateCount of duplicateCountMap) {
+            if(duplicateCount[1] > 1) {
+                if(replicateCountMap.has(duplicateCount[1]))
+                    replicateCountMap.set(duplicateCount[1], replicateCountMap.get(duplicateCount[1])+1);
+                else
+                    replicateCountMap.set(duplicateCount[1], 1);
+            }
+        }
+
+        let replicateCounts = Array.from(replicateCountMap);
+        
+        replicateCounts.sort((a: [number, number], b: [number, number]) =>
+        {
+            if (a[0] > b[0])
+            {
+                return -1;
+            }
+            else if (a[0] < b[0])
+            {
+                return 1;
+            }
+            return 0;
+        });
+
+        return replicateCounts;
+    }
+
 }

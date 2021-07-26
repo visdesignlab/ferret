@@ -6,15 +6,14 @@ import type {
 } from 'lineupjs';
 import { TabularData } from './TabularData';
 import { ColumnNumeric } from './ColumnNumeric';
-import { ColumnCategorical } from './ColumnCategorical';
-import { ChartCalculations } from './components/ChartCalculations';
+import { ChartCalculations } from './ChartCalculations';
 import { chartType, DuplicateCountType } from './lib/constants/filter';
 import * as filterNames from "./lib/constants/filter";
 import vegaEmbed, { VisualizationSpec } from 'vega-embed';
 import { ItemTail } from './components/item-tail';
 export default class ValueDistRenderer implements ICellRendererFactory
 {
-    readonly title: string = 'Value Distribution';
+    readonly title: string = 'Ferret Visualizations';
 
     public canRender(col: Column)
     {
@@ -48,12 +47,23 @@ export default class ValueDistRenderer implements ICellRendererFactory
                     col.id
                     )
 
+      
+                vizContainer = document.createElement('div');
+                container.appendChild(vizContainer);
+                // this.drawFrequentDuplicates(vizContainer, col, context, 'newDuplicateCount-', col.id, dupCountType);
+                
+                vizContainer = document.createElement('div');
+                container.appendChild(vizContainer);
+                const repCountType = 'TOP'; // todo
+                this.drawReplicates(vizContainer, col, context, 'newReplicates-', col.id, repCountType); 
+
+                vizContainer = document.createElement('div');
+                container.appendChild(vizContainer);
+                // this.drawNGramFrequency(data, colNum, 'newNGram-', i, nGram, lsd, nGramCountType);
+
                 vizContainer = document.createElement('div');
                 container.appendChild(vizContainer);
                 this.drawLeadingDigitDist(vizContainer, col, context, 'newBenfordDist-', col.id);
-                // this.drawFrequentDuplicates(data, colNum, 'duplicateCount-', i, dupCountType);
-                // this.drawNGramFrequency(data, colNum, 'nGram-', i, nGram, lsd, nGramCountType);
-                // this.drawReplicates(data, colNum, 'replicates-', i, repCountType); 
 
             },
         };
@@ -89,7 +99,6 @@ export default class ValueDistRenderer implements ICellRendererFactory
         // type: 'string' | 'number' | 'categorical'
         const isNumeric = column.desc.type === 'number';
         const xAxisType = isNumeric ? 'quantitative' : 'nominal';
-
 
         var yourVlSpec: VisualizationSpec = {
             width: 100,
@@ -207,12 +216,23 @@ export default class ValueDistRenderer implements ICellRendererFactory
         .catch(console.warn); 
     }
     
-    private drawReplicates(data: TabularData, column: ColumnNumeric, key: string, i: number, dupCountType: DuplicateCountType): void
+    private async drawReplicates(
+        container: HTMLElement,
+        column: ValueColumn<number>,
+        context: IRenderContext,
+        chartKey: string,
+        colKey: string,
+        dupCountType: DuplicateCountType): Promise<void>
     {
-        let replicateCount = column.GetReplicates();
+        // let replicateCount = column.GetReplicates();
+        let replicateCount = await ChartCalculations.GetReplicates(column, context);
         let dataValues : Array<any> = [];
         let index = 0;
         let [maxIndex, itemTail] = this.getItemTail(dupCountType, replicateCount);
+
+
+        const elementID = chartKey + colKey;
+        container.id = elementID;
         for (let [frequency, count] of replicateCount)
         {
             if (index >= maxIndex)
@@ -265,9 +285,9 @@ export default class ValueDistRenderer implements ICellRendererFactory
             view: {stroke: null}
         };
         
-        this.attachItemTail(itemTail, column, key, i);
+        // this.attachItemTail(itemTail, column, key, i);
   
-        vegaEmbed('#' + key + 'chart-' + i, yourVlSpec, { actions: false })
+        vegaEmbed('#' + elementID, yourVlSpec, { actions: false })
         .catch(console.warn); 
         
     }
@@ -343,7 +363,7 @@ export default class ValueDistRenderer implements ICellRendererFactory
             ],
           };
           
-          this.attachItemTail(itemTail, column, key, i);
+        //   this.attachItemTail(itemTail, column, key, i);
     
           vegaEmbed('#' + key + 'chart-' + i, yourVlSpec, { actions: false }
           ).then(result => {
@@ -433,7 +453,7 @@ export default class ValueDistRenderer implements ICellRendererFactory
             ],
           };
 
-          this.attachItemTail(itemTail, column, key, i, n, lsd);
+        //   this.attachItemTail(itemTail, column, key, i, n, lsd);
     
           vegaEmbed('#' + key + 'chart-' + i, yourVlSpec, { actions: false }
           ).then(result => {
