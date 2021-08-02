@@ -616,6 +616,19 @@ export class TableDisplay extends EventTarget
         this._lineup = builder.build(lineupContainer);
 
 
+
+        // const firstRanking = this.lineup.data.getFirstRanking(); // get the first ranking from the data provider
+        // firstRanking.on('orderChanged.custom', (previous, current, previousGroups, currentGroups, dirtyReason) => {
+    
+        //   // discard all order changed events that are not triggered by filter actions
+        //   if(dirtyReason.indexOf('filter') === -1) {
+        //     return;
+        //   }
+    
+        //   console.log(previous, current, previousGroups, currentGroups, dirtyReason);
+        // });
+
+
         // let rowSelect = d3.select(this._container).select('tbody')
         //     .selectAll('.dataRow')
         //     .data(indices)

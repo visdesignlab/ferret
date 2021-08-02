@@ -50,6 +50,8 @@ let init = (data: string, filename: string) =>
 	const defaultVizShown = [true, false, false, false, false];
 	controlsDisplay.SetData(tabularData, defaultVizShown);
 	tableDisplay.SetData(tabularData, defaultVizShown);
+	// controlsDisplay.updateChartVisibility();
+	// controlsDisplay. // todo show correct viz rows at the beginning correctly
 	filterDisplay.drawDropdown();
 	highlightDisplay.drawDropdown();
 	document.title = filename;

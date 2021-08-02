@@ -29,15 +29,18 @@ export default class ValueDistRenderer implements ICellRendererFactory
     ): ISummaryRenderer
     {
         return {
-            template: '<div class="vizContainer"></div>',
+            template: '<div class="vizContainer"><div></div><div class="noDisp"></div><div class="noDisp"></div><div class="noDisp"></div><div class="noDisp"></div></div>',
             update: (container: HTMLElement) =>
             {
                 console.log('update');
-                container.innerHTML = null;
+                // container.innerHTML = null;
                 // console.log(n);
                 // context.provider.data
-                let vizContainer = document.createElement('div');
-                container.appendChild(vizContainer);
+                let childIndex = 0;
+                let vizContainer = container.children[childIndex++] as HTMLElement;
+                // vizContainer.innerHTML = null
+                // let vizContainer = document.createElement('div');
+                // container.appendChild(vizContainer);
                 this.drawOverallDist(
                     vizContainer,
                     col,
@@ -48,29 +51,38 @@ export default class ValueDistRenderer implements ICellRendererFactory
                     )
 
       
-                vizContainer = document.createElement('div');
-                vizContainer.classList.add('noDisp');
-                container.appendChild(vizContainer);
+                // vizContainer = document.createElement('div');
+                // // vizContainer.classList.add('noDisp');
+                // container.appendChild(vizContainer);
+
+                vizContainer = container.children[childIndex++] as HTMLElement;
+
                 const dupCountType = 'TOP'; // todo
                 this.drawFrequentDuplicates(vizContainer, col, context, 'newDuplicateCount-', col.id, dupCountType);
                 
-                vizContainer = document.createElement('div');
-                vizContainer.classList.add('noDisp');
-                container.appendChild(vizContainer);
+                // vizContainer = document.createElement('div');
+                // // vizContainer.classList.add('noDisp');
+                // container.appendChild(vizContainer);
+                vizContainer = container.children[childIndex++] as HTMLElement;
+
                 const repCountType = 'TOP'; // todo
                 this.drawReplicates(vizContainer, col, context, 'newReplicates-', col.id, repCountType); 
 
-                vizContainer = document.createElement('div');
-                vizContainer.classList.add('noDisp');
-                container.appendChild(vizContainer);
+                // vizContainer = document.createElement('div');
+                // // vizContainer.classList.add('noDisp');
+                // container.appendChild(vizContainer);
+                vizContainer = container.children[childIndex++] as HTMLElement;
+
                 const nGram = 2; // todo
                 const lsd = false; // todo
                 const nGramCountType = 'TOP'; // todo
                 this.drawNGramFrequency(vizContainer, col, context, 'newNGram-', col.id, nGram, lsd, nGramCountType);
 
-                vizContainer = document.createElement('div');
-                vizContainer.classList.add('noDisp');
-                container.appendChild(vizContainer);
+                // vizContainer = document.createElement('div');
+                // // vizContainer.classList.add('noDisp');
+                // container.appendChild(vizContainer);
+                vizContainer = container.children[childIndex++] as HTMLElement;
+
                 this.drawLeadingDigitDist(vizContainer, col, context, 'newBenfordDist-', col.id);
 
             },
@@ -90,16 +102,13 @@ export default class ValueDistRenderer implements ICellRendererFactory
         let dataValues : Array<any> = [];
         let selectionName = filterNames.VALUE_DIST_SELECTION;
 
-        const N = context.provider.getTotalNumberOfRows();
-        for (let i = 0; i < N; i++)
+        const ranking = column.findMyRanker();
+        const indices = ranking.getOrder();
+        for (let i of indices)
         {
             const dataRow = await context.provider.getRow(i);
-            if (column.filter(dataRow))
-            {
-                // todo - this filter function is column-wise, not global
-                const dataValue = column.getRaw(dataRow);
-                dataValues.push({'value': dataValue});
-            }
+            const dataValue = column.getRaw(dataRow);
+            dataValues.push({'value': dataValue});
         }
 
         const elementID = chartKey + colKey;
