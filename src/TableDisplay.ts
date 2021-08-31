@@ -13,7 +13,7 @@ import { FilterPicker } from "./components/filter-picker";
 import { ItemTail } from "./components/item-tail";
 import * as $ from 'jquery';
 import { ColumnBuilder, ICategory } from "lineupjs";
-import ValueDistRenderer from "./FerretRenderer"
+import FerretRenderer from "./FerretRenderer"
 export class TableDisplay extends EventTarget
 {
     charts = ['overallDist', 'duplicateCount', 'replicates', 'nGram', 'benfordDist'];
@@ -569,7 +569,7 @@ export class TableDisplay extends EventTarget
             if (column.type === 'Number')
             {
                 columnBuilder = LineUpJS.buildNumberColumn(key);
-                columnBuilder.renderer('brightness', '', 'ValueDistRenderer');
+                columnBuilder.renderer('brightness', '', 'FerretRenderer');
                 columnBuilder.custom('numberFormat', d3.format('.8~f'));
             }
             else if (column.type === 'Categorical')
@@ -612,7 +612,7 @@ export class TableDisplay extends EventTarget
 
         builder.disableAdvancedModelFeatures()
         builder.sidePanel(false, true)
-        builder.registerRenderer('ValueDistRenderer', new ValueDistRenderer());
+        builder.registerRenderer('FerretRenderer', new FerretRenderer());
         this._lineup = builder.build(lineupContainer);
 
 
