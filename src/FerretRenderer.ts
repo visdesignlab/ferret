@@ -11,7 +11,7 @@ import { chartType, DuplicateCountType } from './lib/constants/filter';
 import * as filterNames from "./lib/constants/filter";
 import vegaEmbed, { VisualizationSpec } from 'vega-embed';
 import { ItemTail } from './components/item-tail';
-export default class ValueDistRenderer implements ICellRendererFactory
+export default class FerretRenderer implements ICellRendererFactory
 {
     readonly title: string = 'Ferret Visualizations';
 
