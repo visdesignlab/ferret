@@ -195,7 +195,6 @@ export class ControlsDisplay
         nGramSwitch.addEventListener("click", e => this.toggleChart(3, e));
         leadingDigitSwitch.addEventListener("click", e => this.toggleChart(4, e));
        
-        lsdSwitch.addEventListener("click", e => this.updateTable());
 
         uniqueValuesSwitch.addEventListener("click", e => 
         {
@@ -212,6 +211,7 @@ export class ControlsDisplay
 
         twoGramSwitch.addEventListener("click", e => this.updateLineUp());
         threeGramSwitch.addEventListener("click", e => this.updateLineUp());
+        lsdSwitch.addEventListener("click", e => this.updateLineUp());
 
         nextSwitch.addEventListener("click", e =>  
         {
