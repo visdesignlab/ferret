@@ -80,7 +80,7 @@ export default class FerretRenderer implements ICellRendererFactory
                 vizContainer = container.children[childIndex++] as HTMLElement;
 
                 const repCountType = 'TOP'; // todo
-                this.drawReplicates(vizContainer, col, context, 'newReplicates-', col.id, repCountType); 
+                this.drawReplicates(vizContainer, col, context, 'newReplicates-', col.id); 
 
                 // vizContainer = document.createElement('div');
                 // // vizContainer.classList.add('noDisp');
@@ -90,7 +90,7 @@ export default class FerretRenderer implements ICellRendererFactory
                 const nGram = 2; // todo
                 const lsd = false; // todo
                 const nGramCountType = 'TOP'; // todo
-                this.drawNGramFrequency(vizContainer, col, context, 'newNGram-', col.id, nGram, lsd, nGramCountType);
+                this.drawNGramFrequency(vizContainer, col, context, 'newNGram-', col.id, nGram, lsd);
 
                 // vizContainer = document.createElement('div');
                 // // vizContainer.classList.add('noDisp');
@@ -184,15 +184,23 @@ export default class FerretRenderer implements ICellRendererFactory
         let index = 0;
         let multiFrequentValues : Array<any> = [];
         const showAll = container.dataset.showAll === 'true';
-        for (let [val, count] of dupCounts) {
-            if (count === 1) continue;
+        for (let [val, count] of dupCounts)
+        {
+            if (count === 1) 
+            {
+                continue;
+            }
             multiFrequentValues.push([val, count]);
         }
 
         const maxIndex = showAll ? multiFrequentValues.length : this.maxCollapseCount;
 
-        for(let [val, count] of multiFrequentValues) {
-            if (index >= maxIndex) break;
+        for (let [val, count] of multiFrequentValues)
+        {
+            if (index >= maxIndex) 
+            {
+                break;
+            }
             index++;
             dataValues.push({
                 'value': val,
@@ -207,7 +215,6 @@ export default class FerretRenderer implements ICellRendererFactory
         var yourVlSpec: VisualizationSpec = {
             width: 85,
             ...(!showAll && { height: 80 }),
-            // height: 50,
             $schema: 'https://vega.github.io/schema/vega-lite/v4.json',
             description: 'Duplicate Counts',
             data: {
@@ -252,8 +259,8 @@ export default class FerretRenderer implements ICellRendererFactory
                 }
             ],
         };
-          const tailCount = multiFrequentValues.length - this.maxCollapseCount
-
+        
+        const tailCount = multiFrequentValues.length - this.maxCollapseCount;
         this.drawExpandCollapseTail(container, tailCount)
     
           vegaEmbed('#' + elementID + '-inner', yourVlSpec, { actions: false }
@@ -270,29 +277,32 @@ export default class FerretRenderer implements ICellRendererFactory
           });
 
     }
-    
+
     private async drawReplicates(
         container: HTMLElement,
         column: ValueColumn<number>,
         context: IRenderContext,
         chartKey: string,
-        colKey: string,
-        dupCountType: DuplicateCountType): Promise<void>
+        colKey: string): Promise<void>
     {
         // let replicateCount = column.GetReplicates();
         let replicateCount = await ChartCalculations.GetReplicates(column, context);
         let dataValues : Array<any> = [];
         let index = 0;
-        let [maxIndex, itemTail] = this.getItemTail(dupCountType, replicateCount);
+        // let [maxIndex, itemTail] = this.getItemTail(dupCountType, replicateCount);
+        const showAll = container.dataset.showAll === 'true';
+        const maxIndex = showAll ? replicateCount.length : this.maxCollapseCount;
 
 
         const elementID = chartKey + colKey;
-        container.querySelector('.innerVizContainer').id = elementID;
+        container.id = elementID;
+        container.querySelector('.innerVizContainer').id = elementID + '-inner';
         for (let [frequency, count] of replicateCount)
         {
             if (index >= maxIndex)
+            {
                 break;
-
+            }
             index++;
             dataValues.push({
                 'frequency': frequency,
@@ -302,7 +312,7 @@ export default class FerretRenderer implements ICellRendererFactory
 
         var yourVlSpec: VisualizationSpec = {
             width: 85,
-            ...(dupCountType === 'TOP' && { height: 50 }),
+            ...(!showAll && { height: 80 }),
             $schema: 'https://vega.github.io/schema/vega-lite/v4.json',
             description: 'Replicate Count',
             data: {
@@ -340,9 +350,11 @@ export default class FerretRenderer implements ICellRendererFactory
             view: {stroke: null}
         };
         
+        const tailCount = replicateCount.length - this.maxCollapseCount;
+        this.drawExpandCollapseTail(container, tailCount)
         // this.attachItemTail(itemTail, column, key, i);
   
-        vegaEmbed('#' + elementID, yourVlSpec, { actions: false })
+        vegaEmbed('#' + elementID + '-inner', yourVlSpec, { actions: false })
         .catch(console.warn); 
         
     }
@@ -354,8 +366,7 @@ export default class FerretRenderer implements ICellRendererFactory
         chartKey: string,
         colKey: string,
         n: number,
-        lsd: boolean,
-        dupCountType: DuplicateCountType): Promise<void>
+        lsd: boolean): Promise<void>
     {
         // let nGramFrequency = column.GetNGramFrequency(n, lsd);
         let nGramFrequency = await ChartCalculations.GetNGramFrequency(column, context, n, lsd);
@@ -368,11 +379,18 @@ export default class FerretRenderer implements ICellRendererFactory
             if (count === 1) continue;
             multiFrequentGrams.push([val, count]);
         }
+        const showAll = container.dataset.showAll === 'true';
+        const maxIndex = showAll ? multiFrequentGrams.length : this.maxCollapseCount;
 
-        let [maxIndex, itemTail] = this.getItemTail(dupCountType, multiFrequentGrams);
 
-        for(let [val, count] of multiFrequentGrams) {
-            if (index >= maxIndex) break;
+        // let [maxIndex, itemTail] = this.getItemTail(dupCountType, multiFrequentGrams);
+
+        for (let [val, count] of multiFrequentGrams)
+        {
+            if (index >= maxIndex) 
+            {
+                break;
+            }
             index++;
             dataValues.push({
                 'value': val,
@@ -381,11 +399,12 @@ export default class FerretRenderer implements ICellRendererFactory
         }
 
         const elementID = chartKey + colKey;
-        container.querySelector('.innerVizContainer').id = elementID;
+        container.id = elementID;
+        container.querySelector('.innerVizContainer').id = elementID + '-inner';
 
         var yourVlSpec: VisualizationSpec = {
             width: 85,
-            ...(dupCountType === 'TOP' && { height: 50 }),
+            ...(!showAll && { height: 80 }),
             $schema: 'https://vega.github.io/schema/vega-lite/v4.json',
             description: 'Duplicate Counts',
             data: {
@@ -432,8 +451,11 @@ export default class FerretRenderer implements ICellRendererFactory
           };
 
         //   this.attachItemTail(itemTail, column, key, i, n, lsd);
-    
-          vegaEmbed('#' + elementID, yourVlSpec, { actions: false }
+        const tailCount = multiFrequentGrams.length - this.maxCollapseCount;
+        this.drawExpandCollapseTail(container, tailCount)
+
+
+          vegaEmbed('#' + elementID + '-inner', yourVlSpec, { actions: false }
           ).then(result => {
             // result.view.addEventListener('mouseover', (event, value) => {
             //     this.attachFilterPicker(value, selectionName, column, key, dataValues, i, "value");
