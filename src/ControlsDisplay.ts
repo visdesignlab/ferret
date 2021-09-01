@@ -176,8 +176,8 @@ export class ControlsDisplay
         let valueDistSwitch = document.getElementById("val-dist-switch");
         let repSwitch = document.getElementById("rep-switch");
         let uniqueValuesSwitch = document.getElementById("unique-values-switch");
-        let ngramCountSwitch = document.getElementById("ngram-count-switch");
         let repCountSwitch = document.getElementById("rep-count-switch");
+        let ngramCountSwitch = document.getElementById("ngram-count-switch");
         let twoGramSwitch = document.getElementById("2-gram-switch");
         let threeGramSwitch = document.getElementById("3-gram-switch");
         let nGramSwitch = document.getElementById("n-gram-switch");
@@ -196,12 +196,20 @@ export class ControlsDisplay
         leadingDigitSwitch.addEventListener("click", e => this.toggleChart(4, e));
        
         lsdSwitch.addEventListener("click", e => this.updateTable());
+
         uniqueValuesSwitch.addEventListener("click", e => 
         {
             this.setShowAll('.duplicateCountViz', e);
         });
-        ngramCountSwitch.addEventListener("click", e => this.updateTable());
-        repCountSwitch.addEventListener("click", e => this.updateTable());
+        repCountSwitch.addEventListener("click", e => 
+        {
+            this.setShowAll('.replicatesViz', e);
+        });
+        ngramCountSwitch.addEventListener("click", e => 
+        {
+            this.setShowAll('.nGramViz', e);
+        });
+
         twoGramSwitch.addEventListener("click", e => this.updateTable());
         threeGramSwitch.addEventListener("click", e => this.updateTable());
 
@@ -294,11 +302,13 @@ export class ControlsDisplay
     private updateChartVisibility(): void
     {
         // this would maybe be better in TableDisplay.ts semantically.
+        const lineupColCount = 3; // agg groups, rank, checkboxes
         for (let i = 0; i < this.charts.length; i++)
         {
             const chartKey = this.charts[i];
             const visible = this.chartsShown[i];
-            for (let j = 0; j < this.data.columnList.length; j++)
+
+            for (let j = lineupColCount; j < this.data.columnList.length + lineupColCount; j++)
             {
                 d3.select(`#${chartKey}-col${j}`).classed('noDisp', !visible);
             }
