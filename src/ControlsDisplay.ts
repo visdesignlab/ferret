@@ -196,7 +196,10 @@ export class ControlsDisplay
         leadingDigitSwitch.addEventListener("click", e => this.toggleChart(4, e));
        
         lsdSwitch.addEventListener("click", e => this.updateTable());
-        uniqueValuesSwitch.addEventListener("click", e => this.updateTable());
+        uniqueValuesSwitch.addEventListener("click", e => 
+        {
+            this.setShowAll('.duplicateCountViz', e);
+        });
         ngramCountSwitch.addEventListener("click", e => this.updateTable());
         repCountSwitch.addEventListener("click", e => this.updateTable());
         twoGramSwitch.addEventListener("click", e => this.updateTable());
@@ -211,10 +214,15 @@ export class ControlsDisplay
         {
             this.setChartIndex(this.chartIndex - 1);
         });
-
-
     }
 
+    private setShowAll(selector: string, e: MouseEvent): void
+    {
+        const value = (e.target as HTMLInputElement).checked;
+        d3.selectAll(selector).attr('data-show-all', value);
+        document.dispatchEvent(new CustomEvent('updateLineup'));
+    }
+    
     public static getLSDStatus(): boolean {
         let lsdSwitch = document.getElementById("lsd-switch") as HTMLInputElement;
         let lowestSignificant = (lsdSwitch.checked) ? true : false;

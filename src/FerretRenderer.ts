@@ -33,13 +33,13 @@ export default class FerretRenderer implements ICellRendererFactory
             template: `
             <div class="vizContainer">
                 <div class="innerVizContainer"></div>
-                <div class="noDisp" data-show-all="false">
+                <div class="noDisp duplicateCountViz" data-show-all="false">
                     <div class="innerVizContainer"></div><div class="expandCollapseTail"></div>
                 </div>
-                <div class="noDisp" data-show-all="false">
+                <div class="noDisp replicatesViz" data-show-all="false">
                     <div class="innerVizContainer"></div><div class="expandCollapseTail"></div>
                 </div>
-                <div class="noDisp" data-show-all="false">
+                <div class="noDisp nGramViz" data-show-all="false">
                     <div class="innerVizContainer"></div><div class="expandCollapseTail"></div>
                 </div>
                 <div class="noDisp innerVizContainer"></div>
@@ -568,7 +568,7 @@ export default class FerretRenderer implements ICellRendererFactory
         }
         else
         {
-            button.textContent = `expend ${count} more items`;
+            button.textContent = `expand ${count} more items`;
         }
         button.onclick = () =>
         {
