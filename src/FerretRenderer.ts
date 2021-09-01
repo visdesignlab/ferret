@@ -14,6 +14,7 @@ import { ItemTail } from './components/item-tail';
 export default class FerretRenderer implements ICellRendererFactory
 {
     readonly title: string = 'Ferret Visualizations';
+    readonly maxCollapseCount: number = 5;
 
     public canRender(col: Column)
     {
@@ -29,7 +30,20 @@ export default class FerretRenderer implements ICellRendererFactory
     ): ISummaryRenderer
     {
         return {
-            template: '<div class="vizContainer"><div></div><div class="noDisp"></div><div class="noDisp"></div><div class="noDisp"></div><div class="noDisp"></div></div>',
+            template: `
+            <div class="vizContainer">
+                <div class="innerVizContainer"></div>
+                <div class="noDisp" data-show-all="false">
+                    <div class="innerVizContainer"></div><div class="expandCollapseTail"></div>
+                </div>
+                <div class="noDisp" data-show-all="false">
+                    <div class="innerVizContainer"></div><div class="expandCollapseTail"></div>
+                </div>
+                <div class="noDisp" data-show-all="false">
+                    <div class="innerVizContainer"></div><div class="expandCollapseTail"></div>
+                </div>
+                <div class="noDisp innerVizContainer"></div>
+            </div>`,
             update: (container: HTMLElement) =>
             {
                 console.log('update');
@@ -57,8 +71,8 @@ export default class FerretRenderer implements ICellRendererFactory
 
                 vizContainer = container.children[childIndex++] as HTMLElement;
 
-                const dupCountType = 'TOP'; // todo
-                this.drawFrequentDuplicates(vizContainer, col, context, 'newDuplicateCount-', col.id, dupCountType);
+                // const dupCountType = 'TOP'; // todo
+                this.drawFrequentDuplicates(vizContainer, col, context, 'newDuplicateCount-', col.id);
                 
                 // vizContainer = document.createElement('div');
                 // // vizContainer.classList.add('noDisp');
@@ -250,7 +264,7 @@ export default class FerretRenderer implements ICellRendererFactory
 
 
         const elementID = chartKey + colKey;
-        container.id = elementID;
+        container.querySelector('.innerVizContainer').id = elementID;
         for (let [frequency, count] of replicateCount)
         {
             if (index >= maxIndex)
@@ -315,8 +329,7 @@ export default class FerretRenderer implements ICellRendererFactory
         column: ValueColumn<number>,
         context: IRenderContext,
         chartKey: string,
-        colKey: string,
-        dupCountType: DuplicateCountType): Promise<void>
+        colKey: string): Promise<void>
     {
         // let dupCounts = column.GetDuplicateCounts();
         let dupCounts = await ChartCalculations.GetDuplicateCounts(column, context);
@@ -324,12 +337,14 @@ export default class FerretRenderer implements ICellRendererFactory
         let dataValues : Array<any> = [];
         let index = 0;
         let multiFrequentValues : Array<any> = [];
+        const showAll = container.dataset.showAll === 'true';
         for (let [val, count] of dupCounts) {
             if (count === 1) continue;
             multiFrequentValues.push([val, count]);
         }
 
-        let [maxIndex, itemTail] = this.getItemTail(dupCountType, multiFrequentValues);
+        const maxIndex = showAll ? multiFrequentValues.length : this.maxCollapseCount;
+        // let [maxIndex, itemTail] = this.getItemTail(showAll, multiFrequentValues);
 
         for(let [val, count] of multiFrequentValues) {
             if (index >= maxIndex) break;
@@ -342,10 +357,12 @@ export default class FerretRenderer implements ICellRendererFactory
 
         const elementID = chartKey + colKey;
         container.id = elementID;
+        container.querySelector('.innerVizContainer').id = elementID + '-inner';
 
         var yourVlSpec: VisualizationSpec = {
             width: 85,
-            ...(dupCountType === 'TOP' && { height: 50 }),
+            // ...(dupCountType === 'TOP' && { height: 50 }),
+            height: 50,
             $schema: 'https://vega.github.io/schema/vega-lite/v4.json',
             description: 'Duplicate Counts',
             data: {
@@ -390,10 +407,14 @@ export default class FerretRenderer implements ICellRendererFactory
                 }
             ],
           };
-          
+          const tailCount = multiFrequentValues.length - this.maxCollapseCount
+          if (tailCount > 0)
+          {
+              this.drawExpandCollapseTail(container, tailCount)
+          }
         //   this.attachItemTail(itemTail, column, key, i);
     
-          vegaEmbed('#' + elementID, yourVlSpec, { actions: false }
+          vegaEmbed('#' + elementID + '-inner', yourVlSpec, { actions: false }
           ).then(result => {
             //   result.view.addEventListener('mouseover', (event, value) => {
             //     this.attachFilterPicker(value, selectionName, column, key, dataValues, i, "value");
@@ -443,7 +464,7 @@ export default class FerretRenderer implements ICellRendererFactory
         }
 
         const elementID = chartKey + colKey;
-        container.id = elementID;
+        container.querySelector('.innerVizContainer').id = elementID;
 
         var yourVlSpec: VisualizationSpec = {
             width: 85,
@@ -534,6 +555,28 @@ export default class FerretRenderer implements ICellRendererFactory
             itemTailComponent = ItemTail.create(count, key, 'close', column, i, nGram, lsd);
 
         document.getElementById(key + 'tail-' + i).appendChild(itemTailComponent);
+    }
+
+    private drawExpandCollapseTail(container: HTMLElement, count: number): void
+    {
+        const showAll = container.dataset.showAll === 'true';
+        const buttonContainer = container.querySelector('.expandCollapseTail');
+        const button = document.createElement('button');
+        if (showAll)
+        {
+            button.textContent = 'collapse';
+        }
+        else
+        {
+            button.textContent = `expend ${count} more items`;
+        }
+        button.onclick = () =>
+        {
+            container.dataset.showAll = showAll ? 'false' : 'true';
+            document.dispatchEvent(new CustomEvent('updateLineup'));
+        }
+        buttonContainer.innerHTML = '';
+        buttonContainer.appendChild(button);
     }
 
 }

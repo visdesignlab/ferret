@@ -22,6 +22,7 @@ export class TableDisplay extends EventTarget
         super();
         document.addEventListener("drawVizRows", (e: CustomEvent) => {this.drawVizRows(e.detail.data)});
         document.addEventListener("drawBody", (e: CustomEvent) => {this.drawBody(e.detail.data)});
+        document.addEventListener("updateLineup", (e: CustomEvent) => {this.lineup.update()});
         document.addEventListener("itemTailClicked", (e: CustomEvent) => {
             let dupCountType: DuplicateCountType = (e.detail.state == 'open') ? 'ALL' : 'TOP';
             switch(e.detail.key) {
@@ -615,8 +616,8 @@ export class TableDisplay extends EventTarget
         builder.registerRenderer('FerretRenderer', new FerretRenderer());
         this._lineup = builder.build(lineupContainer);
 
-
-
+        
+        // this.lineup.update()
         // const firstRanking = this.lineup.data.getFirstRanking(); // get the first ranking from the data provider
         // firstRanking.on('orderChanged.custom', (previous, current, previousGroups, currentGroups, dirtyReason) => {
     
