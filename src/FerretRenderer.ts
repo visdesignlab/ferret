@@ -170,159 +170,6 @@ export default class FerretRenderer implements ICellRendererFactory
             //   });
           });
     }
-
-    private async drawLeadingDigitDist(
-        container: HTMLElement,
-        column: ValueColumn<number>,
-        context: IRenderContext,
-        chartKey: string,
-        colKey: string
-    ): Promise<void>
-    {
-        let leadDictFreq = await ChartCalculations.GetLeadingDigitFreqs(column, context);
-        let selectionName = filterNames.LEADING_DIGIT_FREQ_SELECTION;
-        let dataValues : Array<any> = [];
-        for (let [digit, freq] of leadDictFreq)
-        {
-            dataValues.push({
-                'digit': digit,
-                'frequency': freq
-            });
-        }
-
-        const elementID = chartKey + colKey;
-        container.id = elementID;
-
-        var yourVlSpec: VisualizationSpec = {
-            width: 85,
-            height: 50,
-            $schema: 'https://vega.github.io/schema/vega-lite/v4.json',
-            description: 'Leading Digit frequencies',
-            data: {
-              values: dataValues
-            },
-            mark: 'bar',
-            selection: {
-                "highlightBar": {
-                    type: "single", 
-                    empty: "none", 
-                    on: "mouseover"
-                },
-                "LEADING_DIGIT_FREQ_SELECTION": {
-                        type: "multi",
-                        clear: "dblclick"
-                }
-            },
-            encoding: {
-              x: {
-                  field: 'digit', 
-                  type: 'ordinal',
-                  title: null
-              },
-              y: {field: 'frequency', type: 'quantitative', title: null},
-              color: {
-                value: "#4db6ac"
-              },
-              opacity: {
-                condition: {
-                    selection: 'highlightBar', 
-                    value: 0.7
-                },
-                value: 1
-              },
-            }
-          };
-        
-        vegaEmbed('#' + elementID, yourVlSpec, { actions: false }
-            ).then(result => {
-            //   result.view.addEventListener('mouseover', (event, value) => {
-            //         this.attachFilterPicker(value, selectionName, column, key, dataValues, i, "digit");
-            //     });
-            //   result.view.addEventListener('mouseout', (event, value) => {
-            //         this.removeFilterPicker(value, selectionName, column);
-            //     });
-            //   result.view.addSignalListener(selectionName, (name, value) => {
-            //         this.attachSignalListener(value, dataValues, "digit", column, selectionName);
-            //     });
-          })
-        .catch(console.warn); 
-    }
-    
-    private async drawReplicates(
-        container: HTMLElement,
-        column: ValueColumn<number>,
-        context: IRenderContext,
-        chartKey: string,
-        colKey: string,
-        dupCountType: DuplicateCountType): Promise<void>
-    {
-        // let replicateCount = column.GetReplicates();
-        let replicateCount = await ChartCalculations.GetReplicates(column, context);
-        let dataValues : Array<any> = [];
-        let index = 0;
-        let [maxIndex, itemTail] = this.getItemTail(dupCountType, replicateCount);
-
-
-        const elementID = chartKey + colKey;
-        container.querySelector('.innerVizContainer').id = elementID;
-        for (let [frequency, count] of replicateCount)
-        {
-            if (index >= maxIndex)
-                break;
-
-            index++;
-            dataValues.push({
-                'frequency': frequency,
-                'count': count
-            });
-        }
-
-        var yourVlSpec: VisualizationSpec = {
-            width: 85,
-            ...(dupCountType === 'TOP' && { height: 50 }),
-            $schema: 'https://vega.github.io/schema/vega-lite/v4.json',
-            description: 'Replicate Count',
-            data: {
-              values: dataValues
-            },
-            encoding: {
-                x: {field: "count", type: "quantitative", title: null},
-                color: {
-                    value: "#0277BD"
-                },
-                y: {field: "frequency", type: "nominal", sort: '-y', title: null},
-                tooltip: [
-                    {field: "frequency", type: "nominal", title: "Repetitions:"},
-                    {field: "count", type: "quantitative", title: "Number of values repeated:"}
-                ]
-              },
-              layer: [
-                {
-                    mark: 'bar',
-                },
-                {
-                    mark:
-                    {
-                        type: 'text',
-                        align: 'left',
-                        baseline: 'middle',
-                        dx: 3
-                    },
-                    encoding:
-                    {
-                        text: {field: "count", type: "quantitative"}
-                    }
-                }
-            ],
-            view: {stroke: null}
-        };
-        
-        // this.attachItemTail(itemTail, column, key, i);
-  
-        vegaEmbed('#' + elementID, yourVlSpec, { actions: false })
-        .catch(console.warn); 
-        
-    }
     
     private async drawFrequentDuplicates(
         container: HTMLElement,
@@ -423,7 +270,82 @@ export default class FerretRenderer implements ICellRendererFactory
           });
 
     }
+    
+    private async drawReplicates(
+        container: HTMLElement,
+        column: ValueColumn<number>,
+        context: IRenderContext,
+        chartKey: string,
+        colKey: string,
+        dupCountType: DuplicateCountType): Promise<void>
+    {
+        // let replicateCount = column.GetReplicates();
+        let replicateCount = await ChartCalculations.GetReplicates(column, context);
+        let dataValues : Array<any> = [];
+        let index = 0;
+        let [maxIndex, itemTail] = this.getItemTail(dupCountType, replicateCount);
 
+
+        const elementID = chartKey + colKey;
+        container.querySelector('.innerVizContainer').id = elementID;
+        for (let [frequency, count] of replicateCount)
+        {
+            if (index >= maxIndex)
+                break;
+
+            index++;
+            dataValues.push({
+                'frequency': frequency,
+                'count': count
+            });
+        }
+
+        var yourVlSpec: VisualizationSpec = {
+            width: 85,
+            ...(dupCountType === 'TOP' && { height: 50 }),
+            $schema: 'https://vega.github.io/schema/vega-lite/v4.json',
+            description: 'Replicate Count',
+            data: {
+              values: dataValues
+            },
+            encoding: {
+                x: {field: "count", type: "quantitative", title: null},
+                color: {
+                    value: "#0277BD"
+                },
+                y: {field: "frequency", type: "nominal", sort: '-y', title: null},
+                tooltip: [
+                    {field: "frequency", type: "nominal", title: "Repetitions:"},
+                    {field: "count", type: "quantitative", title: "Number of values repeated:"}
+                ]
+              },
+              layer: [
+                {
+                    mark: 'bar',
+                },
+                {
+                    mark:
+                    {
+                        type: 'text',
+                        align: 'left',
+                        baseline: 'middle',
+                        dx: 3
+                    },
+                    encoding:
+                    {
+                        text: {field: "count", type: "quantitative"}
+                    }
+                }
+            ],
+            view: {stroke: null}
+        };
+        
+        // this.attachItemTail(itemTail, column, key, i);
+  
+        vegaEmbed('#' + elementID, yourVlSpec, { actions: false })
+        .catch(console.warn); 
+        
+    }
 
     private async drawNGramFrequency(
         container: HTMLElement,
@@ -526,6 +448,82 @@ export default class FerretRenderer implements ICellRendererFactory
          
     }
 
+    private async drawLeadingDigitDist(
+        container: HTMLElement,
+        column: ValueColumn<number>,
+        context: IRenderContext,
+        chartKey: string,
+        colKey: string
+    ): Promise<void>
+    {
+        let leadDictFreq = await ChartCalculations.GetLeadingDigitFreqs(column, context);
+        let selectionName = filterNames.LEADING_DIGIT_FREQ_SELECTION;
+        let dataValues : Array<any> = [];
+        for (let [digit, freq] of leadDictFreq)
+        {
+            dataValues.push({
+                'digit': digit,
+                'frequency': freq
+            });
+        }
+
+        const elementID = chartKey + colKey;
+        container.id = elementID;
+
+        var yourVlSpec: VisualizationSpec = {
+            width: 85,
+            height: 50,
+            $schema: 'https://vega.github.io/schema/vega-lite/v4.json',
+            description: 'Leading Digit frequencies',
+            data: {
+              values: dataValues
+            },
+            mark: 'bar',
+            selection: {
+                "highlightBar": {
+                    type: "single", 
+                    empty: "none", 
+                    on: "mouseover"
+                },
+                "LEADING_DIGIT_FREQ_SELECTION": {
+                        type: "multi",
+                        clear: "dblclick"
+                }
+            },
+            encoding: {
+              x: {
+                  field: 'digit', 
+                  type: 'ordinal',
+                  title: null
+              },
+              y: {field: 'frequency', type: 'quantitative', title: null},
+              color: {
+                value: "#4db6ac"
+              },
+              opacity: {
+                condition: {
+                    selection: 'highlightBar', 
+                    value: 0.7
+                },
+                value: 1
+              },
+            }
+          };
+        
+        vegaEmbed('#' + elementID, yourVlSpec, { actions: false }
+            ).then(result => {
+            //   result.view.addEventListener('mouseover', (event, value) => {
+            //         this.attachFilterPicker(value, selectionName, column, key, dataValues, i, "digit");
+            //     });
+            //   result.view.addEventListener('mouseout', (event, value) => {
+            //         this.removeFilterPicker(value, selectionName, column);
+            //     });
+            //   result.view.addSignalListener(selectionName, (name, value) => {
+            //         this.attachSignalListener(value, dataValues, "digit", column, selectionName);
+            //     });
+          })
+        .catch(console.warn); 
+    }
 
     private  getItemTail(dupCountType: DuplicateCountType, data: any) {
         let maxIndex = (dupCountType === 'ALL') ? data.length : 5;
