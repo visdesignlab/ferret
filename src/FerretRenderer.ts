@@ -404,13 +404,10 @@ export default class FerretRenderer implements ICellRendererFactory
                     }
                 }
             ],
-          };
+        };
           const tailCount = multiFrequentValues.length - this.maxCollapseCount
-          if (tailCount > 0)
-          {
-              this.drawExpandCollapseTail(container, tailCount)
-          }
-        //   this.attachItemTail(itemTail, column, key, i);
+
+        this.drawExpandCollapseTail(container, tailCount)
     
           vegaEmbed('#' + elementID + '-inner', yourVlSpec, { actions: false }
           ).then(result => {
@@ -557,8 +554,14 @@ export default class FerretRenderer implements ICellRendererFactory
 
     private drawExpandCollapseTail(container: HTMLElement, count: number): void
     {
-        const showAll = container.dataset.showAll === 'true';
         const buttonContainer = container.querySelector('.expandCollapseTail');
+        buttonContainer.innerHTML = '';
+        if (count <= 0)
+        {
+            return;
+        }
+
+        const showAll = container.dataset.showAll === 'true';
         const button = document.createElement('button');
         if (showAll)
         {
@@ -573,7 +576,6 @@ export default class FerretRenderer implements ICellRendererFactory
             container.dataset.showAll = showAll ? 'false' : 'true';
             document.dispatchEvent(new CustomEvent('updateLineup'));
         }
-        buttonContainer.innerHTML = '';
         buttonContainer.appendChild(button);
     }
 

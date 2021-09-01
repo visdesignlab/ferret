@@ -142,10 +142,10 @@ td
 }
 
 .expandCollapseTail > button {
+    border: none;
     background: white;
-    border: solid black 0px;
     border-radius: 3px;
-    font-size: 10pt;
+    font-size: 9pt;
     user-select: none;
     cursor: pointer;
     margin: 1px;
