@@ -331,7 +331,6 @@ export default class FerretRenderer implements ICellRendererFactory
         chartKey: string,
         colKey: string): Promise<void>
     {
-        // let dupCounts = column.GetDuplicateCounts();
         let dupCounts = await ChartCalculations.GetDuplicateCounts(column, context);
         let selectionName = filterNames.FREQUENT_VALUES_SELECTION;
         let dataValues : Array<any> = [];
@@ -344,7 +343,6 @@ export default class FerretRenderer implements ICellRendererFactory
         }
 
         const maxIndex = showAll ? multiFrequentValues.length : this.maxCollapseCount;
-        // let [maxIndex, itemTail] = this.getItemTail(showAll, multiFrequentValues);
 
         for(let [val, count] of multiFrequentValues) {
             if (index >= maxIndex) break;
@@ -361,8 +359,8 @@ export default class FerretRenderer implements ICellRendererFactory
 
         var yourVlSpec: VisualizationSpec = {
             width: 85,
-            // ...(dupCountType === 'TOP' && { height: 50 }),
-            height: 50,
+            ...(!showAll && { height: 80 }),
+            // height: 50,
             $schema: 'https://vega.github.io/schema/vega-lite/v4.json',
             description: 'Duplicate Counts',
             data: {

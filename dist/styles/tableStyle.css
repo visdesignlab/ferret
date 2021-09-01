@@ -130,3 +130,30 @@ td
     flex-direction: column;
     align-items: center;
 }
+
+.innerVizContainer {
+    max-height: 120px;
+    overflow: scroll;
+}
+
+.expandCollapseTail {
+    display: flex;
+    flex-direction: column;
+}
+
+.expandCollapseTail > button {
+    background: white;
+    border: solid black 0px;
+    border-radius: 3px;
+    font-size: 10pt;
+    user-select: none;
+    cursor: pointer;
+    margin: 1px;
+    padding: 3px 5px;
+    color: #666666;
+    text-decoration: none;
+}
+
+.expandCollapseTail > button:hover {
+    background: #e0e7f0;
+}
