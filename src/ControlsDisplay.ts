@@ -210,8 +210,8 @@ export class ControlsDisplay
             this.setShowAll('.nGramViz', e);
         });
 
-        twoGramSwitch.addEventListener("click", e => this.updateTable());
-        threeGramSwitch.addEventListener("click", e => this.updateTable());
+        twoGramSwitch.addEventListener("click", e => this.updateLineUp());
+        threeGramSwitch.addEventListener("click", e => this.updateLineUp());
 
         nextSwitch.addEventListener("click", e =>  
         {
@@ -228,7 +228,7 @@ export class ControlsDisplay
     {
         const value = (e.target as HTMLInputElement).checked;
         d3.selectAll(selector).attr('data-show-all', value);
-        document.dispatchEvent(new CustomEvent('updateLineup'));
+        this.updateLineUp();
     }
     
     public static getLSDStatus(): boolean {
@@ -251,6 +251,11 @@ export class ControlsDisplay
 
     private updateTable() {
         document.dispatchEvent(new CustomEvent('drawVizRows', {detail: {data: this.data}}));
+    }
+
+    private updateLineUp()
+    {
+        document.dispatchEvent(new CustomEvent('updateLineup'));
     }
     
 

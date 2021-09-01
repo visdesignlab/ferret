@@ -79,7 +79,7 @@ export default class FerretRenderer implements ICellRendererFactory
                 // container.appendChild(vizContainer);
                 vizContainer = container.children[childIndex++] as HTMLElement;
 
-                const repCountType = 'TOP'; // todo
+                // const repCountType = 'TOP'; // todo
                 this.drawReplicates(vizContainer, col, context, 'newReplicates-', col.id); 
 
                 // vizContainer = document.createElement('div');
@@ -87,9 +87,13 @@ export default class FerretRenderer implements ICellRendererFactory
                 // container.appendChild(vizContainer);
                 vizContainer = container.children[childIndex++] as HTMLElement;
 
-                const nGram = 2; // todo
-                const lsd = false; // todo
-                const nGramCountType = 'TOP'; // todo
+
+                const twoGramSwitch = document.getElementById('2-gram-switch') as HTMLInputElement;
+                const nGram = twoGramSwitch.checked ? 2 : 3;
+
+                const lsdSwitch = document.getElementById('lsd-switch') as HTMLInputElement;
+                const lsd = lsdSwitch.checked;
+                // const nGramCountType = 'TOP'; // todo
                 this.drawNGramFrequency(vizContainer, col, context, 'newNGram-', col.id, nGram, lsd);
 
                 // vizContainer = document.createElement('div');

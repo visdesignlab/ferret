@@ -148,10 +148,12 @@ td
     font-size: 9pt;
     user-select: none;
     cursor: pointer;
-    margin: 1px;
     padding: 3px 5px;
     color: #666666;
     text-decoration: none;
+    margin: 1px;
+    margin-bottom: 5px;
+    margin-top: -5px;
 }
 
 .expandCollapseTail > button:hover {
