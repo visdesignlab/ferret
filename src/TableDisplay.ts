@@ -20,9 +20,9 @@ export class TableDisplay extends EventTarget
     chartNames = ['Value Distribution', 'Frequent Values', 'Replicates', 'N Grams', 'Leading Digit Frequency'];
     constructor() {
         super();
-        document.addEventListener("drawVizRows", (e: CustomEvent) => {this.drawVizRows(e.detail.data)});
-        document.addEventListener("drawBody", (e: CustomEvent) => {this.drawBody(e.detail.data)});
-        document.addEventListener("updateLineup", (e: CustomEvent) => {this.lineup.update()});
+        document.addEventListener("drawVizRows", (e: CustomEvent) => this.drawVizRows(e.detail.data));
+        document.addEventListener("drawBody", (e: CustomEvent) => this.drawBody(e.detail.data));
+        document.addEventListener("updateLineup", (e: CustomEvent) => this.lineup.update());
         document.addEventListener("itemTailClicked", (e: CustomEvent) => {
             let dupCountType: DuplicateCountType = (e.detail.state == 'open') ? 'ALL' : 'TOP';
             switch(e.detail.key) {
@@ -36,6 +36,8 @@ export class TableDisplay extends EventTarget
                     this.drawNGramFrequency(null, e.detail.column, e.detail.key, e.detail.i, e.detail.nGram, e.detail.lsd, dupCountType)
             }
         });
+
+        document.addEventListener("highlightRows", (e: CustomEvent) => this.onHighlightRows(e))
     }
 
     private _container : HTMLElement;
@@ -615,8 +617,8 @@ export class TableDisplay extends EventTarget
         builder.sidePanel(false, true)
         builder.registerRenderer('FerretRenderer', new FerretRenderer());
         this._lineup = builder.build(lineupContainer);
+        // this.lineup.setSelection([1,3,5,7,9]);
 
-        
         // this.lineup.update()
         // const firstRanking = this.lineup.data.getFirstRanking(); // get the first ranking from the data provider
         // firstRanking.on('orderChanged.custom', (previous, current, previousGroups, currentGroups, dirtyReason) => {
@@ -646,6 +648,15 @@ export class TableDisplay extends EventTarget
         //     .join('td')
         //     .attr('id', (d, i) => "col" + (i+1))
         //     .text(d => d);
+    }
+
+    private onHighlightRows(e: CustomEvent): void
+    {
+        this.lineup.setSelection(e.detail.rowIndices);
+        this.lineup.sortBy('col1');
+        // lineup appears to not do anything if sort by is already set to col2, so this is to force an update
+        this.lineup.sortBy('col2', false);
+        this.lineup.update();
     }
 
     private getSelectedData(selectedIndices: Array<number>, dataValues: Array<any>, prop: string) : Array<number> {

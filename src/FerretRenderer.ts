@@ -1,4 +1,5 @@
 import * as d3 from "d3";
+import * as uuid from 'uuid';
 import { Column, IImposer, INumberColumn, ValueColumn } from 'lineupjs';
 import type {
     ICellRendererFactory,
@@ -12,6 +13,7 @@ import { chartType, DuplicateCountType } from './lib/constants/filter';
 import * as filterNames from "./lib/constants/filter";
 import vegaEmbed, { VisualizationSpec } from 'vega-embed';
 import { ItemTail } from './components/item-tail';
+import { Filter } from "./Filter";
 export default class FerretRenderer implements ICellRendererFactory
 {
     readonly title: string = 'Ferret Visualizations';
@@ -275,7 +277,7 @@ export default class FerretRenderer implements ICellRendererFactory
                 }
                 event = event as PointerEvent;
                 event.preventDefault();
-                this.drawContextMenu(value.datum.value, event.pageX, event.pageY);
+                this.drawContextMenu(value.datum.value, column, context, event.pageX, event.pageY);
 
             })
             // result.view.addEventListener('mouseover', (event, value) => {
@@ -591,7 +593,7 @@ export default class FerretRenderer implements ICellRendererFactory
         buttonContainer.appendChild(button);
     }
 
-    private drawContextMenu(value: number, pageX: number, pageY: number): void
+    private async drawContextMenu(value: number, column: ValueColumn<number>, context: IRenderContext, pageX: number, pageY: number): Promise<void>
     {
         const outerContextSelection = d3.select('#outerContextMenu')
             .on('click', () => 
@@ -603,18 +605,45 @@ export default class FerretRenderer implements ICellRendererFactory
         (innerContextSelection.node() as HTMLElement).style.top = pageY + 'px';
         (innerContextSelection.node() as HTMLElement).style.left = pageX + 'px';
 
+        const rowIndices = await this.getMatchingRowIndices(value, column, context);
+
         const buttonInfoList = [
-            {iconKey: 'filter', label: `Remove rows with ${value} in this column.`},
-            {iconKey: 'globe-americas', label: `Remove rows with ${value} in any column.`},
-            {iconKey: 'highlighter', label: `Highlight rows with ${value} in this column.`}
+            {iconKey: 'filter', label: `Remove rows with ${value} in this column.`, func: () => {throw new Error('not defined')}},
+            {iconKey: 'globe-americas', label: `Remove rows with ${value} in any column.`, func: () => {throw new Error('not defined')}},
+            {iconKey: 'highlighter', label: `Highlight rows with ${value} in this column.`, func: () => this.onHighlight(rowIndices)}
         ]
 
         innerContextSelection.selectAll('button')
             .data(buttonInfoList)
             .join('button')
+            .on('click', d => d.func())
             .html(d => `<i class="fas fa-${d.iconKey}"></i> ` + d.label);
 
         d3.select('#outerContextMenu').classed('noDisp', false);
+    }
+
+    private async getMatchingRowIndices(matchValue: number, column: ValueColumn<number>, context: IRenderContext): Promise<number[]>
+    {
+        const outIndices: number[] = [];
+        const ranking = column.findMyRanker();
+        const indices = ranking.getOrder();
+        for (let i of indices)
+        {
+            const dataRow = await context.provider.getRow(i);
+            const dataValue = column.getRaw(dataRow);
+            if (dataValue === matchValue)
+            {
+                outIndices.push(i);
+            }
+        }
+        return outIndices;
+    }
+
+    private onHighlight(rowIndices: number[]): void
+    {
+        // let filter: Filter = new Filter(uuid.v4(), column, selectionName, selectedData,'LOCAL');
+        // const filter = new Filter(filter.id, filter.column, filter.chart, filter.selectedData, 'LOCAL');
+        document.dispatchEvent(new CustomEvent('highlightRows', {detail: {rowIndices: rowIndices}}));
     }
     
     private hideContextMenu(): void
