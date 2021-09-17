@@ -1,3 +1,4 @@
+import * as d3 from "d3";
 import { Column, IImposer, INumberColumn, ValueColumn } from 'lineupjs';
 import type {
     ICellRendererFactory,
@@ -71,7 +72,6 @@ export default class FerretRenderer implements ICellRendererFactory
 
                 vizContainer = container.children[childIndex++] as HTMLElement;
 
-                // const dupCountType = 'TOP'; // todo
                 this.drawFrequentDuplicates(vizContainer, col, context, 'newDuplicateCount-', col.id);
                 
                 // vizContainer = document.createElement('div');
@@ -79,7 +79,7 @@ export default class FerretRenderer implements ICellRendererFactory
                 // container.appendChild(vizContainer);
                 vizContainer = container.children[childIndex++] as HTMLElement;
 
-                // const repCountType = 'TOP'; // todo
+
                 this.drawReplicates(vizContainer, col, context, 'newReplicates-', col.id); 
 
                 // vizContainer = document.createElement('div');
@@ -93,7 +93,6 @@ export default class FerretRenderer implements ICellRendererFactory
 
                 const lsdSwitch = document.getElementById('lsd-switch') as HTMLInputElement;
                 const lsd = lsdSwitch.checked;
-                // const nGramCountType = 'TOP'; // todo
                 this.drawNGramFrequency(vizContainer, col, context, 'newNGram-', col.id, nGram, lsd);
 
                 // vizContainer = document.createElement('div');
@@ -235,7 +234,7 @@ export default class FerretRenderer implements ICellRendererFactory
                         selection: selectionName, 
                         value: 1
                     },
-                    value: 1
+                    value: .6
                 },
             },
             layer: [
@@ -267,18 +266,32 @@ export default class FerretRenderer implements ICellRendererFactory
         const tailCount = multiFrequentValues.length - this.maxCollapseCount;
         this.drawExpandCollapseTail(container, tailCount)
     
-          vegaEmbed('#' + elementID + '-inner', yourVlSpec, { actions: false }
-          ).then(result => {
-            //   result.view.addEventListener('mouseover', (event, value) => {
-            //     this.attachFilterPicker(value, selectionName, column, key, dataValues, i, "value");
-            //      });
-            //   result.view.addEventListener('mouseout', (event, value) => {
-            //     this.removeFilterPicker(value, selectionName, column);
-            //      });
-            //   result.view.addSignalListener(selectionName, (name, value) => {
-            //     this.attachSignalListener(value, dataValues, "value", column, selectionName);
-            //   });
-          });
+        vegaEmbed('#' + elementID + '-inner', yourVlSpec, { actions: false })
+        .then(result => {
+            result.view.addEventListener('contextmenu', (event, value) => {
+                if (!value || !value.datum)
+                {
+                    return;
+                }
+                event = event as PointerEvent;
+                event.preventDefault();
+                this.drawContextMenu(value.datum.value, event.pageX, event.pageY);
+
+            })
+            // result.view.addEventListener('mouseover', (event, value) => {
+            // // console.log('mouseover', event, value)
+            // // this.attachFilterPicker(value, selectionName, column, key, dataValues, i, "value");
+            //     });
+            // result.view.addEventListener('mouseout', (event, value) => {
+            // // console.log('mouseout', event, value)
+            // // this.removeFilterPicker(value, selectionName, column);
+            //     });
+        
+            // result.view.addSignalListener(selectionName, (name, value) => {
+            // console.log('signal', name, value)
+            // // this.attachSignalListener(value, dataValues, "value", column, selectionName);
+            // });
+        });
 
     }
 
@@ -551,31 +564,6 @@ export default class FerretRenderer implements ICellRendererFactory
         .catch(console.warn); 
     }
 
-    private  getItemTail(dupCountType: DuplicateCountType, data: any) {
-        let maxIndex = (dupCountType === 'ALL') ? data.length : 5;
-        let itemTail = data.length - maxIndex > 0 ? data.length - maxIndex : 0;
-        return [maxIndex, itemTail];
-    }
-
-    private attachItemTail(count: number, column: ColumnNumeric, key: string, i: number, nGram?: number, lsd?: boolean) {
-        let itemTailDiv = document.getElementById(key + 'tail-' + i);
-        let itemTailExist = (itemTailDiv.hasChildNodes()) ? true : false;
-        let text = itemTailExist ? itemTailDiv.firstChild.textContent : null;
-        let itemTailComponent : HTMLElement;
-
-        while(itemTailDiv.firstChild) 
-            itemTailDiv.removeChild(itemTailDiv.firstChild);
-        
-        if(text == null) 
-            itemTailComponent = ItemTail.create(count, key, 'close', column, i, nGram, lsd);
-        else if(text == 'close')
-            itemTailComponent = ItemTail.create(count, key, 'open', column, i, nGram, lsd);
-        else 
-            itemTailComponent = ItemTail.create(count, key, 'close', column, i, nGram, lsd);
-
-        document.getElementById(key + 'tail-' + i).appendChild(itemTailComponent);
-    }
-
     private drawExpandCollapseTail(container: HTMLElement, count: number): void
     {
         const buttonContainer = container.querySelector('.expandCollapseTail');
@@ -601,6 +589,37 @@ export default class FerretRenderer implements ICellRendererFactory
             document.dispatchEvent(new CustomEvent('updateLineup'));
         }
         buttonContainer.appendChild(button);
+    }
+
+    private drawContextMenu(value: number, pageX: number, pageY: number): void
+    {
+        const outerContextSelection = d3.select('#outerContextMenu')
+            .on('click', () => 
+            {
+                this.hideContextMenu();
+            });
+
+        const innerContextSelection = d3.select('#innerContextMenu');
+        (innerContextSelection.node() as HTMLElement).style.top = pageY + 'px';
+        (innerContextSelection.node() as HTMLElement).style.left = pageX + 'px';
+
+        const buttonInfoList = [
+            {iconKey: 'filter', label: `Remove rows with ${value} in this column.`},
+            {iconKey: 'globe-americas', label: `Remove rows with ${value} in any column.`},
+            {iconKey: 'highlighter', label: `Highlight rows with ${value} in this column.`}
+        ]
+
+        innerContextSelection.selectAll('button')
+            .data(buttonInfoList)
+            .join('button')
+            .html(d => `<i class="fas fa-${d.iconKey}"></i> ` + d.label);
+
+        d3.select('#outerContextMenu').classed('noDisp', false);
+    }
+    
+    private hideContextMenu(): void
+    {
+        d3.select('#outerContextMenu').classed('noDisp', true);
     }
 
 }
