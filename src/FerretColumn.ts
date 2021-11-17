@@ -1,10 +1,18 @@
 import { Column, IDataRow, IColumnDesc, ILinkColumnDesc, IValueColumnDesc, INumberColumnDesc, ValueColumn } from 'lineupjs';
 
+interface FerretFilter {
+  local: Set<number>,
+  global: Set<number>
+}
+
 export default class FerretColumn extends ValueColumn<number> {
   static readonly EVENT_FILTER_CHANGED = 'filterChanged';
   
-  private _currentFilter : Set<number> = new Set<number>();
-  public get currentFilter() : Set<number> {
+  private _currentFilter : FerretFilter = {
+    local: new Set<number>(),
+    global: new Set<number>()
+  }
+  public get currentFilter() : FerretFilter {
     return this._currentFilter;
   }
 
@@ -29,23 +37,34 @@ export default class FerretColumn extends ValueColumn<number> {
   }
 
 
-  isFiltered() {
-    return this.currentFilter.size > 0;
+  public isFiltered(): boolean {
+    return this.currentFilter.local.size > 0 || this.currentFilter.global.size > 0;
   }
 
-  getFilter() {
-    return new Set([...this.currentFilter]);
+  public getFilter(): FerretFilter {
+    let local =  new Set([...this.currentFilter.local]);
+    let global =  new Set([...this.currentFilter.global]);
+    return {local: local, global: global};
   }
 
 
   public addValueFilter(value: number, type: 'local' | 'global')
   {
     const lastFilter = this.getFilter();
-    this.currentFilter.add(value);
+    switch (type)
+    {
+      case 'local':
+        this.currentFilter.local.add(value);
+        break;
+        case 'global':
+        this.currentFilter.global.add(value);
+        break;
+    }
+
     this.triggerEvent(lastFilter);
   }
 
-  public triggerEvent(oldFilter: Set<number>): void
+  public triggerEvent(oldFilter: FerretFilter): void
   {
     this.fire(
       [FerretColumn.EVENT_FILTER_CHANGED, Column.EVENT_DIRTY_VALUES, Column.EVENT_DIRTY],
@@ -76,14 +95,28 @@ export default class FerretColumn extends ValueColumn<number> {
    * @returns {boolean}
    */
   filter(row: IDataRow) {
-    return !this.currentFilter.has(this.getValue(row));
+    const thisValue = this.getValue(row);
+    if (this.currentFilter.local.has(thisValue))
+    {
+      return false;
+    }
+    for (let key in row.v)
+    {
+      let value = row.v[key];
+      if (this.currentFilter.global.has(value))
+      {
+        return false;
+      }
+    }
+    return true;
   }
 
   clearFilter() {
     const was = this.isFiltered();
 
     const lastFilter = this.getFilter();
-    this.currentFilter.clear();
+    this.currentFilter.local.clear();
+    this.currentFilter.global.clear();
     this.triggerEvent(lastFilter);
 
     return was;
