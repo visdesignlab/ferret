@@ -14,6 +14,7 @@ import * as filterNames from "./lib/constants/filter";
 import vegaEmbed, { VisualizationSpec } from 'vega-embed';
 import { ItemTail } from './components/item-tail';
 import { Filter } from "./Filter";
+import FerretColumn from "./FerretColumn";
 export default class FerretRenderer implements ICellRendererFactory
 {
     readonly title: string = 'Ferret Visualizations';
@@ -21,12 +22,12 @@ export default class FerretRenderer implements ICellRendererFactory
 
     public canRender(col: Column)
     {
-        return col.desc.type === 'number' || col.desc.type === 'categorical';
+        return col.desc.type === 'number' || col.desc.type === 'categorical' || col.desc.type === 'FerretColumn';
     }
 
     public createSummary
     (
-        col: ValueColumn<number>,
+        col: FerretColumn,
         context: IRenderContext,
         interactive: boolean,
         imposer?: IImposer
@@ -111,7 +112,7 @@ export default class FerretRenderer implements ICellRendererFactory
     private async drawOverallDist
     (
         container: HTMLElement,
-        column: ValueColumn<number>,
+        column: FerretColumn,
         context: IRenderContext,
         interactive: boolean,
         chartKey: string,
@@ -133,7 +134,7 @@ export default class FerretRenderer implements ICellRendererFactory
         const elementID = chartKey + colKey;
         container.id = elementID;
         // type: 'string' | 'number' | 'categorical'
-        const isNumeric = column.desc.type === 'number';
+        const isNumeric = column.desc.type === 'number' || column.desc.type === 'FerretColumn';
         const xAxisType = isNumeric ? 'quantitative' : 'nominal';
 
         var yourVlSpec: VisualizationSpec = {
@@ -178,7 +179,7 @@ export default class FerretRenderer implements ICellRendererFactory
     
     private async drawFrequentDuplicates(
         container: HTMLElement,
-        column: ValueColumn<number>,
+        column: FerretColumn,
         context: IRenderContext,
         chartKey: string,
         colKey: string): Promise<void>
@@ -299,7 +300,7 @@ export default class FerretRenderer implements ICellRendererFactory
 
     private async drawReplicates(
         container: HTMLElement,
-        column: ValueColumn<number>,
+        column: FerretColumn,
         context: IRenderContext,
         chartKey: string,
         colKey: string): Promise<void>
@@ -380,7 +381,7 @@ export default class FerretRenderer implements ICellRendererFactory
 
     private async drawNGramFrequency(
         container: HTMLElement,
-        column: ValueColumn<number>,
+        column: FerretColumn,
         context: IRenderContext,
         chartKey: string,
         colKey: string,
@@ -491,13 +492,13 @@ export default class FerretRenderer implements ICellRendererFactory
 
     private async drawLeadingDigitDist(
         container: HTMLElement,
-        column: ValueColumn<number>,
+        column: FerretColumn,
         context: IRenderContext,
         chartKey: string,
         colKey: string
     ): Promise<void>
     {
-        let leadDictFreq = await ChartCalculations.GetLeadingDigitFreqs(column, context);
+        let leadDictFreq = await ChartCalculations.GetLeadingDigitFreqs(column as ValueColumn<number>, context);
         let selectionName = filterNames.LEADING_DIGIT_FREQ_SELECTION;
         let dataValues : Array<any> = [];
         for (let [digit, freq] of leadDictFreq)
@@ -593,7 +594,7 @@ export default class FerretRenderer implements ICellRendererFactory
         buttonContainer.appendChild(button);
     }
 
-    private async drawContextMenu(value: number, column: ValueColumn<number>, context: IRenderContext, pageX: number, pageY: number): Promise<void>
+    private async drawContextMenu(value: number, column: FerretColumn, context: IRenderContext, pageX: number, pageY: number): Promise<void>
     {
         const outerContextSelection = d3.select('#outerContextMenu')
             .on('click', () => 
@@ -608,8 +609,8 @@ export default class FerretRenderer implements ICellRendererFactory
         const rowIndices = await this.getMatchingRowIndices(value, column, context);
 
         const buttonInfoList = [
-            {iconKey: 'filter', label: `Remove rows with ${value} in this column.`, func: () => {throw new Error('not defined')}},
-            {iconKey: 'globe-americas', label: `Remove rows with ${value} in any column.`, func: () => {throw new Error('not defined')}},
+            {iconKey: 'filter', label: `Remove rows with ${value} in this column.`, func: () => this.onFilter(column, value, 'local')},
+            {iconKey: 'globe-americas', label: `Remove rows with ${value} in any column.`, func: () => this.onFilter(column, value, 'global')},
             {iconKey: 'highlighter', label: `Highlight rows with ${value} in this column.`, func: () => this.onHighlight(rowIndices)}
         ]
 
@@ -637,6 +638,11 @@ export default class FerretRenderer implements ICellRendererFactory
             }
         }
         return outIndices;
+    }
+
+    private onFilter(column: FerretColumn, value: number, type: 'local' | 'global'): void
+    {
+        column.addValueFilter(value, type);
     }
 
     private onHighlight(rowIndices: number[]): void

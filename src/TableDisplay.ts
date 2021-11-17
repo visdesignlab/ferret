@@ -12,8 +12,9 @@ import { ControlsDisplay } from "./ControlsDisplay";
 import { FilterPicker } from "./components/filter-picker";
 import { ItemTail } from "./components/item-tail";
 import * as $ from 'jquery';
-import { ColumnBuilder, ICategory } from "lineupjs";
+import { ColumnBuilder, ICategory, LocalDataProvider } from "lineupjs";
 import FerretRenderer from "./FerretRenderer"
+import FerretColumn from "./FerretColumn"
 export class TableDisplay extends EventTarget
 {
     charts = ['overallDist', 'duplicateCount', 'replicates', 'nGram', 'benfordDist'];
@@ -37,6 +38,7 @@ export class TableDisplay extends EventTarget
             }
         });
 
+        document.addEventListener("filterRows", (e: CustomEvent) => this.onFilterRows(e))
         document.addEventListener("highlightRows", (e: CustomEvent) => this.onHighlightRows(e))
     }
 
@@ -562,6 +564,8 @@ export class TableDisplay extends EventTarget
         const rowFirstData = data.getRowList();
         console.log(rowFirstData);
         const builder = LineUpJS.builder(rowFirstData);
+        builder.registerColumnType('FerretColumn', FerretColumn)
+        LineUpJS.toolbar('rename', 'sort', 'sortBy', 'filterNumber')(FerretColumn);
 
         for (let i = 0; i < data.columnList.length; i++)
         {
@@ -571,7 +575,8 @@ export class TableDisplay extends EventTarget
             let columnBuilder: ColumnBuilder;
             if (column.type === 'Number')
             {
-                columnBuilder = LineUpJS.buildNumberColumn(key);
+                // columnBuilder = LineUpJS.buildNumberColumn(key);
+                columnBuilder = LineUpJS.buildColumn('FerretColumn', key)
                 columnBuilder.renderer('brightness', '', 'FerretRenderer');
                 columnBuilder.custom('numberFormat', d3.format('.8~f'));
             }
@@ -619,6 +624,20 @@ export class TableDisplay extends EventTarget
         this._lineup = builder.build(lineupContainer);
         // this.lineup.setSelection([1,3,5,7,9]);
 
+        // const firstRanking = this.lineup.data.getFirstRanking(); // get the first ranking from the data provider
+        // firstRanking.filter({v: 1, i: 1});
+
+        // let columnDescList = this.lineup.data.getColumns();
+
+        // let dataProvider = new LocalDataProvider([rowFirstData, rowFirstData], columnDescList);
+        // this.lineup.setDataProvider(dataProvider);
+        // this.lineup.update();
+
+
+
+        // new LocalDataProvider(data: any[], columns?: IColumnDesc[], options?: Partial<ILocalDataProviderOptions & IDataProviderOptions>): LocalDataProvider
+
+        // firstRanking.children[0]
         // this.lineup.update()
         // const firstRanking = this.lineup.data.getFirstRanking(); // get the first ranking from the data provider
         // firstRanking.on('orderChanged.custom', (previous, current, previousGroups, currentGroups, dirtyReason) => {
@@ -657,6 +676,22 @@ export class TableDisplay extends EventTarget
         // lineup appears to not do anything if sort by is already set to col2, so this is to force an update
         this.lineup.sortBy('col2', false);
         this.lineup.update();
+    }
+
+    private onFilterRows(e: CustomEvent): void
+    {
+        // let firstTenRows = this.data.getRowList().slice(0,10);
+        // let columnDescList = this.lineup.data.getColumns();
+// 
+        // let dataProvider = new LocalDataProvider(firstTenRows, columnDescList);
+        // this.lineup.setDataProvider(dataProvider);
+        this.lineup.update();
+
+
+        // const firstRanking = this.lineup.data.getFirstRanking(); // get the first ranking from the data provider
+        // firstRanking.filter([1,2,3])
+        // this.lineup.data.view([1,2,3])
+        // selectAll([1,2,3])
     }
 
     private getSelectedData(selectedIndices: Array<number>, dataValues: Array<any>, prop: string) : Array<number> {
