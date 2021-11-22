@@ -130,19 +130,6 @@ export default class FerretColumn extends ValueColumn<number> {
    * @returns {boolean}
    */
   filter(row: IDataRow) {
-    // const thisValue = this.getValue(row);
-    // if (this.currentFilter.local.has(thisValue))
-    // {
-    //   return false;
-    // }
-    // for (let key in row.v)
-    // {
-    //   let value = row.v[key];
-    //   if (this.currentFilter.global.has(value))
-    //   {
-    //     return false;
-    //   }
-    // }
     return true;
   }
 
@@ -157,14 +144,6 @@ export default class FerretColumn extends ValueColumn<number> {
       {
         return true;
       }
-      // for (let key in row.v)
-      // {
-      //   let value = row.v[key];
-      //   if (FerretColumn.globalFilter.ignoreValues.has(value))
-      //   {
-      //     return true;
-      //   }
-      // }
       return false;
     }
 
