@@ -1,11 +1,12 @@
 import { Column } from './Column';
+import FerretColumn from './FerretColumn';
 import { FilterRange } from './lib/constants/filter';
 
 export class Filter
 {
 
-    constructor(id: string, column: Column<string | number>, chart: string, selectedData: Array<string | number>, filterRange: FilterRange) {
-        this._id = id;
+    constructor(column: FerretColumn, chart: string, selectedData: Array<string | number>, filterRange: FilterRange) {
+        this._id = column.id;
         this._column = column;
         this._chart = chart;
         this._selectedData = selectedData;
@@ -21,11 +22,11 @@ export class Filter
         this._id = v;
     }
 
-    private _column : Column<string | number>;
-    public get column() : Column<string | number> {
+    private _column : FerretColumn;
+    public get column() : FerretColumn {
         return this._column;
     }
-    public set column(v: Column<string | number>)
+    public set column(v: FerretColumn)
     {
         this._column = v;
     }

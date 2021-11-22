@@ -1,6 +1,7 @@
 * {
     margin: 0px;
     padding: 0px;
+    font-family: 'Josefin Sans', sans-serif;
 }
 
 body {
@@ -33,7 +34,6 @@ body {
     font-size: 12pt;
     user-select: none;
     padding: 5px;
-    font-family: 'Josefin Sans', sans-serif;
     background: white;
 }
 
@@ -83,14 +83,49 @@ body {
     padding: 4px;
     cursor: pointer;
     border-bottom: 1px solid #eeeeee;
+    display: flex;
+    white-space: nowrap;
+    align-items: baseline;
+    color: #5c5c5c;
+    transition: background-color .4s;
+    font-size: 9pt;
 }
 
-.data-div {
+.dropdown-item:hover {
+    background-color: #e5e5e5
+}
+
+.column-label {
+    border: solid #565656 1px;
+}
+
+.ignore-label {
     margin-right: 5px;
-    padding: 2px 5px 2px 5px;
+    margin-left: 5px;
+    padding: 3px 4px 2px 4px;
     border-radius: 2px;
-    font-size: 9pt;
-    font-family: 'Josefin Sans', sans-serif;
+    font-weight: 800;
+    font-size: 10pt;
+    color: black;
+}
+
+.ignore-label.value {
+    background-color: #e57373;
+}
+
+.trash-container {
+    opacity: 0.0;
+    transition: opacity .4s;
+    color: #3c3c3c;
+    margin-left: 4px;
+    margin-right: 4px;
+    font-size: 11pt;
+}
+
+
+
+.dropdown-item:hover .trash-container {
+    opacity: 1;
 }
 
 .description {
@@ -98,7 +133,6 @@ body {
     transition: 0.5s;
     margin-left: 0px;
     padding: 5px;
-    font-family: 'Josefin Sans', sans-serif;
     border: 1px solid #d0d0d0;
     background: white;
 }

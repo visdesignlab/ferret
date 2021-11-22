@@ -11,7 +11,7 @@ let vizTableContainer = document.getElementById('tableContainer');
 let dataTableContainer = document.getElementById('lineupContainerOuter');
 let tableDisplay = new TableDisplay();
 let filterDisplay = new FilterDisplay();
-let highlightDisplay = new HighlightDisplay();
+// let highlightDisplay = new HighlightDisplay();
 tableDisplay.SetContainer(vizTableContainer);
 let outerContainer = document.getElementById('outerContainer');
 let uploadOnlyContainerOuter = document.getElementById('uploadOnlyContainerOuter');
@@ -21,7 +21,8 @@ let controlsContainer = document.getElementById('controlsContainer');
 let descriptionContainer = document.getElementById('description');
 let controlsDisplay = new ControlsDisplay(toolbarContainer, controlsContainer, descriptionContainer, vizTableContainer, dataTableContainer);
 filterDisplay.SetContainer(toolbarContainer);
-highlightDisplay.SetContainer(toolbarContainer);
+// highlightDisplay.SetContainer(toolbarContainer);
+
 
 
 let clear = () : void =>
@@ -50,10 +51,12 @@ let init = (data: string, filename: string) =>
 	const defaultVizShown = [true, false, false, false, false];
 	controlsDisplay.SetData(tabularData, defaultVizShown);
 	tableDisplay.SetData(tabularData, defaultVizShown);
+	filterDisplay.SetLineUp(tableDisplay.lineup);
+
 	// controlsDisplay.updateChartVisibility();
 	// controlsDisplay. // todo show correct viz rows at the beginning correctly
 	filterDisplay.drawDropdown();
-	highlightDisplay.drawDropdown();
+	// highlightDisplay.drawDropdown();
 	document.title = filename;
 	uploadOnlyContainerOuter.classList.add('noDisp');
 	outerContainer.classList.remove('noDisp');

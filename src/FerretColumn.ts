@@ -1,11 +1,11 @@
 import { Column, IDataRow, IColumnDesc, ILinkColumnDesc, IValueColumnDesc, INumberColumnDesc, ValueColumn, INumberColumn, EAdvancedSortMethod, ECompareValueType, IGroup } from 'lineupjs';
-import { IAdvancedBoxPlotData, ISequence } from 'lineupjs/build/src/internal';
+import { IAdvancedBoxPlotData, IEventListener, ISequence } from 'lineupjs/build/src/internal';
 
 interface FerretFilter {
   ignoreValues: Set<number>
 }
 
-interface CombinedFilter {
+export interface CombinedFilter {
   local: FerretFilter,
   global: FerretFilter
 }
@@ -13,8 +13,12 @@ interface CombinedFilter {
 export default class FerretColumn extends ValueColumn<number> {
   static readonly EVENT_FILTER_CHANGED = 'filterChanged';
 
-  static globalFilter: FerretFilter = {
+  private static _globalFilter: FerretFilter = {
     ignoreValues: new Set<number>()
+  }
+
+  public static get globalFilter(): FerretFilter {
+    return FerretColumn._globalFilter;
   }
 
 
@@ -31,6 +35,11 @@ export default class FerretColumn extends ValueColumn<number> {
       .concat([
         FerretColumn.EVENT_FILTER_CHANGED
       ]);
+  }
+
+  // on(type: typeof FerretColumn.EVENT_FILTER_CHANGED, listener: typeof filterChanged_NC | null): this;
+  on(type: string | string[], listener: IEventListener | null): this {
+    return super.on(type as any, listener);
   }
 
   public getValue(row: IDataRow): number {
@@ -51,9 +60,9 @@ export default class FerretColumn extends ValueColumn<number> {
   }
 
   public getFilter(): CombinedFilter {
-    let local: FerretFilter =  {ignoreValues: new Set([...this.localFilter.ignoreValues])};
-    let global: FerretFilter =  {ignoreValues: new Set([...FerretColumn.globalFilter.ignoreValues])};
-    return {local: local, global: global};
+    // let local: FerretFilter =  {ignoreValues: new Set([...this.localFilter.ignoreValues])};
+    // let global: FerretFilter =  {ignoreValues: new Set([...FerretColumn.globalFilter.ignoreValues])};
+    return {local: this.localFilter, global: FerretColumn.globalFilter};
   }
 
 
@@ -73,12 +82,29 @@ export default class FerretColumn extends ValueColumn<number> {
     this.triggerEvent(lastFilter);
   }
 
+  public removeValueToIgnore(value: number, type: 'local' | 'global')
+  {
+    const lastFilter = this.getFilter();
+    switch (type)
+    {
+      case 'local':
+        this.localFilter.ignoreValues.delete(value);
+        break;
+      case 'global':
+        FerretColumn.globalFilter.ignoreValues.delete(value);
+        break;
+    }
+
+    this.triggerEvent(lastFilter);
+  }
+
   public triggerEvent(oldFilter: CombinedFilter): void
   {
     this.fire(
       [FerretColumn.EVENT_FILTER_CHANGED, Column.EVENT_DIRTY_VALUES, Column.EVENT_DIRTY],
-      oldFilter,
-      this.getFilter()
+      // oldFilter,
+      this.getFilter(),
+      this
     );
   }
 

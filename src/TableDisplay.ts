@@ -15,7 +15,9 @@ import * as $ from 'jquery';
 import { ColumnBuilder, ICategory, LocalDataProvider } from "lineupjs";
 import FerretRenderer from "./FerretRenderer"
 import FerretCellRenderer from "./FerretCellRenderer"
-import FerretColumn from "./FerretColumn"
+import FerretColumn, { CombinedFilter } from "./FerretColumn"
+import { first } from "lodash";
+import { IEventListener } from "lineupjs/build/src/internal";
 export class TableDisplay extends EventTarget
 {
     charts = ['overallDist', 'duplicateCount', 'replicates', 'nGram', 'benfordDist'];
@@ -39,7 +41,7 @@ export class TableDisplay extends EventTarget
             }
         });
 
-        document.addEventListener("filterRows", (e: CustomEvent) => this.onFilterRows(e))
+        // document.addEventListener("filterRows", (e: CustomEvent) => this.onFilterRows(e))
         document.addEventListener("highlightRows", (e: CustomEvent) => this.onHighlightRows(e))
     }
 
@@ -238,11 +240,11 @@ export class TableDisplay extends EventTarget
           };
           vegaEmbed('#' + key + 'chart-' + i, yourVlSpec, { actions: false }
           ).then(result => {
-              result.view.addSignalListener(selectionName, (name, value) => {
-                let selectedData : Array<number> = this.getSelectedData(value._vgsid_, dataValues, "value");
-                let filter: Filter = new Filter(uuid.v4(), column, selectionName, selectedData, 'LOCAL') 
-                document.dispatchEvent(new CustomEvent('addHighlight', {detail: {filter: filter}}));
-              });
+            //   result.view.addSignalListener(selectionName, (name, value) => {
+            //     let selectedData : Array<number> = this.getSelectedData(value._vgsid_, dataValues, "value");
+            //     let filter: Filter = new Filter(uuid.v4(), column, selectionName, selectedData, 'LOCAL') 
+            //     document.dispatchEvent(new CustomEvent('addHighlight', {detail: {filter: filter}}));
+            //   });
           });
     }
 
@@ -300,15 +302,15 @@ export class TableDisplay extends EventTarget
         
         vegaEmbed('#' + key + 'chart-' + i, yourVlSpec, { actions: false }
             ).then(result => {
-              result.view.addEventListener('mouseover', (event, value) => {
-                    this.attachFilterPicker(value, selectionName, column, key, dataValues, i, "digit");
-                });
-              result.view.addEventListener('mouseout', (event, value) => {
-                    this.removeFilterPicker(value, selectionName, column);
-                });
-              result.view.addSignalListener(selectionName, (name, value) => {
-                    this.attachSignalListener(value, dataValues, "digit", column, selectionName);
-                });
+            //   result.view.addEventListener('mouseover', (event, value) => {
+            //         this.attachFilterPicker(value, selectionName, column, key, dataValues, i, "digit");
+            //     });
+            //   result.view.addEventListener('mouseout', (event, value) => {
+            //         this.removeFilterPicker(value, selectionName, column);
+            //     });
+            //   result.view.addSignalListener(selectionName, (name, value) => {
+            //         this.attachSignalListener(value, dataValues, "digit", column, selectionName);
+            //     });
           })
         .catch(console.warn); 
     }
@@ -453,15 +455,15 @@ export class TableDisplay extends EventTarget
     
           vegaEmbed('#' + key + 'chart-' + i, yourVlSpec, { actions: false }
           ).then(result => {
-              result.view.addEventListener('mouseover', (event, value) => {
-                this.attachFilterPicker(value, selectionName, column, key, dataValues, i, "value");
-                 });
-              result.view.addEventListener('mouseout', (event, value) => {
-                this.removeFilterPicker(value, selectionName, column);
-                 });
-              result.view.addSignalListener(selectionName, (name, value) => {
-                this.attachSignalListener(value, dataValues, "value", column, selectionName);
-              });
+            //   result.view.addEventListener('mouseover', (event, value) => {
+            //     this.attachFilterPicker(value, selectionName, column, key, dataValues, i, "value");
+            //      });
+            //   result.view.addEventListener('mouseout', (event, value) => {
+            //     this.removeFilterPicker(value, selectionName, column);
+            //      });
+            //   result.view.addSignalListener(selectionName, (name, value) => {
+            //     this.attachSignalListener(value, dataValues, "value", column, selectionName);
+            //   });
           });
 
     }
@@ -543,15 +545,15 @@ export class TableDisplay extends EventTarget
     
           vegaEmbed('#' + key + 'chart-' + i, yourVlSpec, { actions: false }
           ).then(result => {
-            result.view.addEventListener('mouseover', (event, value) => {
-                this.attachFilterPicker(value, selectionName, column, key, dataValues, i, "value");
-                 });
-              result.view.addEventListener('mouseout', (event, value) => {
-                this.removeFilterPicker(value, selectionName, column);
-                 });
-              result.view.addSignalListener(selectionName, (name, value) => {
-                this.attachSignalListener(value, dataValues, "value", column, selectionName);
-                 });
+            // result.view.addEventListener('mouseover', (event, value) => {
+            //     this.attachFilterPicker(value, selectionName, column, key, dataValues, i, "value");
+            //      });
+            //   result.view.addEventListener('mouseout', (event, value) => {
+            //     this.removeFilterPicker(value, selectionName, column);
+            //      });
+            //   result.view.addSignalListener(selectionName, (name, value) => {
+            //     this.attachSignalListener(value, dataValues, "value", column, selectionName);
+            //      });
           })
          
     }
@@ -624,6 +626,26 @@ export class TableDisplay extends EventTarget
         builder.registerRenderer('FerretRenderer', new FerretRenderer());
         builder.registerRenderer('FerretCellRenderer', new FerretCellRenderer());
         this._lineup = builder.build(lineupContainer);
+        const firstRanking = this.lineup.data.getFirstRanking(); // get the first ranking from the data provider
+        for (let col of firstRanking.flatColumns)
+        {
+            if (col instanceof FerretColumn)
+            {
+                // col.on('filterChanged', (A, B, C) => { console.log('filter changed (on col).', 'A', A, 'B', B, 'C', C) })
+                col.on('filterChanged', (newFilter, column) =>  this.onFilterRows(newFilter, column));
+            }
+        }
+
+        let columnDescList = this.lineup.data.getColumns();
+
+        for (let columnDesc of columnDescList)
+        {
+            console.log(columnDesc.type);
+            console.log(columnDesc);
+            console.log('------');
+        }
+
+        
         // this.lineup.setSelection([1,3,5,7,9]);
 
         // const firstRanking = this.lineup.data.getFirstRanking(); // get the first ranking from the data provider
@@ -680,14 +702,17 @@ export class TableDisplay extends EventTarget
         this.lineup.update();
     }
 
-    private onFilterRows(e: CustomEvent): void
+    private onFilterRows(newFilter: CombinedFilter, column: FerretColumn): void
     {
+        let f: Filter = new Filter(column, 'temp-chart', [1,2,3], 'LOCAL');
+
+        document.dispatchEvent(new CustomEvent('addFilter', {detail: {filter: f}}));
         // let firstTenRows = this.data.getRowList().slice(0,10);
         // let columnDescList = this.lineup.data.getColumns();
 // 
         // let dataProvider = new LocalDataProvider(firstTenRows, columnDescList);
         // this.lineup.setDataProvider(dataProvider);
-        this.lineup.update();
+        // this.lineup.update();
 
 
         // const firstRanking = this.lineup.data.getFirstRanking(); // get the first ranking from the data provider
@@ -748,35 +773,35 @@ export class TableDisplay extends EventTarget
         document.getElementById(key + 'tail-' + i).appendChild(itemTailComponent);
     }
     
-    private attachFilterPicker(value: any, selectionName: string, column: ColumnNumeric, key: string, dataValues: any[], i: number, selectDataType: string) {
-        if(value != null && value.datum != null) {
-            let selectedIndices: Array<number> = [];
-            selectedIndices.push(value.datum._vgsid_);
-            let selectedData : Array<number> = this.getSelectedData(selectedIndices, dataValues, selectDataType);
-            let filter: Filter = new Filter(uuid.v4(), column, selectionName, selectedData,'LOCAL');
-            let e = window.event;
-            let filterPickerId = selectionName+column.id.replace('.', '_')+value.datum.digit;
-            let filterPicker: HTMLElement = FilterPicker.create(filterPickerId, filter, e, document.getElementById(key + 'chart-' + i));
-            document.getElementById(key + 'chart-' + i).appendChild(filterPicker);
-            } 
-        }
+    // private attachFilterPicker(value: any, selectionName: string, column: ColumnNumeric, key: string, dataValues: any[], i: number, selectDataType: string) {
+    //     if(value != null && value.datum != null) {
+    //         let selectedIndices: Array<number> = [];
+    //         selectedIndices.push(value.datum._vgsid_);
+    //         let selectedData : Array<number> = this.getSelectedData(selectedIndices, dataValues, selectDataType);
+    //         let filter: Filter = new Filter(uuid.v4(), column, selectionName, selectedData,'LOCAL');
+    //         let e = window.event;
+    //         let filterPickerId = selectionName+column.id.replace('.', '_')+value.datum.digit;
+    //         let filterPicker: HTMLElement = FilterPicker.create(filterPickerId, filter, e, document.getElementById(key + 'chart-' + i));
+    //         document.getElementById(key + 'chart-' + i).appendChild(filterPicker);
+    //         } 
+    //     }
     
-    private removeFilterPicker(value: any, selectionName: string, column: ColumnNumeric) {
-        if(value != null && value.datum != null) {
-            let filterPickerId = selectionName+column.id.replace('.', '_')+value.datum.digit;
-            let filterPicker = document.getElementById(filterPickerId);
-            $(document).on('mousemove', () => {
-                if($('#'+filterPickerId+":hover").length == 0) {
-                        if(filterPickerId!=null) filterPicker.remove();
-                    }
-            });
-        }
-    }
+    // private removeFilterPicker(value: any, selectionName: string, column: ColumnNumeric) {
+    //     if(value != null && value.datum != null) {
+    //         let filterPickerId = selectionName+column.id.replace('.', '_')+value.datum.digit;
+    //         let filterPicker = document.getElementById(filterPickerId);
+    //         $(document).on('mousemove', () => {
+    //             if($('#'+filterPickerId+":hover").length == 0) {
+    //                     if(filterPickerId!=null) filterPicker.remove();
+    //                 }
+    //         });
+    //     }
+    // }
 
-    private attachSignalListener(value: any, dataValues: any[], selectDataType: string, column: ColumnNumeric | ColumnCategorical, selectionName: string) {
-        console.log("gere0");
-        let selectedData : Array<number> = this.getSelectedData(value._vgsid_, dataValues, selectDataType);
-        let filter: Filter = new Filter(uuid.v4(), column, selectionName, selectedData, 'LOCAL') 
-        document.dispatchEvent(new CustomEvent('addHighlight', {detail: {filter: filter}}));
-    }
+    // private attachSignalListener(value: any, dataValues: any[], selectDataType: string, column: ColumnNumeric | ColumnCategorical, selectionName: string) {
+    //     console.log("gere0");
+    //     let selectedData : Array<number> = this.getSelectedData(value._vgsid_, dataValues, selectDataType);
+    //     let filter: Filter = new Filter(uuid.v4(), column, selectionName, selectedData, 'LOCAL') 
+    //     document.dispatchEvent(new CustomEvent('addHighlight', {detail: {filter: filter}}));
+    // }
 }

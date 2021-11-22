@@ -8,8 +8,8 @@ export class FilterPicker extends EventTarget
     }
 
     public static create(id: string, filter: Filter, e: any, parent: HTMLElement) {
-        let localFilter = new Filter(filter.id, filter.column, filter.chart, filter.selectedData, 'LOCAL');
-        let globalFilter = new Filter(filter.id, filter.column, filter.chart, filter.selectedData, 'GLOBAL');
+        let localFilter = new Filter(filter.column, filter.chart, filter.selectedData, 'LOCAL');
+        let globalFilter = new Filter(filter.column, filter.chart, filter.selectedData, 'GLOBAL');
         let picker = document.createElement('div');
         let pickerContent = document.createElement('div');
         let iconGlobal = document.createElement('i');

@@ -1,7 +1,11 @@
+import * as d3 from 'd3';
 import { Filter } from './Filter';
 import { applyFilterUpdate, removedFilterUpdate } from "./ProvenanceSetup";
 import { TabularData } from './TabularData';
 import * as filterNames from "./lib/constants/filter";
+import LineUp from 'lineupjs';
+import FerretColumn from './FerretColumn';
+import { duplicate } from 'vega-lite';
 
 export abstract class FilterDropdown extends EventTarget
 {
@@ -19,6 +23,17 @@ export abstract class FilterDropdown extends EventTarget
     public SetContainer(container: HTMLElement): void {
         this._toolbarContainer = container;
     }
+
+    private _lineupInstance : LineUp;
+    public get lineupInstance() : LineUp {
+        return this._lineupInstance;
+    }
+
+    public SetLineUp(lineup: LineUp): void
+    {
+        this._lineupInstance = lineup;
+    }
+    
     
     protected _filters: Array<Filter>;
     public get filters(): Array<Filter> {
@@ -113,27 +128,103 @@ export abstract class FilterDropdown extends EventTarget
     }
 
     private manageDropdown(filters: Array<Filter>) {
-        let dropdownMenu = document.getElementById(this._id+"DropdownMenu");
-        dropdownMenu.innerHTML = null;
+        let dropdownMenu = document.getElementById(this._id + 'DropdownMenu');
         if(this._id == "highlight") 
             this.addChangeToFilterOption(filters);
 
-        for(let f of filters) {
-            let filterItemDiv = document.createElement('div');
-            filterItemDiv.classList.add('dropdown-item');
-            filterItemDiv.id = f.id;
-            filterItemDiv.addEventListener("click", e => this.removeFilter(new Filter(f.id, f.column, f.chart, f.selectedData, f.filterRange)));
-            let columnDiv = document.createElement('span');
-            let selectedDataDiv = document.createElement('span');
-            columnDiv.innerHTML = f.filterRange == 'LOCAL' ? f.column.id : 'GLOBAL';
-            columnDiv.classList.add('group-sub-header');
-            selectedDataDiv.innerHTML = f.selectedData.toString();
-            selectedDataDiv.style.backgroundColor = this.getBackgroundColor(f.chart);
-            selectedDataDiv.classList.add('data-div');
-            filterItemDiv.appendChild(selectedDataDiv);
-            filterItemDiv.appendChild(columnDiv);
-            dropdownMenu.appendChild(filterItemDiv);
-        }
+
+        const ignoreVals: {
+            col: FerretColumn | null;
+            val: number;
+        }[] = []
+
+        const globalVals = [...FerretColumn.globalFilter.ignoreValues].map(val => {
+            return {
+                col: null,
+                val: val
+            }
+        });
+        ignoreVals.push(...globalVals);
+
+        const firstRanking = this.lineupInstance.data.getFirstRanking();
+        const ferretColumns: FerretColumn[] = firstRanking.flatColumns.filter(col => col instanceof FerretColumn) as FerretColumn[];
+        const firstFerretColumn = ferretColumns[0];
+        const ferretColumnsWithFilter: FerretColumn[] = ferretColumns.filter(col => col.localFilter.ignoreValues.size > 0);
+        const localVals = ferretColumnsWithFilter.map(col => [...col.localFilter.ignoreValues].map(val => {
+            return {
+                col: col,
+                val: val
+            }
+        })).flat();
+
+        ignoreVals.push(...localVals);
+
+        const selectorString = '#' + this._id + 'DropdownMenu';
+        const dropdownMenuSelect = d3.select(selectorString);
+        const filterListSelect = dropdownMenuSelect.selectAll('div')
+            .data(ignoreVals)
+            .join('div')
+            .classed('dropdown-item', true)
+            // .attr('id', d => d.col.id)
+            .attr('title', 'select to remove filter')
+            .on('click', (d) => {
+                if (d.col !== null)
+                {
+                    d.col.removeValueToIgnore(d.val, 'local')
+                }
+                else
+                {
+                    // need a column instance to fire correctly, but it
+                    // does not matter which one.
+                    firstFerretColumn.removeValueToIgnore(d.val, 'global');
+                }
+            })
+            .each((d, i, nodes) => {
+                const element: HTMLDivElement = nodes[i] as HTMLDivElement;   
+                
+                const valueSpan: HTMLSpanElement = document.createElement('span');
+                valueSpan.classList.add('ignore-label', 'value');
+                valueSpan.innerText = d.val.toString();
+
+                const columnSpan: HTMLSpanElement = document.createElement('span');
+                columnSpan.classList.add('ignore-label', 'column-label');
+                columnSpan.innerText = d.col !== null ? `${d.col.desc.label} (${d.col.id})` : `ALL`;
+
+                const trashSpan: HTMLSpanElement = document.createElement('span');
+                trashSpan.classList.add('trash-container');
+                trashSpan.innerHTML = '<i class="fas fa-trash"></i>';
+
+                element.innerHTML = `Value ${valueSpan.outerHTML} ignored in ${columnSpan.outerHTML}${trashSpan.outerHTML}`
+            });
+
+        // filterListSelect.selectAll('span')
+        //     .data(d => [d])
+        //     .join('span')
+        //     .classed('ignore-label', true)
+        //     .classed('ignore-value', true)
+        //     .text(d => d.val.toString())
+            
+
+
+
+        // for(let f of filters) {
+        //     let filterItemDiv = document.createElement('div');
+        //     filterItemDiv.classList.add('dropdown-item');
+        //     filterItemDiv.id = f.id;
+        //     filterItemDiv.addEventListener("click", e => this.removeFilter(new Filter(f.column, f.chart, f.selectedData, f.filterRange)));
+            
+        //     let columnDiv = document.createElement('span');
+        //     let selectedDataDiv = document.createElement('span');
+        //     columnDiv.innerHTML = f.filterRange == 'LOCAL' ? f.column.id : 'GLOBAL';
+        //     columnDiv.classList.add('group-sub-header');
+        //     selectedDataDiv.innerHTML = f.selectedData.toString();
+        //     selectedDataDiv.style.backgroundColor = this.getBackgroundColor(f.chart);
+        //     selectedDataDiv.classList.add('ignore-label');
+        //     filterItemDiv.appendChild(selectedDataDiv);
+        //     filterItemDiv.appendChild(columnDiv);
+            
+        //     dropdownMenu.appendChild(filterItemDiv);
+        // }
     }
 
     private addChangeToFilterOption(filters: Array<Filter>) {
@@ -144,7 +235,7 @@ export abstract class FilterDropdown extends EventTarget
         filterItemDiv.classList.add('dropdown-item');
         let selectedDataDiv = document.createElement('span');
         selectedDataDiv.innerHTML = 'TRANSFORM TO FILTER';
-        selectedDataDiv.classList.add('data-div');
+        selectedDataDiv.classList.add('ignore-label');
         filterItemDiv.appendChild(icon);
         filterItemDiv.appendChild(selectedDataDiv);
         dropdownMenu.appendChild(filterItemDiv);
@@ -198,10 +289,10 @@ export abstract class FilterDropdown extends EventTarget
 
     private addFilter(filter: Filter): void 
     {
-        this._filters.push(filter);
-        applyFilterUpdate(filter, this._selectionType);
-        this.filterData(filter, this._data, this._localData);
-        this.drawFilterCount(this._filters);
+        // this._filters.push(filter);
+        // applyFilterUpdate(filter, this._selectionType);
+        // this.filterData(filter, this._data, this._localData);
+        // this.drawFilterCount(this._filters);
         this.manageDropdown(this._filters);
     }
 
