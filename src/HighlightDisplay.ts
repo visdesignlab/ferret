@@ -24,12 +24,12 @@ export class HighlightDisplay extends FilterDropdown
         });
     }
 
-    public drawDropdown(): void {
+    public drawSetup(): void {
         let filters: Array<Filter> = [];
         let id: string = "highlight";
         let title: string = "Highlight";
         let iconType: string = "highlighter";
-        this.draw(filters, id, title, iconType);
+        super.drawSetup(filters, id, title, iconType);
     }
 
     protected filterData(filter: Filter | null, data: TabularData | null, localData: TabularData | null) { 

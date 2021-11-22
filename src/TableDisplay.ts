@@ -41,7 +41,6 @@ export class TableDisplay extends EventTarget
             }
         });
 
-        // document.addEventListener("filterRows", (e: CustomEvent) => this.onFilterRows(e))
         document.addEventListener("highlightRows", (e: CustomEvent) => this.onHighlightRows(e))
     }
 
@@ -631,8 +630,7 @@ export class TableDisplay extends EventTarget
         {
             if (col instanceof FerretColumn)
             {
-                // col.on('filterChanged', (A, B, C) => { console.log('filter changed (on col).', 'A', A, 'B', B, 'C', C) })
-                col.on('filterChanged', (newFilter, column) =>  this.onFilterRows(newFilter, column));
+                col.on('filterChanged', () =>  document.dispatchEvent(new CustomEvent('filterChanged')));
             }
         }
 
@@ -704,21 +702,8 @@ export class TableDisplay extends EventTarget
 
     private onFilterRows(newFilter: CombinedFilter, column: FerretColumn): void
     {
-        let f: Filter = new Filter(column, 'temp-chart', [1,2,3], 'LOCAL');
 
-        document.dispatchEvent(new CustomEvent('addFilter', {detail: {filter: f}}));
-        // let firstTenRows = this.data.getRowList().slice(0,10);
-        // let columnDescList = this.lineup.data.getColumns();
-// 
-        // let dataProvider = new LocalDataProvider(firstTenRows, columnDescList);
-        // this.lineup.setDataProvider(dataProvider);
-        // this.lineup.update();
-
-
-        // const firstRanking = this.lineup.data.getFirstRanking(); // get the first ranking from the data provider
-        // firstRanking.filter([1,2,3])
-        // this.lineup.data.view([1,2,3])
-        // selectAll([1,2,3])
+        document.dispatchEvent(new CustomEvent('todododododo'));
     }
 
     private getSelectedData(selectedIndices: Array<number>, dataValues: Array<any>, prop: string) : Array<number> {

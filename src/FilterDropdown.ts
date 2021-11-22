@@ -81,7 +81,7 @@ export abstract class FilterDropdown extends EventTarget
 
     protected filterData(filter: Filter | null, data: TabularData | null, localData: TabularData | null): void {}
 
-    public draw(filters: Array<Filter>, id: string, title: string, iconType: string): void {
+    public drawSetup(filters: Array<Filter>, id: string, title: string, iconType: string): void {
 
         let div = document.createElement("div");
 
@@ -160,7 +160,7 @@ export abstract class FilterDropdown extends EventTarget
         return ignoreVals;
     }
 
-    private manageDropdown(filters: Array<Filter>) {
+    private drawDropdown(filters: Array<Filter>) {
         let dropdownMenu = document.getElementById(this._id + 'DropdownMenu');
         if(this._id == "highlight") 
             this.addChangeToFilterOption(filters);
@@ -178,7 +178,8 @@ export abstract class FilterDropdown extends EventTarget
 
         const selectorString = '#' + this._id + 'DropdownMenu';
         const dropdownMenuSelect = d3.select(selectorString);
-        const filterListSelect = dropdownMenuSelect.selectAll('div')
+        
+        dropdownMenuSelect.selectAll('div')
             .data(ignoreVals)
             .join('div')
             .classed('dropdown-item', true)
@@ -253,43 +254,43 @@ export abstract class FilterDropdown extends EventTarget
         filterCountText.innerHTML = "("+filterList.length+")";
     }
     
-    public selectFilter(filter: Filter) : void
-    { 
-        if(this._filters == null || this._filters.length == 0) 
-            this._filters = [];
+    // public selectFilter(filter: Filter) : void
+    // { 
+    //     if(this._filters == null || this._filters.length == 0) 
+    //         this._filters = [];
 
-        let selectedFilter = this.find(filter, this._filters);
-        if(selectedFilter == null) 
-            this.addFilter(filter);
+    //     let selectedFilter = this.find(filter, this._filters);
+    //     if(selectedFilter == null) 
+    //         this.addFilter(filter);
 
-    }
+    // }
 
-    private find(filter: Filter, filters: Array<Filter>): Filter {
-        if(filters == null || filters.length == 0 || filter == null) return null;
-        for(let f of filters) {
-            let selectedFilterData = filter.selectedData.map((x) => x).sort().toString();
-            let iterableFilterData = f.selectedData.map((x) => x).sort().toString();
-            if(f.chart == filter.chart && f.column.id == filter.column.id && selectedFilterData == iterableFilterData)
-                return f;
-        }
-        return null;
-    }
+    // private find(filter: Filter, filters: Array<Filter>): Filter {
+    //     if(filters == null || filters.length == 0 || filter == null) return null;
+    //     for(let f of filters) {
+    //         let selectedFilterData = filter.selectedData.map((x) => x).sort().toString();
+    //         let iterableFilterData = f.selectedData.map((x) => x).sort().toString();
+    //         if(f.chart == filter.chart && f.column.id == filter.column.id && selectedFilterData == iterableFilterData)
+    //             return f;
+    //     }
+    //     return null;
+    // }
 
-    private addFilter(filter: Filter): void 
+    public onFilterChange(): void 
     {
         // this._filters.push(filter);
         // applyFilterUpdate(filter, this._selectionType);
         // this.filterData(filter, this._data, this._localData);
         this.drawFilterCount();
-        this.manageDropdown(this._filters);
+        this.drawDropdown(this._filters);
     }
 
-    private removeFilter(filter: Filter): void 
-    {
-        this._filters = this._filters.filter(f => { return f.id != filter.id});
-        this.drawFilterCount();
-        this.filterData(filter, this._data, this._localData);
-        removedFilterUpdate(filter, this._selectionType);
-        this.manageDropdown(this._filters);
-    }    
+    // private removeFilter(filter: Filter): void 
+    // {
+    //     this._filters = this._filters.filter(f => { return f.id != filter.id});
+    //     this.drawFilterCount();
+    //     this.filterData(filter, this._data, this._localData);
+    //     removedFilterUpdate(filter, this._selectionType);
+    //     this.drawDropdown(this._filters);
+    // }    
 }   
