@@ -127,8 +127,11 @@ export default class FerretRenderer implements ICellRendererFactory
         for (let i of indices)
         {
             const dataRow = await context.provider.getRow(i);
-            const dataValue = column.getRaw(dataRow);
-            dataValues.push({'value': dataValue});
+            if (!column.ignoreInAnalysis(dataRow))
+            {
+                const dataValue = column.getRaw(dataRow);
+                dataValues.push({'value': dataValue});
+            }
         }
 
         const elementID = chartKey + colKey;
@@ -498,7 +501,7 @@ export default class FerretRenderer implements ICellRendererFactory
         colKey: string
     ): Promise<void>
     {
-        let leadDictFreq = await ChartCalculations.GetLeadingDigitFreqs(column as ValueColumn<number>, context);
+        let leadDictFreq = await ChartCalculations.GetLeadingDigitFreqs(column, context);
         let selectionName = filterNames.LEADING_DIGIT_FREQ_SELECTION;
         let dataValues : Array<any> = [];
         for (let [digit, freq] of leadDictFreq)
@@ -609,8 +612,8 @@ export default class FerretRenderer implements ICellRendererFactory
         const rowIndices = await this.getMatchingRowIndices(value, column, context);
 
         const buttonInfoList = [
-            {iconKey: 'filter', label: `Remove rows with ${value} in this column.`, func: () => this.onFilter(column, value, 'local')},
-            {iconKey: 'globe-americas', label: `Remove rows with ${value} in any column.`, func: () => this.onFilter(column, value, 'global')},
+            {iconKey: 'filter', label: `Ignore ${value} in this column.`, func: () => this.onFilter(column, value, 'local')},
+            {iconKey: 'globe-americas', label: `Ignore ${value} in any column.`, func: () => this.onFilter(column, value, 'global')},
             {iconKey: 'highlighter', label: `Highlight rows with ${value} in this column.`, func: () => this.onHighlight(rowIndices)}
         ]
 
@@ -642,7 +645,7 @@ export default class FerretRenderer implements ICellRendererFactory
 
     private onFilter(column: FerretColumn, value: number, type: 'local' | 'global'): void
     {
-        column.addValueFilter(value, type);
+        column.addValueToIgnore(value, type);
     }
 
     private onHighlight(rowIndices: number[]): void

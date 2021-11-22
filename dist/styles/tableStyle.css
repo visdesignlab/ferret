@@ -159,3 +159,8 @@ td
 .expandCollapseTail > button:hover {
     background: #e0e7f0;
 }
+
+.ignoredCell {
+    text-decoration: line-through;
+    color: #767676;
+}

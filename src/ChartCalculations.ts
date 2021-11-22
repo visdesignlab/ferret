@@ -1,9 +1,10 @@
 import { IRenderContext, ValueColumn } from "lineupjs";
+import FerretColumn from "./FerretColumn";
 
 export class ChartCalculations
 {
 
-    public static async GetLeadingDigitFreqs(column: ValueColumn<number>, context: IRenderContext): Promise<Map<number, number>>
+    public static async GetLeadingDigitFreqs(column: FerretColumn, context: IRenderContext): Promise<Map<number, number>>
     {
         let digitCounts = await ChartCalculations.getLeadingDigitCounts(column, context);
         for (let digit of digitCounts.keys())
@@ -15,7 +16,7 @@ export class ChartCalculations
         return digitCounts;
     }
     
-    private static async getLeadingDigitCounts(column: ValueColumn<number>, context: IRenderContext): Promise<Map<number, number>>
+    private static async getLeadingDigitCounts(column: FerretColumn, context: IRenderContext): Promise<Map<number, number>>
     {
         let digitCounts = new Map<number, number>();
 
@@ -29,6 +30,10 @@ export class ChartCalculations
         for (let i of indices)
         {
             const dataRow = await context.provider.getRow(i);
+            if (column.ignoreInAnalysis(dataRow))
+            {
+                continue;
+            }
             const dataValue = column.getRaw(dataRow);
 
             let digit = ChartCalculations.getLeadingDigit(dataValue, null);
@@ -73,7 +78,7 @@ export class ChartCalculations
         } 
     }
 
-    public static async GetDuplicateCounts(column: ValueColumn<number>, context: IRenderContext): Promise<[number, number][]>
+    public static async GetDuplicateCounts(column: FerretColumn, context: IRenderContext): Promise<[number, number][]>
     {
         let duplicateCountMap: Map<number, number> = new Map<number, number>();
 
@@ -82,6 +87,11 @@ export class ChartCalculations
         for (let i of indices)
         {
             const dataRow = await context.provider.getRow(i);
+
+            if (column.ignoreInAnalysis(dataRow))
+            {
+                continue;
+            }
 
             const val = column.getRaw(dataRow);
 
@@ -111,7 +121,7 @@ export class ChartCalculations
         return duplicateCounts;
     }
 
-    public static async GetReplicates(column: ValueColumn<number>, context: IRenderContext): Promise<[number, number][]>
+    public static async GetReplicates(column: FerretColumn, context: IRenderContext): Promise<[number, number][]>
     {
         let duplicateCountMap: [number, number][];
         duplicateCountMap = await ChartCalculations.GetDuplicateCounts(column, context);
@@ -143,7 +153,7 @@ export class ChartCalculations
         return replicateCounts;
     }
 
-    public static async GetNGramFrequency(column: ValueColumn<number>, context: IRenderContext, n: number, lsd: boolean): Promise<[string, number][]>
+    public static async GetNGramFrequency(column: FerretColumn, context: IRenderContext, n: number, lsd: boolean): Promise<[string, number][]>
     {
         let nGramFrequencyMap: Map<string, number> = new Map<string, number>();
         const ranking = column.findMyRanker();
@@ -151,7 +161,10 @@ export class ChartCalculations
         for (let i of indices)
         {
             const dataRow = await context.provider.getRow(i);
-
+            if (column.ignoreInAnalysis(dataRow))
+            {
+                continue;
+            }
             const val = column.getRaw(dataRow);
 
             let valString = val.toString();

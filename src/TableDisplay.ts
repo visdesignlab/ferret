@@ -14,6 +14,7 @@ import { ItemTail } from "./components/item-tail";
 import * as $ from 'jquery';
 import { ColumnBuilder, ICategory, LocalDataProvider } from "lineupjs";
 import FerretRenderer from "./FerretRenderer"
+import FerretCellRenderer from "./FerretCellRenderer"
 import FerretColumn from "./FerretColumn"
 export class TableDisplay extends EventTarget
 {
@@ -577,7 +578,7 @@ export class TableDisplay extends EventTarget
             {
                 // columnBuilder = LineUpJS.buildNumberColumn(key);
                 columnBuilder = LineUpJS.buildColumn('FerretColumn', key)
-                columnBuilder.renderer('brightness', '', 'FerretRenderer');
+                columnBuilder.renderer('FerretCellRenderer', '', 'FerretRenderer');
                 columnBuilder.custom('numberFormat', d3.format('.8~f'));
             }
             else if (column.type === 'Categorical')
@@ -621,6 +622,7 @@ export class TableDisplay extends EventTarget
         builder.disableAdvancedModelFeatures()
         builder.sidePanel(false, true)
         builder.registerRenderer('FerretRenderer', new FerretRenderer());
+        builder.registerRenderer('FerretCellRenderer', new FerretCellRenderer());
         this._lineup = builder.build(lineupContainer);
         // this.lineup.setSelection([1,3,5,7,9]);
 

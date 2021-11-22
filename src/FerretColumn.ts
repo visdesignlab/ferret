@@ -1,19 +1,26 @@
 import { Column, IDataRow, IColumnDesc, ILinkColumnDesc, IValueColumnDesc, INumberColumnDesc, ValueColumn } from 'lineupjs';
 
 interface FerretFilter {
-  local: Set<number>,
-  global: Set<number>
+  ignoreValues: Set<number>
+}
+
+interface CombinedFilter {
+  local: FerretFilter,
+  global: FerretFilter
 }
 
 export default class FerretColumn extends ValueColumn<number> {
   static readonly EVENT_FILTER_CHANGED = 'filterChanged';
-  
-  private _currentFilter : FerretFilter = {
-    local: new Set<number>(),
-    global: new Set<number>()
+  static globalFilter: FerretFilter = {
+    ignoreValues: new Set<number>()
   }
-  public get currentFilter() : FerretFilter {
-    return this._currentFilter;
+
+
+  private _localFilter : FerretFilter = {
+    ignoreValues: new Set<number>()
+  }
+  public get localFilter() : FerretFilter {
+    return this._localFilter;
   }
 
   protected createEventList() {
@@ -38,33 +45,33 @@ export default class FerretColumn extends ValueColumn<number> {
 
 
   public isFiltered(): boolean {
-    return this.currentFilter.local.size > 0 || this.currentFilter.global.size > 0;
+    return this.localFilter.ignoreValues.size > 0 || FerretColumn.globalFilter.ignoreValues.size > 0;
   }
 
-  public getFilter(): FerretFilter {
-    let local =  new Set([...this.currentFilter.local]);
-    let global =  new Set([...this.currentFilter.global]);
+  public getFilter(): CombinedFilter {
+    let local: FerretFilter =  {ignoreValues: new Set([...this.localFilter.ignoreValues])};
+    let global: FerretFilter =  {ignoreValues: new Set([...FerretColumn.globalFilter.ignoreValues])};
     return {local: local, global: global};
   }
 
 
-  public addValueFilter(value: number, type: 'local' | 'global')
+  public addValueToIgnore(value: number, type: 'local' | 'global')
   {
     const lastFilter = this.getFilter();
     switch (type)
     {
       case 'local':
-        this.currentFilter.local.add(value);
+        this.localFilter.ignoreValues.add(value);
         break;
-        case 'global':
-        this.currentFilter.global.add(value);
+      case 'global':
+        FerretColumn.globalFilter.ignoreValues.add(value);
         break;
     }
 
     this.triggerEvent(lastFilter);
   }
 
-  public triggerEvent(oldFilter: FerretFilter): void
+  public triggerEvent(oldFilter: CombinedFilter): void
   {
     this.fire(
       [FerretColumn.EVENT_FILTER_CHANGED, Column.EVENT_DIRTY_VALUES, Column.EVENT_DIRTY],
@@ -95,28 +102,50 @@ export default class FerretColumn extends ValueColumn<number> {
    * @returns {boolean}
    */
   filter(row: IDataRow) {
-    const thisValue = this.getValue(row);
-    if (this.currentFilter.local.has(thisValue))
-    {
-      return false;
-    }
-    for (let key in row.v)
-    {
-      let value = row.v[key];
-      if (this.currentFilter.global.has(value))
-      {
-        return false;
-      }
-    }
+    // const thisValue = this.getValue(row);
+    // if (this.currentFilter.local.has(thisValue))
+    // {
+    //   return false;
+    // }
+    // for (let key in row.v)
+    // {
+    //   let value = row.v[key];
+    //   if (this.currentFilter.global.has(value))
+    //   {
+    //     return false;
+    //   }
+    // }
     return true;
   }
+
+  /**
+   * ignore the current value in analysis, also strike through it in the table.
+   * @param row
+   * @returns {boolean}
+   */
+  public ignoreInAnalysis(row: IDataRow): boolean {
+      const thisValue = this.getValue(row);
+      if (this.localFilter.ignoreValues.has(thisValue) || FerretColumn.globalFilter.ignoreValues.has(thisValue))
+      {
+        return true;
+      }
+      // for (let key in row.v)
+      // {
+      //   let value = row.v[key];
+      //   if (FerretColumn.globalFilter.ignoreValues.has(value))
+      //   {
+      //     return true;
+      //   }
+      // }
+      return false;
+    }
 
   clearFilter() {
     const was = this.isFiltered();
 
     const lastFilter = this.getFilter();
-    this.currentFilter.local.clear();
-    this.currentFilter.global.clear();
+    this.localFilter.ignoreValues.clear();
+    FerretColumn.globalFilter.ignoreValues.clear();
     this.triggerEvent(lastFilter);
 
     return was;
