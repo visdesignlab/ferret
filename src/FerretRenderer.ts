@@ -612,7 +612,7 @@ export default class FerretRenderer implements ICellRendererFactory
         const rowIndices = await this.getMatchingRowIndices(value, column, context);
 
         const buttonInfoList = [
-            {iconKey: 'filter', label: `Ignore ${value} in this column.`, func: () => this.onFilter(column, value, 'local')},
+            {iconKey: 'eye-slash', label: `Ignore ${value} in this column.`, func: () => this.onFilter(column, value, 'local')},
             {iconKey: 'globe-americas', label: `Ignore ${value} in any column.`, func: () => this.onFilter(column, value, 'global')},
             {iconKey: 'highlighter', label: `Highlight rows with ${value} in this column.`, func: () => this.onHighlight(rowIndices)}
         ]

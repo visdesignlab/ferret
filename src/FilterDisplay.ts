@@ -13,7 +13,7 @@ export class FilterDisplay extends FilterDropdown
 
     constructor() {
         super();
-        super.SetId('filter');
+        super.SetId('ignore');
         super.SetSelectionType('Filter');
         document.addEventListener('addFilter', (e: CustomEvent) => this.selectFilter(e.detail.filter));
         document.addEventListener('addGlobalFilter', (e: CustomEvent) => this.selectFilter(e.detail.filter));
@@ -22,9 +22,9 @@ export class FilterDisplay extends FilterDropdown
 
     public drawDropdown(): void {
         let filters: Array<Filter> = [];
-        let id: string = "filter";
-        let title: string = "Filter";
-        let iconType: string = "filter";
+        let id: string = "ignore";
+        let title: string = "Ignore";
+        let iconType: string = "eye-slash";
         this.draw(filters, id, title, iconType);
     }
 
