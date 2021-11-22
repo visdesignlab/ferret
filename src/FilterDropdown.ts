@@ -116,7 +116,7 @@ export abstract class FilterDropdown extends EventTarget
 
         button.addEventListener("click", e => this.toggleFilterDropdown(id+"DropdownMenu"));
         this._toolbarContainer.appendChild(div);
-        this.drawFilterCount(filters);
+        this.drawFilterCount();
     }
 
     private toggleFilterDropdown(filterDropdownMenuID: string ) {
@@ -127,12 +127,11 @@ export abstract class FilterDropdown extends EventTarget
             dropdownMenu.classList.add('show');
     }
 
-    private manageDropdown(filters: Array<Filter>) {
-        let dropdownMenu = document.getElementById(this._id + 'DropdownMenu');
-        if(this._id == "highlight") 
-            this.addChangeToFilterOption(filters);
-
-
+    private getListOfIgnoreValues(): {
+        col: FerretColumn | null;
+        val: number;
+    }[]
+    {
         const ignoreVals: {
             col: FerretColumn | null;
             val: number;
@@ -148,7 +147,7 @@ export abstract class FilterDropdown extends EventTarget
 
         const firstRanking = this.lineupInstance.data.getFirstRanking();
         const ferretColumns: FerretColumn[] = firstRanking.flatColumns.filter(col => col instanceof FerretColumn) as FerretColumn[];
-        const firstFerretColumn = ferretColumns[0];
+
         const ferretColumnsWithFilter: FerretColumn[] = ferretColumns.filter(col => col.localFilter.ignoreValues.size > 0);
         const localVals = ferretColumnsWithFilter.map(col => [...col.localFilter.ignoreValues].map(val => {
             return {
@@ -158,6 +157,24 @@ export abstract class FilterDropdown extends EventTarget
         })).flat();
 
         ignoreVals.push(...localVals);
+        return ignoreVals;
+    }
+
+    private manageDropdown(filters: Array<Filter>) {
+        let dropdownMenu = document.getElementById(this._id + 'DropdownMenu');
+        if(this._id == "highlight") 
+            this.addChangeToFilterOption(filters);
+
+        const ignoreVals = this.getListOfIgnoreValues();
+        let firstFerretColumn: FerretColumn;
+        for (let ignoreVal of ignoreVals)
+        {
+            if (ignoreVal.col)
+            {
+                firstFerretColumn = ignoreVal.col;
+                break;
+            }
+        }
 
         const selectorString = '#' + this._id + 'DropdownMenu';
         const dropdownMenuSelect = d3.select(selectorString);
@@ -165,7 +182,6 @@ export abstract class FilterDropdown extends EventTarget
             .data(ignoreVals)
             .join('div')
             .classed('dropdown-item', true)
-            // .attr('id', d => d.col.id)
             .attr('title', 'select to remove filter')
             .on('click', (d) => {
                 if (d.col !== null)
@@ -196,35 +212,6 @@ export abstract class FilterDropdown extends EventTarget
 
                 element.innerHTML = `Value ${valueSpan.outerHTML} ignored in ${columnSpan.outerHTML}${trashSpan.outerHTML}`
             });
-
-        // filterListSelect.selectAll('span')
-        //     .data(d => [d])
-        //     .join('span')
-        //     .classed('ignore-label', true)
-        //     .classed('ignore-value', true)
-        //     .text(d => d.val.toString())
-            
-
-
-
-        // for(let f of filters) {
-        //     let filterItemDiv = document.createElement('div');
-        //     filterItemDiv.classList.add('dropdown-item');
-        //     filterItemDiv.id = f.id;
-        //     filterItemDiv.addEventListener("click", e => this.removeFilter(new Filter(f.column, f.chart, f.selectedData, f.filterRange)));
-            
-        //     let columnDiv = document.createElement('span');
-        //     let selectedDataDiv = document.createElement('span');
-        //     columnDiv.innerHTML = f.filterRange == 'LOCAL' ? f.column.id : 'GLOBAL';
-        //     columnDiv.classList.add('group-sub-header');
-        //     selectedDataDiv.innerHTML = f.selectedData.toString();
-        //     selectedDataDiv.style.backgroundColor = this.getBackgroundColor(f.chart);
-        //     selectedDataDiv.classList.add('ignore-label');
-        //     filterItemDiv.appendChild(selectedDataDiv);
-        //     filterItemDiv.appendChild(columnDiv);
-            
-        //     dropdownMenu.appendChild(filterItemDiv);
-        // }
     }
 
     private addChangeToFilterOption(filters: Array<Filter>) {
@@ -260,9 +247,10 @@ export abstract class FilterDropdown extends EventTarget
         }
     }
 
-    public drawFilterCount(filters: Array<Filter>): void {
+    public drawFilterCount(): void {
         let filterCountText = document.getElementById(this._id+"Count");
-        filterCountText.innerHTML = "("+filters.length+")";
+        let filterList = this.getListOfIgnoreValues();
+        filterCountText.innerHTML = "("+filterList.length+")";
     }
     
     public selectFilter(filter: Filter) : void
@@ -292,14 +280,14 @@ export abstract class FilterDropdown extends EventTarget
         // this._filters.push(filter);
         // applyFilterUpdate(filter, this._selectionType);
         // this.filterData(filter, this._data, this._localData);
-        // this.drawFilterCount(this._filters);
+        this.drawFilterCount();
         this.manageDropdown(this._filters);
     }
 
     private removeFilter(filter: Filter): void 
     {
         this._filters = this._filters.filter(f => { return f.id != filter.id});
-        this.drawFilterCount(this._filters);
+        this.drawFilterCount();
         this.filterData(filter, this._data, this._localData);
         removedFilterUpdate(filter, this._selectionType);
         this.manageDropdown(this._filters);
