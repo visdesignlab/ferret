@@ -1,4 +1,5 @@
-import { Column, IDataRow, IColumnDesc, ILinkColumnDesc, IValueColumnDesc, INumberColumnDesc, ValueColumn } from 'lineupjs';
+import { Column, IDataRow, IColumnDesc, ILinkColumnDesc, IValueColumnDesc, INumberColumnDesc, ValueColumn, INumberColumn, EAdvancedSortMethod, ECompareValueType, IGroup } from 'lineupjs';
+import { IAdvancedBoxPlotData, ISequence } from 'lineupjs/build/src/internal';
 
 interface FerretFilter {
   ignoreValues: Set<number>
@@ -11,6 +12,7 @@ interface CombinedFilter {
 
 export default class FerretColumn extends ValueColumn<number> {
   static readonly EVENT_FILTER_CHANGED = 'filterChanged';
+
   static globalFilter: FerretFilter = {
     ignoreValues: new Set<number>()
   }
@@ -149,6 +151,15 @@ export default class FerretColumn extends ValueColumn<number> {
     this.triggerEvent(lastFilter);
 
     return was;
+  }
+
+
+  toCompareValue(row: IDataRow, valueCache?: any) {
+    return valueCache != null ? valueCache : this.getNumber(row);
+  }
+
+  toCompareValueType() {
+    return ECompareValueType.FLOAT;
   }
 
 }
