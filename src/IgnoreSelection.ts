@@ -7,26 +7,43 @@ import { ColumnLabel } from './ColumnLabel';
 import { ColumnNumeric } from './ColumnNumeric';
 import * as filterNames from "./lib/constants/filter";
 import { SelectionDropdown } from './SelectionDropdown';
+import FerretColumn, { FerretSelection } from './FerretColumn';
 
 export class IgnoreSelection extends SelectionDropdown
 {
 
-    constructor() {
+    constructor(container: HTMLElement) {
         super();
-        super.SetId('ignore');
-        super.SetSelectionType('Filter');
-        document.addEventListener('filterChanged', () => this.onFilterChange());
+        super.Init(
+            'ignore', container, 'Ignore', 'eye-slash', 'ignored',
+            () => FerretColumn.globalIgnore,
+            (col: FerretColumn) => col.localIgnore,
+            (d: {col: FerretColumn, val: number}) =>
+                {
+                    if (d.col !== null)
+                    {
+                        d.col.removeValueToIgnore(d.val, 'local')
+                    }
+                    else
+                    {
+                        // todo get global to work somehow
+                        // need a column instance to fire correctly, but it
+                        // does not matter which one.
+                        // firstFerretColumn.removeValueToIgnore(d.val, 'global');
+                    }
+                }
+            );
+
+        // super.SetId('ignore');
+        // super.SetSelectionType('Filter');
+        document.addEventListener('filterChanged', () => this.onSelectionChange());
         // document.addEventListener('addGlobalFilter', (e: CustomEvent) => this.selectFilter(e.detail.filter));
         // document.addEventListener('onLocalDataChange', (e: CustomEvent) => this.SetLocalData(e.detail.data));
     }
 
-    public drawSetup(): void {
-        let filters: Array<Filter> = [];
-        let id: string = "ignore";
-        let title: string = "Ignore";
-        let iconType: string = "eye-slash";
-        super.drawSetup(filters, id, title, iconType);
-    }
+    // public drawSetup(): void {
+    //     super.drawSetup();
+    // }
 
     // protected filterData(filter: Filter | null, data: TabularData | null, localData: TabularData | null) {
     //     let header = data.columnList.map(d => d.id).toString();

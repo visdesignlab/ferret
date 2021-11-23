@@ -632,6 +632,7 @@ export class TableDisplay extends EventTarget
             if (col instanceof FerretColumn)
             {
                 col.on('filterChanged', () =>  document.dispatchEvent(new CustomEvent('filterChanged')));
+                col.on('highlightChanged', () =>  document.dispatchEvent(new CustomEvent('highlightChanged')));
             }
         }
 

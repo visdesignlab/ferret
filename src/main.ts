@@ -10,8 +10,7 @@ import { HighlightSelection } from './HighlightSelection';
 let vizTableContainer = document.getElementById('tableContainer');
 let dataTableContainer = document.getElementById('lineupContainerOuter');
 let tableDisplay = new TableDisplay();
-let ignoreDropdown = new IgnoreSelection();
-let highlightDropdown = new HighlightSelection();
+
 tableDisplay.SetContainer(vizTableContainer);
 let outerContainer = document.getElementById('outerContainer');
 let uploadOnlyContainerOuter = document.getElementById('uploadOnlyContainerOuter');
@@ -20,8 +19,11 @@ let toolbarContainer = document.getElementById('toolbar');
 let controlsContainer = document.getElementById('controlsContainer');
 let descriptionContainer = document.getElementById('description');
 let controlsDisplay = new ControlsDisplay(toolbarContainer, controlsContainer, descriptionContainer, vizTableContainer, dataTableContainer);
-ignoreDropdown.SetContainer(toolbarContainer);
-highlightDropdown.SetContainer(toolbarContainer);
+// ignoreDropdown.Init(toolbarContainer);
+// highlightDropdown.Init(toolbarContainer);
+
+let ignoreDropdown = new IgnoreSelection(toolbarContainer);
+let highlightDropdown = new HighlightSelection(toolbarContainer);
 
 
 
@@ -51,8 +53,8 @@ let init = (data: string, filename: string) =>
 	const defaultVizShown = [true, false, false, false, false];
 	controlsDisplay.SetData(tabularData, defaultVizShown);
 	tableDisplay.SetData(tabularData, defaultVizShown);
-	ignoreDropdown.SetLineUp(tableDisplay.lineup);
-	highlightDropdown.SetLineUp(tableDisplay.lineup);
+	ignoreDropdown.SetData(tableDisplay.lineup);
+	highlightDropdown.SetData(tableDisplay.lineup);
 
 	// controlsDisplay.updateChartVisibility();
 	// controlsDisplay. // todo show correct viz rows at the beginning correctly

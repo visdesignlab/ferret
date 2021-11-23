@@ -99,7 +99,7 @@ body {
     border: solid #565656 1px;
 }
 
-.ignore-label {
+.selection-label {
     margin-right: 5px;
     margin-left: 5px;
     padding: 3px 4px 2px 4px;
@@ -109,7 +109,7 @@ body {
     color: black;
 }
 
-.ignore-label.value {
+.selection-label.value {
     background-color: #e57373;
 }
 

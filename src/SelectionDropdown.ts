@@ -4,15 +4,20 @@ import { applyFilterUpdate, removedFilterUpdate } from "./ProvenanceSetup";
 import { TabularData } from './TabularData';
 import * as filterNames from "./lib/constants/filter";
 import LineUp from 'lineupjs';
-import FerretColumn from './FerretColumn';
+import FerretColumn, { FerretSelection } from './FerretColumn';
 import { duplicate } from 'vega-lite';
 
 export abstract class SelectionDropdown extends EventTarget
 {
 
-    constructor() {
-        super();
-        document.addEventListener('onDataChange', (e: CustomEvent) => this.SetData(e.detail.data));
+    // constructor() {
+    //     super();
+    //     // document.addEventListener('onDataChange', (e: CustomEvent) => this.SetData(e.detail.data));
+    // }
+
+    private _id: string;
+    public get id(): string {
+        return this._id;
     }
 
     private _toolbarContainer: HTMLElement;
@@ -20,101 +25,114 @@ export abstract class SelectionDropdown extends EventTarget
         return this._toolbarContainer;
     }
 
-    public SetContainer(container: HTMLElement): void {
-        this._toolbarContainer = container;
-    }
-
     private _lineupInstance : LineUp;
     public get lineupInstance() : LineUp {
         return this._lineupInstance;
     }
 
-    public SetLineUp(lineup: LineUp): void
+    private _title : string;
+    public get title() : string {
+        return this._title;
+    }
+
+    private _iconType : string;
+    public get iconType() : string {
+        return this._iconType;
+    }
+
+    private _actionWord : string;
+    public get actionWord() : string {
+        return this._actionWord;
+    }   
+
+    
+    private _globalAccessor : () => FerretSelection;
+    public get globalAccessor() : () => FerretSelection {
+        return this._globalAccessor;
+    }
+    
+    
+    private _localAccessor : (col: FerretColumn) => FerretSelection;
+    public get localAccessor() : (col: FerretColumn) => FerretSelection {
+        return this._localAccessor;
+    }
+    
+    private _onRowclick : (val: {col: FerretColumn, val: number}) => void;
+    public get onRowclick() : (val: {col: FerretColumn, val: number}) => void {
+        return this._onRowclick;
+    }    
+
+    public SetData(lineup: LineUp): void
     {
         this._lineupInstance = lineup;
     }
-    
-    
-    protected _filters: Array<Filter>;
-    public get filters(): Array<Filter> {
-        return this._filters;
-    }
 
-    public SetFilters(filters: Array<Filter>): void {
-        this._filters = filters;
-    }
 
-    protected _data: TabularData;
-    public get data(): TabularData {
-        return this._data;
-    }
-
-    public SetData(data: TabularData): void{
-        this._data = data;
-    }
-
-    protected _localData: TabularData;
-    public get localData(): TabularData {
-        return this._localData;
-    }
-
-    public SetLocalData(localData: TabularData): void{
-        this._localData = localData;
-    }
-    private _id: string;
-    public get id(): string {
-        return this._id;
-    }
-
-    public SetId(id: string) {
+    public Init(
+        id: string,
+        container: HTMLElement,
+        title: string,
+        iconType: string,
+        actionWord: string,
+        globalAccessor: () => FerretSelection,
+        localAccessor: (col: FerretColumn) => FerretSelection,
+        onRowClick: (val: {col: FerretColumn, val: number}) => void): void
+    {
         this._id = id;
+        this._toolbarContainer = container;
+        this._title = title;
+        this._iconType = iconType;
+        this._actionWord = actionWord;
+        this._localAccessor = localAccessor;
+        this._globalAccessor = globalAccessor;
+        this._onRowclick = onRowClick;
     }
 
-    protected _selectionType: filterNames.SelectionType;
-    public get selectionType(): filterNames.SelectionType {
-        return this._selectionType;
-    }
+    // protected _selectionType: filterNames.SelectionType;
+    // public get selectionType(): filterNames.SelectionType {
+    //     return this._selectionType;
+    // }
 
-    public SetSelectionType(selectionType: filterNames.SelectionType) {
-        this._selectionType = selectionType;
-    }
+    // public SetSelectionType(selectionType: filterNames.SelectionType) {
+    //     this._selectionType = selectionType;
+    // }
 
-    protected filterData(filter: Filter | null, data: TabularData | null, localData: TabularData | null): void {}
+    // protected filterData(filter: Filter | null, data: TabularData | null, localData: TabularData | null): void {}
 
-    public drawSetup(filters: Array<Filter>, id: string, title: string, iconType: string): void {
+    public drawSetup(): void {
 
         let div = document.createElement("div");
 
         let button = document.createElement("div");
 
         let icon = document.createElement("i")
-        icon.classList.add("fas", "fa-"+iconType, "customButtonIcon");
+        icon.classList.add("fas", "fa-"+this.iconType, "customButtonIcon");
         button.appendChild(icon);
 
         let buttonText = document.createElement("span");
-        buttonText.innerHTML = title;
+        buttonText.innerHTML = this.title;
         button.appendChild(buttonText);
 
         let countText = document.createElement("span");
-        countText.id = id+"Count";
+        countText.id = this.id+"Count";
         button.appendChild(countText);
 
         let dropdownIcon = document.createElement("i")
         dropdownIcon.classList.add("fas", "fa-chevron-circle-down", "customButtonIconRight");
         button.appendChild(dropdownIcon);
 
-        button.id = id+"Button";
+        button.id = this.id+"Button";
         button.classList.add("customButton");
 
         let dropdownMenu = document.createElement("div");
-        dropdownMenu.id = id+"DropdownMenu";
+        dropdownMenu.id = this.id+"DropdownMenu";
         dropdownMenu.classList.add('dropdown-content');
 
         div.appendChild(button);
         div.appendChild(dropdownMenu);
         div.classList.add('dropdown');
 
-        button.addEventListener("click", e => this.toggleSelectionDropdown(id+"DropdownMenu"));
+        button.addEventListener("click", e => this.toggleSelectionDropdown(this.id+"DropdownMenu"));
         this._toolbarContainer.appendChild(div);
         this.drawFilterCount();
     }
@@ -127,51 +145,51 @@ export abstract class SelectionDropdown extends EventTarget
             dropdownMenu.classList.add('show');
     }
 
-    private getListOfIgnoreValues(): {
+    private getListOfSelectionValues(): {
         col: FerretColumn | null;
         val: number;
     }[]
     {
-        const ignoreVals: {
+        const selectionVals: {
             col: FerretColumn | null;
             val: number;
         }[] = []
 
-        const globalVals = [...FerretColumn.globalIgnore.values].map(val => {
+        const globalVals = [...this.globalAccessor().values].map(val => {
             return {
                 col: null,
                 val: val
             }
         });
-        ignoreVals.push(...globalVals);
+        selectionVals.push(...globalVals);
 
         const firstRanking = this.lineupInstance.data.getFirstRanking();
         const ferretColumns: FerretColumn[] = firstRanking.flatColumns.filter(col => col instanceof FerretColumn) as FerretColumn[];
 
-        const ferretColumnsWithFilter: FerretColumn[] = ferretColumns.filter(col => col.localIgnore.values.size > 0);
-        const localVals = ferretColumnsWithFilter.map(col => [...col.localIgnore.values].map(val => {
+        const ferretColumnsWithFilter: FerretColumn[] = ferretColumns.filter(col => this.localAccessor(col).values.size > 0);
+        const localVals = ferretColumnsWithFilter.map(col => [...this.localAccessor(col).values].map(val => {
             return {
                 col: col,
                 val: val
             }
         })).flat();
 
-        ignoreVals.push(...localVals);
-        return ignoreVals;
+        selectionVals.push(...localVals);
+        return selectionVals;
     }
 
-    private drawDropdown(filters: Array<Filter>) {
+    private drawDropdown() {
         let dropdownMenu = document.getElementById(this._id + 'DropdownMenu');
-        if(this._id == "highlight") 
-            this.addChangeToFilterOption(filters);
+        // if(this._id == "highlight") 
+        //     this.addChangeToFilterOption(filters);
 
-        const ignoreVals = this.getListOfIgnoreValues();
+        const selectionVals = this.getListOfSelectionValues();
         let firstFerretColumn: FerretColumn;
-        for (let ignoreVal of ignoreVals)
+        for (let selectionVal of selectionVals)
         {
-            if (ignoreVal.col)
+            if (selectionVal.col)
             {
-                firstFerretColumn = ignoreVal.col;
+                firstFerretColumn = selectionVal.col;
                 break;
             }
         }
@@ -180,38 +198,27 @@ export abstract class SelectionDropdown extends EventTarget
         const dropdownMenuSelect = d3.select(selectorString);
         
         dropdownMenuSelect.selectAll('div')
-            .data(ignoreVals)
+            .data(selectionVals)
             .join('div')
             .classed('dropdown-item', true)
             .attr('title', 'select to remove filter')
-            .on('click', (d) => {
-                if (d.col !== null)
-                {
-                    d.col.removeValueToIgnore(d.val, 'local')
-                }
-                else
-                {
-                    // need a column instance to fire correctly, but it
-                    // does not matter which one.
-                    firstFerretColumn.removeValueToIgnore(d.val, 'global');
-                }
-            })
+            .on('click', (d) => this.onRowclick(d))
             .each((d, i, nodes) => {
                 const element: HTMLDivElement = nodes[i] as HTMLDivElement;   
                 
                 const valueSpan: HTMLSpanElement = document.createElement('span');
-                valueSpan.classList.add('ignore-label', 'value');
+                valueSpan.classList.add('selection-label', 'value');
                 valueSpan.innerText = d.val.toString();
 
                 const columnSpan: HTMLSpanElement = document.createElement('span');
-                columnSpan.classList.add('ignore-label', 'column-label');
+                columnSpan.classList.add('selection-label', 'column-label');
                 columnSpan.innerText = d.col !== null ? `${d.col.desc.label} (${d.col.id})` : `ALL`;
 
                 const trashSpan: HTMLSpanElement = document.createElement('span');
                 trashSpan.classList.add('trash-container');
                 trashSpan.innerHTML = '<i class="fas fa-trash"></i>';
 
-                element.innerHTML = `Value ${valueSpan.outerHTML} ignored in ${columnSpan.outerHTML}${trashSpan.outerHTML}`
+                element.innerHTML = `Value ${valueSpan.outerHTML} ${this.actionWord} in ${columnSpan.outerHTML}${trashSpan.outerHTML}`
             });
     }
 
@@ -223,21 +230,21 @@ export abstract class SelectionDropdown extends EventTarget
         filterItemDiv.classList.add('dropdown-item');
         let selectedDataDiv = document.createElement('span');
         selectedDataDiv.innerHTML = 'TRANSFORM TO FILTER';
-        selectedDataDiv.classList.add('ignore-label');
+        selectedDataDiv.classList.add('selection-label');
         filterItemDiv.appendChild(icon);
         filterItemDiv.appendChild(selectedDataDiv);
         dropdownMenu.appendChild(filterItemDiv);
-        filterItemDiv.addEventListener("click", () => this.changeToFilter());
+        // filterItemDiv.addEventListener("click", () => this.changeToFilter());
     }
 
-    private changeToFilter() {
-        for(let f of this._filters) 
-            document.dispatchEvent(new CustomEvent('addFilter', {detail: {filter: f}}));
+    // private changeToFilter() {
+    //     for(let f of this._filters) 
+    //         document.dispatchEvent(new CustomEvent('addFilter', {detail: {filter: f}}));
         
-        for(let f of this._filters) 
-            document.dispatchEvent(new CustomEvent('addHighlight', {detail: {filter: f}}));
+    //     for(let f of this._filters) 
+    //         document.dispatchEvent(new CustomEvent('addHighlight', {detail: {filter: f}}));
         
-    }
+    // }
 
     private getBackgroundColor(chart: string): string {
         switch(chart) {
@@ -250,7 +257,7 @@ export abstract class SelectionDropdown extends EventTarget
 
     public drawFilterCount(): void {
         let filterCountText = document.getElementById(this._id+"Count");
-        let filterList = this.getListOfIgnoreValues();
+        let filterList = this.getListOfSelectionValues();
         filterCountText.innerHTML = "("+filterList.length+")";
     }
     
@@ -276,13 +283,14 @@ export abstract class SelectionDropdown extends EventTarget
     //     return null;
     // }
 
-    public onFilterChange(): void 
+    public onSelectionChange(): void 
     {
+        console.log('recompile pls');
         // this._filters.push(filter);
         // applyFilterUpdate(filter, this._selectionType);
         // this.filterData(filter, this._data, this._localData);
         this.drawFilterCount();
-        this.drawDropdown(this._filters);
+        this.drawDropdown();
     }
 
     // private removeFilter(filter: Filter): void 

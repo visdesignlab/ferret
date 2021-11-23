@@ -2,7 +2,7 @@ import * as d3 from 'd3';
 import { Column, IDataRow, IColumnDesc, ILinkColumnDesc, IValueColumnDesc, INumberColumnDesc, ValueColumn, INumberColumn, EAdvancedSortMethod, ECompareValueType, IGroup } from 'lineupjs';
 import { IAdvancedBoxPlotData, IEventListener, ISequence } from 'lineupjs/build/src/internal';
 
-interface FerretSelection {
+export interface FerretSelection {
   values: Set<number>
 }
 
@@ -50,7 +50,7 @@ export default class FerretColumn extends ValueColumn<number> {
       .createEventList()
       .concat([
         FerretColumn.EVENT_FILTER_CHANGED,
-        FerretColumn.EVENT_HIGHLIGHT_CHANGED,
+        FerretColumn.EVENT_HIGHLIGHT_CHANGED
       ]);
   }
 
