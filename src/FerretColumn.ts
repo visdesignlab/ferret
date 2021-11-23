@@ -2,45 +2,58 @@ import * as d3 from 'd3';
 import { Column, IDataRow, IColumnDesc, ILinkColumnDesc, IValueColumnDesc, INumberColumnDesc, ValueColumn, INumberColumn, EAdvancedSortMethod, ECompareValueType, IGroup } from 'lineupjs';
 import { IAdvancedBoxPlotData, IEventListener, ISequence } from 'lineupjs/build/src/internal';
 
-interface FerretFilter {
+interface FerretSelection {
   values: Set<number>
 }
 
-export interface CombinedFilter {
-  local: FerretFilter,
-  global: FerretFilter
-}
+// export interface CombinedFilter {
+//   local: FerretSelection,
+//   global: FerretSelection
+// }
 
 export default class FerretColumn extends ValueColumn<number> {
   static readonly EVENT_FILTER_CHANGED = 'filterChanged';
+  static readonly EVENT_HIGHLIGHT_CHANGED = 'highlightChanged';
 
   private _defaultDecimalPlaces: number = 6;
 
-  private static _globalIgnore: FerretFilter = {
+  private static _globalIgnore: FerretSelection = {
     values: new Set<number>()
   }
-
-  public static get globalIgnore(): FerretFilter {
+  public static get globalIgnore(): FerretSelection {
     return FerretColumn._globalIgnore;
   }
 
-
-  private _localIgnore : FerretFilter = {
+  private static _globalHighlight: FerretSelection = {
     values: new Set<number>()
   }
-  public get localIgnore() : FerretFilter {
+  public static get globalHighlight(): FerretSelection {
+    return FerretColumn._globalHighlight;
+  }
+
+  private _localIgnore : FerretSelection = {
+    values: new Set<number>()
+  }
+  public get localIgnore() : FerretSelection {
     return this._localIgnore;
+  }
+
+  private _localHighlight : FerretSelection = {
+    values: new Set<number>()
+  }
+  public get localHighlight() : FerretSelection {
+    return this._localHighlight;
   }
 
   protected createEventList() {
     return super
       .createEventList()
       .concat([
-        FerretColumn.EVENT_FILTER_CHANGED
+        FerretColumn.EVENT_FILTER_CHANGED,
+        FerretColumn.EVENT_HIGHLIGHT_CHANGED,
       ]);
   }
 
-  // on(type: typeof FerretColumn.EVENT_FILTER_CHANGED, listener: typeof filterChanged_NC | null): this;
   on(type: string | string[], listener: IEventListener | null): this {
     return super.on(type as any, listener);
   }
@@ -96,16 +109,16 @@ export default class FerretColumn extends ValueColumn<number> {
     return this.localIgnore.values.size > 0 || FerretColumn.globalIgnore.values.size > 0;
   }
 
-  public getFilter(): CombinedFilter {
-    // let local: FerretFilter =  {values: new Set([...this.localIgnore.values])};
-    // let global: FerretFilter =  {values: new Set([...FerretColumn.globalIgnore.values])};
-    return {local: this.localIgnore, global: FerretColumn.globalIgnore};
-  }
+  // public getFilter(): CombinedFilter {
+  //   // let local: FerretSelection =  {values: new Set([...this.localIgnore.values])};
+  //   // let global: FerretSelection =  {values: new Set([...FerretColumn.globalIgnore.values])};
+  //   return {local: this.localIgnore, global: FerretColumn.globalIgnore};
+  // }
 
 
   public addValueToIgnore(value: number, type: 'local' | 'global')
   {
-    const lastFilter = this.getFilter();
+    // const lastFilter = this.getFilter();
     switch (type)
     {
       case 'local':
@@ -116,12 +129,29 @@ export default class FerretColumn extends ValueColumn<number> {
         break;
     }
 
-    this.triggerEvent(lastFilter);
+    this.triggerEvent(FerretColumn.EVENT_FILTER_CHANGED);
+  }
+
+  private addValueToSelection(value: number, type: 'local' | 'global')
+  {
+    // const lastFilter = this.getFilter();
+    switch (type)
+    {
+      case 'local':
+        this.localIgnore.values.add(value);
+        break;
+      case 'global':
+        FerretColumn.globalIgnore.values.add(value);
+        break;
+    }
+
+    this.triggerEvent('todo');
   }
 
   public removeValueToIgnore(value: number, type: 'local' | 'global')
   {
-    const lastFilter = this.getFilter();
+    console.log('please refresh pls pols pls');
+    // const lastFilter = this.getFilter();
     switch (type)
     {
       case 'local':
@@ -132,16 +162,16 @@ export default class FerretColumn extends ValueColumn<number> {
         break;
     }
 
-    this.triggerEvent(lastFilter);
+    this.triggerEvent(FerretColumn.EVENT_FILTER_CHANGED);
   }
 
-  public triggerEvent(oldFilter: CombinedFilter): void
+  public triggerEvent(event: string): void
   {
     this.fire(
-      [FerretColumn.EVENT_FILTER_CHANGED, Column.EVENT_DIRTY_VALUES, Column.EVENT_DIRTY],
+      [event, Column.EVENT_DIRTY_VALUES, Column.EVENT_DIRTY]
       // oldFilter,
-      this.getFilter(),
-      this
+      // this.getFilter(),
+      // this
     );
   }
 
@@ -187,10 +217,10 @@ export default class FerretColumn extends ValueColumn<number> {
   clearFilter() {
     const was = this.isFiltered();
 
-    const lastFilter = this.getFilter();
+    // const lastFilter = this.getFilter();
     this.localIgnore.values.clear();
     FerretColumn.globalIgnore.values.clear();
-    this.triggerEvent(lastFilter);
+    this.triggerEvent(FerretColumn.EVENT_FILTER_CHANGED);
 
     return was;
   }

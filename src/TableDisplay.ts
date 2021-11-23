@@ -15,7 +15,7 @@ import * as $ from 'jquery';
 import { ColumnBuilder, ICategory, LocalDataProvider } from "lineupjs";
 import FerretRenderer from "./FerretRenderer"
 import FerretCellRenderer from "./FerretCellRenderer"
-import FerretColumn, { CombinedFilter } from "./FerretColumn"
+import FerretColumn from "./FerretColumn"
 import { first } from "lodash";
 import { IEventListener } from "lineupjs/build/src/internal";
 export class TableDisplay extends EventTarget
@@ -699,12 +699,6 @@ export class TableDisplay extends EventTarget
         // lineup appears to not do anything if sort by is already set to col2, so this is to force an update
         this.lineup.sortBy('col2', false);
         this.lineup.update();
-    }
-
-    private onFilterRows(newFilter: CombinedFilter, column: FerretColumn): void
-    {
-
-        document.dispatchEvent(new CustomEvent('todododododo'));
     }
 
     private getSelectedData(selectedIndices: Array<number>, dataValues: Array<any>, prop: string) : Array<number> {
