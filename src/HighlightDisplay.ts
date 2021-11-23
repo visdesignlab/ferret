@@ -5,12 +5,12 @@ import { ColumnCategorical } from './ColumnCategorical';
 import { ColumnLabel } from './ColumnLabel';
 import { ColumnNumeric } from './ColumnNumeric';
 import * as filterNames from "./lib/constants/filter";
-import { FilterDropdown } from "./FilterDropdown";
+import { SelectionDropdown } from "./SelectionDropdown";
 import { Filter } from "./Filter";
 import * as d3 from "d3";
 import { local } from 'd3';
 
-export class HighlightDisplay extends FilterDropdown
+export class HighlightDisplay extends SelectionDropdown
 {
 
     constructor() {

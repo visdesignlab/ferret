@@ -7,7 +7,7 @@ import LineUp from 'lineupjs';
 import FerretColumn from './FerretColumn';
 import { duplicate } from 'vega-lite';
 
-export abstract class FilterDropdown extends EventTarget
+export abstract class SelectionDropdown extends EventTarget
 {
 
     constructor() {
@@ -114,13 +114,13 @@ export abstract class FilterDropdown extends EventTarget
         div.appendChild(dropdownMenu);
         div.classList.add('dropdown');
 
-        button.addEventListener("click", e => this.toggleFilterDropdown(id+"DropdownMenu"));
+        button.addEventListener("click", e => this.toggleSelectionDropdown(id+"DropdownMenu"));
         this._toolbarContainer.appendChild(div);
         this.drawFilterCount();
     }
 
-    private toggleFilterDropdown(filterDropdownMenuID: string ) {
-        let dropdownMenu = document.getElementById(filterDropdownMenuID);
+    private toggleSelectionDropdown(selectionDropdownMenuID: string ) {
+        let dropdownMenu = document.getElementById(selectionDropdownMenuID);
         if(dropdownMenu.classList.contains('show'))
             dropdownMenu.classList.remove('show');
         else 

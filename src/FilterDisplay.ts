@@ -6,9 +6,9 @@ import { ColumnCategorical } from './ColumnCategorical';
 import { ColumnLabel } from './ColumnLabel';
 import { ColumnNumeric } from './ColumnNumeric';
 import * as filterNames from "./lib/constants/filter";
-import { FilterDropdown } from './FilterDropdown';
+import { SelectionDropdown } from './SelectionDropdown';
 
-export class FilterDisplay extends FilterDropdown
+export class FilterDisplay extends SelectionDropdown
 {
 
     constructor() {
