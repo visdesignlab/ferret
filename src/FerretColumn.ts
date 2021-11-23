@@ -3,7 +3,7 @@ import { Column, IDataRow, IColumnDesc, ILinkColumnDesc, IValueColumnDesc, INumb
 import { IAdvancedBoxPlotData, IEventListener, ISequence } from 'lineupjs/build/src/internal';
 
 interface FerretFilter {
-  ignoreValues: Set<number>
+  values: Set<number>
 }
 
 export interface CombinedFilter {
@@ -16,20 +16,20 @@ export default class FerretColumn extends ValueColumn<number> {
 
   private _defaultDecimalPlaces: number = 6;
 
-  private static _globalFilter: FerretFilter = {
-    ignoreValues: new Set<number>()
+  private static _globalIgnore: FerretFilter = {
+    values: new Set<number>()
   }
 
-  public static get globalFilter(): FerretFilter {
-    return FerretColumn._globalFilter;
+  public static get globalIgnore(): FerretFilter {
+    return FerretColumn._globalIgnore;
   }
 
 
-  private _localFilter : FerretFilter = {
-    ignoreValues: new Set<number>()
+  private _localIgnore : FerretFilter = {
+    values: new Set<number>()
   }
-  public get localFilter() : FerretFilter {
-    return this._localFilter;
+  public get localIgnore() : FerretFilter {
+    return this._localIgnore;
   }
 
   protected createEventList() {
@@ -86,20 +86,20 @@ export default class FerretColumn extends ValueColumn<number> {
     {
       return ''
     }
-    
+
     paddingString += '0'.repeat(numZeros);
 
     return paddingString
   }
 
   public isFiltered(): boolean {
-    return this.localFilter.ignoreValues.size > 0 || FerretColumn.globalFilter.ignoreValues.size > 0;
+    return this.localIgnore.values.size > 0 || FerretColumn.globalIgnore.values.size > 0;
   }
 
   public getFilter(): CombinedFilter {
-    // let local: FerretFilter =  {ignoreValues: new Set([...this.localFilter.ignoreValues])};
-    // let global: FerretFilter =  {ignoreValues: new Set([...FerretColumn.globalFilter.ignoreValues])};
-    return {local: this.localFilter, global: FerretColumn.globalFilter};
+    // let local: FerretFilter =  {values: new Set([...this.localIgnore.values])};
+    // let global: FerretFilter =  {values: new Set([...FerretColumn.globalIgnore.values])};
+    return {local: this.localIgnore, global: FerretColumn.globalIgnore};
   }
 
 
@@ -109,10 +109,10 @@ export default class FerretColumn extends ValueColumn<number> {
     switch (type)
     {
       case 'local':
-        this.localFilter.ignoreValues.add(value);
+        this.localIgnore.values.add(value);
         break;
       case 'global':
-        FerretColumn.globalFilter.ignoreValues.add(value);
+        FerretColumn.globalIgnore.values.add(value);
         break;
     }
 
@@ -125,10 +125,10 @@ export default class FerretColumn extends ValueColumn<number> {
     switch (type)
     {
       case 'local':
-        this.localFilter.ignoreValues.delete(value);
+        this.localIgnore.values.delete(value);
         break;
       case 'global':
-        FerretColumn.globalFilter.ignoreValues.delete(value);
+        FerretColumn.globalIgnore.values.delete(value);
         break;
     }
 
@@ -177,7 +177,7 @@ export default class FerretColumn extends ValueColumn<number> {
    */
   public ignoreInAnalysis(row: IDataRow): boolean {
       const thisValue = this.getValue(row);
-      if (this.localFilter.ignoreValues.has(thisValue) || FerretColumn.globalFilter.ignoreValues.has(thisValue))
+      if (this.localIgnore.values.has(thisValue) || FerretColumn.globalIgnore.values.has(thisValue))
       {
         return true;
       }
@@ -188,8 +188,8 @@ export default class FerretColumn extends ValueColumn<number> {
     const was = this.isFiltered();
 
     const lastFilter = this.getFilter();
-    this.localFilter.ignoreValues.clear();
-    FerretColumn.globalFilter.ignoreValues.clear();
+    this.localIgnore.values.clear();
+    FerretColumn.globalIgnore.values.clear();
     this.triggerEvent(lastFilter);
 
     return was;

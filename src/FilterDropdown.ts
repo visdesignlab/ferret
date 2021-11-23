@@ -137,7 +137,7 @@ export abstract class FilterDropdown extends EventTarget
             val: number;
         }[] = []
 
-        const globalVals = [...FerretColumn.globalFilter.ignoreValues].map(val => {
+        const globalVals = [...FerretColumn.globalIgnore.values].map(val => {
             return {
                 col: null,
                 val: val
@@ -148,8 +148,8 @@ export abstract class FilterDropdown extends EventTarget
         const firstRanking = this.lineupInstance.data.getFirstRanking();
         const ferretColumns: FerretColumn[] = firstRanking.flatColumns.filter(col => col instanceof FerretColumn) as FerretColumn[];
 
-        const ferretColumnsWithFilter: FerretColumn[] = ferretColumns.filter(col => col.localFilter.ignoreValues.size > 0);
-        const localVals = ferretColumnsWithFilter.map(col => [...col.localFilter.ignoreValues].map(val => {
+        const ferretColumnsWithFilter: FerretColumn[] = ferretColumns.filter(col => col.localIgnore.values.size > 0);
+        const localVals = ferretColumnsWithFilter.map(col => [...col.localIgnore.values].map(val => {
             return {
                 col: col,
                 val: val
