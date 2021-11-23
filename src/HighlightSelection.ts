@@ -10,7 +10,7 @@ import { Filter } from "./Filter";
 import * as d3 from "d3";
 import { local } from 'd3';
 
-export class HighlightDisplay extends SelectionDropdown
+export class HighlightSelection extends SelectionDropdown
 {
 
     constructor() {

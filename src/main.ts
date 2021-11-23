@@ -3,15 +3,15 @@ import { UploadFileButton } from './lib/UploadFileButton';
 import { TabularData } from './TabularData';
 import { TableDisplay } from './TableDisplay';
 import { ControlsDisplay } from './ControlsDisplay';
-import { FilterDisplay } from './FilterDisplay';
-import { HighlightDisplay } from './HighlightDisplay';
+import { IgnoreSelection } from './IgnoreSelection';
+import { HighlightSelection } from './HighlightSelection';
 
 // let tableContainer = document.getElementById('tableContainer');
 let vizTableContainer = document.getElementById('tableContainer');
 let dataTableContainer = document.getElementById('lineupContainerOuter');
 let tableDisplay = new TableDisplay();
-let filterDisplay = new FilterDisplay();
-let highlightDisplay = new HighlightDisplay();
+let ignoreDropdown = new IgnoreSelection();
+let highlightDropdown = new HighlightSelection();
 tableDisplay.SetContainer(vizTableContainer);
 let outerContainer = document.getElementById('outerContainer');
 let uploadOnlyContainerOuter = document.getElementById('uploadOnlyContainerOuter');
@@ -20,8 +20,8 @@ let toolbarContainer = document.getElementById('toolbar');
 let controlsContainer = document.getElementById('controlsContainer');
 let descriptionContainer = document.getElementById('description');
 let controlsDisplay = new ControlsDisplay(toolbarContainer, controlsContainer, descriptionContainer, vizTableContainer, dataTableContainer);
-filterDisplay.SetContainer(toolbarContainer);
-highlightDisplay.SetContainer(toolbarContainer);
+ignoreDropdown.SetContainer(toolbarContainer);
+highlightDropdown.SetContainer(toolbarContainer);
 
 
 
@@ -51,13 +51,13 @@ let init = (data: string, filename: string) =>
 	const defaultVizShown = [true, false, false, false, false];
 	controlsDisplay.SetData(tabularData, defaultVizShown);
 	tableDisplay.SetData(tabularData, defaultVizShown);
-	filterDisplay.SetLineUp(tableDisplay.lineup);
-	highlightDisplay.SetLineUp(tableDisplay.lineup);
+	ignoreDropdown.SetLineUp(tableDisplay.lineup);
+	highlightDropdown.SetLineUp(tableDisplay.lineup);
 
 	// controlsDisplay.updateChartVisibility();
 	// controlsDisplay. // todo show correct viz rows at the beginning correctly
-	filterDisplay.drawSetup();
-	highlightDisplay.drawSetup();
+	ignoreDropdown.drawSetup();
+	highlightDropdown.drawSetup();
 	document.title = filename;
 	uploadOnlyContainerOuter.classList.add('noDisp');
 	outerContainer.classList.remove('noDisp');

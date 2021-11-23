@@ -8,7 +8,7 @@ import { ColumnNumeric } from './ColumnNumeric';
 import * as filterNames from "./lib/constants/filter";
 import { SelectionDropdown } from './SelectionDropdown';
 
-export class FilterDisplay extends SelectionDropdown
+export class IgnoreSelection extends SelectionDropdown
 {
 
     constructor() {
