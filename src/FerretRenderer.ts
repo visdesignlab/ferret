@@ -609,13 +609,16 @@ export default class FerretRenderer implements ICellRendererFactory
         (innerContextSelection.node() as HTMLElement).style.top = pageY + 'px';
         (innerContextSelection.node() as HTMLElement).style.left = pageX + 'px';
 
-        const rowIndices = await this.getMatchingRowIndices(value, column, context);
+        const {
+            local: localRowIndices,
+            global: globalRowIndices
+        } = await this.getMatchingRowIndices(value, column, context);
 
         const buttonInfoList = [
             {iconKey: 'eye-slash', label: `Ignore ${value} in this column.`, func: () => this.onFilter(column, value, 'local')},
             {iconKey: 'globe-americas', label: `Ignore ${value} in any column.`, func: () => this.onFilter(column, value, 'global')},
-            {iconKey: 'highlighter', label: `Highlight ${value} in this column.`, func: () => this.onHighlight(column, value, 'local', rowIndices)},
-            {iconKey: 'globe-americas', label: `Highlight ${value} in any column.`, func: () => this.onHighlight(column, value, 'global', rowIndices)}
+            {iconKey: 'highlighter', label: `Highlight ${value} in this column.`, func: () => this.onHighlight(column, value, 'local', localRowIndices)},
+            {iconKey: 'globe-americas', label: `Highlight ${value} in any column.`, func: () => this.onHighlight(column, value, 'global', globalRowIndices)}
         ]
 
         innerContextSelection.selectAll('button')
@@ -627,9 +630,10 @@ export default class FerretRenderer implements ICellRendererFactory
         d3.select('#outerContextMenu').classed('noDisp', false);
     }
 
-    private async getMatchingRowIndices(matchValue: number, column: ValueColumn<number>, context: IRenderContext): Promise<number[]>
+    private async getMatchingRowIndices(matchValue: number, column: ValueColumn<number>, context: IRenderContext): Promise<{local: number[], global: number[]}>
     {
-        const outIndices: number[] = [];
+        const localIndices: number[] = [];
+        const globalIndices: number[] = [];
         const ranking = column.findMyRanker();
         const indices = ranking.getOrder();
         for (let i of indices)
@@ -638,10 +642,17 @@ export default class FerretRenderer implements ICellRendererFactory
             const dataValue = column.getRaw(dataRow);
             if (dataValue === matchValue)
             {
-                outIndices.push(i);
+                localIndices.push(i);
+            }
+            for (let colKey in dataRow.v)
+            {
+                if (dataRow.v[colKey] === matchValue)
+                {
+                    globalIndices.push(i);
+                }
             }
         }
-        return outIndices;
+        return {local: localIndices, global: globalIndices};
     }
 
     private onFilter(column: FerretColumn, value: number, type: 'local' | 'global'): void
