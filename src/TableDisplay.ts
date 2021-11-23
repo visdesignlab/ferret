@@ -578,9 +578,10 @@ export class TableDisplay extends EventTarget
             if (column.type === 'Number')
             {
                 // columnBuilder = LineUpJS.buildNumberColumn(key);
-                columnBuilder = LineUpJS.buildColumn('FerretColumn', key)
+                columnBuilder = LineUpJS.buildColumn('FerretColumn', key);
                 columnBuilder.renderer('FerretCellRenderer', '', 'FerretRenderer');
-                columnBuilder.custom('numberFormat', d3.format('.8~f'));
+                const decimalPlaces = (column as ColumnNumeric).getDecimalPlaces();
+                columnBuilder.custom('decimalPlaces', decimalPlaces);
             }
             else if (column.type === 'Categorical')
             {

@@ -14,8 +14,7 @@ export interface CombinedFilter {
 export default class FerretColumn extends ValueColumn<number> {
   static readonly EVENT_FILTER_CHANGED = 'filterChanged';
 
-  // TODO - make this dynamic
-  private _decimalPlaces: number = 6;
+  private _defaultDecimalPlaces: number = 6;
 
   private static _globalFilter: FerretFilter = {
     ignoreValues: new Set<number>()
@@ -62,18 +61,32 @@ export default class FerretColumn extends ValueColumn<number> {
   {
     const label: string = this.getLabel(row);
     const numberParts = label.split('.');
+    
+    let decimalPlaces;
+    if (typeof (this.desc as any).decimalPlaces !== 'undefined')
+    {
+      decimalPlaces = (this.desc as any).decimalPlaces;
+    }
+    else
+    {
+      decimalPlaces = this._defaultDecimalPlaces;
+    }
     let paddingString = '';
     let numZeros: number;
     if (numberParts.length == 1)
     {
       paddingString += '.';
-      numZeros = this._decimalPlaces;
+      numZeros = decimalPlaces;
     }
     else
     {
-      numZeros = this._decimalPlaces - numberParts[1].length;
+      numZeros = decimalPlaces - numberParts[1].length;
     }
-    // todo handle negative numZeros
+    if (numZeros <=0)
+    {
+      return ''
+    }
+    
     paddingString += '0'.repeat(numZeros);
 
     return paddingString
