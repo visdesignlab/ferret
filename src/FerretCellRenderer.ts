@@ -17,6 +17,7 @@ export default class BrightnessCellRenderer implements ICellRendererFactory {
         n.title = col.getLabel(d);
         n.innerHTML = `<span class='ferretCellValue'>${n.title}</span><span class='paddingZeros'>${col.getRightPaddingString(d)}</span>`;
         n.classList.toggle('ignoredCell', col.ignoreInAnalysis(d));
+        n.classList.toggle('highlightedCell', col.highlightValue(d));
         // (n.firstElementChild! as HTMLDivElement).style.backgroundColor = missing
         //   ? null
         //   : toHeatMapColor(col.getNumber(d), d, col, imposer);

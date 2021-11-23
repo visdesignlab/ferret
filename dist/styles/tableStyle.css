@@ -172,8 +172,11 @@ td
     font-family: 'Montserrat';
 }
 
-.ignoredCell .ferretCellValue{
-    
+.ignoredCell .ferretCellValue {
     text-decoration: line-through;
     color: #767676;
+}
+
+.highlightedCell .ferretCellValue {
+    background-color: bisque;
 }

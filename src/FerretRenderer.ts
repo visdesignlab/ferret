@@ -614,7 +614,8 @@ export default class FerretRenderer implements ICellRendererFactory
         const buttonInfoList = [
             {iconKey: 'eye-slash', label: `Ignore ${value} in this column.`, func: () => this.onFilter(column, value, 'local')},
             {iconKey: 'globe-americas', label: `Ignore ${value} in any column.`, func: () => this.onFilter(column, value, 'global')},
-            {iconKey: 'highlighter', label: `Highlight rows with ${value} in this column.`, func: () => this.onHighlight(rowIndices)}
+            {iconKey: 'highlighter', label: `Highlight ${value} in this column.`, func: () => this.onHighlight(column, value, 'local', rowIndices)},
+            {iconKey: 'globe-americas', label: `Highlight ${value} in any column.`, func: () => this.onHighlight(column, value, 'global', rowIndices)}
         ]
 
         innerContextSelection.selectAll('button')
@@ -648,8 +649,9 @@ export default class FerretRenderer implements ICellRendererFactory
         column.addValueToIgnore(value, type);
     }
 
-    private onHighlight(rowIndices: number[]): void
+    private onHighlight(column: FerretColumn, value: number, type: 'local' | 'global', rowIndices: number[]): void
     {
+        column.addValueToHighlight(value, type);
         // let filter: Filter = new Filter(uuid.v4(), column, selectionName, selectedData,'LOCAL');
         // const filter = new Filter(filter.id, filter.column, filter.chart, filter.selectedData, 'LOCAL');
         document.dispatchEvent(new CustomEvent('highlightRows', {detail: {rowIndices: rowIndices}}));
