@@ -17,7 +17,7 @@ export class HighlightDisplay extends FilterDropdown
         super();
         super.SetId('highlight');
         super.SetSelectionType('Highlight');
-        document.addEventListener('addHighlight', (e: CustomEvent) => this.selectFilter(e.detail.filter));
+        // document.addEventListener('addHighlight', (e: CustomEvent) => this.selectFilter(e.detail.filter));
         document.addEventListener('onLocalDataChange', (e: CustomEvent) => {
             this.SetLocalData(e.detail.data)
             this.filterData(null, this._data, this._localData);

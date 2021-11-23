@@ -1,3 +1,4 @@
+import * as d3 from 'd3';
 import { Column, IDataRow, IColumnDesc, ILinkColumnDesc, IValueColumnDesc, INumberColumnDesc, ValueColumn, INumberColumn, EAdvancedSortMethod, ECompareValueType, IGroup } from 'lineupjs';
 import { IAdvancedBoxPlotData, IEventListener, ISequence } from 'lineupjs/build/src/internal';
 
@@ -12,6 +13,9 @@ export interface CombinedFilter {
 
 export default class FerretColumn extends ValueColumn<number> {
   static readonly EVENT_FILTER_CHANGED = 'filterChanged';
+
+  // TODO - make this dynamic
+  private _decimalPlaces: number = 6;
 
   private static _globalFilter: FerretFilter = {
     ignoreValues: new Set<number>()
@@ -54,6 +58,26 @@ export default class FerretColumn extends ValueColumn<number> {
     return this.getRaw(row);
   }
 
+  public getRightPaddingString(row: IDataRow): string
+  {
+    const label: string = this.getLabel(row);
+    const numberParts = label.split('.');
+    let paddingString = '';
+    let numZeros: number;
+    if (numberParts.length == 1)
+    {
+      paddingString += '.';
+      numZeros = this._decimalPlaces;
+    }
+    else
+    {
+      numZeros = this._decimalPlaces - numberParts[1].length;
+    }
+    // todo handle negative numZeros
+    paddingString += '0'.repeat(numZeros);
+
+    return paddingString
+  }
 
   public isFiltered(): boolean {
     return this.localFilter.ignoreValues.size > 0 || FerretColumn.globalFilter.ignoreValues.size > 0;

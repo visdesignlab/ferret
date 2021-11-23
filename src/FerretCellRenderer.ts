@@ -11,11 +11,11 @@ export default class BrightnessCellRenderer implements ICellRendererFactory {
   create(col: FerretColumn, context: IRenderContext, imposer?: IImposer): ICellRenderer {
     // const width = context.colWidth(col);
     return {
-      template: `<div title=""></div>`,
+      template: `<div title="" class="ferretCell"></div>`,
       update: (n: HTMLElement, d: IDataRow) => {
         const missing = renderMissingDOM(n, col, d);
         n.title = col.getLabel(d);
-        n.innerText = n.title;
+        n.innerHTML = `<span class='ferretCellValue'>${n.title}</span><span class='paddingZeros'>${col.getRightPaddingString(d)}</span>`;
         n.classList.toggle('ignoredCell', col.ignoreInAnalysis(d));
         // (n.firstElementChild! as HTMLDivElement).style.backgroundColor = missing
         //   ? null

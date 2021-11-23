@@ -159,7 +159,21 @@ td
     background: #e0e7f0;
 }
 
-.ignoredCell {
+.ferretCell {
+    text-align: right;
+}
+
+.ferretCellValue {
+    font-family: 'Montserrat';
+}
+
+.paddingZeros {
+    color: #d3d3d3;
+    font-family: 'Montserrat';
+}
+
+.ignoredCell .ferretCellValue{
+    
     text-decoration: line-through;
     color: #767676;
 }
