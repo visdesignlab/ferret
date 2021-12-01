@@ -1,9 +1,12 @@
 import * as d3 from 'd3';
 import { Column, IDataRow, IColumnDesc, ILinkColumnDesc, IValueColumnDesc, INumberColumnDesc, ValueColumn, INumberColumn, EAdvancedSortMethod, ECompareValueType, IGroup } from 'lineupjs';
 import { IAdvancedBoxPlotData, IEventListener, ISequence } from 'lineupjs/build/src/internal';
+import { ColumnNumeric } from './ColumnNumeric';
 
 export interface FerretSelection {
-  values: Set<number>
+  values: Set<number>,
+  ngrams: Set<string>,
+  leadingDigits: Set<string>
 }
 
 // export interface CombinedFilter {
@@ -18,28 +21,36 @@ export default class FerretColumn extends ValueColumn<number> {
   private _defaultDecimalPlaces: number = 6;
 
   private static _globalIgnore: FerretSelection = {
-    values: new Set<number>()
+    values: new Set<number>(),
+    ngrams: new Set<string>(),
+    leadingDigits: new Set<string>()
   }
   public static get globalIgnore(): FerretSelection {
     return FerretColumn._globalIgnore;
   }
 
   private static _globalHighlight: FerretSelection = {
-    values: new Set<number>()
+    values: new Set<number>(),
+    ngrams: new Set<string>(),
+    leadingDigits: new Set<string>()
   }
   public static get globalHighlight(): FerretSelection {
     return FerretColumn._globalHighlight;
   }
 
   private _localIgnore : FerretSelection = {
-    values: new Set<number>()
+    values: new Set<number>(),
+    ngrams: new Set<string>(),
+    leadingDigits: new Set<string>()
   }
   public get localIgnore() : FerretSelection {
     return this._localIgnore;
   }
 
   private _localHighlight : FerretSelection = {
-    values: new Set<number>()
+    values: new Set<number>(),
+    ngrams: new Set<string>(),
+    leadingDigits: new Set<string>()
   }
   public get localHighlight() : FerretSelection {
     return this._localHighlight;
@@ -116,50 +127,65 @@ export default class FerretColumn extends ValueColumn<number> {
   // }
 
 
-  public addValueToIgnore(value: number, type: 'local' | 'global')
+  private addToIgnore<T>(value: T, scope: 'local' | 'global', accessor: (s: FerretSelection) => Set<T>): void
   {
-    // const lastFilter = this.getFilter();
-    switch (type)
+    switch (scope)
     {
       case 'local':
-        this.localIgnore.values.add(value);
+        accessor(this.localIgnore).add(value);
         break;
       case 'global':
-        FerretColumn.globalIgnore.values.add(value);
+        accessor(FerretColumn.globalIgnore).add(value);
         break;
     }
 
     this.triggerEvent(FerretColumn.EVENT_FILTER_CHANGED);
   }
 
-  // public removeValueToIgnore(value: number, type: 'local' | 'global')
-  // {
-  //   switch (type)
-  //   {
-  //     case 'local':
-  //       this.localIgnore.values.delete(value);
-  //       break;
-  //     case 'global':
-  //       FerretColumn.globalIgnore.values.delete(value);
-  //       break;
-  //   }
-
-  //   this.triggerEvent(FerretColumn.EVENT_FILTER_CHANGED);
-  // }
-
-  public addValueToHighlight(value: number, type: 'local' | 'global')
+  private addToHighlight<T>(value: T, scope: 'local' | 'global', accessor: (s: FerretSelection) => Set<T>): void
   {
-    switch (type)
+    switch (scope)
     {
       case 'local':
-        this.localHighlight.values.add(value);
+        accessor(this.localHighlight).add(value);
         break;
       case 'global':
-        FerretColumn.globalHighlight.values.add(value);
+        accessor(FerretColumn.globalHighlight).add(value);
         break;
     }
 
     this.triggerEvent(FerretColumn.EVENT_HIGHLIGHT_CHANGED);
+  }
+
+  public addValueToIgnore(value: number, scope: 'local' | 'global')
+  {
+    this.addToIgnore(value, scope, s => s.values);
+  }
+
+  public addNGramToIgnore(ngram: string, scope: 'local' | 'global')
+  {
+    this.addToIgnore(ngram, scope, s => s.ngrams);
+  }
+
+  public addLeadingDigitToIgnore(digit: string, scope: 'local' | 'global')
+  {
+    this.addToIgnore(digit, scope, s => s.leadingDigits);
+  }
+
+
+  public addValueToHighlight(value: number, scope: 'local' | 'global')
+  {
+    this.addToHighlight(value, scope, s => s.values);
+  }
+
+  public addNGramToHighlight(ngram: string, scope: 'local' | 'global')
+  {
+    this.addToHighlight(ngram, scope, s => s.ngrams);
+  }
+
+  public addLeadingDigitToHighlight(leadingDigit: string, scope: 'local' | 'global')
+  {
+    this.addToHighlight(leadingDigit, scope, s => s.leadingDigits);
   }
   
   public static removeValueToIgnore(columnOrListOfColumns: FerretColumn | FerretColumn[], value: number): void
@@ -233,29 +259,59 @@ export default class FerretColumn extends ValueColumn<number> {
 
   /**
    * ignore the current value in analysis, also strike through it in the table.
-   * @param row
-   * @returns {boolean}
    */
   public ignoreInAnalysis(row: IDataRow): boolean
   {
-      const thisValue = this.getValue(row);
-      if (this.localIgnore.values.has(thisValue) || FerretColumn.globalIgnore.values.has(thisValue))
-      {
-        return true;
-      }
-      return false;
-    }
+    return this.inSelection(row, FerretColumn.globalIgnore, this.localIgnore);
+  }
 
   public highlightValue(row: IDataRow): boolean
   {
-    const thisValue = this.getValue(row);
-    if (this.localHighlight.values.has(thisValue) || FerretColumn.globalHighlight.values.has(thisValue))
+    return this.inSelection(row, FerretColumn.globalHighlight, this.localHighlight);
+  }
+
+
+  private inSelection(row: IDataRow, global: FerretSelection, local: FerretSelection): boolean
+  {
+    const thisValue: number = this.getValue(row);
+
+    // value filter
+    if (global.values.has(thisValue)
+      || local.values.has(thisValue))
     {
       return true;
     }
+
+    // ngram filter
+    const valueString: string = thisValue.toString();
+    for (let N of [2, 3])
+    {
+      for (let i = 0; i < valueString.length - N + 1; i++)
+      {
+        const substring = valueString.substring(i, i + N);
+        if (global.ngrams.has(substring)
+          || local.ngrams.has(substring))
+        {
+          return true;
+        }
+      }
+    }
+
+    // leading digit filter
+    const leadingDigit = ColumnNumeric.getLeadingDigit(thisValue)
+    if (leadingDigit === null)
+    {
+      return false;
+    }
+    const leadingDigitString = leadingDigit.toString();
+    if (global.leadingDigits.has(leadingDigitString)
+      || local.leadingDigits.has(leadingDigitString))
+    {
+      return true;
+    }
+
     return false;
   }
-
 
   // clearFilter() {
   //   const was = this.isFiltered();

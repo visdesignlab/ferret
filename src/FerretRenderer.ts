@@ -1,6 +1,6 @@
 import * as d3 from "d3";
 import * as uuid from 'uuid';
-import { Column, IImposer, INumberColumn, ValueColumn } from 'lineupjs';
+import { Column, IImposer, INumberColumn, StringColumn, ValueColumn } from 'lineupjs';
 import type {
     ICellRendererFactory,
     IRenderContext,
@@ -281,7 +281,7 @@ export default class FerretRenderer implements ICellRendererFactory
                 }
                 event = event as PointerEvent;
                 event.preventDefault();
-                this.drawContextMenu(value.datum.value, column, context, event.pageX, event.pageY);
+                this.drawContextMenu('value', value.datum.value, column, context, event.pageX, event.pageY);
 
             })
             // result.view.addEventListener('mouseover', (event, value) => {
@@ -478,19 +478,30 @@ export default class FerretRenderer implements ICellRendererFactory
         this.drawExpandCollapseTail(container, tailCount)
 
 
-          vegaEmbed('#' + elementID + '-inner', yourVlSpec, { actions: false }
-          ).then(result => {
-            // result.view.addEventListener('mouseover', (event, value) => {
-            //     this.attachFilterPicker(value, selectionName, column, key, dataValues, i, "value");
-            //      });
-            //   result.view.addEventListener('mouseout', (event, value) => {
-            //     this.removeFilterPicker(value, selectionName, column);
-            //      });
-            //   result.view.addSignalListener(selectionName, (name, value) => {
-            //     this.attachSignalListener(value, dataValues, "value", column, selectionName);
-            //      });
-          })
-         
+          vegaEmbed('#' + elementID + '-inner', yourVlSpec, { actions: false })
+        //   .then(result => {
+        //     // result.view.addEventListener('mouseover', (event, value) => {
+        //     //     this.attachFilterPicker(value, selectionName, column, key, dataValues, i, "value");
+        //     //      });
+        //     //   result.view.addEventListener('mouseout', (event, value) => {
+        //     //     this.removeFilterPicker(value, selectionName, column);
+        //     //      });
+        //     //   result.view.addSignalListener(selectionName, (name, value) => {
+        //     //     this.attachSignalListener(value, dataValues, "value", column, selectionName);
+        //     //      });
+        //   })
+
+          .then(result => {
+            result.view.addEventListener('contextmenu', (event, value) => {
+                if (!value || !value.datum)
+                {
+                    return;
+                }
+                event = event as PointerEvent;
+                event.preventDefault();
+                this.drawContextMenu('nGram', value.datum.value, column, context, event.pageX, event.pageY);
+            })
+            });
     }
 
     private async drawLeadingDigitDist(
@@ -555,18 +566,29 @@ export default class FerretRenderer implements ICellRendererFactory
             }
           };
         
-        vegaEmbed('#' + elementID, yourVlSpec, { actions: false }
-            ).then(result => {
-            //   result.view.addEventListener('mouseover', (event, value) => {
-            //         this.attachFilterPicker(value, selectionName, column, key, dataValues, i, "digit");
-            //     });
-            //   result.view.addEventListener('mouseout', (event, value) => {
-            //         this.removeFilterPicker(value, selectionName, column);
-            //     });
-            //   result.view.addSignalListener(selectionName, (name, value) => {
-            //         this.attachSignalListener(value, dataValues, "digit", column, selectionName);
-            //     });
-          })
+        vegaEmbed('#' + elementID, yourVlSpec, { actions: false })
+        // .then(result => {
+        //     //   result.view.addEventListener('mouseover', (event, value) => {
+        //     //         this.attachFilterPicker(value, selectionName, column, key, dataValues, i, "digit");
+        //     //     });
+        //     //   result.view.addEventListener('mouseout', (event, value) => {
+        //     //         this.removeFilterPicker(value, selectionName, column);
+        //     //     });
+        //     //   result.view.addSignalListener(selectionName, (name, value) => {
+        //     //         this.attachSignalListener(value, dataValues, "digit", column, selectionName);
+        //     //     });
+        //   })
+            .then(result => {
+                result.view.addEventListener('contextmenu', (event, value) => {
+                    if (!value || !value.datum)
+                    {
+                        return;
+                    }
+                    event = event as PointerEvent;
+                    event.preventDefault();
+                    this.drawContextMenu('leadingDigit', value.datum.digit, column, context, event.pageX, event.pageY);
+                })
+            })
         .catch(console.warn); 
     }
 
@@ -597,7 +619,7 @@ export default class FerretRenderer implements ICellRendererFactory
         buttonContainer.appendChild(button);
     }
 
-    private async drawContextMenu(value: number, column: FerretColumn, context: IRenderContext, pageX: number, pageY: number): Promise<void>
+    private async drawContextMenu(type: 'value' | 'nGram' | 'leadingDigit', value: number, column: FerretColumn, context: IRenderContext, pageX: number, pageY: number): Promise<void>
     {
         const outerContextSelection = d3.select('#outerContextMenu')
             .on('click', () => 
@@ -614,12 +636,18 @@ export default class FerretRenderer implements ICellRendererFactory
             global: globalRowIndices
         } = await this.getMatchingRowIndices(value, column, context);
 
+        let typeString: string = {
+            'value': 'value',
+            'nGram': 'N-Gram',
+            'leadingDigit': 'leading digit'
+        }[type];
+
         const buttonInfoList = [
-            {iconKey: 'eye-slash', label: `Ignore ${value} in this column.`, func: () => this.onFilter(column, value, 'local')},
-            {iconKey: 'globe-americas', label: `Ignore ${value} in any column.`, func: () => this.onFilter(column, value, 'global')},
-            {iconKey: 'highlighter', label: `Highlight ${value} in this column.`, func: () => this.onHighlight(column, value, 'local', localRowIndices)},
-            {iconKey: 'globe-americas', label: `Highlight ${value} in any column.`, func: () => this.onHighlight(column, value, 'global', globalRowIndices)}
-        ]
+            {iconKey: 'eye-slash', label: `Ignore ${typeString} ${value} in this column.`, func: () => this.onFilter(type, column, value, 'local')},
+            {iconKey: 'globe-americas', label: `Ignore ${typeString} ${value} in any column.`, func: () => this.onFilter(type, column, value, 'global')},
+            {iconKey: 'highlighter', label: `Highlight ${typeString} ${value} in this column.`, func: () => this.onHighlight(type, column, value, 'local', localRowIndices)},
+            {iconKey: 'globe-americas', label: `Highlight ${typeString} ${value} in any column.`, func: () => this.onHighlight(type, column, value, 'global', globalRowIndices)}
+        ];
 
         innerContextSelection.selectAll('button')
             .data(buttonInfoList)
@@ -655,16 +683,35 @@ export default class FerretRenderer implements ICellRendererFactory
         return {local: localIndices, global: globalIndices};
     }
 
-    private onFilter(column: FerretColumn, value: number, type: 'local' | 'global'): void
+    private onFilter(type: 'value' | 'nGram' | 'leadingDigit', column: FerretColumn, value: number | string, scope: 'local' | 'global'): void
     {
-        column.addValueToIgnore(value, type);
+        switch (type) {
+            case 'value':
+                column.addValueToIgnore(value as number, scope);
+                break;
+            case 'nGram':
+                column.addNGramToIgnore(value as string, scope);
+                break;
+            case 'leadingDigit':
+                column.addLeadingDigitToIgnore(value as string, scope);
+                break;
+        }
     }
 
-    private onHighlight(column: FerretColumn, value: number, type: 'local' | 'global', rowIndices: number[]): void
+    private onHighlight(type: 'value' | 'nGram' | 'leadingDigit', column: FerretColumn, value: number | string, scope: 'local' | 'global', rowIndices: number[]): void
     {
-        column.addValueToHighlight(value, type);
-        // let filter: Filter = new Filter(uuid.v4(), column, selectionName, selectedData,'LOCAL');
-        // const filter = new Filter(filter.id, filter.column, filter.chart, filter.selectedData, 'LOCAL');
+        switch (type) {
+            case 'value':
+                column.addValueToHighlight(value as number, scope);
+                break;
+            case 'nGram':
+                column.addNGramToHighlight(value as string, scope);
+                break;
+            case 'leadingDigit':
+                column.addLeadingDigitToHighlight(value as string, scope);
+                break;
+        }
+
         document.dispatchEvent(new CustomEvent('highlightRows', {detail: {rowIndices: rowIndices}}));
     }
     
