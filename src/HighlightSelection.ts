@@ -19,19 +19,10 @@ export class HighlightSelection extends SelectionDropdown
             'highlight', container, 'Highlight', 'highlighter', 'highlighted',
             () => FerretColumn.globalHighlight,
             (col: FerretColumn) => col.localHighlight,
-            (d: {col: FerretColumn, val: number}) =>
+            (d: {col: FerretColumn | null, val: number}, allColumns: FerretColumn[]) =>
                 {
-                    if (d.col !== null)
-                    {
-                        d.col.removeValueToHighlight(d.val, 'local')
-                    }
-                    else
-                    {
-                        // todo get global to work somehow
-                        // need a column instance to fire correctly, but it
-                        // does not matter which one.
-                        // firstFerretColumn.removeValueToIgnore(d.val, 'global');
-                    }
+                    let removeFrom: FerretColumn | FerretColumn[] = d.col !== null ? d.col : allColumns;
+                    FerretColumn.removeValueToHighlight(removeFrom, d.val);
                 }
             );
 

@@ -18,19 +18,11 @@ export class IgnoreSelection extends SelectionDropdown
             'ignore', container, 'Ignore', 'eye-slash', 'ignored',
             () => FerretColumn.globalIgnore,
             (col: FerretColumn) => col.localIgnore,
-            (d: {col: FerretColumn, val: number}) =>
+            (d: {col: FerretColumn | null, val: number}, allColumns: FerretColumn[]) =>
                 {
-                    if (d.col !== null)
-                    {
-                        d.col.removeValueToIgnore(d.val, 'local')
-                    }
-                    else
-                    {
-                        // todo get global to work somehow
-                        // need a column instance to fire correctly, but it
-                        // does not matter which one.
-                        // firstFerretColumn.removeValueToIgnore(d.val, 'global');
-                    }
+                    let removeFrom: FerretColumn | FerretColumn[] = d.col !== null ? d.col : allColumns;
+                    FerretColumn.removeValueToIgnore(removeFrom, d.val);
+ 
                 }
             );
 

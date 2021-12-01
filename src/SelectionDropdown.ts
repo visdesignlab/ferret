@@ -57,8 +57,8 @@ export abstract class SelectionDropdown extends EventTarget
         return this._localAccessor;
     }
     
-    private _onRowclick : (val: {col: FerretColumn, val: number}) => void;
-    public get onRowclick() : (val: {col: FerretColumn, val: number}) => void {
+    private _onRowclick : (val: {col: FerretColumn | null, val: number}, allColumns: FerretColumn[]) => void;
+    public get onRowclick() : (val: {col: FerretColumn | null, val: number}, allColumns: FerretColumn[]) => void {
         return this._onRowclick;
     }    
 
@@ -76,7 +76,7 @@ export abstract class SelectionDropdown extends EventTarget
         actionWord: string,
         globalAccessor: () => FerretSelection,
         localAccessor: (col: FerretColumn) => FerretSelection,
-        onRowClick: (val: {col: FerretColumn, val: number}) => void): void
+        onRowClick: (val: {col: FerretColumn | null, val: number}, allColumns: FerretColumn[]) => void): void
     {
         this._id = id;
         this._toolbarContainer = container;
@@ -146,9 +146,12 @@ export abstract class SelectionDropdown extends EventTarget
     }
 
     private getListOfSelectionValues(): {
+        selectionVals: {
         col: FerretColumn | null;
         val: number;
-    }[]
+        }[]
+        allColumns: FerretColumn[]
+    }
     {
         const selectionVals: {
             col: FerretColumn | null;
@@ -165,7 +168,6 @@ export abstract class SelectionDropdown extends EventTarget
 
         const firstRanking = this.lineupInstance.data.getFirstRanking();
         const ferretColumns: FerretColumn[] = firstRanking.flatColumns.filter(col => col instanceof FerretColumn) as FerretColumn[];
-
         const ferretColumnsWithFilter: FerretColumn[] = ferretColumns.filter(col => this.localAccessor(col).values.size > 0);
         const localVals = ferretColumnsWithFilter.map(col => [...this.localAccessor(col).values].map(val => {
             return {
@@ -175,7 +177,7 @@ export abstract class SelectionDropdown extends EventTarget
         })).flat();
 
         selectionVals.push(...localVals);
-        return selectionVals;
+        return { selectionVals: selectionVals, allColumns: ferretColumns };
     }
 
     private drawDropdown() {
@@ -183,16 +185,10 @@ export abstract class SelectionDropdown extends EventTarget
         // if(this._id == "highlight") 
         //     this.addChangeToFilterOption(filters);
 
-        const selectionVals = this.getListOfSelectionValues();
-        let firstFerretColumn: FerretColumn;
-        for (let selectionVal of selectionVals)
-        {
-            if (selectionVal.col)
-            {
-                firstFerretColumn = selectionVal.col;
-                break;
-            }
-        }
+        const {
+            selectionVals: selectionVals,
+            allColumns: allColumns
+        } = this.getListOfSelectionValues();
 
         const selectorString = '#' + this._id + 'DropdownMenu';
         const dropdownMenuSelect = d3.select(selectorString);
@@ -202,7 +198,7 @@ export abstract class SelectionDropdown extends EventTarget
             .join('div')
             .classed('dropdown-item', true)
             .attr('title', 'select to remove filter')
-            .on('click', (d) => this.onRowclick(d))
+            .on('click', (d) => this.onRowclick(d, allColumns))
             .each((d, i, nodes) => {
                 const element: HTMLDivElement = nodes[i] as HTMLDivElement;   
                 
@@ -258,7 +254,7 @@ export abstract class SelectionDropdown extends EventTarget
     public drawFilterCount(): void {
         let filterCountText = document.getElementById(this._id+"Count");
         let filterList = this.getListOfSelectionValues();
-        filterCountText.innerHTML = "("+filterList.length+")";
+        filterCountText.innerHTML = "("+filterList.selectionVals.length+")";
     }
     
     // public selectFilter(filter: Filter) : void
@@ -285,7 +281,6 @@ export abstract class SelectionDropdown extends EventTarget
 
     public onSelectionChange(): void 
     {
-        console.log('recompile pls');
         // this._filters.push(filter);
         // applyFilterUpdate(filter, this._selectionType);
         // this.filterData(filter, this._data, this._localData);
