@@ -175,14 +175,14 @@ export default class FerretColumn extends ValueColumn<number> {
     if (columnOrListOfColumns instanceof FerretColumn)
     {
       accessor(columnOrListOfColumns.localIgnore).delete(value);
-      columnOrListOfColumns.triggerEvent(FerretColumn.EVENT_HIGHLIGHT_CHANGED);
+      columnOrListOfColumns.triggerEvent(FerretColumn.EVENT_FILTER_CHANGED);
     }
     else
     {
       accessor(FerretColumn.globalIgnore).delete(value);
       for (let col of columnOrListOfColumns)
       {
-        col.triggerEvent(FerretColumn.EVENT_HIGHLIGHT_CHANGED);
+        col.triggerEvent(FerretColumn.EVENT_FILTER_CHANGED);
       }
     }
   }
