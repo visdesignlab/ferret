@@ -499,7 +499,7 @@ export default class FerretRenderer implements ICellRendererFactory
                 }
                 event = event as PointerEvent;
                 event.preventDefault();
-                this.drawContextMenu('nGram', value.datum.value, column, context, event.pageX, event.pageY);
+                this.drawContextMenu('nGram', value.datum.value.toString(), column, context, event.pageX, event.pageY);
             })
             });
     }
@@ -586,7 +586,7 @@ export default class FerretRenderer implements ICellRendererFactory
                     }
                     event = event as PointerEvent;
                     event.preventDefault();
-                    this.drawContextMenu('leadingDigit', value.datum.digit, column, context, event.pageX, event.pageY);
+                    this.drawContextMenu('leadingDigit', value.datum.digit.toString(), column, context, event.pageX, event.pageY);
                 })
             })
         .catch(console.warn); 
