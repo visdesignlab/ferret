@@ -14,7 +14,7 @@ import * as filterNames from "./lib/constants/filter";
 import vegaEmbed, { VisualizationSpec } from 'vega-embed';
 import { ItemTail } from './components/item-tail';
 import { Filter } from "./Filter";
-import FerretColumn from "./FerretColumn";
+import FerretColumn, { SelectionType, SelectionTypeString } from "./FerretColumn";
 export default class FerretRenderer implements ICellRendererFactory
 {
     readonly title: string = 'Ferret Visualizations';
@@ -619,7 +619,7 @@ export default class FerretRenderer implements ICellRendererFactory
         buttonContainer.appendChild(button);
     }
 
-    private async drawContextMenu(type: 'value' | 'nGram' | 'leadingDigit', value: number, column: FerretColumn, context: IRenderContext, pageX: number, pageY: number): Promise<void>
+    private async drawContextMenu(type: SelectionType, value: number, column: FerretColumn, context: IRenderContext, pageX: number, pageY: number): Promise<void>
     {
         const outerContextSelection = d3.select('#outerContextMenu')
             .on('click', () => 
@@ -636,11 +636,7 @@ export default class FerretRenderer implements ICellRendererFactory
             global: globalRowIndices
         } = await this.getMatchingRowIndices(value, column, context);
 
-        let typeString: string = {
-            'value': 'value',
-            'nGram': 'N-Gram',
-            'leadingDigit': 'leading digit'
-        }[type];
+        let typeString: string = SelectionTypeString(type);
 
         const buttonInfoList = [
             {iconKey: 'eye-slash', label: `Ignore ${typeString} ${value} in this column.`, func: () => this.onFilter(type, column, value, 'local')},
@@ -683,7 +679,7 @@ export default class FerretRenderer implements ICellRendererFactory
         return {local: localIndices, global: globalIndices};
     }
 
-    private onFilter(type: 'value' | 'nGram' | 'leadingDigit', column: FerretColumn, value: number | string, scope: 'local' | 'global'): void
+    private onFilter(type: SelectionType, column: FerretColumn, value: number | string, scope: 'local' | 'global'): void
     {
         switch (type) {
             case 'value':
@@ -698,7 +694,7 @@ export default class FerretRenderer implements ICellRendererFactory
         }
     }
 
-    private onHighlight(type: 'value' | 'nGram' | 'leadingDigit', column: FerretColumn, value: number | string, scope: 'local' | 'global', rowIndices: number[]): void
+    private onHighlight(type: SelectionType, column: FerretColumn, value: number | string, scope: 'local' | 'global', rowIndices: number[]): void
     {
         switch (type) {
             case 'value':

@@ -4,9 +4,15 @@ import { applyFilterUpdate, removedFilterUpdate } from "./ProvenanceSetup";
 import { TabularData } from './TabularData';
 import * as filterNames from "./lib/constants/filter";
 import LineUp from 'lineupjs';
-import FerretColumn, { FerretSelection } from './FerretColumn';
+import FerretColumn, { FerretSelection, SelectionType, SelectionTypeString } from './FerretColumn';
 import { duplicate } from 'vega-lite';
 
+
+export interface SelectionVal {
+    col: FerretColumn | null,
+    val: number | string,
+    type: SelectionType
+}
 export abstract class SelectionDropdown extends EventTarget
 {
 
@@ -57,8 +63,8 @@ export abstract class SelectionDropdown extends EventTarget
         return this._localAccessor;
     }
     
-    private _onRowclick : (val: {col: FerretColumn | null, val: number}, allColumns: FerretColumn[]) => void;
-    public get onRowclick() : (val: {col: FerretColumn | null, val: number}, allColumns: FerretColumn[]) => void {
+    private _onRowclick : (val: SelectionVal, allColumns: FerretColumn[]) => void;
+    public get onRowclick() : (val: SelectionVal, allColumns: FerretColumn[]) => void {
         return this._onRowclick;
     }    
 
@@ -76,7 +82,7 @@ export abstract class SelectionDropdown extends EventTarget
         actionWord: string,
         globalAccessor: () => FerretSelection,
         localAccessor: (col: FerretColumn) => FerretSelection,
-        onRowClick: (val: {col: FerretColumn | null, val: number}, allColumns: FerretColumn[]) => void): void
+        onRowClick: (val: SelectionVal, allColumns: FerretColumn[]) => void): void
     {
         this._id = id;
         this._toolbarContainer = container;
@@ -146,37 +152,61 @@ export abstract class SelectionDropdown extends EventTarget
     }
 
     private getListOfSelectionValues(): {
-        selectionVals: {
-        col: FerretColumn | null;
-        val: number;
-        }[]
+        selectionVals: SelectionVal[]
         allColumns: FerretColumn[]
     }
     {
-        const selectionVals: {
-            col: FerretColumn | null;
-            val: number;
-        }[] = []
+        const selectionVals: SelectionVal[] = [];
 
-        const globalVals = [...this.globalAccessor().values].map(val => {
-            return {
-                col: null,
-                val: val
-            }
-        });
-        selectionVals.push(...globalVals);
+
+        const globalSelectList: {
+            selectionValues: Set<number> | Set<string>,
+            type: SelectionType
+        }[] = [
+            { selectionValues: this.globalAccessor().values, type: 'value' },
+            { selectionValues: this.globalAccessor().ngrams, type: 'nGram' },
+            { selectionValues: this.globalAccessor().leadingDigits, type: 'leadingDigit' }
+        ];
+
+        for (let globalSelect of globalSelectList)
+        {
+            const globalVals: SelectionVal[] = [...globalSelect.selectionValues].map(val => {
+                return {
+                    col: null,
+                    val: val,
+                    type: globalSelect.type
+                }
+            });
+            selectionVals.push(...globalVals);
+        }
 
         const firstRanking = this.lineupInstance.data.getFirstRanking();
         const ferretColumns: FerretColumn[] = firstRanking.flatColumns.filter(col => col instanceof FerretColumn) as FerretColumn[];
-        const ferretColumnsWithFilter: FerretColumn[] = ferretColumns.filter(col => this.localAccessor(col).values.size > 0);
-        const localVals = ferretColumnsWithFilter.map(col => [...this.localAccessor(col).values].map(val => {
-            return {
-                col: col,
-                val: val
-            }
-        })).flat();
+        
 
-        selectionVals.push(...localVals);
+        let localSelectList: {
+            colAccessor: (col: FerretColumn) => Set<number> | Set<string>,
+            type: SelectionType
+        }[] = [
+            { colAccessor: (col: FerretColumn) => this.localAccessor(col).values, type: 'value' },
+            { colAccessor: (col: FerretColumn) => this.localAccessor(col).ngrams, type: 'nGram' },
+            { colAccessor: (col: FerretColumn) => this.localAccessor(col).leadingDigits, type: 'leadingDigit' }
+        ];
+
+        for (let localSelect of localSelectList)
+        {
+            const ferretColumnsWithFilter: FerretColumn[] = ferretColumns.filter(col => localSelect.colAccessor(col).size > 0);
+            const localVals = ferretColumnsWithFilter.map(col => [...localSelect.colAccessor(col)].map(val => {
+                return {
+                    col: col,
+                    val: val,
+                    type: localSelect.type
+                }
+            })).flat();
+    
+            selectionVals.push(...localVals);
+        }
+        
         return { selectionVals: selectionVals, allColumns: ferretColumns };
     }
 
@@ -202,8 +232,10 @@ export abstract class SelectionDropdown extends EventTarget
             .each((d, i, nodes) => {
                 const element: HTMLDivElement = nodes[i] as HTMLDivElement;   
                 
+                const selectionTypeWord = SelectionTypeString(d.type, true);
+
                 const valueSpan: HTMLSpanElement = document.createElement('span');
-                valueSpan.classList.add('selection-label', 'value');
+                valueSpan.classList.add('selection-label', d.type);
                 valueSpan.innerText = d.val.toString();
 
                 const columnSpan: HTMLSpanElement = document.createElement('span');
@@ -214,7 +246,7 @@ export abstract class SelectionDropdown extends EventTarget
                 trashSpan.classList.add('trash-container');
                 trashSpan.innerHTML = '<i class="fas fa-trash"></i>';
 
-                element.innerHTML = `Value ${valueSpan.outerHTML} ${this.actionWord} in ${columnSpan.outerHTML}${trashSpan.outerHTML}`
+                element.innerHTML = `${selectionTypeWord} ${valueSpan.outerHTML} ${this.actionWord} in ${columnSpan.outerHTML}${trashSpan.outerHTML}`
             });
     }
 

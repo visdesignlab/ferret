@@ -9,10 +9,23 @@ export interface FerretSelection {
   leadingDigits: Set<string>
 }
 
-// export interface CombinedFilter {
-//   local: FerretSelection,
-//   global: FerretSelection
-// }
+export type SelectionType = 'value' | 'nGram' | 'leadingDigit';
+
+export function SelectionTypeString(selectionType: SelectionType, upper: boolean = false): string
+{
+  if (upper) {
+    return {
+      'value': 'Value',
+      'nGram': 'N-Gram',
+      'leadingDigit': 'Leading Digit'
+      }[selectionType];
+  }  
+  return {
+    'value': 'value',
+    'nGram': 'n-gram',
+    'leadingDigit': 'leading digit'
+    }[selectionType];
+}
 
 export default class FerretColumn extends ValueColumn<number> {
   static readonly EVENT_FILTER_CHANGED = 'filterChanged';
@@ -161,43 +174,83 @@ export default class FerretColumn extends ValueColumn<number> {
   {
     this.addToIgnore(value, scope, s => s.values);
   }
+  public static removeValueFromIgnore(value: number, removeFrom: FerretColumn | FerretColumn[])
+  {
+    FerretColumn.removeFromIgnore(value, removeFrom, s => s.values);
+  }
 
   public addNGramToIgnore(ngram: string, scope: 'local' | 'global')
   {
     this.addToIgnore(ngram, scope, s => s.ngrams);
+  }
+  public static removeNGramFromIgnore(value: string, removeFrom: FerretColumn | FerretColumn[])
+  {
+    FerretColumn.removeFromIgnore(value, removeFrom, s => s.ngrams);
   }
 
   public addLeadingDigitToIgnore(digit: string, scope: 'local' | 'global')
   {
     this.addToIgnore(digit, scope, s => s.leadingDigits);
   }
-
+  public static removeLeadingDigitFromIgnore(value: string, removeFrom: FerretColumn | FerretColumn[])
+  {
+    FerretColumn.removeFromIgnore(value, removeFrom, s => s.leadingDigits);
+  }
 
   public addValueToHighlight(value: number, scope: 'local' | 'global')
   {
     this.addToHighlight(value, scope, s => s.values);
+  }
+  public static removeValueFromHighlight(value: number, removeFrom: FerretColumn | FerretColumn[])
+  {
+    FerretColumn.removeFromHighlight(value, removeFrom, s => s.values);
   }
 
   public addNGramToHighlight(ngram: string, scope: 'local' | 'global')
   {
     this.addToHighlight(ngram, scope, s => s.ngrams);
   }
+  public static removeNGramFromHighlight(value: string, removeFrom: FerretColumn | FerretColumn[])
+  {
+    FerretColumn.removeFromHighlight(value, removeFrom, s => s.ngrams);
+  }
 
   public addLeadingDigitToHighlight(leadingDigit: string, scope: 'local' | 'global')
   {
     this.addToHighlight(leadingDigit, scope, s => s.leadingDigits);
   }
-  
-  public static removeValueToIgnore(columnOrListOfColumns: FerretColumn | FerretColumn[], value: number): void
+  public static removeLeadingDigitFromHighlight(value: string, removeFrom: FerretColumn | FerretColumn[])
+  {
+    FerretColumn.removeFromHighlight(value, removeFrom, s => s.leadingDigits);
+  }
+
+  // public static removeValueToIgnore(columnOrListOfColumns: FerretColumn | FerretColumn[], value: number): void
+  // {
+  //   if (columnOrListOfColumns instanceof FerretColumn)
+  //   {
+  //     columnOrListOfColumns.localIgnore.values.delete(value);
+  //     columnOrListOfColumns.triggerEvent(FerretColumn.EVENT_HIGHLIGHT_CHANGED);
+  //   }
+  //   else
+  //   {
+  //     FerretColumn.globalIgnore.values.delete(value);
+  //     for (let col of columnOrListOfColumns)
+  //     {
+  //       col.triggerEvent(FerretColumn.EVENT_HIGHLIGHT_CHANGED);
+  //     }
+  //   }
+  // }
+
+  public static removeFromIgnore<T>(value: T, columnOrListOfColumns: FerretColumn | FerretColumn[], accessor: (s: FerretSelection) => Set<T>): void
   {
     if (columnOrListOfColumns instanceof FerretColumn)
     {
-      columnOrListOfColumns.localIgnore.values.delete(value);
+      accessor(columnOrListOfColumns.localIgnore).delete(value);
       columnOrListOfColumns.triggerEvent(FerretColumn.EVENT_HIGHLIGHT_CHANGED);
     }
     else
     {
-      FerretColumn.globalIgnore.values.delete(value);
+      accessor(FerretColumn.globalIgnore).delete(value);
       for (let col of columnOrListOfColumns)
       {
         col.triggerEvent(FerretColumn.EVENT_HIGHLIGHT_CHANGED);
@@ -205,22 +258,41 @@ export default class FerretColumn extends ValueColumn<number> {
     }
   }
 
-  public static removeValueToHighlight(columnOrListOfColumns: FerretColumn | FerretColumn[], value: number): void
+
+  public static removeFromHighlight<T>(value: T, columnOrListOfColumns: FerretColumn | FerretColumn[], accessor: (s: FerretSelection) => Set<T>): void
   {
     if (columnOrListOfColumns instanceof FerretColumn)
     {
-      columnOrListOfColumns.localHighlight.values.delete(value);
+      accessor(columnOrListOfColumns.localHighlight).delete(value);
       columnOrListOfColumns.triggerEvent(FerretColumn.EVENT_HIGHLIGHT_CHANGED);
     }
     else
     {
-      FerretColumn.globalHighlight.values.delete(value);
+      accessor(FerretColumn.globalHighlight).delete(value);
       for (let col of columnOrListOfColumns)
       {
         col.triggerEvent(FerretColumn.EVENT_HIGHLIGHT_CHANGED);
       }
     }
   }
+
+
+  // public static removeValueToHighlight(columnOrListOfColumns: FerretColumn | FerretColumn[], value: number): void
+  // {
+  //   if (columnOrListOfColumns instanceof FerretColumn)
+  //   {
+  //     columnOrListOfColumns.localHighlight.values.delete(value);
+  //     columnOrListOfColumns.triggerEvent(FerretColumn.EVENT_HIGHLIGHT_CHANGED);
+  //   }
+  //   else
+  //   {
+  //     FerretColumn.globalHighlight.values.delete(value);
+  //     for (let col of columnOrListOfColumns)
+  //     {
+  //       col.triggerEvent(FerretColumn.EVENT_HIGHLIGHT_CHANGED);
+  //     }
+  //   }
+  // }
 
   public triggerEvent(event: string): void
   {

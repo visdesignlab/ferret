@@ -113,6 +113,14 @@ body {
     background-color: #e57373;
 }
 
+.selection-label.nGram {
+    background-color: #ff8f00;
+}
+
+.selection-label.leadingDigit {
+    background-color: #4db6ac;
+}
+
 .trash-container {
     opacity: 0.0;
     transition: opacity .4s;

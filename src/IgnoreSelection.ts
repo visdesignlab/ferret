@@ -6,7 +6,7 @@ import { ColumnCategorical } from './ColumnCategorical';
 import { ColumnLabel } from './ColumnLabel';
 import { ColumnNumeric } from './ColumnNumeric';
 import * as filterNames from "./lib/constants/filter";
-import { SelectionDropdown } from './SelectionDropdown';
+import { SelectionDropdown, SelectionVal } from './SelectionDropdown';
 import FerretColumn, { FerretSelection } from './FerretColumn';
 
 export class IgnoreSelection extends SelectionDropdown
@@ -18,10 +18,21 @@ export class IgnoreSelection extends SelectionDropdown
             'ignore', container, 'Ignore', 'eye-slash', 'ignored',
             () => FerretColumn.globalIgnore,
             (col: FerretColumn) => col.localIgnore,
-            (d: {col: FerretColumn | null, val: number}, allColumns: FerretColumn[]) =>
+            (val: SelectionVal, allColumns: FerretColumn[]) =>
                 {
-                    let removeFrom: FerretColumn | FerretColumn[] = d.col !== null ? d.col : allColumns;
-                    FerretColumn.removeValueToIgnore(removeFrom, d.val);
+                    let removeFrom: FerretColumn | FerretColumn[] = val.col !== null ? val.col : allColumns;
+                    switch (val.type)
+                    {
+                        case 'value':
+                            FerretColumn.removeValueFromIgnore( val.val as number, removeFrom);
+                            break;
+                        case 'nGram':
+                            FerretColumn.removeNGramFromIgnore(val.val as string, removeFrom);
+                            break;
+                            case 'leadingDigit':
+                            FerretColumn.removeLeadingDigitFromIgnore(val.val as string, removeFrom);
+                            break;
+                    }
  
                 }
             );
