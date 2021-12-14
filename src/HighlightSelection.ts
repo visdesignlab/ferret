@@ -30,7 +30,7 @@ export class HighlightSelection extends SelectionDropdown
                         case 'nGram':
                             FerretColumn.removeNGramFromHighlight(val.val as string, removeFrom);
                             break;
-                            case 'leadingDigit':
+                        case 'leadingDigit':
                             FerretColumn.removeLeadingDigitFromHighlight(val.val as string, removeFrom);
                             break;
                     }

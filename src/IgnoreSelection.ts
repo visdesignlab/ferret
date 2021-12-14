@@ -29,7 +29,7 @@ export class IgnoreSelection extends SelectionDropdown
                         case 'nGram':
                             FerretColumn.removeNGramFromIgnore(val.val as string, removeFrom);
                             break;
-                            case 'leadingDigit':
+                        case 'leadingDigit':
                             FerretColumn.removeLeadingDigitFromIgnore(val.val as string, removeFrom);
                             break;
                     }

@@ -170,6 +170,41 @@ export default class FerretColumn extends ValueColumn<number> {
     this.triggerEvent(FerretColumn.EVENT_HIGHLIGHT_CHANGED);
   }
 
+  public static removeFromIgnore<T>(value: T, columnOrListOfColumns: FerretColumn | FerretColumn[], accessor: (s: FerretSelection) => Set<T>): void
+  {
+    if (columnOrListOfColumns instanceof FerretColumn)
+    {
+      accessor(columnOrListOfColumns.localIgnore).delete(value);
+      columnOrListOfColumns.triggerEvent(FerretColumn.EVENT_HIGHLIGHT_CHANGED);
+    }
+    else
+    {
+      accessor(FerretColumn.globalIgnore).delete(value);
+      for (let col of columnOrListOfColumns)
+      {
+        col.triggerEvent(FerretColumn.EVENT_HIGHLIGHT_CHANGED);
+      }
+    }
+  }
+
+  public static removeFromHighlight<T>(value: T, columnOrListOfColumns: FerretColumn | FerretColumn[], accessor: (s: FerretSelection) => Set<T>): void
+  {
+    if (columnOrListOfColumns instanceof FerretColumn)
+    {
+      accessor(columnOrListOfColumns.localHighlight).delete(value);
+      columnOrListOfColumns.triggerEvent(FerretColumn.EVENT_HIGHLIGHT_CHANGED);
+    }
+    else
+    {
+      accessor(FerretColumn.globalHighlight).delete(value);
+      for (let col of columnOrListOfColumns)
+      {
+        col.triggerEvent(FerretColumn.EVENT_HIGHLIGHT_CHANGED);
+      }
+    }
+  }
+
+
   public addValueToIgnore(value: number, scope: 'local' | 'global')
   {
     this.addToIgnore(value, scope, s => s.values);
@@ -240,42 +275,6 @@ export default class FerretColumn extends ValueColumn<number> {
   //     }
   //   }
   // }
-
-  public static removeFromIgnore<T>(value: T, columnOrListOfColumns: FerretColumn | FerretColumn[], accessor: (s: FerretSelection) => Set<T>): void
-  {
-    if (columnOrListOfColumns instanceof FerretColumn)
-    {
-      accessor(columnOrListOfColumns.localIgnore).delete(value);
-      columnOrListOfColumns.triggerEvent(FerretColumn.EVENT_HIGHLIGHT_CHANGED);
-    }
-    else
-    {
-      accessor(FerretColumn.globalIgnore).delete(value);
-      for (let col of columnOrListOfColumns)
-      {
-        col.triggerEvent(FerretColumn.EVENT_HIGHLIGHT_CHANGED);
-      }
-    }
-  }
-
-
-  public static removeFromHighlight<T>(value: T, columnOrListOfColumns: FerretColumn | FerretColumn[], accessor: (s: FerretSelection) => Set<T>): void
-  {
-    if (columnOrListOfColumns instanceof FerretColumn)
-    {
-      accessor(columnOrListOfColumns.localHighlight).delete(value);
-      columnOrListOfColumns.triggerEvent(FerretColumn.EVENT_HIGHLIGHT_CHANGED);
-    }
-    else
-    {
-      accessor(FerretColumn.globalHighlight).delete(value);
-      for (let col of columnOrListOfColumns)
-      {
-        col.triggerEvent(FerretColumn.EVENT_HIGHLIGHT_CHANGED);
-      }
-    }
-  }
-
 
   // public static removeValueToHighlight(columnOrListOfColumns: FerretColumn | FerretColumn[], value: number): void
   // {
