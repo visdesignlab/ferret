@@ -161,6 +161,7 @@ td
 
 .ferretCell {
     text-align: right;
+    padding-right: 1px;
 }
 
 .ferretCellValue {
@@ -174,9 +175,33 @@ td
 
 .ignoredCell .ferretCellValue {
     text-decoration: line-through;
-    color: #767676;
+    /* color: #767676; */
+    opacity: 0.3;
 }
 
-.highlightedCell .ferretCellValue {
-    background-color: bisque;
+.ferretCellValue .highlight {
+    border-width: 1px;
+    border-style: solid;
+    border-top-width: 0px;
+    border-bottom-width: 0px;
+    font-family: 'Montserrat';
+    margin-right: -1px;
+}
+
+.ferretCellValue .highlight.value {
+    border-color: #e57373;
+    background-color: hsl(0, 69%, 97%);
+    border-radius: 1px;
+}
+
+.ferretCellValue .highlight.ngram {
+    border-color: #ff8f00;
+    background-color: hsl(34, 100%, 90%);
+    border-radius: 3px;
+}
+
+.ferretCellValue .highlight.leadingDigit {
+    border-color: #4db6ac;
+    background-color: hsl(174, 42%, 91%);
+    border-radius: 5px;
 }

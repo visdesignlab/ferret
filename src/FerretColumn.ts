@@ -9,6 +9,15 @@ export interface FerretSelection {
   leadingDigits: Set<string>
 }
 
+export interface FerretSelectionExplanation {
+  selected: boolean,
+  why: {
+    value: {cause: boolean, col: FerretColumn | null}
+    nGram: {start: number, end: number, col: FerretColumn | null}[], 
+    leadingDigit: {cause: boolean, col: FerretColumn | null}
+  }
+}
+
 export type SelectionType = 'value' | 'nGram' | 'leadingDigit';
 
 export function SelectionTypeString(selectionType: SelectionType, upper: boolean = false): string
@@ -336,21 +345,45 @@ export default class FerretColumn extends ValueColumn<number> {
     return this.inSelection(row, FerretColumn.globalIgnore, this.localIgnore);
   }
 
-  public highlightValue(row: IDataRow): boolean
-  {
-    return this.inSelection(row, FerretColumn.globalHighlight, this.localHighlight);
-  }
+  // public highlightValue(row: IDataRow): boolean
+  // {
+  //   return this.inSelection(row, FerretColumn.globalHighlight, this.localHighlight);
+  // }
 
+  public highlightValueExplanation(row: IDataRow): FerretSelectionExplanation
+  {
+    return this.inSelectionExplanation(row, FerretColumn.globalHighlight, this.localHighlight);
+  }
 
   private inSelection(row: IDataRow, global: FerretSelection, local: FerretSelection): boolean
   {
+    return this.inSelectionExplanation(row, global, local).selected;
+  }
+
+  private inSelectionExplanation(row: IDataRow, global: FerretSelection, local: FerretSelection): FerretSelectionExplanation
+  {
+    const explanation: FerretSelectionExplanation = {
+      selected: false,
+      why: {
+        value: {cause: false, col: null},
+        nGram: [],
+        leadingDigit: {cause: false, col: null}
+      }
+    };
+
     const thisValue: number = this.getValue(row);
 
     // value filter
-    if (global.values.has(thisValue)
-      || local.values.has(thisValue))
+    if (global.values.has(thisValue))
     {
-      return true;
+      explanation.selected = true;
+      explanation.why.value.cause = true;
+    }
+    else if (local.values.has(thisValue))
+    {
+      explanation.selected = true;
+      explanation.why.value.cause = true;
+      explanation.why.value.col  = this;
     }
 
     // ngram filter
@@ -359,31 +392,40 @@ export default class FerretColumn extends ValueColumn<number> {
     {
       for (let i = 0; i < valueString.length - N + 1; i++)
       {
-        const substring = valueString.substring(i, i + N);
-        if (global.ngrams.has(substring)
-          || local.ngrams.has(substring))
+        const endIdx = i + N;
+        const substring = valueString.substring(i, endIdx);
+        if (global.ngrams.has(substring))
         {
-          return true;
+          explanation.selected = true;
+          explanation.why.nGram.push({start: i, end: endIdx, col: null});
+        }
+        else if (local.ngrams.has(substring))
+        {
+          explanation.selected = true;
+          explanation.why.nGram.push({start: i, end: endIdx, col: this});
         }
       }
     }
 
     // leading digit filter
-    const leadingDigit = ColumnNumeric.getLeadingDigit(thisValue)
-    if (leadingDigit === null)
+    const leadingDigitString = ColumnNumeric.getLeadingDigitString(thisValue)
+    if (global.leadingDigits.has(leadingDigitString))
     {
-      return false;
+      explanation.selected = true;
+      explanation.why.leadingDigit.cause = true;
+      explanation.why.leadingDigit.col = null;
     }
-    const leadingDigitString = leadingDigit.toString();
-    if (global.leadingDigits.has(leadingDigitString)
-      || local.leadingDigits.has(leadingDigitString))
+    else if (local.leadingDigits.has(leadingDigitString))
     {
-      return true;
+      explanation.selected = true;
+      explanation.why.leadingDigit.cause = true;
+      explanation.why.leadingDigit.col = this;
     }
-
-    return false;
+    return explanation;
   }
 
+
+ 
   // clearFilter() {
   //   const was = this.isFiltered();
 
