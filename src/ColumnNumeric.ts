@@ -106,6 +106,16 @@ export class ColumnNumeric extends Column<number>
         return null;
     }
 
+    public static getLeadingDigitString(val: number): '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | ''
+    {
+        const leadingDigit = ColumnNumeric.getLeadingDigit(val);
+        if (leadingDigit === null)
+        {
+            return '';
+        }
+        return leadingDigit.toString() as '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9';
+    }
+
     public static isSelectedValue(val: number, nums: Set<Number | string> | null) : Boolean {
 
         if(nums == null) return false;

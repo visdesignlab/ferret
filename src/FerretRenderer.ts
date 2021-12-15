@@ -619,7 +619,7 @@ export default class FerretRenderer implements ICellRendererFactory
         buttonContainer.appendChild(button);
     }
 
-    private async drawContextMenu(type: SelectionType, value: number, column: FerretColumn, context: IRenderContext, pageX: number, pageY: number): Promise<void>
+    private async drawContextMenu(type: SelectionType, value: number | string, column: FerretColumn, context: IRenderContext, pageX: number, pageY: number): Promise<void>
     {
         const outerContextSelection = d3.select('#outerContextMenu')
             .on('click', () => 
@@ -634,7 +634,7 @@ export default class FerretRenderer implements ICellRendererFactory
         const {
             local: localRowIndices,
             global: globalRowIndices
-        } = await this.getMatchingRowIndices(value, column, context);
+        } = await this.getMatchingRowIndices(type, value, column, context);
 
         let typeString: string = SelectionTypeString(type);
 
@@ -654,7 +654,7 @@ export default class FerretRenderer implements ICellRendererFactory
         d3.select('#outerContextMenu').classed('noDisp', false);
     }
 
-    private async getMatchingRowIndices(matchValue: number, column: ValueColumn<number>, context: IRenderContext): Promise<{local: number[], global: number[]}>
+    private async getMatchingRowIndices(type: SelectionType, value: number | string, column: FerretColumn, context: IRenderContext): Promise<{local: number[], global: number[]}>
     {
         const localIndices: number[] = [];
         const globalIndices: number[] = [];
@@ -663,20 +663,28 @@ export default class FerretRenderer implements ICellRendererFactory
         for (let i of indices)
         {
             const dataRow = await context.provider.getRow(i);
+
             const dataValue = column.getRaw(dataRow);
-            if (dataValue === matchValue)
+            if (FerretRenderer.isMatchingRow(dataValue, type, value))
             {
                 localIndices.push(i);
             }
             for (let colKey in dataRow.v)
             {
-                if (dataRow.v[colKey] === matchValue)
+                if (FerretRenderer.isMatchingRow(dataRow.v[colKey], type, value))
                 {
                     globalIndices.push(i);
                 }
             }
         }
         return {local: localIndices, global: globalIndices};
+    }
+
+    private static isMatchingRow(dataValue: number, type: SelectionType, value: number | string): boolean
+    {
+        return (type === 'value' && dataValue === value)
+            || (type === 'nGram' && dataValue.toString().includes(value as string)) 
+            || (type === 'leadingDigit' && ColumnNumeric.getLeadingDigitString(dataValue) === value as string);
     }
 
     private onFilter(type: SelectionType, column: FerretColumn, value: number | string, scope: 'local' | 'global'): void
