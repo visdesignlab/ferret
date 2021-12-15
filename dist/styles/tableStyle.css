@@ -205,3 +205,17 @@ td
     background-color: hsl(174, 42%, 91%);
     border-radius: 5px;
 }
+
+
+
+/* Overrite lineup */
+
+.le-tr.lu-selected {
+    /* box-shadow: 0 0 0 2px orange; */
+    box-shadow: 0 0 0 2px #d1d0d0 !important;
+    /* outline: solid 2px #c5c5c5; */
+}
+
+.le-tr:hover, .le-tr.le-highlighted {
+    box-shadow: 0 0 0 2px #d1d0d0 !important;
+}
