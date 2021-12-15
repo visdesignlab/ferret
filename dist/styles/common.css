@@ -182,7 +182,7 @@ body {
 .innerContextMenu {
     display: flex;
     flex-direction: column;
-    width: 300px;
+    /* width: 300px; */
     border: solid black 1px;
     position: absolute;
 }
@@ -192,6 +192,7 @@ body {
     border: none;
     text-align: left;
     padding: 3px;
+    padding-right: 12px;
     cursor: pointer;
 }
 .innerContextMenu > button:hover {
