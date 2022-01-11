@@ -1,6 +1,6 @@
 import * as d3 from 'd3';
 import { Column, ERenderMode, ICellRenderer, ICellRendererFactory, IDataRow, IGroupCellRenderer, IImposer, IRenderContext, ISummaryRenderer, renderMissingDOM } from "lineupjs";
-import { ColumnNumeric } from './ColumnNumeric';
+import { ChartCalculations } from './ChartCalculations';
 import FerretColumn from './FerretColumn'
 
 export default class FerretCellRenderer implements ICellRendererFactory {
@@ -38,7 +38,7 @@ export default class FerretCellRenderer implements ICellRendererFactory {
           let leadingDigitIndex: number = 0;
           if (selectionExplanation.why.leadingDigit.cause)
           {
-            leadingDigitIndex = ColumnNumeric.getLeadingDigitIndex(cellLabel);
+            leadingDigitIndex = ChartCalculations.getLeadingDigitIndex(cellLabel);
           }
 
           if (selectionExplanation.why.nGram.length > 0)

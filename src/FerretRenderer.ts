@@ -608,7 +608,7 @@ export default class FerretRenderer implements ICellRendererFactory
     {
         return (type === 'value' && dataValue === value)
             || (type === 'nGram' && dataValue.toString().includes(value as string)) 
-            || (type === 'leadingDigit' && ColumnNumeric.getLeadingDigitString(dataValue) === value as string);
+            || (type === 'leadingDigit' && ChartCalculations.getLeadingDigitString(dataValue) === value as string);
     }
 
     private onFilter(type: SelectionType, column: FerretColumn, value: number | string, scope: 'local' | 'global'): void

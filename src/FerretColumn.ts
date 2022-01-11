@@ -1,6 +1,6 @@
 import { Column, IDataRow, ValueColumn, ECompareValueType } from 'lineupjs';
 import { IEventListener } from 'lineupjs/build/src/internal';
-import { ColumnNumeric } from './ColumnNumeric';
+import { ChartCalculations } from './ChartCalculations';
 
 export interface FerretSelection {
   values: Set<number>,
@@ -342,7 +342,7 @@ export default class FerretColumn extends ValueColumn<number> {
     }
 
     // leading digit filter
-    const leadingDigitString = ColumnNumeric.getLeadingDigitString(thisValue)
+    const leadingDigitString = ChartCalculations.getLeadingDigitString(thisValue)
     if (global.leadingDigits.has(leadingDigitString))
     {
       explanation.selected = true;

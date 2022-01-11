@@ -36,7 +36,7 @@ export class ChartCalculations
             }
             const dataValue = column.getRaw(dataRow);
 
-            let digit = ChartCalculations.getLeadingDigit(dataValue, null);
+            let digit = ChartCalculations.getLeadingDigit(dataValue);
             let oldVal = digitCounts.get(digit);
             digitCounts.set(digit, oldVal + 1);
 
@@ -45,37 +45,51 @@ export class ChartCalculations
         return digitCounts;
     }
 
-    private static getLeadingDigit(val: number, nums: Set<Number | string> | null): 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 
-    {
-
-        val = (val < 0) ? val*-1 : val;
-    
-        const validNums = new Set([1,2,3,4,5,6,7,8,9]);
+    public static getLeadingDigitIndex(val: number | string): number | null
+    {    
+        const validNums = new Set(['1','2','3','4','5','6','7','8','9']);
         
-        let valString = val.toString();
+        let valString: string;
+        if (typeof(val) === 'number')
+        {
+            valString = val.toString();
+        }
+        else
+        {
 
-        for (let char of valString)
-        { 
-            /* 
-            * assigning it to zero since we don't count zero as leading digit.
-            * should we decide to count it, we should change this code.
-            */
-           
-            let num = (char >= '1' && char <= '9') ? +char : 0; 
-            if (validNums.has(num))
+            valString = val;
+        }        
+
+        for (let i = 0; i < valString.length; i++)
+        {
+            let char = valString[i];
+            if (validNums.has(char))
             {
-                if(nums == null)
-                    return num as 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 ;
-              
-                else if(nums != null) {
-                    if (nums.has(num)) {
-                        return num as 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
-                    }  
-                    else 
-                        return null;
-                }
+                return i;
             }
-        } 
+        }
+        return null;
+    }
+
+    public static getLeadingDigit(val: number): 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | null
+    {
+        let leadingDigitIndex = ChartCalculations.getLeadingDigitIndex(val);
+        if (leadingDigitIndex === null) 
+        {
+            return null;
+        }
+        let valString = val.toString();
+        return +valString[leadingDigitIndex] as 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
+    }
+
+    public static getLeadingDigitString(val: number): '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | ''
+    {
+        const leadingDigit = ChartCalculations.getLeadingDigit(val);
+        if (leadingDigit === null)
+        {
+            return '';
+        }
+        return leadingDigit.toString() as '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9';
     }
 
     public static async GetDuplicateCounts(column: FerretColumn, context: IRenderContext): Promise<[number, number][]>
