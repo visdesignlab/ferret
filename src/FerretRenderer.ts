@@ -1,33 +1,35 @@
-import * as d3 from "d3";
+import * as d3 from 'd3';
 import { Column, IImposer } from 'lineupjs';
 import type {
     ICellRendererFactory,
     IRenderContext,
     ISummaryRenderer
 } from 'lineupjs';
-import { ColumnNumeric } from './ColumnNumeric';
 import { ChartCalculations } from './ChartCalculations';
-import * as filterNames from "./lib/constants/filter";
+import * as filterNames from './lib/constants/filter';
 import vegaEmbed, { VisualizationSpec } from 'vega-embed';
-import FerretColumn, { SelectionType, SelectionTypeString } from "./FerretColumn";
-export default class FerretRenderer implements ICellRendererFactory
-{
+import FerretColumn, {
+    SelectionType,
+    SelectionTypeString
+} from './FerretColumn';
+export default class FerretRenderer implements ICellRendererFactory {
     readonly title: string = 'Ferret Visualizations';
     readonly maxCollapseCount: number = 5;
 
-    public canRender(col: Column)
-    {
-        return col.desc.type === 'number' || col.desc.type === 'categorical' || col.desc.type === 'FerretColumn';
+    public canRender(col: Column) {
+        return (
+            col.desc.type === 'number' ||
+            col.desc.type === 'categorical' ||
+            col.desc.type === 'FerretColumn'
+        );
     }
 
-    public createSummary
-    (
+    public createSummary(
         col: FerretColumn,
         context: IRenderContext,
         interactive: boolean,
         imposer?: IImposer
-    ): ISummaryRenderer
-    {
+    ): ISummaryRenderer {
         return {
             template: `
             <div class="vizContainer">
@@ -43,10 +45,11 @@ export default class FerretRenderer implements ICellRendererFactory
                 </div>
                 <div class="noDisp innerVizContainer"></div>
             </div>`,
-            update: (container: HTMLElement) =>
-            {
+            update: (container: HTMLElement) => {
                 let childIndex = 0;
-                let vizContainer = container.children[childIndex++] as HTMLElement;
+                let vizContainer = container.children[
+                    childIndex++
+                ] as HTMLElement;
                 this.drawOverallDist(
                     vizContainer,
                     col,
@@ -54,56 +57,83 @@ export default class FerretRenderer implements ICellRendererFactory
                     interactive,
                     'newOverallDist-',
                     col.id
-                    );
+                );
 
                 vizContainer = container.children[childIndex++] as HTMLElement;
-                this.drawFrequentDuplicates(vizContainer, col, context, 'newDuplicateCount-', col.id);
+                this.drawFrequentDuplicates(
+                    vizContainer,
+                    col,
+                    context,
+                    'newDuplicateCount-',
+                    col.id
+                );
 
                 vizContainer = container.children[childIndex++] as HTMLElement;
-                this.drawReplicates(vizContainer, col, context, 'newReplicates-', col.id); 
+                this.drawReplicates(
+                    vizContainer,
+                    col,
+                    context,
+                    'newReplicates-',
+                    col.id
+                );
 
                 vizContainer = container.children[childIndex++] as HTMLElement;
-                const twoGramSwitch = document.getElementById('2-gram-switch') as HTMLInputElement;
+                const twoGramSwitch = document.getElementById(
+                    '2-gram-switch'
+                ) as HTMLInputElement;
                 const nGram = twoGramSwitch.checked ? 2 : 3;
-                const lsdSwitch = document.getElementById('lsd-switch') as HTMLInputElement;
+                const lsdSwitch = document.getElementById(
+                    'lsd-switch'
+                ) as HTMLInputElement;
                 const lsd = lsdSwitch.checked;
-                this.drawNGramFrequency(vizContainer, col, context, 'newNGram-', col.id, nGram, lsd);
+                this.drawNGramFrequency(
+                    vizContainer,
+                    col,
+                    context,
+                    'newNGram-',
+                    col.id,
+                    nGram,
+                    lsd
+                );
 
                 vizContainer = container.children[childIndex++] as HTMLElement;
-                this.drawLeadingDigitDist(vizContainer, col, context, 'newBenfordDist-', col.id);
-
-            },
+                this.drawLeadingDigitDist(
+                    vizContainer,
+                    col,
+                    context,
+                    'newBenfordDist-',
+                    col.id
+                );
+            }
         };
     }
 
-    private async drawOverallDist
-    (
+    private async drawOverallDist(
         container: HTMLElement,
         column: FerretColumn,
         context: IRenderContext,
         interactive: boolean,
         chartKey: string,
         colKey: string
-    ): Promise<void>
-    {
-        let dataValues : Array<any> = [];
+    ): Promise<void> {
+        let dataValues: Array<any> = [];
         let selectionName = filterNames.VALUE_DIST_SELECTION;
 
         const ranking = column.findMyRanker();
         const indices = ranking.getOrder();
-        for (let i of indices)
-        {
+        for (let i of indices) {
             const dataRow = await context.provider.getRow(i);
-            if (!column.ignoreInAnalysis(dataRow))
-            {
+            if (!column.ignoreInAnalysis(dataRow)) {
                 const dataValue = column.getRaw(dataRow);
-                dataValues.push({'value': dataValue});
+                dataValues.push({ value: dataValue });
             }
         }
 
         const elementID = chartKey + colKey;
         container.id = elementID;
-        const isNumeric = column.desc.type === 'number' || column.desc.type === 'FerretColumn';
+        const isNumeric =
+            column.desc.type === 'number' ||
+            column.desc.type === 'FerretColumn';
         const xAxisType = isNumeric ? 'quantitative' : 'nominal';
 
         var yourVlSpec: VisualizationSpec = {
@@ -112,75 +142,87 @@ export default class FerretRenderer implements ICellRendererFactory
             $schema: 'https://vega.github.io/schema/vega-lite/v4.json',
             description: 'Overall Distribution',
             data: {
-              values: dataValues
+                values: dataValues
             },
             mark: 'bar',
             selection: {
-                "VALUE_DIST_SELECTION": {
-                    type: "multi",
+                VALUE_DIST_SELECTION: {
+                    type: 'multi',
                     clear: false
-                },
+                }
             },
             encoding: {
-              x: {field: 'value', type: xAxisType, bin: isNumeric, title: null},
-              color: {
-                  value: "#ffb726"
-              },
-              y: {field: 'value', aggregate: 'count', type: 'quantitative', title: null},
-              opacity: {
-                condition: {
-                    selection: selectionName, 
-                    value: 1
+                x: {
+                    field: 'value',
+                    type: xAxisType,
+                    bin: isNumeric,
+                    title: null
                 },
-                value: 1
-              },
-            }   
-          };
-          vegaEmbed('#' + elementID, yourVlSpec, { actions: false }
-          ).then(result => {
-            // TODO - add back some interactivity here
-            //   result.view.addSignalListener(selectionName, (name, value) => {
-            //     let selectedData : Array<number> = this.getSelectedData(value._vgsid_, dataValues, "value");
-            //     let filter: Filter = new Filter(uuid.v4(), column, selectionName, selectedData, 'LOCAL') 
-            //     document.dispatchEvent(new CustomEvent('addHighlight', {detail: {filter: filter}}));
-            //   });
-          });
+                color: {
+                    value: '#ffb726'
+                },
+                y: {
+                    field: 'value',
+                    aggregate: 'count',
+                    type: 'quantitative',
+                    title: null
+                },
+                opacity: {
+                    condition: {
+                        selection: selectionName,
+                        value: 1
+                    },
+                    value: 1
+                }
+            }
+        };
+        vegaEmbed('#' + elementID, yourVlSpec, { actions: false }).then(
+            result => {
+                // TODO - add back some interactivity here
+                //   result.view.addSignalListener(selectionName, (name, value) => {
+                //     let selectedData : Array<number> = this.getSelectedData(value._vgsid_, dataValues, "value");
+                //     let filter: Filter = new Filter(uuid.v4(), column, selectionName, selectedData, 'LOCAL')
+                //     document.dispatchEvent(new CustomEvent('addHighlight', {detail: {filter: filter}}));
+                //   });
+            }
+        );
     }
-    
+
     private async drawFrequentDuplicates(
         container: HTMLElement,
         column: FerretColumn,
         context: IRenderContext,
         chartKey: string,
-        colKey: string): Promise<void>
-    {
-        let dupCounts = await ChartCalculations.GetDuplicateCounts(column, context);
+        colKey: string
+    ): Promise<void> {
+        let dupCounts = await ChartCalculations.GetDuplicateCounts(
+            column,
+            context
+        );
         let selectionName = filterNames.FREQUENT_VALUES_SELECTION;
-        let dataValues : Array<any> = [];
+        let dataValues: Array<any> = [];
         let index = 0;
-        let multiFrequentValues : Array<any> = [];
+        let multiFrequentValues: Array<any> = [];
         const showAll = container.dataset.showAll === 'true';
-        for (let [val, count] of dupCounts)
-        {
-            if (count === 1) 
-            {
+        for (let [val, count] of dupCounts) {
+            if (count === 1) {
                 continue;
             }
             multiFrequentValues.push([val, count]);
         }
 
-        const maxIndex = showAll ? multiFrequentValues.length : this.maxCollapseCount;
+        const maxIndex = showAll
+            ? multiFrequentValues.length
+            : this.maxCollapseCount;
 
-        for (let [val, count] of multiFrequentValues)
-        {
-            if (index >= maxIndex) 
-            {
+        for (let [val, count] of multiFrequentValues) {
+            if (index >= maxIndex) {
                 break;
             }
             index++;
             dataValues.push({
-                'value': val,
-                'count': count
+                value: val,
+                count: count
             });
         }
 
@@ -194,65 +236,74 @@ export default class FerretRenderer implements ICellRendererFactory
             $schema: 'https://vega.github.io/schema/vega-lite/v4.json',
             description: 'Duplicate Counts',
             data: {
-              values: dataValues
+                values: dataValues
             },
             encoding: {
-                y: {field: 'value', type: 'ordinal', sort: '-x', axis: {labelBound: 20}, title: null},
-                x: {field: 'count', type: 'quantitative', title: null},
+                y: {
+                    field: 'value',
+                    type: 'ordinal',
+                    sort: '-x',
+                    axis: { labelBound: 20 },
+                    title: null
+                },
+                x: { field: 'count', type: 'quantitative', title: null },
                 color: {
-                    value: "#e57373"
+                    value: '#e57373'
                 },
                 opacity: {
                     condition: {
-                        selection: selectionName, 
+                        selection: selectionName,
                         value: 1
                     },
-                    value: .6
-                },
+                    value: 0.6
+                }
             },
             layer: [
                 {
                     mark: 'bar',
                     selection: {
-                        "FREQUENT_VALUES_SELECTION": {
-                            type: "multi",
-                            clear: "dblclick"
-                        },
+                        FREQUENT_VALUES_SELECTION: {
+                            type: 'multi',
+                            clear: 'dblclick'
+                        }
                     }
                 },
                 {
-                    mark:
-                    {
+                    mark: {
                         type: 'text',
                         align: 'left',
                         baseline: 'middle',
                         dx: 3
                     },
-                    encoding:
-                    {
-                        text: {field: "count", type: "quantitative"}
+                    encoding: {
+                        text: { field: 'count', type: 'quantitative' }
                     }
                 }
-            ],
+            ]
         };
-        
+
         const tailCount = multiFrequentValues.length - this.maxCollapseCount;
-        this.drawExpandCollapseTail(container, tailCount)
-    
-        vegaEmbed('#' + elementID + '-inner', yourVlSpec, { actions: false })
-        .then(result => {
+        this.drawExpandCollapseTail(container, tailCount);
+
+        vegaEmbed('#' + elementID + '-inner', yourVlSpec, {
+            actions: false
+        }).then(result => {
             result.view.addEventListener('contextmenu', (event, value) => {
-                if (!value || !value.datum)
-                {
+                if (!value || !value.datum) {
                     return;
                 }
                 event = event as PointerEvent;
                 event.preventDefault();
-                this.drawContextMenu('value', value.datum.value, column, context, event.pageX, event.pageY);
-
+                this.drawContextMenu(
+                    'value',
+                    value.datum.value,
+                    column,
+                    context,
+                    event.pageX,
+                    event.pageY
+                );
             });
         });
-
     }
 
     private async drawReplicates(
@@ -260,28 +311,30 @@ export default class FerretRenderer implements ICellRendererFactory
         column: FerretColumn,
         context: IRenderContext,
         chartKey: string,
-        colKey: string): Promise<void>
-    {
-        let replicateCount = await ChartCalculations.GetReplicates(column, context);
-        let dataValues : Array<any> = [];
+        colKey: string
+    ): Promise<void> {
+        let replicateCount = await ChartCalculations.GetReplicates(
+            column,
+            context
+        );
+        let dataValues: Array<any> = [];
         let index = 0;
         const showAll = container.dataset.showAll === 'true';
-        const maxIndex = showAll ? replicateCount.length : this.maxCollapseCount;
-
+        const maxIndex = showAll
+            ? replicateCount.length
+            : this.maxCollapseCount;
 
         const elementID = chartKey + colKey;
         container.id = elementID;
         container.querySelector('.innerVizContainer').id = elementID + '-inner';
-        for (let [frequency, count] of replicateCount)
-        {
-            if (index >= maxIndex)
-            {
+        for (let [frequency, count] of replicateCount) {
+            if (index >= maxIndex) {
                 break;
             }
             index++;
             dataValues.push({
-                'frequency': frequency,
-                'count': count
+                frequency: frequency,
+                count: count
             });
         }
 
@@ -291,45 +344,56 @@ export default class FerretRenderer implements ICellRendererFactory
             $schema: 'https://vega.github.io/schema/vega-lite/v4.json',
             description: 'Replicate Count',
             data: {
-              values: dataValues
+                values: dataValues
             },
             encoding: {
-                x: {field: "count", type: "quantitative", title: null},
+                x: { field: 'count', type: 'quantitative', title: null },
                 color: {
-                    value: "#0277BD"
+                    value: '#0277BD'
                 },
-                y: {field: "frequency", type: "nominal", sort: '-y', title: null},
+                y: {
+                    field: 'frequency',
+                    type: 'nominal',
+                    sort: '-y',
+                    title: null
+                },
                 tooltip: [
-                    {field: "frequency", type: "nominal", title: "Repetitions:"},
-                    {field: "count", type: "quantitative", title: "Number of values repeated:"}
+                    {
+                        field: 'frequency',
+                        type: 'nominal',
+                        title: 'Repetitions:'
+                    },
+                    {
+                        field: 'count',
+                        type: 'quantitative',
+                        title: 'Number of values repeated:'
+                    }
                 ]
-              },
-              layer: [
+            },
+            layer: [
                 {
-                    mark: 'bar',
+                    mark: 'bar'
                 },
                 {
-                    mark:
-                    {
+                    mark: {
                         type: 'text',
                         align: 'left',
                         baseline: 'middle',
                         dx: 3
                     },
-                    encoding:
-                    {
-                        text: {field: "count", type: "quantitative"}
+                    encoding: {
+                        text: { field: 'count', type: 'quantitative' }
                     }
                 }
             ],
-            view: {stroke: null}
+            view: { stroke: null }
         };
-        
+
         const tailCount = replicateCount.length - this.maxCollapseCount;
-        this.drawExpandCollapseTail(container, tailCount)  
-        vegaEmbed('#' + elementID + '-inner', yourVlSpec, { actions: false })
-        .catch(console.warn); 
-        
+        this.drawExpandCollapseTail(container, tailCount);
+        vegaEmbed('#' + elementID + '-inner', yourVlSpec, {
+            actions: false
+        }).catch(console.warn);
     }
 
     private async drawNGramFrequency(
@@ -339,31 +403,36 @@ export default class FerretRenderer implements ICellRendererFactory
         chartKey: string,
         colKey: string,
         n: number,
-        lsd: boolean): Promise<void>
-    {
-        let nGramFrequency = await ChartCalculations.GetNGramFrequency(column, context, n, lsd);
-        let dataValues : Array<any> = [];
+        lsd: boolean
+    ): Promise<void> {
+        let nGramFrequency = await ChartCalculations.GetNGramFrequency(
+            column,
+            context,
+            n,
+            lsd
+        );
+        let dataValues: Array<any> = [];
         let index = 0;
-        let multiFrequentGrams : Array<any> = [];
+        let multiFrequentGrams: Array<any> = [];
         let selectionName = filterNames.N_GRAM_SELECTION;
-        
+
         for (let [val, count] of nGramFrequency) {
             if (count === 1) continue;
             multiFrequentGrams.push([val, count]);
         }
         const showAll = container.dataset.showAll === 'true';
-        const maxIndex = showAll ? multiFrequentGrams.length : this.maxCollapseCount;
+        const maxIndex = showAll
+            ? multiFrequentGrams.length
+            : this.maxCollapseCount;
 
-        for (let [val, count] of multiFrequentGrams)
-        {
-            if (index >= maxIndex) 
-            {
+        for (let [val, count] of multiFrequentGrams) {
+            if (index >= maxIndex) {
                 break;
             }
             index++;
             dataValues.push({
-                'value': val,
-                'count': count
+                value: val,
+                count: count
             });
         }
 
@@ -377,65 +446,68 @@ export default class FerretRenderer implements ICellRendererFactory
             $schema: 'https://vega.github.io/schema/vega-lite/v4.json',
             description: 'Duplicate Counts',
             data: {
-              values: dataValues
+                values: dataValues
             },
             encoding: {
-                y: {field: 'value', type: 'ordinal', sort: '-x', title: null},
-                x: {field: 'count', type: 'quantitative', title: null},
+                y: { field: 'value', type: 'ordinal', sort: '-x', title: null },
+                x: { field: 'count', type: 'quantitative', title: null },
                 color: {
-                    value: "#ff8f00"
+                    value: '#ff8f00'
                 },
                 opacity: {
                     condition: {
-                        selection: selectionName, 
+                        selection: selectionName,
                         value: 1
                     },
                     value: 1
-                },
+                }
             },
             layer: [
                 {
                     mark: 'bar',
                     selection: {
-                        "N_GRAM_SELECTION": {
-                            type: "multi",
-                            clear: "dblclick"
-                        },
+                        N_GRAM_SELECTION: {
+                            type: 'multi',
+                            clear: 'dblclick'
+                        }
                     }
                 },
                 {
-                    mark:
-                    {
+                    mark: {
                         type: 'text',
                         align: 'left',
                         baseline: 'middle',
                         dx: 3
                     },
-                    encoding:
-                    {
-                        text: {field: "count", type: "quantitative"}
+                    encoding: {
+                        text: { field: 'count', type: 'quantitative' }
                     }
                 }
-            ],
-          };
+            ]
+        };
 
         const tailCount = multiFrequentGrams.length - this.maxCollapseCount;
-        this.drawExpandCollapseTail(container, tailCount)
+        this.drawExpandCollapseTail(container, tailCount);
 
-
-          vegaEmbed('#' + elementID + '-inner', yourVlSpec, { actions: false })
-
-          .then(result => {
+        vegaEmbed('#' + elementID + '-inner', yourVlSpec, {
+            actions: false
+        }).then(result => {
             result.view.addEventListener('contextmenu', (event, value) => {
-                if (!value || !value.datum)
-                {
+                if (!value || !value.datum) {
                     return;
                 }
                 event = event as PointerEvent;
                 event.preventDefault();
-                this.drawContextMenu('nGram', value.datum.value.toString(), column, context, event.pageX, event.pageY);
+                this.drawContextMenu(
+                    'nGram',
+                    value.datum.value.toString(),
+                    column,
+                    context,
+                    event.pageX,
+                    event.pageY
+                );
             });
-            });
+        });
     }
 
     private async drawLeadingDigitDist(
@@ -444,16 +516,17 @@ export default class FerretRenderer implements ICellRendererFactory
         context: IRenderContext,
         chartKey: string,
         colKey: string
-    ): Promise<void>
-    {
-        let leadDictFreq = await ChartCalculations.GetLeadingDigitFreqs(column, context);
+    ): Promise<void> {
+        let leadDictFreq = await ChartCalculations.GetLeadingDigitFreqs(
+            column,
+            context
+        );
         let selectionName = filterNames.LEADING_DIGIT_FREQ_SELECTION;
-        let dataValues : Array<any> = [];
-        for (let [digit, freq] of leadDictFreq)
-        {
+        let dataValues: Array<any> = [];
+        for (let [digit, freq] of leadDictFreq) {
             dataValues.push({
-                'digit': digit,
-                'frequency': freq
+                digit: digit,
+                frequency: freq
             });
         }
 
@@ -466,87 +539,96 @@ export default class FerretRenderer implements ICellRendererFactory
             $schema: 'https://vega.github.io/schema/vega-lite/v4.json',
             description: 'Leading Digit frequencies',
             data: {
-              values: dataValues
+                values: dataValues
             },
             mark: 'bar',
             selection: {
-                "highlightBar": {
-                    type: "single", 
-                    empty: "none", 
-                    on: "mouseover"
+                highlightBar: {
+                    type: 'single',
+                    empty: 'none',
+                    on: 'mouseover'
                 },
-                "LEADING_DIGIT_FREQ_SELECTION": {
-                        type: "multi",
-                        clear: "dblclick"
+                LEADING_DIGIT_FREQ_SELECTION: {
+                    type: 'multi',
+                    clear: 'dblclick'
                 }
             },
             encoding: {
-              x: {
-                  field: 'digit', 
-                  type: 'ordinal',
-                  title: null
-              },
-              y: {field: 'frequency', type: 'quantitative', title: null},
-              color: {
-                value: "#4db6ac"
-              },
-              opacity: {
-                condition: {
-                    selection: 'highlightBar', 
-                    value: 0.7
+                x: {
+                    field: 'digit',
+                    type: 'ordinal',
+                    title: null
                 },
-                value: 1
-              },
+                y: { field: 'frequency', type: 'quantitative', title: null },
+                color: {
+                    value: '#4db6ac'
+                },
+                opacity: {
+                    condition: {
+                        selection: 'highlightBar',
+                        value: 0.7
+                    },
+                    value: 1
+                }
             }
-          };
-        
+        };
+
         vegaEmbed('#' + elementID, yourVlSpec, { actions: false })
             .then(result => {
                 result.view.addEventListener('contextmenu', (event, value) => {
-                    if (!value || !value.datum)
-                    {
+                    if (!value || !value.datum) {
                         return;
                     }
                     event = event as PointerEvent;
                     event.preventDefault();
-                    this.drawContextMenu('leadingDigit', value.datum.digit.toString(), column, context, event.pageX, event.pageY);
-                })
+                    this.drawContextMenu(
+                        'leadingDigit',
+                        value.datum.digit.toString(),
+                        column,
+                        context,
+                        event.pageX,
+                        event.pageY
+                    );
+                });
             })
-        .catch(console.warn); 
+            .catch(console.warn);
     }
 
-    private drawExpandCollapseTail(container: HTMLElement, count: number): void
-    {
+    private drawExpandCollapseTail(
+        container: HTMLElement,
+        count: number
+    ): void {
         const buttonContainer = container.querySelector('.expandCollapseTail');
         buttonContainer.innerHTML = '';
-        if (count <= 0)
-        {
+        if (count <= 0) {
             return;
         }
 
         const showAll = container.dataset.showAll === 'true';
         const button = document.createElement('button');
-        if (showAll)
-        {
+        if (showAll) {
             button.textContent = 'collapse';
-        }
-        else
-        {
+        } else {
             button.textContent = `expand ${count} more items`;
         }
-        button.onclick = () =>
-        {
+        button.onclick = () => {
             container.dataset.showAll = showAll ? 'false' : 'true';
             document.dispatchEvent(new CustomEvent('updateLineup'));
-        }
+        };
         buttonContainer.appendChild(button);
     }
 
-    private async drawContextMenu(type: SelectionType, value: number | string, column: FerretColumn, context: IRenderContext, pageX: number, pageY: number): Promise<void>
-    {
-        const outerContextSelection = d3.select('#outerContextMenu')
-            .on('click', () => 
-            {
+    private async drawContextMenu(
+        type: SelectionType,
+        value: number | string,
+        column: FerretColumn,
+        context: IRenderContext,
+        pageX: number,
+        pageY: number
+    ): Promise<void> {
+        const outerContextSelection = d3
+            .select('#outerContextMenu')
+            .on('click', () => {
                 this.hideContextMenu();
             });
 
@@ -554,21 +636,52 @@ export default class FerretRenderer implements ICellRendererFactory
         (innerContextSelection.node() as HTMLElement).style.top = pageY + 'px';
         (innerContextSelection.node() as HTMLElement).style.left = pageX + 'px';
 
-        const {
-            local: localRowIndices,
-            global: globalRowIndices
-        } = await this.getMatchingRowIndices(type, value, column, context);
+        const { local: localRowIndices, global: globalRowIndices } =
+            await this.getMatchingRowIndices(type, value, column, context);
 
         let typeString: string = SelectionTypeString(type);
 
         const buttonInfoList = [
-            {iconKey: 'eye-slash', label: `Ignore ${typeString} ${value} in this column.`, func: () => this.onFilter(type, column, value, 'local')},
-            {iconKey: 'globe-americas', label: `Ignore ${typeString} ${value} in any column.`, func: () => this.onFilter(type, column, value, 'global')},
-            {iconKey: 'highlighter', label: `Highlight ${typeString} ${value} in this column.`, func: () => this.onHighlight(type, column, value, 'local', localRowIndices)},
-            {iconKey: 'globe-americas', label: `Highlight ${typeString} ${value} in any column.`, func: () => this.onHighlight(type, column, value, 'global', globalRowIndices)}
+            {
+                iconKey: 'eye-slash',
+                label: `Ignore ${typeString} ${value} in this column.`,
+                func: () => this.onFilter(type, column, value, 'local')
+            },
+            {
+                iconKey: 'globe-americas',
+                label: `Ignore ${typeString} ${value} in any column.`,
+                func: () => this.onFilter(type, column, value, 'global')
+            },
+            {
+                iconKey: 'highlighter',
+                label: `Highlight ${typeString} ${value} in this column.`,
+                func: () => {
+                    this.onHighlight(
+                        type,
+                        column,
+                        value,
+                        'local',
+                        localRowIndices
+                    );
+                }
+            },
+            {
+                iconKey: 'globe-americas',
+                label: `Highlight ${typeString} ${value} in any column.`,
+                func: () => {
+                    this.onHighlight(
+                        type,
+                        column,
+                        value,
+                        'global',
+                        globalRowIndices
+                    );
+                }
+            }
         ];
 
-        innerContextSelection.selectAll('button')
+        innerContextSelection
+            .selectAll('button')
             .data(buttonInfoList)
             .join('button')
             .on('click', d => d.func())
@@ -577,41 +690,54 @@ export default class FerretRenderer implements ICellRendererFactory
         d3.select('#outerContextMenu').classed('noDisp', false);
     }
 
-    private async getMatchingRowIndices(type: SelectionType, value: number | string, column: FerretColumn, context: IRenderContext): Promise<{local: number[], global: number[]}>
-    {
+    private async getMatchingRowIndices(
+        type: SelectionType,
+        value: number | string,
+        column: FerretColumn,
+        context: IRenderContext
+    ): Promise<{ local: number[]; global: number[] }> {
         const localIndices: number[] = [];
         const globalIndices: number[] = [];
         const ranking = column.findMyRanker();
         const indices = ranking.getOrder();
-        for (let i of indices)
-        {
+        for (let i of indices) {
             const dataRow = await context.provider.getRow(i);
 
             const dataValue = column.getRaw(dataRow);
-            if (FerretRenderer.isMatchingRow(dataValue, type, value))
-            {
+            if (FerretRenderer.isMatchingRow(dataValue, type, value)) {
                 localIndices.push(i);
             }
-            for (let colKey in dataRow.v)
-            {
-                if (FerretRenderer.isMatchingRow(dataRow.v[colKey], type, value))
-                {
+            for (let colKey in dataRow.v) {
+                let val = dataRow.v[colKey];
+                if (FerretRenderer.isMatchingRow(val, type, value)) {
                     globalIndices.push(i);
                 }
             }
         }
-        return {local: localIndices, global: globalIndices};
+        return { local: localIndices, global: globalIndices };
     }
 
-    private static isMatchingRow(dataValue: number, type: SelectionType, value: number | string): boolean
-    {
-        return (type === 'value' && dataValue === value)
-            || (type === 'nGram' && dataValue.toString().includes(value as string)) 
-            || (type === 'leadingDigit' && ChartCalculations.getLeadingDigitString(dataValue) === value as string);
+    private static isMatchingRow(
+        dataValue: number,
+        type: SelectionType,
+        value: number | string
+    ): boolean {
+        return (
+            (type === 'value' && dataValue === value) ||
+            (type === 'nGram' &&
+                dataValue.toString().includes(value as string)) ||
+            (type === 'leadingDigit' &&
+                ChartCalculations.getLeadingDigitString(dataValue) ===
+                    (value as string))
+        );
     }
 
-    private onFilter(type: SelectionType, column: FerretColumn, value: number | string, scope: 'local' | 'global'): void
-    {
+    private onFilter(
+        type: SelectionType,
+        column: FerretColumn,
+        value: number | string,
+        scope: 'local' | 'global'
+    ): void {
         switch (type) {
             case 'value':
                 column.addValueToIgnore(value as number, scope);
@@ -625,8 +751,13 @@ export default class FerretRenderer implements ICellRendererFactory
         }
     }
 
-    private onHighlight(type: SelectionType, column: FerretColumn, value: number | string, scope: 'local' | 'global', rowIndices: number[]): void
-    {
+    private onHighlight(
+        type: SelectionType,
+        column: FerretColumn,
+        value: number | string,
+        scope: 'local' | 'global',
+        rowIndices: number[]
+    ): void {
         switch (type) {
             case 'value':
                 column.addValueToHighlight(value as number, scope);
@@ -639,12 +770,14 @@ export default class FerretRenderer implements ICellRendererFactory
                 break;
         }
 
-        document.dispatchEvent(new CustomEvent('highlightRows', {detail: {rowIndices: rowIndices}}));
-    }
-    
-    private hideContextMenu(): void
-    {
-        d3.select('#outerContextMenu').classed('noDisp', true);
+        document.dispatchEvent(
+            new CustomEvent('highlightRows', {
+                detail: { rowIndices: rowIndices }
+            })
+        );
     }
 
+    private hideContextMenu(): void {
+        d3.select('#outerContextMenu').classed('noDisp', true);
+    }
 }
