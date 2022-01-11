@@ -51,14 +51,8 @@ export default class FerretRenderer implements ICellRendererFactory
             update: (container: HTMLElement) =>
             {
                 console.log('update');
-                // container.innerHTML = null;
-                // console.log(n);
-                // context.provider.data
                 let childIndex = 0;
                 let vizContainer = container.children[childIndex++] as HTMLElement;
-                // vizContainer.innerHTML = null
-                // let vizContainer = document.createElement('div');
-                // container.appendChild(vizContainer);
                 this.drawOverallDist(
                     vizContainer,
                     col,
@@ -66,43 +60,22 @@ export default class FerretRenderer implements ICellRendererFactory
                     interactive,
                     'newOverallDist-',
                     col.id
-                    )
-
-      
-                // vizContainer = document.createElement('div');
-                // // vizContainer.classList.add('noDisp');
-                // container.appendChild(vizContainer);
+                    );
 
                 vizContainer = container.children[childIndex++] as HTMLElement;
-
                 this.drawFrequentDuplicates(vizContainer, col, context, 'newDuplicateCount-', col.id);
-                
-                // vizContainer = document.createElement('div');
-                // // vizContainer.classList.add('noDisp');
-                // container.appendChild(vizContainer);
+
                 vizContainer = container.children[childIndex++] as HTMLElement;
-
-
                 this.drawReplicates(vizContainer, col, context, 'newReplicates-', col.id); 
 
-                // vizContainer = document.createElement('div');
-                // // vizContainer.classList.add('noDisp');
-                // container.appendChild(vizContainer);
                 vizContainer = container.children[childIndex++] as HTMLElement;
-
-
                 const twoGramSwitch = document.getElementById('2-gram-switch') as HTMLInputElement;
                 const nGram = twoGramSwitch.checked ? 2 : 3;
-
                 const lsdSwitch = document.getElementById('lsd-switch') as HTMLInputElement;
                 const lsd = lsdSwitch.checked;
                 this.drawNGramFrequency(vizContainer, col, context, 'newNGram-', col.id, nGram, lsd);
 
-                // vizContainer = document.createElement('div');
-                // // vizContainer.classList.add('noDisp');
-                // container.appendChild(vizContainer);
                 vizContainer = container.children[childIndex++] as HTMLElement;
-
                 this.drawLeadingDigitDist(vizContainer, col, context, 'newBenfordDist-', col.id);
 
             },
@@ -136,7 +109,6 @@ export default class FerretRenderer implements ICellRendererFactory
 
         const elementID = chartKey + colKey;
         container.id = elementID;
-        // type: 'string' | 'number' | 'categorical'
         const isNumeric = column.desc.type === 'number' || column.desc.type === 'FerretColumn';
         const xAxisType = isNumeric ? 'quantitative' : 'nominal';
 
@@ -172,6 +144,7 @@ export default class FerretRenderer implements ICellRendererFactory
           };
           vegaEmbed('#' + elementID, yourVlSpec, { actions: false }
           ).then(result => {
+            // TODO - add back some interactivity here
             //   result.view.addSignalListener(selectionName, (name, value) => {
             //     let selectedData : Array<number> = this.getSelectedData(value._vgsid_, dataValues, "value");
             //     let filter: Filter = new Filter(uuid.v4(), column, selectionName, selectedData, 'LOCAL') 
@@ -283,20 +256,7 @@ export default class FerretRenderer implements ICellRendererFactory
                 event.preventDefault();
                 this.drawContextMenu('value', value.datum.value, column, context, event.pageX, event.pageY);
 
-            })
-            // result.view.addEventListener('mouseover', (event, value) => {
-            // // console.log('mouseover', event, value)
-            // // this.attachFilterPicker(value, selectionName, column, key, dataValues, i, "value");
-            //     });
-            // result.view.addEventListener('mouseout', (event, value) => {
-            // // console.log('mouseout', event, value)
-            // // this.removeFilterPicker(value, selectionName, column);
-            //     });
-        
-            // result.view.addSignalListener(selectionName, (name, value) => {
-            // console.log('signal', name, value)
-            // // this.attachSignalListener(value, dataValues, "value", column, selectionName);
-            // });
+            });
         });
 
     }
@@ -308,11 +268,9 @@ export default class FerretRenderer implements ICellRendererFactory
         chartKey: string,
         colKey: string): Promise<void>
     {
-        // let replicateCount = column.GetReplicates();
         let replicateCount = await ChartCalculations.GetReplicates(column, context);
         let dataValues : Array<any> = [];
         let index = 0;
-        // let [maxIndex, itemTail] = this.getItemTail(dupCountType, replicateCount);
         const showAll = container.dataset.showAll === 'true';
         const maxIndex = showAll ? replicateCount.length : this.maxCollapseCount;
 
@@ -374,9 +332,7 @@ export default class FerretRenderer implements ICellRendererFactory
         };
         
         const tailCount = replicateCount.length - this.maxCollapseCount;
-        this.drawExpandCollapseTail(container, tailCount)
-        // this.attachItemTail(itemTail, column, key, i);
-  
+        this.drawExpandCollapseTail(container, tailCount)  
         vegaEmbed('#' + elementID + '-inner', yourVlSpec, { actions: false })
         .catch(console.warn); 
         
@@ -391,7 +347,6 @@ export default class FerretRenderer implements ICellRendererFactory
         n: number,
         lsd: boolean): Promise<void>
     {
-        // let nGramFrequency = column.GetNGramFrequency(n, lsd);
         let nGramFrequency = await ChartCalculations.GetNGramFrequency(column, context, n, lsd);
         let dataValues : Array<any> = [];
         let index = 0;
@@ -404,9 +359,6 @@ export default class FerretRenderer implements ICellRendererFactory
         }
         const showAll = container.dataset.showAll === 'true';
         const maxIndex = showAll ? multiFrequentGrams.length : this.maxCollapseCount;
-
-
-        // let [maxIndex, itemTail] = this.getItemTail(dupCountType, multiFrequentGrams);
 
         for (let [val, count] of multiFrequentGrams)
         {
@@ -473,23 +425,11 @@ export default class FerretRenderer implements ICellRendererFactory
             ],
           };
 
-        //   this.attachItemTail(itemTail, column, key, i, n, lsd);
         const tailCount = multiFrequentGrams.length - this.maxCollapseCount;
         this.drawExpandCollapseTail(container, tailCount)
 
 
           vegaEmbed('#' + elementID + '-inner', yourVlSpec, { actions: false })
-        //   .then(result => {
-        //     // result.view.addEventListener('mouseover', (event, value) => {
-        //     //     this.attachFilterPicker(value, selectionName, column, key, dataValues, i, "value");
-        //     //      });
-        //     //   result.view.addEventListener('mouseout', (event, value) => {
-        //     //     this.removeFilterPicker(value, selectionName, column);
-        //     //      });
-        //     //   result.view.addSignalListener(selectionName, (name, value) => {
-        //     //     this.attachSignalListener(value, dataValues, "value", column, selectionName);
-        //     //      });
-        //   })
 
           .then(result => {
             result.view.addEventListener('contextmenu', (event, value) => {
@@ -500,7 +440,7 @@ export default class FerretRenderer implements ICellRendererFactory
                 event = event as PointerEvent;
                 event.preventDefault();
                 this.drawContextMenu('nGram', value.datum.value.toString(), column, context, event.pageX, event.pageY);
-            })
+            });
             });
     }
 
@@ -567,17 +507,6 @@ export default class FerretRenderer implements ICellRendererFactory
           };
         
         vegaEmbed('#' + elementID, yourVlSpec, { actions: false })
-        // .then(result => {
-        //     //   result.view.addEventListener('mouseover', (event, value) => {
-        //     //         this.attachFilterPicker(value, selectionName, column, key, dataValues, i, "digit");
-        //     //     });
-        //     //   result.view.addEventListener('mouseout', (event, value) => {
-        //     //         this.removeFilterPicker(value, selectionName, column);
-        //     //     });
-        //     //   result.view.addSignalListener(selectionName, (name, value) => {
-        //     //         this.attachSignalListener(value, dataValues, "digit", column, selectionName);
-        //     //     });
-        //   })
             .then(result => {
                 result.view.addEventListener('contextmenu', (event, value) => {
                     if (!value || !value.datum)

@@ -107,37 +107,6 @@ export class ColumnNumeric extends Column<number>
         }
         let valString = val.toString();
         return +valString[leadingDigitIndex] as 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
-
-
-        // val = (val < 0) ? val*-1 : val;
-    
-        // const validNums = new Set([1,2,3,4,5,6,7,8,9]);
-        
-        // let valString = val.toString();
-
-        // for (let char of valString)
-        // { 
-        //     /* 
-        //     * assigning it to zero since we don't count zero as leading digit.
-        //     * should we decide to count it, we should change this code.
-        //     */
-           
-        //     let num = (char >= '1' && char <= '9') ? +char : 0; 
-        //     if (validNums.has(num))
-        //     {
-        //         // if(nums == null)
-        //             return num as 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 ;
-              
-        //         // else if(nums != null) {
-        //         //     if (nums.has(num)) {
-        //         //         return num as 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
-        //         //     }  
-        //         //     else 
-        //         //         return null;
-        //         // }
-        //     }
-        // }
-        // return null;
     }
 
     public static getLeadingDigitString(val: number): '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | ''

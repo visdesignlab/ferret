@@ -6,7 +6,6 @@ import { ControlsDisplay } from './ControlsDisplay';
 import { IgnoreSelection } from './IgnoreSelection';
 import { HighlightSelection } from './HighlightSelection';
 
-// let tableContainer = document.getElementById('tableContainer');
 let vizTableContainer = document.getElementById('tableContainer');
 let dataTableContainer = document.getElementById('lineupContainerOuter');
 let tableDisplay = new TableDisplay();
@@ -19,20 +18,14 @@ let toolbarContainer = document.getElementById('toolbar');
 let controlsContainer = document.getElementById('controlsContainer');
 let descriptionContainer = document.getElementById('description');
 let controlsDisplay = new ControlsDisplay(toolbarContainer, controlsContainer, descriptionContainer, vizTableContainer, dataTableContainer);
-// ignoreDropdown.Init(toolbarContainer);
-// highlightDropdown.Init(toolbarContainer);
 
 let ignoreDropdown = new IgnoreSelection(toolbarContainer);
 let highlightDropdown = new HighlightSelection(toolbarContainer);
-
-
 
 let clear = () : void =>
 {
 	toolbarContainer.innerHTML = '';
 }
-
-
 
 let init = (data: string, filename: string) =>
 {
@@ -56,8 +49,6 @@ let init = (data: string, filename: string) =>
 	ignoreDropdown.SetData(tableDisplay.lineup);
 	highlightDropdown.SetData(tableDisplay.lineup);
 
-	// controlsDisplay.updateChartVisibility();
-	// controlsDisplay. // todo show correct viz rows at the beginning correctly
 	ignoreDropdown.drawSetup();
 	highlightDropdown.drawSetup();
 	document.title = filename;

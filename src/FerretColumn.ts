@@ -142,13 +142,6 @@ export default class FerretColumn extends ValueColumn<number> {
     return this.localIgnore.values.size > 0 || FerretColumn.globalIgnore.values.size > 0;
   }
 
-  // public getFilter(): CombinedFilter {
-  //   // let local: FerretSelection =  {values: new Set([...this.localIgnore.values])};
-  //   // let global: FerretSelection =  {values: new Set([...FerretColumn.globalIgnore.values])};
-  //   return {local: this.localIgnore, global: FerretColumn.globalIgnore};
-  // }
-
-
   private addToIgnore<T>(value: T, scope: 'local' | 'global', accessor: (s: FerretSelection) => Set<T>): void
   {
     switch (scope)
@@ -268,65 +261,12 @@ export default class FerretColumn extends ValueColumn<number> {
     FerretColumn.removeFromHighlight(value, removeFrom, s => s.leadingDigits);
   }
 
-  // public static removeValueToIgnore(columnOrListOfColumns: FerretColumn | FerretColumn[], value: number): void
-  // {
-  //   if (columnOrListOfColumns instanceof FerretColumn)
-  //   {
-  //     columnOrListOfColumns.localIgnore.values.delete(value);
-  //     columnOrListOfColumns.triggerEvent(FerretColumn.EVENT_HIGHLIGHT_CHANGED);
-  //   }
-  //   else
-  //   {
-  //     FerretColumn.globalIgnore.values.delete(value);
-  //     for (let col of columnOrListOfColumns)
-  //     {
-  //       col.triggerEvent(FerretColumn.EVENT_HIGHLIGHT_CHANGED);
-  //     }
-  //   }
-  // }
-
-  // public static removeValueToHighlight(columnOrListOfColumns: FerretColumn | FerretColumn[], value: number): void
-  // {
-  //   if (columnOrListOfColumns instanceof FerretColumn)
-  //   {
-  //     columnOrListOfColumns.localHighlight.values.delete(value);
-  //     columnOrListOfColumns.triggerEvent(FerretColumn.EVENT_HIGHLIGHT_CHANGED);
-  //   }
-  //   else
-  //   {
-  //     FerretColumn.globalHighlight.values.delete(value);
-  //     for (let col of columnOrListOfColumns)
-  //     {
-  //       col.triggerEvent(FerretColumn.EVENT_HIGHLIGHT_CHANGED);
-  //     }
-  //   }
-  // }
-
   public triggerEvent(event: string): void
   {
     this.fire(
       [event, Column.EVENT_DIRTY_VALUES, Column.EVENT_DIRTY]
-      // oldFilter,
-      // this.getFilter(),
-      // this
     );
   }
-
-  // setFilter(index: number | null) {
-  //   console.log('inside setFilter')
-  //   if (index === null)
-  //   {
-  //     return;
-  //   }
-
-  //   const lastFilter = this.getFilter();
-  //   this.currentFilter = !this.currentFilter;
-  //   this.fire(
-  //     [FerretColumn.EVENT_FILTER_CHANGED, Column.EVENT_DIRTY_VALUES, Column.EVENT_DIRTY],
-  //     lastFilter,
-  //     this.getFilter()
-  //   );
-  // }
 
   /**
    * filter the current row if any filter is set
@@ -344,11 +284,6 @@ export default class FerretColumn extends ValueColumn<number> {
   {
     return this.inSelection(row, FerretColumn.globalIgnore, this.localIgnore);
   }
-
-  // public highlightValue(row: IDataRow): boolean
-  // {
-  //   return this.inSelection(row, FerretColumn.globalHighlight, this.localHighlight);
-  // }
 
   public highlightValueExplanation(row: IDataRow): FerretSelectionExplanation
   {
@@ -423,19 +358,6 @@ export default class FerretColumn extends ValueColumn<number> {
     }
     return explanation;
   }
-
-
- 
-  // clearFilter() {
-  //   const was = this.isFiltered();
-
-  //   // const lastFilter = this.getFilter();
-  //   this.localIgnore.values.clear();
-  //   FerretColumn.globalIgnore.values.clear();
-  //   this.triggerEvent(FerretColumn.EVENT_FILTER_CHANGED);
-
-  //   return was;
-  // }
 
 
   toCompareValue(row: IDataRow, valueCache?: any) {

@@ -67,7 +67,6 @@ export class ControlsDisplay
     public SetData(data: TabularData, chartsShown: boolean[]) : void {
         this._data = data;
         this._chartsShown = chartsShown;
-        // this.updateChartVisibility();
     }
 
     private _show : boolean;

@@ -174,15 +174,12 @@ body {
     height: 100%;
     top: 0;
     left: 0;
-    /* background: red; */
-    /* opacity: 0.5; */
     z-index: 1;
 }
 
 .innerContextMenu {
     display: flex;
     flex-direction: column;
-    /* width: 300px; */
     border: solid black 1px;
     position: absolute;
 }

@@ -2,15 +2,12 @@
     position: absolute;
     height: 100%;
     width: 0px;
-    /* position: fixed; */
     z-index: 1;
-    /* top: 50; */
     left: 0;
     border: 1px solid #d0d0d0;  
     overflow-x: hidden;
     transition: 0.5s;
     background: #fff;
-    /* margin-top: 5px; */
     margin-top: 39px;
     margin-left: 4px;
     padding-top: 10px;

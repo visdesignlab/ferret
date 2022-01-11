@@ -11,7 +11,6 @@ export default class FerretCellRenderer implements ICellRendererFactory {
   }
 
   create(col: FerretColumn, context: IRenderContext, imposer?: IImposer): ICellRenderer {
-    // const width = context.colWidth(col);
     return {
       template: `<div title="" class="ferretCell"></div>`,
       update: (n: HTMLElement, d: IDataRow) => {
@@ -48,20 +47,6 @@ export default class FerretCellRenderer implements ICellRendererFactory {
             const maxStop  = d3.max(selectionExplanation.why.nGram, d => d.end);
             const highlightNGramSpan = FerretCellRenderer.highlightSpanSubstring(currentSpan, minStart, maxStop, ['highlight', 'ngram']);
 
-            // const highlightNGramSpan = document.createElement('span');
-            // highlightNGramSpan.classList.add('highlight', 'ngram');
-
-
-            // const subBefore = cellLabel.substring(0, minStart);
-            // const subInner = cellLabel.substring(minStart, maxStop);
-            // const subAfter = cellLabel.substring(maxStop);
-            
-            // highlightNGramSpan.innerText = subInner;
-            // currentSpan.innerHTML = null;
-            // currentSpan.append(subBefore)
-            // currentSpan.appendChild(highlightNGramSpan)
-            // currentSpan.append(subAfter)
-
             if (minStart <= leadingDigitIndex && leadingDigitIndex < maxStop)
             {
               currentSpan = highlightNGramSpan;
@@ -72,44 +57,17 @@ export default class FerretCellRenderer implements ICellRendererFactory {
           if (selectionExplanation.why.leadingDigit.cause)
           {
             const highlightNGramSpan = FerretCellRenderer.highlightSpanSubstring(currentSpan, leadingDigitIndex, leadingDigitIndex+1, ['highlight', 'leadingDigit']);
-
-
-            // const highlightLeadingDigitSpan = document.createElement('span');
-            // highlightLeadingDigitSpan.classList.add('highlight', 'leadingDigit');
-
-            // const textNode: Text = currentSpan.firstChild as Text;
-            // const _after = textNode.splitText(1);
-            // highlightLeadingDigitSpan.innerText = textNode.textContent;
-            // currentSpan.replaceChild(highlightLeadingDigitSpan, textNode);
           }
         }
-        // add ngrams
-        //add
 
         n.innerHTML = `${cellLabelSpan.outerHTML}<span class='paddingZeros'>${col.getRightPaddingString(d)}</span>`;
-        // n.innerHTML = `<span class='ferretCellValue'>${cellLabel}</span><span class='paddingZeros'>${col.getRightPaddingString(d)}</span>`;
         n.classList.toggle('ignoredCell', col.ignoreInAnalysis(d));
-        // n.classList.toggle('highlightedCell', col.highlightValue(d));
-
-
-        // (n.firstElementChild! as HTMLDivElement).style.backgroundColor = missing
-        //   ? null
-        //   : toHeatMapColor(col.getNumber(d), d, col, imposer);
-        // setText(n.lastElementChild!, n.title);
       },
-    //   render: (ctx: CanvasRenderingContext2D, d: IDataRow) => {
-    //     if (renderMissingCanvas(ctx, col, d, width)) {
-    //       return;
-    //     }
-    //     ctx.fillStyle = toHeatMapColor(col.getNumber(d), d, col, imposer);
-    //     ctx.fillRect(0, 0, width, CANVAS_HEIGHT);
-    //   },
     };
   }
 
   private static highlightSpanSubstring(
     currentSpan: HTMLSpanElement,
-    // label: string,
     start: number, end: number,
     cssClasses: string[]): HTMLSpanElement
   {
@@ -133,22 +91,6 @@ export default class FerretCellRenderer implements ICellRendererFactory {
       lastIndex = textIndex;
     }
     return null;
-
-
-    // const highlightSpan = document.createElement('span');
-    // highlightSpan.classList.add(...cssClasses);
-
-    // const subBefore = label.substring(0, start);
-    // const subInner = label.substring(start, end);
-    // const subAfter = label.substring(end);
-    
-    // highlightSpan.innerText = subInner;
-    // currentSpan.innerHTML = null;
-    // currentSpan.append(subBefore)
-    // currentSpan.appendChild(highlightSpan)
-    // currentSpan.append(subAfter)
-
-    // return highlightSpan;
   }
 
   private static highlightTextSubstring(

@@ -15,12 +15,6 @@ export interface SelectionVal {
 }
 export abstract class SelectionDropdown extends EventTarget
 {
-
-    // constructor() {
-    //     super();
-    //     // document.addEventListener('onDataChange', (e: CustomEvent) => this.SetData(e.detail.data));
-    // }
-
     private _id: string;
     public get id(): string {
         return this._id;
@@ -93,17 +87,6 @@ export abstract class SelectionDropdown extends EventTarget
         this._globalAccessor = globalAccessor;
         this._onRowclick = onRowClick;
     }
-
-    // protected _selectionType: filterNames.SelectionType;
-    // public get selectionType(): filterNames.SelectionType {
-    //     return this._selectionType;
-    // }
-
-    // public SetSelectionType(selectionType: filterNames.SelectionType) {
-    //     this._selectionType = selectionType;
-    // }
-
-    // protected filterData(filter: Filter | null, data: TabularData | null, localData: TabularData | null): void {}
 
     public drawSetup(): void {
 
@@ -212,8 +195,6 @@ export abstract class SelectionDropdown extends EventTarget
 
     private drawDropdown() {
         let dropdownMenu = document.getElementById(this._id + 'DropdownMenu');
-        // if(this._id == "highlight") 
-        //     this.addChangeToFilterOption(filters);
 
         const {
             selectionVals: selectionVals,
@@ -262,17 +243,7 @@ export abstract class SelectionDropdown extends EventTarget
         filterItemDiv.appendChild(icon);
         filterItemDiv.appendChild(selectedDataDiv);
         dropdownMenu.appendChild(filterItemDiv);
-        // filterItemDiv.addEventListener("click", () => this.changeToFilter());
     }
-
-    // private changeToFilter() {
-    //     for(let f of this._filters) 
-    //         document.dispatchEvent(new CustomEvent('addFilter', {detail: {filter: f}}));
-        
-    //     for(let f of this._filters) 
-    //         document.dispatchEvent(new CustomEvent('addHighlight', {detail: {filter: f}}));
-        
-    // }
 
     private getBackgroundColor(chart: string): string {
         switch(chart) {
@@ -289,43 +260,9 @@ export abstract class SelectionDropdown extends EventTarget
         filterCountText.innerHTML = "("+filterList.selectionVals.length+")";
     }
     
-    // public selectFilter(filter: Filter) : void
-    // { 
-    //     if(this._filters == null || this._filters.length == 0) 
-    //         this._filters = [];
-
-    //     let selectedFilter = this.find(filter, this._filters);
-    //     if(selectedFilter == null) 
-    //         this.addFilter(filter);
-
-    // }
-
-    // private find(filter: Filter, filters: Array<Filter>): Filter {
-    //     if(filters == null || filters.length == 0 || filter == null) return null;
-    //     for(let f of filters) {
-    //         let selectedFilterData = filter.selectedData.map((x) => x).sort().toString();
-    //         let iterableFilterData = f.selectedData.map((x) => x).sort().toString();
-    //         if(f.chart == filter.chart && f.column.id == filter.column.id && selectedFilterData == iterableFilterData)
-    //             return f;
-    //     }
-    //     return null;
-    // }
-
     public onSelectionChange(): void 
     {
-        // this._filters.push(filter);
-        // applyFilterUpdate(filter, this._selectionType);
-        // this.filterData(filter, this._data, this._localData);
         this.drawFilterCount();
         this.drawDropdown();
     }
-
-    // private removeFilter(filter: Filter): void 
-    // {
-    //     this._filters = this._filters.filter(f => { return f.id != filter.id});
-    //     this.drawFilterCount();
-    //     this.filterData(filter, this._data, this._localData);
-    //     removedFilterUpdate(filter, this._selectionType);
-    //     this.drawDropdown(this._filters);
-    // }    
 }   

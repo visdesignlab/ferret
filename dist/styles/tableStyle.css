@@ -1,7 +1,6 @@
 .vizTable
 {   
     table-layout:fixed;
-    /* margin-top: 10px; */
     white-space: nowrap;
     border-collapse: collapse;
 }
@@ -23,13 +22,11 @@ th {
     flex: 1 0 auto;
     position: relative;
     margin-top: 8px;
-    /* border: solid #d0d0d0 1px; */
     overflow: scroll;
 }
 
 .lineupContainerOuter {
     transition: 0.5s;
-    /* margin-left: 0px; */
     background: white;
     flex: 1 0 auto;
     position: relative;
@@ -175,7 +172,6 @@ td
 
 .ignoredCell .ferretCellValue {
     text-decoration: line-through;
-    /* color: #767676; */
     opacity: 0.3;
 }
 
@@ -207,12 +203,9 @@ td
 }
 
 
-
 /* Overrite lineup */
 .le-tr.lu-selected {
-    /* box-shadow: 0 0 0 2px orange; */
     box-shadow: 0 0 0 2px #d1d0d0 !important;
-    /* outline: solid 2px #c5c5c5; */
 }
 
 .le-tr:hover, .le-tr.le-highlighted {
