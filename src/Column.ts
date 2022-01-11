@@ -1,9 +1,3 @@
-import { TabularData } from "./TabularData";
-import { ColumnNumeric } from "./ColumnNumeric";
-import { ColumnLabel } from "./ColumnLabel";
-import { ColumnCategorical } from "./ColumnCategorical";
-import { ColumnMixed } from "./ColumnMixed";
-
 export type ColumnTypes =
   | 'Number'
   | 'Label'
@@ -59,22 +53,5 @@ export abstract class Column<T>
 
     public set position(position: number) {
         this._position = position;
-    }
-
-    public static getColumnById(data: TabularData, id: string) : ColumnNumeric | ColumnMixed | ColumnCategorical | ColumnLabel {
-
-        if(data == null || id == null) return null;
-        
-        let selectedColumn = null;
-        let pos = 0;
-        data.columnList.forEach((column) => {
-            pos++;
-            if(column._id == id) {
-                selectedColumn = column;
-                selectedColumn.position = pos;
-            }
-        });   
-
-        return selectedColumn;
     }
 }
