@@ -1,6 +1,5 @@
-import * as d3 from 'd3';
-import { Column, IDataRow, IColumnDesc, ILinkColumnDesc, IValueColumnDesc, INumberColumnDesc, ValueColumn, INumberColumn, EAdvancedSortMethod, ECompareValueType, IGroup } from 'lineupjs';
-import { IAdvancedBoxPlotData, IEventListener, ISequence } from 'lineupjs/build/src/internal';
+import { Column, IDataRow, ValueColumn, ECompareValueType } from 'lineupjs';
+import { IEventListener } from 'lineupjs/build/src/internal';
 import { ColumnNumeric } from './ColumnNumeric';
 
 export interface FerretSelection {

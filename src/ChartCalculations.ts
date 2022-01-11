@@ -1,4 +1,4 @@
-import { IRenderContext, ValueColumn } from "lineupjs";
+import { IRenderContext } from "lineupjs";
 import FerretColumn from "./FerretColumn";
 
 export class ChartCalculations

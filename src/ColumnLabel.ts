@@ -1,4 +1,4 @@
-import { Column, ColumnTypes } from "./Column";
+import { Column } from "./Column";
 
 export class ColumnLabel extends Column<string | number>
 {

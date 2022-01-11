@@ -1,15 +1,5 @@
-import { TabularData } from './TabularData';
-import { Column } from './Column';
-import { ColumnMixed } from './ColumnMixed';
-import { ColumnCategorical } from './ColumnCategorical';
-import { ColumnLabel } from './ColumnLabel';
-import { ColumnNumeric } from './ColumnNumeric';
-import * as filterNames from "./lib/constants/filter";
 import { SelectionDropdown, SelectionVal } from "./SelectionDropdown";
-import { Filter } from "./Filter";
-import * as d3 from "d3";
-import { local } from 'd3';
-import FerretColumn, { FerretSelection } from './FerretColumn';
+import FerretColumn from './FerretColumn';
 export class HighlightSelection extends SelectionDropdown
 {
 

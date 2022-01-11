@@ -1,23 +1,17 @@
 import { TabularData } from "./TabularData";
 import * as d3 from "d3";
-import * as uuid from 'uuid';
 import * as LineUpJS from 'lineupjs';
 import vegaEmbed, { VisualizationSpec } from 'vega-embed';
 import { ColumnNumeric } from "./ColumnNumeric";
 import * as filterNames from "./lib/constants/filter";
 import { ColumnCategorical } from "./ColumnCategorical";
 import { DuplicateCountType, chartType } from "./lib/constants/filter";
-import { Filter } from "./Filter";
 import { ControlsDisplay } from "./ControlsDisplay";
-import { FilterPicker } from "./components/filter-picker";
 import { ItemTail } from "./components/item-tail";
-import * as $ from 'jquery';
 import { ColumnBuilder, ICategory, LocalDataProvider } from "lineupjs";
 import FerretRenderer from "./FerretRenderer"
 import FerretCellRenderer from "./FerretCellRenderer"
 import FerretColumn from "./FerretColumn"
-import { first } from "lodash";
-import { IEventListener } from "lineupjs/build/src/internal";
 export class TableDisplay extends EventTarget
 {
     charts = ['overallDist', 'duplicateCount', 'replicates', 'nGram', 'benfordDist'];

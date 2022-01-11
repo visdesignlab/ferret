@@ -1,19 +1,14 @@
 import * as d3 from "d3";
-import * as uuid from 'uuid';
-import { Column, IImposer, INumberColumn, StringColumn, ValueColumn } from 'lineupjs';
+import { Column, IImposer } from 'lineupjs';
 import type {
     ICellRendererFactory,
     IRenderContext,
     ISummaryRenderer
 } from 'lineupjs';
-import { TabularData } from './TabularData';
 import { ColumnNumeric } from './ColumnNumeric';
 import { ChartCalculations } from './ChartCalculations';
-import { chartType, DuplicateCountType } from './lib/constants/filter';
 import * as filterNames from "./lib/constants/filter";
 import vegaEmbed, { VisualizationSpec } from 'vega-embed';
-import { ItemTail } from './components/item-tail';
-import { Filter } from "./Filter";
 import FerretColumn, { SelectionType, SelectionTypeString } from "./FerretColumn";
 export default class FerretRenderer implements ICellRendererFactory
 {

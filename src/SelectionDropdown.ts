@@ -1,13 +1,6 @@
 import * as d3 from 'd3';
-import { Filter } from './Filter';
-import { applyFilterUpdate, removedFilterUpdate } from "./ProvenanceSetup";
-import { TabularData } from './TabularData';
-import * as filterNames from "./lib/constants/filter";
 import LineUp from 'lineupjs';
 import FerretColumn, { FerretSelection, SelectionType, SelectionTypeString } from './FerretColumn';
-import { duplicate } from 'vega-lite';
-
-
 export interface SelectionVal {
     col: FerretColumn | null,
     val: number | string,
@@ -45,13 +38,11 @@ export abstract class SelectionDropdown extends EventTarget
         return this._actionWord;
     }   
 
-    
     private _globalAccessor : () => FerretSelection;
     public get globalAccessor() : () => FerretSelection {
         return this._globalAccessor;
     }
-    
-    
+
     private _localAccessor : (col: FerretColumn) => FerretSelection;
     public get localAccessor() : (col: FerretColumn) => FerretSelection {
         return this._localAccessor;
@@ -66,7 +57,6 @@ export abstract class SelectionDropdown extends EventTarget
     {
         this._lineupInstance = lineup;
     }
-
 
     public Init(
         id: string,
@@ -229,29 +219,6 @@ export abstract class SelectionDropdown extends EventTarget
 
                 element.innerHTML = `${selectionTypeWord} ${valueSpan.outerHTML} ${this.actionWord} in ${columnSpan.outerHTML}${trashSpan.outerHTML}`
             });
-    }
-
-    private addChangeToFilterOption(filters: Array<Filter>) {
-        let icon = document.createElement("i")
-        icon.classList.add("fas", "fa-filter", "customButtonSubIcon");
-        let dropdownMenu = document.getElementById(this._id+"DropdownMenu");
-        let filterItemDiv = document.createElement('div');
-        filterItemDiv.classList.add('dropdown-item');
-        let selectedDataDiv = document.createElement('span');
-        selectedDataDiv.innerHTML = 'TRANSFORM TO FILTER';
-        selectedDataDiv.classList.add('selection-label');
-        filterItemDiv.appendChild(icon);
-        filterItemDiv.appendChild(selectedDataDiv);
-        dropdownMenu.appendChild(filterItemDiv);
-    }
-
-    private getBackgroundColor(chart: string): string {
-        switch(chart) {
-            case filterNames.LEADING_DIGIT_FREQ_SELECTION: return '#4db6ac';
-            case filterNames.FREQUENT_VALUES_SELECTION: return '#e57373';
-            case filterNames.N_GRAM_SELECTION: return '#ff8f00';
-            default: return '#eeeeee';
-        }
     }
 
     public drawFilterCount(): void {

@@ -1,6 +1,4 @@
-import { Column } from "../Column";
 import { ColumnNumeric } from "../ColumnNumeric";
-
 export class ItemTail extends EventTarget
 {
 
