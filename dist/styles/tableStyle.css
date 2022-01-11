@@ -190,26 +190,25 @@ td
 
 .ferretCellValue .highlight.value {
     border-color: #e57373;
-    background-color: hsl(0, 69%, 97%);
+    background-color: hsl(0, 100%, 82%);
     border-radius: 1px;
 }
 
 .ferretCellValue .highlight.ngram {
     border-color: #ff8f00;
-    background-color: hsl(34, 100%, 90%);
+    background-color: hsl(34, 89%, 72%);
     border-radius: 3px;
 }
 
 .ferretCellValue .highlight.leadingDigit {
     border-color: #4db6ac;
-    background-color: hsl(174, 42%, 91%);
+    background-color: hsl(174, 70%, 75%);
     border-radius: 5px;
 }
 
 
 
 /* Overrite lineup */
-
 .le-tr.lu-selected {
     /* box-shadow: 0 0 0 2px orange; */
     box-shadow: 0 0 0 2px #d1d0d0 !important;
