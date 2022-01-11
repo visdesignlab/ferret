@@ -45,7 +45,6 @@ export default class FerretRenderer implements ICellRendererFactory
             </div>`,
             update: (container: HTMLElement) =>
             {
-                console.log('update');
                 let childIndex = 0;
                 let vizContainer = container.children[childIndex++] as HTMLElement;
                 this.drawOverallDist(
