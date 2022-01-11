@@ -1,6 +1,6 @@
-import { SelectionDropdown, SelectionVal } from "./SelectionDropdown";
+import { DropdownBase, SelectionVal } from "./DropdownBase";
 import FerretColumn from './FerretColumn';
-export class HighlightSelection extends SelectionDropdown
+export class DropdownHighlight extends DropdownBase
 {
 
     constructor(container: HTMLElement) {

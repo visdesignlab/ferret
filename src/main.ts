@@ -3,8 +3,8 @@ import { UploadFileButton } from './lib/UploadFileButton';
 import { TabularData } from './TabularData';
 import { TableDisplay } from './TableDisplay';
 import { ControlsDisplay } from './ControlsDisplay';
-import { IgnoreSelection } from './IgnoreSelection';
-import { HighlightSelection } from './HighlightSelection';
+import { DropdownIgnore } from './DropdownIgnore';
+import { DropdownHighlight } from './DropdownHighlight';
 
 let vizTableContainer = document.getElementById('tableContainer');
 let dataTableContainer = document.getElementById('lineupContainerOuter');
@@ -19,8 +19,8 @@ let controlsContainer = document.getElementById('controlsContainer');
 let descriptionContainer = document.getElementById('description');
 let controlsDisplay = new ControlsDisplay(toolbarContainer, controlsContainer, descriptionContainer, vizTableContainer, dataTableContainer);
 
-let ignoreDropdown = new IgnoreSelection(toolbarContainer);
-let highlightDropdown = new HighlightSelection(toolbarContainer);
+let ignoreDropdown = new DropdownIgnore(toolbarContainer);
+let highlightDropdown = new DropdownHighlight(toolbarContainer);
 
 let clear = () : void =>
 {

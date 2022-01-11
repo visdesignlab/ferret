@@ -6,7 +6,7 @@ export interface SelectionVal {
     val: number | string,
     type: SelectionType
 }
-export abstract class SelectionDropdown extends EventTarget
+export abstract class DropdownBase extends EventTarget
 {
     private _id: string;
     public get id(): string {
@@ -111,12 +111,12 @@ export abstract class SelectionDropdown extends EventTarget
         div.appendChild(dropdownMenu);
         div.classList.add('dropdown');
 
-        button.addEventListener("click", e => this.toggleSelectionDropdown(this.id+"DropdownMenu"));
+        button.addEventListener("click", e => this.toggleVisibility(this.id+"DropdownMenu"));
         this._toolbarContainer.appendChild(div);
         this.drawFilterCount();
     }
 
-    private toggleSelectionDropdown(selectionDropdownMenuID: string ) {
+    private toggleVisibility(selectionDropdownMenuID: string ) {
         let dropdownMenu = document.getElementById(selectionDropdownMenuID);
         if(dropdownMenu.classList.contains('show'))
             dropdownMenu.classList.remove('show');
