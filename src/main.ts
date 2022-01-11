@@ -45,7 +45,7 @@ let init = (data: string, filename: string) =>
 	controlsDisplay.drawControls(tabularData);
 	const defaultVizShown = [true, false, false, false, false];
 	controlsDisplay.SetData(tabularData, defaultVizShown);
-	tableDisplay.SetData(tabularData, defaultVizShown);
+	tableDisplay.SetData(tabularData);
 	ignoreDropdown.SetData(tableDisplay.lineup);
 	highlightDropdown.SetData(tableDisplay.lineup);
 

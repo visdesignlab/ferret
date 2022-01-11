@@ -248,10 +248,6 @@ export class ControlsDisplay
         return dupCountType;
     }
 
-    private updateTable() {
-        document.dispatchEvent(new CustomEvent('drawVizRows', {detail: {data: this.data}}));
-    }
-
     private updateLineUp()
     {
         document.dispatchEvent(new CustomEvent('updateLineup'));
