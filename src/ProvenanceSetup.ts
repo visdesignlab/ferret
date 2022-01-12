@@ -8,9 +8,9 @@ import { SelectionType } from './lib/constants/filter';
  * interface representing the state of the application
  */
 export interface NodeState {
-  hoveredNode: string;
-  appliedFilter: Filter | null;
-  removedFilter: Filter | null;
+    hoveredNode: string;
+    appliedFilter: Filter | null;
+    removedFilter: Filter | null;
 }
 
 /**
@@ -18,16 +18,16 @@ export interface NodeState {
  */
 
 const initialState: NodeState = {
-  hoveredNode: 'none',
-  appliedFilter: null,
-  removedFilter: null,
+    hoveredNode: 'none',
+    appliedFilter: null,
+    removedFilter: null
 };
 
 type EventTypes = 'Hover Node' | 'Applied Filter' | 'Removed Filter';
 
 // initialize provenance with the first state
 const prov = initProvenance<NodeState, EventTypes, string>(initialState, {
-  loadFromUrl: false,
+    loadFromUrl: false
 });
 
 /**
@@ -35,57 +35,68 @@ const prov = initProvenance<NodeState, EventTypes, string>(initialState, {
  */
 
 const hoverAction = createAction<NodeState, any, EventTypes>(
-  (state: NodeState, newHover: string) => {
-    state.hoveredNode = newHover;
-    return state;
-  },
+    (state: NodeState, newHover: string) => {
+        state.hoveredNode = newHover;
+        return state;
+    }
 );
 
 export const hoverNodeUpdate = function (newHover: string) {
-  hoverAction
-    .setLabel(newHover === '' ? 'Hover Removed' : `${newHover} Hovered`)
-    .setActionType('Ephemeral')
-    .setEventType('Hover Node');
+    hoverAction
+        .setLabel(newHover === '' ? 'Hover Removed' : `${newHover} Hovered`)
+        .setActionType('Ephemeral')
+        .setEventType('Hover Node');
     prov.apply(hoverAction(newHover));
 };
 
-
 const applyFilterAction = createAction<NodeState, any, EventTypes>(
-  (state: NodeState, newFilter: Filter) => {
-    state.appliedFilter = newFilter;
-    return state;
-  },
+    (state: NodeState, newFilter: Filter) => {
+        state.appliedFilter = newFilter;
+        return state;
+    }
 );
 
-export const applyFilterUpdate = function (newFilter: Filter, type: SelectionType) {
-  let label: string = type == 'Filter' ? 'filtered' : 'highlighted';
-  applyFilterAction
-    .setLabel(newFilter === null ? 'None' : `${newFilter.column.id} ` +label)
-    .setEventType('Applied Filter');
+export const applyFilterUpdate = function (
+    newFilter: Filter,
+    type: SelectionType
+) {
+    let label: string = type == 'Filter' ? 'filtered' : 'highlighted';
+    applyFilterAction
+        .setLabel(
+            newFilter === null ? 'None' : `${newFilter.column.id} ` + label
+        )
+        .setEventType('Applied Filter');
 
-  prov.apply(applyFilterAction(newFilter));
+    prov.apply(applyFilterAction(newFilter));
 };
 
 const removedFilterAction = createAction<NodeState, any, EventTypes>(
-  (state: NodeState, newFilter: Filter) => {
-    state.removedFilter = newFilter;
-    return state;
-  },
+    (state: NodeState, newFilter: Filter) => {
+        state.removedFilter = newFilter;
+        return state;
+    }
 );
 
-export const removedFilterUpdate = function (removedFilter: Filter, type: SelectionType) {
-  let label: string = type == 'Filter' ? 'filter' : 'highlight';
-  removedFilterAction
-    .setLabel(removedFilter === null ? 'None' : `${removedFilter.column.id} `+ label +` removed`)
-    .setEventType('Applied Filter');
+export const removedFilterUpdate = function (
+    removedFilter: Filter,
+    type: SelectionType
+) {
+    let label: string = type == 'Filter' ? 'filter' : 'highlight';
+    removedFilterAction
+        .setLabel(
+            removedFilter === null
+                ? 'None'
+                : `${removedFilter.column.id} ` + label + ` removed`
+        )
+        .setEventType('Applied Filter');
 
-  prov.apply(removedFilterAction(removedFilter));
+    prov.apply(removedFilterAction(removedFilter));
 };
 
 // Create function to pass to the ProvVis library for when a node is selected in the graph.
 // For our purposes, were simply going to jump to the selected node.
 const visCallback = function (newNode: NodeID) {
-  prov.goToNode(newNode);
+    prov.goToNode(newNode);
 };
 
 // Set up observers for the three keys in state. These observers will get called either when
@@ -98,38 +109,42 @@ const visCallback = function (newNode: NodeID) {
  * Observer for when the hovered node state is changed. Calls hoverNode in scatterplot to update vis.
  */
 prov.addObserver(
-  (state) => state.hoveredNode,
-  () => {
-    let tableDisplay = new TableDisplay();
-    tableDisplay.hoverNode(prov.getState(prov.current).hoveredNode);
-  },
+    state => state.hoveredNode,
+    () => {
+        let tableDisplay = new TableDisplay();
+        tableDisplay.hoverNode(prov.getState(prov.current).hoveredNode);
+    }
 );
 
 prov.done();
 
 // Setup ProvVis once initially
-ProvVisCreator<NodeState, EventTypes, string>(document.getElementById('provDiv')!, prov, visCallback);
+ProvVisCreator<NodeState, EventTypes, string>(
+    document.getElementById('provDiv')!,
+    prov,
+    visCallback
+);
 
 // Undo function which simply goes one step backwards in the graph.
 function undo() {
-  prov.goBackOneStep();
+    prov.goBackOneStep();
 }
 
 // Redo function which traverses down the tree one step.
 function redo() {
-  if (prov.current.children.length === 0) {
-    return;
-  }
-  prov.goForwardOneStep();
+    if (prov.current.children.length === 0) {
+        return;
+    }
+    prov.goForwardOneStep();
 }
 
 // Setting up undo/redo hotkey to typical buttons
 document.onkeydown = function (e) {
-  const mac = /(Mac|iPhone|iPod|iPad)/i.test(navigator.platform);
+    const mac = /(Mac|iPhone|iPod|iPad)/i.test(navigator.platform);
 
-  if (!e.shiftKey && (mac ? e.metaKey : e.ctrlKey) && e.which === 90) {
-    undo();
-  } else if (e.shiftKey && (mac ? e.metaKey : e.ctrlKey) && e.which === 90) {
-    redo();
-  }
+    if (!e.shiftKey && (mac ? e.metaKey : e.ctrlKey) && e.which === 90) {
+        undo();
+    } else if (e.shiftKey && (mac ? e.metaKey : e.ctrlKey) && e.which === 90) {
+        redo();
+    }
 };

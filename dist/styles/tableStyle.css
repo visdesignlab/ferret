@@ -1,7 +1,6 @@
-.dataTable
+.vizTable
 {   
     table-layout:fixed;
-    margin-top: 10px;
     white-space: nowrap;
     border-collapse: collapse;
 }
@@ -14,13 +13,35 @@ th {
     border-right: solid #d0d0d0 1px;
     border-top: solid #d0d0d0 1px;
     border-bottom: solid #d0d0d0 1px;
-    font-family: 'Josefin Sans', sans-serif;
 }
 
 .tableContainer {
     transition: 0.5s;
     margin-left: 0px;
     background: white;
+    flex: 1 0 auto;
+    position: relative;
+    margin-top: 8px;
+    overflow: scroll;
+}
+
+.lineupContainerOuter {
+    transition: 0.5s;
+    background: white;
+    flex: 1 0 auto;
+    position: relative;
+    margin-top: 8px;
+    border: solid #d0d0d0 1px;
+    min-height: 50vh;
+    border-top: 0px;
+}
+
+.lineupContainer {
+    position: absolute !important;
+    left: 5px;
+    right: 5px;
+    top: 5px;
+    bottom: 5px;
 }
 
 .columnType {
@@ -97,4 +118,96 @@ td
 .scrollbar {
     -ms-overflow-style: none;  /* IE and Edge */
     scrollbar-width: none;  /* Firefox */
+}
+
+.vizContainer {
+    height: auto !important;
+    display: flex !important;
+    flex-direction: column;
+    align-items: center;
+}
+
+.innerVizContainer {
+    max-height: 120px;
+    overflow: scroll;
+}
+
+.expandCollapseTail {
+    display: flex;
+    flex-direction: column;
+}
+
+.expandCollapseTail > button {
+    border: none;
+    background: white;
+    border-radius: 3px;
+    font-size: 9pt;
+    user-select: none;
+    cursor: pointer;
+    padding: 3px 5px;
+    color: #666666;
+    text-decoration: none;
+    margin: 1px;
+    margin-bottom: 5px;
+    margin-top: -5px;
+}
+
+.expandCollapseTail > button:hover {
+    background: #e0e7f0;
+}
+
+.ferretCell {
+    text-align: right;
+    padding-right: 1px;
+}
+
+.ferretCellValue {
+    font-family: 'Montserrat';
+}
+
+.paddingZeros {
+    color: #d3d3d3;
+    font-family: 'Montserrat';
+}
+
+.ignoredCell .ferretCellValue {
+    text-decoration: line-through;
+    opacity: 0.3;
+}
+
+.ferretCellValue .highlight {
+    border-width: 1px;
+    border-style: solid;
+    border-top-width: 0px;
+    border-bottom-width: 0px;
+    font-family: 'Montserrat';
+    margin-right: -1px;
+}
+
+.ferretCellValue .highlight.value {
+    border-color: #e57373;
+    background-color: hsl(0, 100%, 82%);
+    border-radius: 1px;
+}
+
+.ferretCellValue .highlight.ngram {
+    border-color: #ff8f00;
+    background-color: hsl(34, 89%, 72%);
+    border-radius: 3px;
+}
+
+.ferretCellValue .highlight.leadingDigit {
+    border-color: #4db6ac;
+    background-color: hsl(174, 70%, 75%);
+    border-radius: 5px;
+}
+
+
+/* Overrite lineup */
+.le-tr.lu-selected {
+    box-shadow: 0 0 0 2px #d1d0d0 !important;
+}
+
+.le-tr:hover, .le-tr.le-highlighted {
+    box-shadow: 0 0 0 2px #d1d0d0 !important;
 }

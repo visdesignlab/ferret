@@ -7,12 +7,12 @@
         <link rel="stylesheet" type="text/css" href="./styles/controls.css">
         <link rel="stylesheet" type="text/css" href="./styles/tableStyle.css">
         <link rel="stylesheet" type="text/css" href="./styles/common.css">
-        <link rel="stylesheet" type="text/css" href="./src/components/components.css">
+        <link rel="stylesheet" type="text/css" href="./styles/components.css">
+        <link href="https://unpkg.com/lineupjs/build/LineUpJS.css" rel="stylesheet">
         <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans&display=swap" rel="stylesheet">
         <script src="https://kit.fontawesome.com/de8d467ef5.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/@webcomponents/webcomponentsjs@2/webcomponents-loader.min.js"></script>
         <script type="module" src="https://cdn.jsdelivr.net/gh/zerodevx/zero-md@1/src/zero-md.min.js"></script>
-
     </head>
     <body>
         <div class="uploadOnlyContainerOuter"  id="uploadOnlyContainerOuter">
@@ -84,10 +84,6 @@
                                 <input type="checkbox" id="lsd-switch"></input>
                                 <label for="lsd-switch" class="controlsLabel">Least Significant Digits</label>
                             </div>
-                            <!-- <div class="item-option">
-                                <input type="checkbox" id="threshold-switch"></input>
-                                <label for="threshold-switch" class="controlsLabel">Show threshold analysis</label>
-                            </div> -->
                         </div>
                     </div>
                     <div id="benfordDist">
@@ -130,14 +126,24 @@
                 <zero-md class='noDisp' src="./assets/descriptions/n-gram.md"></zero-md>
                 <h1 class="des-header blue noDisp">Leading Digit Frequency</h1>
                 <zero-md class='noDisp' src="./assets/descriptions/leading-digit-frequency.md"></zero-md>
-            </div>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
-            <div class="tableContainer" id="tableContainer">
-                <table class='dataTable' id="dataTable">
+            </div>
+            <div class="tableContainer noDisp" id="tableContainer">
+                <table class='vizTable' id="vizTable">
                     <thead>
                     </thead>
                     <tbody>
                     </tbody>
                 </table>
+            </div>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
+            <div class="lineupContainerOuter" id="lineupContainerOuter">
+                <div class="lineupContainer" id="lineupContainer">
+
+                </div>
+            </div>
+        </div>
+        <div id="outerContextMenu" class="outerContextMenu noDisp">
+            <div id="innerContextMenu" class="innerContextMenu">
+
             </div>
         </div>
         <script src="bundle.js"></script>
