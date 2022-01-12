@@ -1,6 +1,5 @@
-.vizTable
-{   
-    table-layout:fixed;
+.vizTable {
+    table-layout: fixed;
     white-space: nowrap;
     border-collapse: collapse;
 }
@@ -50,53 +49,57 @@ th {
 }
 
 .columnHidden {
-    visibility:hidden;
+    visibility: hidden;
 }
 
-.vizCell
-{
+.vizCell {
     white-space: break-spaces;
     border-top: solid #d0d0d0 1px;
     height: 99px;
     transition: 0.5s;
 }
 
-.chartHidden
-{
+.chartHidden {
     height: 0px !important;
     animation-name: heightEffect;
     animation-duration: 1s;
     overflow: hidden;
 }
 
-.chartDiv 
-{
-    margin-top: 3px; 
+.chartDiv {
+    margin-top: 3px;
     max-height: 100px;
     overflow: scroll;
 }
 
-td 
-{
+td {
     padding: 12px 4px 12px 4px;
     border-left: solid #d0d0d0 1px;
     border-right: solid #d0d0d0 1px;
     border-top: solid #d0d0d0 1px;
     border-bottom: solid #d0d0d0 1px;
     max-width: 250px;
-    text-overflow:clip;
-    overflow:hidden;
-    white-space:nowrap;
+    text-overflow: clip;
+    overflow: hidden;
+    white-space: nowrap;
 }
 
 @keyframes heightEffect {
-    from {height: 100px;}
-    to {height: 0px;}
+    from {
+        height: 100px;
+    }
+    to {
+        height: 0px;
+    }
 }
 
 @keyframes highlightEffect {
-    from {background-color: #ffffff;}
-    to {background-color: #eeeeee;}
+    from {
+        background-color: #ffffff;
+    }
+    to {
+        background-color: #eeeeee;
+    }
 }
 
 .highlighted {
@@ -112,12 +115,12 @@ td
 /* Hide scrollbar for Chrome, Safari and Opera */
 .scrollbar::-webkit-scrollbar {
     display: none;
-  }
-  
-  /* Hide scrollbar for IE, Edge and Firefox */
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
 .scrollbar {
-    -ms-overflow-style: none;  /* IE and Edge */
-    scrollbar-width: none;  /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
 }
 
 .vizContainer {
@@ -202,12 +205,23 @@ td
     border-radius: 5px;
 }
 
+/* LINEUP OVERWRITES */
 
-/* Overrite lineup */
+/* change orange outline bar into grey */
 .le-tr.lu-selected {
     box-shadow: 0 0 0 2px #d1d0d0 !important;
 }
-
-.le-tr:hover, .le-tr.le-highlighted {
+.le-tr:hover,
+.le-tr.le-highlighted {
     box-shadow: 0 0 0 2px #d1d0d0 !important;
+}
+
+/* make string column right-aligned */
+.le-td.lu-renderer-string {
+    flex-direction: row-reverse;
+}
+
+/* make the teh table text font consistent */
+.le-tbody * {
+    font-family: 'Montserrat';
 }
