@@ -6,7 +6,7 @@ export class DropdownHighlight extends DropdownBase {
         super.Init(
             'highlight',
             container,
-            'Highlight (asdfasdfasdf!)',
+            'Highlight',
             'highlighter',
             'highlighted',
             () => FerretColumn.globalHighlight,
