@@ -220,3 +220,8 @@ td {
 .le-td.lu-renderer-string {
     flex-direction: row-reverse;
 }
+
+/* make the teh table text font consistent */
+.le-tbody * {
+    font-family: 'Montserrat';
+}
