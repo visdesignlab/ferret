@@ -43,6 +43,11 @@ body {
     text-decoration: none;
 }
 
+.customButton:active a,
+.customButton:active a:visited {
+    color: white;
+}
+
 .big .customButton {
     border-style: dashed;
     padding: 200px;
