@@ -94,7 +94,7 @@ export class ControlsDisplay {
         settingsButton.appendChild(settingsButtonText);
 
         settingsButton.id = 'settingsButton';
-        settingsButton.classList.add('customButton', 'customButtonIcon');
+        settingsButton.classList.add('customButton');
         settingsButton.addEventListener('click', e =>
             this.toggleControlsPanel()
         );
