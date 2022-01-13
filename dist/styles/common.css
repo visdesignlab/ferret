@@ -34,7 +34,9 @@ body {
     font-size: 12pt;
     user-select: none;
     padding: 5px;
+    padding-bottom: 4px;
     background: white;
+    color: white;
 }
 
 .customButton a,
