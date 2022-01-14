@@ -35,13 +35,13 @@ export default class FerretRenderer implements ICellRendererFactory {
             <div class="vizContainer">
                 <div class="innerVizContainer"></div>
                 <div class="noDisp duplicateCountViz" data-show-all="false">
-                    <div class="innerVizContainer"></div><div class="expandCollapseTail"></div>
+                    <div class="innerVizContainer"></div><div class="textButton"></div>
                 </div>
                 <div class="noDisp replicatesViz" data-show-all="false">
-                    <div class="innerVizContainer"></div><div class="expandCollapseTail"></div>
+                    <div class="innerVizContainer"></div><div class="textButton"></div>
                 </div>
                 <div class="noDisp nGramViz" data-show-all="false">
-                    <div class="innerVizContainer"></div><div class="expandCollapseTail"></div>
+                    <div class="innerVizContainer"></div><div class="textButton"></div>
                 </div>
                 <div class="noDisp innerVizContainer"></div>
             </div>`,
@@ -598,7 +598,7 @@ export default class FerretRenderer implements ICellRendererFactory {
         container: HTMLElement,
         count: number
     ): void {
-        const buttonContainer = container.querySelector('.expandCollapseTail');
+        const buttonContainer = container.querySelector('.textButton');
         buttonContainer.innerHTML = '';
         if (count <= 0) {
             return;

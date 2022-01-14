@@ -95,7 +95,9 @@ export class DescriptionDisplay {
                 this.setDescriptionIndex(event.detail.chartIndex);
             }
         );
+    }
 
+    public init(): void {
         this.setDescriptionIndex(0);
     }
 
