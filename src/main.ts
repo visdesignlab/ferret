@@ -2,6 +2,7 @@ import * as d3 from 'd3';
 import { UploadFileButton } from './lib/UploadFileButton';
 import { TabularData } from './TabularData';
 import { TableDisplay } from './TableDisplay';
+import { DescriptionDisplay } from './DescriptionDisplay';
 import { ControlsDisplay } from './ControlsDisplay';
 import { DropdownIgnore } from './DropdownIgnore';
 import { DropdownHighlight } from './DropdownHighlight';
@@ -21,7 +22,12 @@ let uploadOnlyContainerInner = document.getElementById(
 );
 let toolbarContainer = document.getElementById('toolbar');
 let controlsContainer = document.getElementById('controlsContainer');
-let descriptionContainer = document.getElementById('description');
+let descriptionContainer = document.getElementById(
+    'description'
+) as HTMLDivElement;
+
+let descriptionDisplay = new DescriptionDisplay(descriptionContainer);
+
 let controlsDisplay = new ControlsDisplay(
     toolbarContainer,
     controlsContainer,

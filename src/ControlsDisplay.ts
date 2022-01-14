@@ -281,12 +281,21 @@ export class ControlsDisplay {
         document.dispatchEvent(new CustomEvent('updateLineup'));
     }
 
+    private updateDescriptions() {
+        document.dispatchEvent(
+            new CustomEvent('changeCurrentChartIndex', {
+                detail: { chartIndex: this.chartIndex }
+            })
+        );
+    }
+
     private setChartIndex(index: number): void {
         if (index < 0 || index >= this.charts.length) {
             return;
         }
         this.chartIndex = index;
         this.showOnly(this.chartIndex);
+        this.updateDescriptions();
     }
 
     private showOnly(index: number): void {
@@ -300,6 +309,7 @@ export class ControlsDisplay {
         const disableIndexIndicator: boolean = showCount != 1;
         if (showCount === 1) {
             this.chartIndex = this.chartsShown.findIndex(Boolean);
+            this.updateDescriptions();
         }
 
         d3.selectAll('.current-index')
@@ -332,14 +342,6 @@ export class ControlsDisplay {
                 d3.select(`#${chartKey}-col${j}`).classed('noDisp', !visible);
             }
         }
-
-        d3.selectAll('zero-md')
-            .data(this.chartsShown)
-            .classed('noDisp', d => !d);
-
-        d3.selectAll('.des-header')
-            .data(this.chartsShown)
-            .classed('noDisp', d => !d);
 
         d3.selectAll('.item-option-container')
             .data(this.chartsShown)

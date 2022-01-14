@@ -1,0 +1,1 @@
+This chart shows which values are repeated two or more times. The y-axis shows the value that was repeated. The x-axis encodes how many times that value was repeated. By default, the top five values are shown.
