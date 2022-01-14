@@ -203,3 +203,27 @@ body {
 .innerContextMenu > button:hover {
     background: #e5e5e5;
 }
+
+.textButton {
+    display: flex;
+    flex-direction: column;
+}
+
+.textButton > button {
+    border: none;
+    background: white;
+    border-radius: 3px;
+    font-size: 9pt;
+    user-select: none;
+    cursor: pointer;
+    padding: 3px 5px;
+    color: #666666;
+    text-decoration: none;
+    margin: 1px;
+    margin-bottom: 5px;
+    margin-top: -5px;
+}
+
+.textButton > button:hover {
+    background: #e0e7f0;
+}

@@ -65,6 +65,8 @@ let init = (data: string, filename: string) => {
     ignoreDropdown.SetData(tableDisplay.lineup);
     highlightDropdown.SetData(tableDisplay.lineup);
 
+    descriptionDisplay.init();
+
     ignoreDropdown.drawSetup();
     highlightDropdown.drawSetup();
     document.title = filename;
