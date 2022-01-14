@@ -1,0 +1,1 @@
+This chart shows the most common <a href='https://en.wikipedia.org/wiki/N-gram'>n-grams</a>. Specifically, 2-grams, and 3-grams. The y-axis shows the actual n-gram. The x-axis encodes how many times that n-gram is repeated. By default, the top five n-grams are shown.
