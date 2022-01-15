@@ -39,7 +39,8 @@ export class ControlsDisplay {
         this._descriptionContainer = descriptionContainer;
         this._vizTableContainer = vizTableContainer;
         this._dataTableContainer = dataTableContainer;
-        this._show = false;
+        this._showSettings = false;
+        this._showDescriptions = true;
     }
 
     private _toolbarContainer: HTMLElement;
@@ -72,37 +73,71 @@ export class ControlsDisplay {
         return this._data;
     }
 
+    private _showSettings: boolean;
+    public get showSettings(): boolean {
+        return this._showSettings;
+    }
+
+    private _showDescriptions: boolean;
+    public get showDescriptions(): boolean {
+        return this._showDescriptions;
+    }
+
     public SetData(data: TabularData, chartsShown: boolean[]): void {
         this._data = data;
         this._chartsShown = chartsShown;
     }
 
-    private _show: boolean;
-    public get show(): boolean {
-        return this._show;
-    }
-
     public drawControls(tabularData: TabularData): void {
-        let settingsButton = document.createElement('div');
-
-        let icon = document.createElement('i');
-        icon.classList.add('fas', 'fa-cogs', 'customButtonIcon');
-        settingsButton.appendChild(icon);
-
-        let settingsButtonText = document.createElement('span');
-        settingsButtonText.innerHTML = 'Settings';
-        settingsButton.appendChild(settingsButtonText);
-
-        settingsButton.id = 'settingsButton';
-        settingsButton.classList.add('customButton');
-        settingsButton.addEventListener('click', e =>
-            this.toggleControlsPanel()
+        let settingsButton = this.createToolbarButton(
+            'Settings',
+            'settingsButton',
+            ['fas', 'fa-cogs'],
+            (e: MouseEvent) => {
+                this.toggleControlsPanel();
+            }
         );
         this._toolbarContainer.appendChild(settingsButton);
+
+        let descriptionsButton = this.createToolbarButton(
+            'Descriptions',
+            'descriptionsButton',
+            ['fas', 'fa-info-circle'],
+            (e: MouseEvent) => {
+                this.toggleDescriptions();
+            }
+        );
+        descriptionsButton.classList.add('selected');
+        this._toolbarContainer.appendChild(descriptionsButton);
         this.showControlsPanel();
         this.drawDataColumnRows(tabularData.columnList);
         this.drawSummaryRows(tabularData);
         this.attachChartControls();
+    }
+
+    private createToolbarButton(
+        label: string,
+        ID: string,
+        iconClasses: string[],
+        callback: (e: MouseEvent) => void
+    ): HTMLButtonElement {
+        let settingsButton = document.createElement('button');
+
+        let icon = document.createElement('i');
+        icon.classList.add(...iconClasses);
+        icon.classList.add('customButtonIcon');
+        settingsButton.appendChild(icon);
+
+        let settingsButtonText = document.createElement('span');
+        settingsButtonText.innerHTML = label;
+        settingsButton.appendChild(settingsButtonText);
+
+        settingsButton.id = ID;
+        settingsButton.classList.add('customButton');
+        settingsButton.addEventListener('click', e => {
+            callback(e);
+        });
+        return settingsButton;
     }
 
     private drawSummaryRows(tabularData: TabularData) {
@@ -155,7 +190,7 @@ export class ControlsDisplay {
     }
 
     private toggleControlsPanel(): void {
-        if (this.show) {
+        if (this.showSettings) {
             this.hideControlsPanel();
         } else {
             this.showControlsPanel();
@@ -177,7 +212,7 @@ export class ControlsDisplay {
             settingsContainerWidth + padding
         }px`;
         document.getElementById('settingsButton').classList.add('selected');
-        this._show = true;
+        this._showSettings = true;
     }
 
     private hideControlsPanel(): void {
@@ -188,7 +223,19 @@ export class ControlsDisplay {
         this._vizTableContainer.style.marginLeft = `${padding}px`;
         this._dataTableContainer.style.marginLeft = `${padding}px`;
         document.getElementById('settingsButton').classList.remove('selected');
-        this._show = false;
+        this._showSettings = false;
+    }
+
+    private toggleDescriptions(): void {
+        this._showDescriptions = !this.showDescriptions;
+        const toggleButton = document.getElementById('descriptionsButton');
+        if (this.showDescriptions) {
+            this.descriptionContainer.classList.remove('noDisp');
+            toggleButton.classList.add('selected');
+        } else {
+            this.descriptionContainer.classList.add('noDisp');
+            toggleButton.classList.remove('selected');
+        }
     }
 
     public attachChartControls(): void {
