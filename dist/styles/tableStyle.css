@@ -1,35 +1,9 @@
-.vizTable {
-    table-layout: fixed;
-    white-space: nowrap;
-    border-collapse: collapse;
-}
-
-th {
-    max-width: 270px;
-    padding: 12px;
-    color: #212121;
-    border-left: solid #d0d0d0 1px;
-    border-right: solid #d0d0d0 1px;
-    border-top: solid #d0d0d0 1px;
-    border-bottom: solid #d0d0d0 1px;
-}
-
-.tableContainer {
-    transition: 0.5s;
-    margin-left: 0px;
-    background: white;
-    flex: 1 0 auto;
-    position: relative;
-    margin-top: 8px;
-    overflow: scroll;
-}
-
 .lineupContainerOuter {
-    transition: 0.5s;
+    transition: 0.25s;
     background: white;
     flex: 1 0 auto;
     position: relative;
-    margin-top: 8px;
+    margin-top: 5px;
     border: solid #d0d0d0 1px;
     min-height: 50vh;
 }
@@ -49,56 +23,6 @@ th {
 
 .columnHidden {
     visibility: hidden;
-}
-
-.vizCell {
-    white-space: break-spaces;
-    border-top: solid #d0d0d0 1px;
-    height: 99px;
-    transition: 0.5s;
-}
-
-.chartHidden {
-    height: 0px !important;
-    animation-name: heightEffect;
-    animation-duration: 1s;
-    overflow: hidden;
-}
-
-.chartDiv {
-    margin-top: 3px;
-    max-height: 100px;
-    overflow: scroll;
-}
-
-td {
-    padding: 12px 4px 12px 4px;
-    border-left: solid #d0d0d0 1px;
-    border-right: solid #d0d0d0 1px;
-    border-top: solid #d0d0d0 1px;
-    border-bottom: solid #d0d0d0 1px;
-    max-width: 250px;
-    text-overflow: clip;
-    overflow: hidden;
-    white-space: nowrap;
-}
-
-@keyframes heightEffect {
-    from {
-        height: 100px;
-    }
-    to {
-        height: 0px;
-    }
-}
-
-@keyframes highlightEffect {
-    from {
-        background-color: #ffffff;
-    }
-    to {
-        background-color: #eeeeee;
-    }
 }
 
 .highlighted {

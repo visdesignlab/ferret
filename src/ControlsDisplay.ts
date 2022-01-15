@@ -31,13 +31,11 @@ export class ControlsDisplay {
         toolbarContainer: HTMLElement,
         controlsContainer: HTMLElement,
         descriptionContainer: HTMLElement,
-        vizTableContainer: HTMLElement,
         dataTableContainer: HTMLElement
     ) {
         this._toolbarContainer = toolbarContainer;
         this._controlsContainer = controlsContainer;
         this._descriptionContainer = descriptionContainer;
-        this._vizTableContainer = vizTableContainer;
         this._dataTableContainer = dataTableContainer;
         this._showSettings = false;
         this._showDescriptions = true;
@@ -51,11 +49,6 @@ export class ControlsDisplay {
     private _controlsContainer: HTMLElement;
     public get controlsContainer(): HTMLElement {
         return this._controlsContainer;
-    }
-
-    private _vizTableContainer: HTMLElement;
-    public get vizTableContainer(): HTMLElement {
-        return this._vizTableContainer;
     }
 
     private _dataTableContainer: HTMLElement;
@@ -199,13 +192,10 @@ export class ControlsDisplay {
 
     private showControlsPanel(): void {
         const settingsContainerWidth = 250;
-        const padding = 10;
+        const padding = 5 + 2 + 7;
         this._controlsContainer.style.width = `${settingsContainerWidth}px`;
         this._controlsContainer.style.borderWidth = '1px';
         this._descriptionContainer.style.marginLeft = `${
-            settingsContainerWidth + padding
-        }px`;
-        this._vizTableContainer.style.marginLeft = `${
             settingsContainerWidth + padding
         }px`;
         this._dataTableContainer.style.marginLeft = `${
@@ -216,11 +206,10 @@ export class ControlsDisplay {
     }
 
     private hideControlsPanel(): void {
-        const padding = 10;
+        const padding = 7;
         this._controlsContainer.style.width = '0px';
         this._controlsContainer.style.borderWidth = '0px';
         this._descriptionContainer.style.marginLeft = `${padding}px`;
-        this._vizTableContainer.style.marginLeft = `${padding}px`;
         this._dataTableContainer.style.marginLeft = `${padding}px`;
         document.getElementById('settingsButton').classList.remove('selected');
         this._showSettings = false;

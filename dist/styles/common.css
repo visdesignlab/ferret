@@ -34,7 +34,6 @@ body {
     font-size: 12pt;
     user-select: none;
     padding: 5px;
-    padding-bottom: 4px;
     background: white;
 }
 
@@ -78,6 +77,8 @@ body {
 
 .buttonContainer {
     display: flex;
+    margin-top: 5px;
+    margin-left: 5px;
 }
 
 .buttonContainer.big {
@@ -147,7 +148,7 @@ body {
 
 .description {
     margin-top: 5px;
-    transition: 0.5s;
+    transition: 0.25s;
     margin-left: 0px;
     padding: 5px;
     border: 1px solid #d0d0d0;

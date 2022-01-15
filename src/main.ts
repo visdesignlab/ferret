@@ -7,12 +7,9 @@ import { ControlsDisplay } from './ControlsDisplay';
 import { DropdownIgnore } from './DropdownIgnore';
 import { DropdownHighlight } from './DropdownHighlight';
 
-console.log('begin main');
-let vizTableContainer = document.getElementById('tableContainer');
 let dataTableContainer = document.getElementById('lineupContainerOuter');
 let tableDisplay = new TableDisplay();
 
-tableDisplay.SetContainer(vizTableContainer);
 let outerContainer = document.getElementById('outerContainer');
 let uploadOnlyContainerOuter = document.getElementById(
     'uploadOnlyContainerOuter'
@@ -32,7 +29,6 @@ let controlsDisplay = new ControlsDisplay(
     toolbarContainer,
     controlsContainer,
     descriptionContainer,
-    vizTableContainer,
     dataTableContainer
 );
 
@@ -44,7 +40,6 @@ let clear = (): void => {
 };
 
 let init = (data: string, filename: string) => {
-    console.log('init');
     clear(); // clearing all the existing elements.
     const bigStyle = false;
 
