@@ -2,7 +2,7 @@ import { initProvenance, NodeID, createAction } from '@visdesignlab/trrack';
 import { ProvVisCreator } from '@visdesignlab/trrack-vis';
 import { TableDisplay } from './TableDisplay';
 import { Filter } from './Filter';
-import { SelectionType } from './lib/constants/filter';
+import { SelectionType } from './lib/constants';
 
 /**
  * interface representing the state of the application
