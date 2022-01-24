@@ -151,22 +151,24 @@ export class ControlsDisplay {
 
     private drawDataColumnRows(columnList: Column<String | Number>[]): void {
         let parentDiv = document.getElementById('data-columns');
-        let columnName = columnList.map(d => d.id);
-        for (let column of columnList) {
+
+        for (let i = 0; i < columnList.length; i++) {
+            const column = columnList[i];
+            const uniqueId = 'COL- ' + i + ':' + column.id;
+
             let label = document.createElement('label');
             label.innerHTML = column.id;
+            label.htmlFor = uniqueId;
             label.classList.add('controlsLabel');
+
             let input = document.createElement('input');
             input.type = 'checkbox';
             input.checked = true;
-            input.id = column + '-COL';
+            input.id = uniqueId;
             input.addEventListener('click', e =>
-                this.toggleColumnDisplay(
-                    e,
-                    column,
-                    columnName.indexOf(column.id)
-                )
+                this.toggleColumnDisplay(e, column, i)
             );
+
             let div = document.createElement('div');
             div.appendChild(input);
             div.appendChild(label);
