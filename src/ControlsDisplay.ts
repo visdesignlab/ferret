@@ -375,6 +375,7 @@ export class ControlsDisplay {
     private toggleChart(index: number, e: Event): void {
         this.chartsShown[index] = !this.chartsShown[index];
         const showCount: number = this.chartsShown.filter(Boolean).length;
+        this.drawChartSelectRowsRows();
         this.updateChartVisibility();
         e.stopPropagation();
     }
