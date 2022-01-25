@@ -6,6 +6,8 @@ import { ColumnBuilder, ICategory } from 'lineupjs';
 import FerretRenderer from './FerretRenderer';
 import FerretCellRenderer from './FerretCellRenderer';
 import FerretColumn from './FerretColumn';
+import { LINEUP_COL_COUNT } from './lib/constants';
+
 export class TableDisplay extends EventTarget {
     charts = [
         'overallDist',
@@ -23,11 +25,18 @@ export class TableDisplay extends EventTarget {
     ];
     constructor() {
         super();
-        document.addEventListener('updateLineup', (e: CustomEvent) =>
-            this.lineup.update()
-        );
-        document.addEventListener('highlightRows', (e: CustomEvent) =>
-            this.onHighlightRows(e)
+        document.addEventListener('updateLineup', (e: CustomEvent) => {
+            this.lineup.update();
+        });
+        document.addEventListener('highlightRows', (e: CustomEvent) => {
+            this.onHighlightRows(e);
+        });
+        document.addEventListener(
+            'toggleColumnVisibility',
+            (e: CustomEvent) => {
+                const args = e.detail;
+                this.toggleColumnVisibilty(args.colIndex, args.visible);
+            }
         );
     }
 
@@ -50,6 +59,11 @@ export class TableDisplay extends EventTarget {
         return this._lineup;
     }
 
+    private _allColumns: LineUpJS.Column[];
+    public get allColumns(): LineUpJS.Column[] {
+        return this._allColumns;
+    }
+
     public SetData(data: TabularData): void {
         this._data = data;
         this.onDataChanged(this._data);
@@ -65,8 +79,10 @@ export class TableDisplay extends EventTarget {
         this.initLineup(data);
     }
 
-    public changeColumnVisibilty(index: number, visible: Boolean) {
-        // TODO - issue #56 https://github.com/visdesignlab/data-forensics/issues/56
+    public toggleColumnVisibilty(index: number, visible: boolean) {
+        const firstRanking = this.lineup.data.getFirstRanking(); // get the first ranking from the data provider
+        let col = this.allColumns[LINEUP_COL_COUNT + index];
+        col.setVisible(visible);
     }
 
     public initLineup(data: TabularData): void {
@@ -128,15 +144,22 @@ export class TableDisplay extends EventTarget {
             new FerretCellRenderer()
         );
         this._lineup = builder.build(lineupContainer);
-        const firstRanking = this.lineup.data.getFirstRanking(); // get the first ranking from the data provider
-        for (let col of firstRanking.flatColumns) {
+        // get the first ranking from the data provider
+        const firstRanking = this.lineup.data.getFirstRanking();
+        this._allColumns = firstRanking.flatColumns;
+        for (let col of this.allColumns) {
             if (col instanceof FerretColumn) {
-                col.on('filterChanged', () =>
-                    document.dispatchEvent(new CustomEvent('filterChanged'))
-                );
-                col.on('highlightChanged', () =>
-                    document.dispatchEvent(new CustomEvent('highlightChanged'))
-                );
+                col.on('filterChanged', () => {
+                    document.dispatchEvent(new CustomEvent('filterChanged'));
+                });
+                col.on('highlightChanged', () => {
+                    document.dispatchEvent(new CustomEvent('highlightChanged'));
+                });
+                col.on('visibilityChanged', () => {
+                    document.dispatchEvent(
+                        new CustomEvent('visibilityChanged')
+                    );
+                });
             }
         }
     }
@@ -144,7 +167,8 @@ export class TableDisplay extends EventTarget {
     private onHighlightRows(e: CustomEvent): void {
         this.lineup.setSelection(e.detail.rowIndices);
         this.lineup.sortBy('col1');
-        // lineup appears to not do anything if sort by is already set to col2, so this is to force an update
+        // lineup appears to not do anything if sort by is already set to col2
+        // so this is to force an update
         this.lineup.sortBy('col2', false);
         this.lineup.update();
     }

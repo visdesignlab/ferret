@@ -1,8 +1,7 @@
 import * as d3 from 'd3';
 import { TabularData } from './TabularData';
-import { TableDisplay } from './TableDisplay';
 import { Column } from './Column';
-import { DuplicateCountType } from './lib/constants/filter';
+import { DuplicateCountType, LINEUP_COL_COUNT } from './lib/constants';
 
 export class ControlsDisplay {
     charts = [
@@ -106,6 +105,9 @@ export class ControlsDisplay {
         this.drawDataColumnRows(tabularData.columnList);
         this.drawSummaryRows(tabularData);
         this.attachChartControls();
+        document.addEventListener('visibilityChanged', () => {
+            this.updateChartVisibility();
+        });
     }
 
     private createToolbarButton(
@@ -149,23 +151,28 @@ export class ControlsDisplay {
 
     private drawDataColumnRows(columnList: Column<String | Number>[]): void {
         let parentDiv = document.getElementById('data-columns');
-        let columnName = columnList.map(d => d.id);
-        for (let column of columnList) {
-            let label = document.createElement('label');
-            label.innerHTML = column.id;
-            label.classList.add('controlsLabel');
+
+        for (let i = 0; i < columnList.length; i++) {
+            const column = columnList[i];
+            const uniqueId = 'COL- ' + i + ':' + column.id;
+
             let input = document.createElement('input');
             input.type = 'checkbox';
             input.checked = true;
-            input.id = column + '-COL';
+            input.id = uniqueId;
             input.addEventListener('click', e =>
-                this.toggleColumnDisplay(
-                    e,
-                    column,
-                    columnName.indexOf(column.id)
-                )
+                this.toggleColumnDisplay(e, column, i)
             );
+            input.classList.add('form-check-input');
+
+            let label = document.createElement('label');
+            label.innerHTML = column.id;
+            label.htmlFor = uniqueId;
+            label.classList.add('controlsLabel');
+            label.classList.add('form-check-label');
+
             let div = document.createElement('div');
+            div.classList.add('form-check', 'form-switch');
             div.appendChild(input);
             div.appendChild(label);
             parentDiv.appendChild(div);
@@ -177,9 +184,15 @@ export class ControlsDisplay {
         column: Column<Number | String>,
         index: number
     ) {
-        let tableDisplay = new TableDisplay();
         column.visible = !column.visible;
-        tableDisplay.changeColumnVisibilty(index, column.visible);
+        document.dispatchEvent(
+            new CustomEvent('toggleColumnVisibility', {
+                detail: {
+                    colIndex: index,
+                    visible: column.visible
+                }
+            })
+        );
     }
 
     private toggleControlsPanel(): void {
@@ -362,19 +375,18 @@ export class ControlsDisplay {
     private toggleChart(index: number, e: Event): void {
         this.chartsShown[index] = !this.chartsShown[index];
         const showCount: number = this.chartsShown.filter(Boolean).length;
-        this.drawChartSelectRowsRows();
+        this.updateChartVisibility();
         e.stopPropagation();
     }
 
     private updateChartVisibility(): void {
         // this would maybe be better in TableDisplay.ts semantically.
-        const lineupColCount = 3; // agg groups, rank, checkboxes
         for (let i = 0; i < this.charts.length; i++) {
             const chartKey = this.charts[i];
             const visible = this.chartsShown[i];
 
-            const lastIndex = this.data.columnList.length + lineupColCount;
-            for (let j = lineupColCount; j < lastIndex; j++) {
+            const lastIndex = this.data.columnList.length + LINEUP_COL_COUNT;
+            for (let j = LINEUP_COL_COUNT; j < lastIndex; j++) {
                 d3.select(`#${chartKey}-col${j}`).classed('noDisp', !visible);
             }
         }

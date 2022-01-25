@@ -6,7 +6,7 @@ import type {
     ISummaryRenderer
 } from 'lineupjs';
 import { ChartCalculations } from './ChartCalculations';
-import * as filterNames from './lib/constants/filter';
+import * as filterNames from './lib/constants';
 import vegaEmbed, { VisualizationSpec } from 'vega-embed';
 import FerretColumn, {
     SelectionType,
@@ -33,7 +33,7 @@ export default class FerretRenderer implements ICellRendererFactory {
         return {
             template: `
             <div class="vizContainer">
-                <div class="innerVizContainer"></div>
+                <div class="noDisp innerVizContainer"></div>
                 <div class="noDisp duplicateCountViz" data-show-all="false">
                     <div class="innerVizContainer"></div><div class="textButton"></div>
                 </div>
@@ -104,6 +104,14 @@ export default class FerretRenderer implements ICellRendererFactory {
                     'newBenfordDist-',
                     col.id
                 );
+
+                // triggering this here ensures the right charts are shown
+                // the setTimeout(0) is required so it will update correctly
+                setTimeout(() => {
+                    document.dispatchEvent(
+                        new CustomEvent('visibilityChanged')
+                    );
+                }, 0);
             }
         };
     }
