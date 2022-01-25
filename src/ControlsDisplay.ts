@@ -156,11 +156,6 @@ export class ControlsDisplay {
             const column = columnList[i];
             const uniqueId = 'COL- ' + i + ':' + column.id;
 
-            let label = document.createElement('label');
-            label.innerHTML = column.id;
-            label.htmlFor = uniqueId;
-            label.classList.add('controlsLabel');
-
             let input = document.createElement('input');
             input.type = 'checkbox';
             input.checked = true;
@@ -168,8 +163,16 @@ export class ControlsDisplay {
             input.addEventListener('click', e =>
                 this.toggleColumnDisplay(e, column, i)
             );
+            input.classList.add('form-check-input');
+
+            let label = document.createElement('label');
+            label.innerHTML = column.id;
+            label.htmlFor = uniqueId;
+            label.classList.add('controlsLabel');
+            label.classList.add('form-check-label');
 
             let div = document.createElement('div');
+            div.classList.add('form-check', 'form-switch');
             div.appendChild(input);
             div.appendChild(label);
             parentDiv.appendChild(div);
