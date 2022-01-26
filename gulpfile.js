@@ -46,20 +46,33 @@ function bundle() {
         .pipe(gulp.dest('dist'));
 }
 
-function css() {
+gulp.task('css', () => {
     return gulp
         .src('src/scss/**/*.{scss,sass}')
         .pipe(gulpSass().on('error', gulpSass.logError))
         .pipe(gulp.dest('dist/css'));
-}
+});
+
+// function css() {
+//     return gulp
+//         .src('src/scss/**/*.{scss,sass}')
+//         .pipe(gulpSass().on('error', gulpSass.logError))
+//         .pipe(gulp.dest('dist/css'));
+// }
 
 gulp.task('watch', function () {
     gulp.watch('src/*.html', gulp.series('copy-html'));
+    gulp.watch('src/scss/*.scss', gulp.series('css'));
 });
 
 gulp.task(
     'default',
-    gulp.series(gulp.parallel('copy-html'), css, bundle, gulp.parallel('watch'))
+    gulp.series(
+        gulp.parallel('copy-html'),
+        gulp.series('css'),
+        bundle,
+        gulp.parallel('watch')
+    )
 );
 watchedBrowserify.on('update', bundle);
 watchedBrowserify.on('log', fancy_log);
