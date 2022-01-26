@@ -1,7 +1,10 @@
+$test-color: blue;
+
 * {
     margin: 0px;
     padding: 0px;
     font-family: 'Josefin Sans', sans-serif;
+    background-color: $test-color;
 }
 
 body {

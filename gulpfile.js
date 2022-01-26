@@ -1,4 +1,8 @@
 var gulp = require('gulp');
+
+var gulpSass = require('gulp-sass')(require('sass'));
+// gulpSass.compiler = require('sass');
+
 var browserify = require('browserify');
 var source = require('vinyl-source-stream');
 var watchify = require('watchify');
@@ -28,11 +32,11 @@ gulp.task('autoprefixer', () => {
     const postcss = require('gulp-postcss');
 
     return gulp
-        .src('./src/css/*.css')
+        .src('src/scss/*.css')
         .pipe(sourcemaps.init())
         .pipe(postcss([autoprefixer()]))
         .pipe(sourcemaps.write('.'))
-        .pipe(gulp.dest('./dist/css'));
+        .pipe(gulp.dest('dist/css'));
 });
 
 function bundle() {
@@ -43,9 +47,13 @@ function bundle() {
         .pipe(gulp.dest('dist'));
 }
 
-gulp.task(
-    'default',
-    gulp.series(gulp.parallel('copy-html'), 'autoprefixer', bundle)
-);
+function css() {
+    return gulp
+        .src('src/scss/**/*.{scss,sass}')
+        .pipe(gulpSass().on('error', gulpSass.logError))
+        .pipe(gulp.dest('dist/css'));
+}
+
+gulp.task('default', gulp.series(gulp.parallel('copy-html'), css, bundle));
 watchedBrowserify.on('update', bundle);
 watchedBrowserify.on('log', fancy_log);

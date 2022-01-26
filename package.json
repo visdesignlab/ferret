@@ -27,8 +27,10 @@
     "d3": "^5.12.0",
     "gulp-cli": "^2.3.0",
     "gulp-postcss": "^9.0.1",
+    "gulp-sass": "^5.1.0",
     "gulp-sourcemaps": "^3.0.0",
     "lineupjs": "^4.2.0",
+    "sass": "^1.49.0",
     "vega": "^5.17.0",
     "vega-embed": "^6.12.2",
     "vega-lite": "^4.17.0"
