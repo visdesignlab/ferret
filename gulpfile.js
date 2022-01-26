@@ -1,7 +1,6 @@
 var gulp = require('gulp');
 
 var gulpSass = require('gulp-sass')(require('sass'));
-// gulpSass.compiler = require('sass');
 
 var browserify = require('browserify');
 var source = require('vinyl-source-stream');
@@ -54,6 +53,13 @@ function css() {
         .pipe(gulp.dest('dist/css'));
 }
 
-gulp.task('default', gulp.series(gulp.parallel('copy-html'), css, bundle));
+gulp.task('watch', function () {
+    gulp.watch('src/*.html', gulp.series('copy-html'));
+});
+
+gulp.task(
+    'default',
+    gulp.series(gulp.parallel('copy-html'), css, bundle, gulp.parallel('watch'))
+);
 watchedBrowserify.on('update', bundle);
 watchedBrowserify.on('log', fancy_log);
