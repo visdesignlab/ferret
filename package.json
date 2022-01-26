@@ -25,6 +25,7 @@
     "@visdesignlab/trrack-vis": "^2.0.0-alpha.5",
     "autoprefixer": "^10.4.2",
     "bootstrap": "^5.1.3",
+    "browser-sync": "^2.27.7",
     "d3": "^5.12.0",
     "gulp-cli": "^2.3.0",
     "gulp-postcss": "^9.0.1",

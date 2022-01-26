@@ -1,6 +1,7 @@
 var gulp = require('gulp');
 
 var gulpSass = require('gulp-sass')(require('sass'));
+var browserSync = require('browser-sync').create();
 
 var browserify = require('browserify');
 var source = require('vinyl-source-stream');
@@ -22,7 +23,10 @@ var watchedBrowserify = watchify(
 );
 
 gulp.task('copy-html', function () {
-    return gulp.src(paths.pages).pipe(gulp.dest('dist'));
+    return gulp
+        .src(paths.pages)
+        .pipe(gulp.dest('dist'))
+        .pipe(browserSync.stream());
 });
 
 gulp.task('autoprefixer', () => {
@@ -43,14 +47,16 @@ function bundle() {
         .bundle()
         .on('error', fancy_log)
         .pipe(source('bundle.js'))
-        .pipe(gulp.dest('dist'));
+        .pipe(gulp.dest('dist'))
+        .pipe(browserSync.stream());
 }
 
 gulp.task('css', () => {
     return gulp
         .src('src/scss/**/*.{scss,sass}')
         .pipe(gulpSass().on('error', gulpSass.logError))
-        .pipe(gulp.dest('dist/css'));
+        .pipe(gulp.dest('dist/css'))
+        .pipe(browserSync.stream());
 });
 
 // function css() {
@@ -63,6 +69,10 @@ gulp.task('css', () => {
 gulp.task('watch', function () {
     gulp.watch('src/*.html', gulp.series('copy-html'));
     gulp.watch('src/scss/*.scss', gulp.series('css'));
+    browserSync.init({
+        server: './dist',
+        logFileChanges: false
+    });
 });
 
 gulp.task(
