@@ -30,14 +30,16 @@ gulp.task('copy-html', function () {
         .pipe(browserSync.stream());
 });
 
-function bundle() {
+var compileJS = () => {
     return watchedBrowserify
         .bundle()
         .on('error', fancy_log)
         .pipe(source('bundle.js'))
         .pipe(gulp.dest('dist'))
         .pipe(browserSync.stream());
-}
+};
+
+gulp.task('compileJS', compileJS);
 
 gulp.task('css', () => {
     return gulp
@@ -52,6 +54,9 @@ gulp.task('css', () => {
 gulp.task('watch', function () {
     gulp.watch('src/*.html', gulp.series('copy-html'));
     gulp.watch('src/scss/*.scss', gulp.series('css'));
+});
+
+gulp.task('initServer', function () {
     browserSync.init({
         server: './dist',
         logFileChanges: false
@@ -61,11 +66,10 @@ gulp.task('watch', function () {
 gulp.task(
     'default',
     gulp.series(
-        gulp.parallel('copy-html'),
-        gulp.series('css'),
-        bundle,
-        gulp.parallel('watch')
+        gulp.parallel('copy-html', 'css'),
+        'compileJS',
+        gulp.parallel('initServer', 'watch')
     )
 );
-watchedBrowserify.on('update', bundle);
+watchedBrowserify.on('update', compileJS);
 watchedBrowserify.on('log', fancy_log);
