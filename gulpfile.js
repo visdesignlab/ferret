@@ -29,19 +29,6 @@ gulp.task('copy-html', function () {
         .pipe(browserSync.stream());
 });
 
-gulp.task('autoprefixer', () => {
-    const autoprefixer = require('autoprefixer');
-    const sourcemaps = require('gulp-sourcemaps');
-    const postcss = require('gulp-postcss');
-
-    return gulp
-        .src('src/scss/*.css')
-        .pipe(sourcemaps.init())
-        .pipe(postcss([autoprefixer()]))
-        .pipe(sourcemaps.write('.'))
-        .pipe(gulp.dest('dist/css'));
-});
-
 function bundle() {
     return watchedBrowserify
         .bundle()
@@ -58,13 +45,6 @@ gulp.task('css', () => {
         .pipe(gulp.dest('dist/css'))
         .pipe(browserSync.stream());
 });
-
-// function css() {
-//     return gulp
-//         .src('src/scss/**/*.{scss,sass}')
-//         .pipe(gulpSass().on('error', gulpSass.logError))
-//         .pipe(gulp.dest('dist/css'));
-// }
 
 gulp.task('watch', function () {
     gulp.watch('src/*.html', gulp.series('copy-html'));
