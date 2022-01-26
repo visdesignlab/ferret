@@ -3,6 +3,7 @@ var gulp = require('gulp');
 var gulpSass = require('gulp-sass')(require('sass'));
 var browserSync = require('browser-sync').create();
 
+const cleanCSS = require('gulp-clean-css');
 var browserify = require('browserify');
 var source = require('vinyl-source-stream');
 var watchify = require('watchify');
@@ -42,6 +43,7 @@ gulp.task('css', () => {
     return gulp
         .src('src/scss/**/*.{scss,sass}')
         .pipe(gulpSass().on('error', gulpSass.logError))
+        .pipe(cleanCSS({ batch: true }))
         .pipe(gulp.dest('dist/css'))
         .pipe(browserSync.stream());
 });
