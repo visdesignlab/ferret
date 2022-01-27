@@ -63,13 +63,12 @@ gulp.task('initServer', function () {
     });
 });
 
+gulp.task('build', gulp.series(gulp.parallel('copy-html', 'css'), 'compileJS'));
+
 gulp.task(
     'default',
-    gulp.series(
-        gulp.parallel('copy-html', 'css'),
-        'compileJS',
-        gulp.parallel('initServer', 'watch')
-    )
+    gulp.series('build', gulp.parallel('initServer', 'watch'))
 );
+
 watchedBrowserify.on('update', compileJS);
 watchedBrowserify.on('log', fancy_log);
