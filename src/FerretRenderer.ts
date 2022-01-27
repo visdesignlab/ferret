@@ -167,7 +167,7 @@ export default class FerretRenderer implements ICellRendererFactory {
                     title: null
                 },
                 color: {
-                    value: '#ffb726'
+                    value: '#ffb727'
                 },
                 y: {
                     field: 'value',
@@ -357,7 +357,7 @@ export default class FerretRenderer implements ICellRendererFactory {
             encoding: {
                 x: { field: 'count', type: 'quantitative', title: null },
                 color: {
-                    value: '#0277BD'
+                    value: '#0277bb'
                 },
                 y: {
                     field: 'frequency',
@@ -460,7 +460,7 @@ export default class FerretRenderer implements ICellRendererFactory {
                 y: { field: 'value', type: 'ordinal', sort: '-x', title: null },
                 x: { field: 'count', type: 'quantitative', title: null },
                 color: {
-                    value: '#ff8f00'
+                    value: '#ff9100'
                 },
                 opacity: {
                     condition: {
@@ -569,7 +569,7 @@ export default class FerretRenderer implements ICellRendererFactory {
                 },
                 y: { field: 'frequency', type: 'quantitative', title: null },
                 color: {
-                    value: '#4db6ac'
+                    value: '#4eb7ac'
                 },
                 opacity: {
                     condition: {
