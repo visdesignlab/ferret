@@ -1,12 +1,9 @@
+@import './variables.scss';
+
 * {
     margin: 0px;
     padding: 0px;
     font-family: 'Josefin Sans', sans-serif;
-}
-
-body {
-    background: #ece7e7;
-    position: relative;
 }
 
 .outerContainer {
@@ -72,7 +69,7 @@ body {
 
 .customButtonIconRight {
     padding-left: 40px;
-    color: #4db6ac;
+    color: $primary;
 }
 
 .buttonContainer {
@@ -119,18 +116,25 @@ body {
     font-weight: 800;
     font-size: 10pt;
     color: black;
+    border: solid 1px;
 }
 
 .selection-label.value {
-    background-color: #e57373;
+    background-color: $chart-fv-med;
+    border: solid $chart-fv 1px;
+    border-radius: 1px;
 }
 
 .selection-label.nGram {
-    background-color: #ff8f00;
+    border-color: $chart-ng;
+    background-color: $chart-ng-med;
+    border-radius: 3px;
 }
 
 .selection-label.leadingDigit {
-    background-color: #4db6ac;
+    border-color: $chart-ldf;
+    background-color: $chart-ldf-med;
+    border-radius: 5px;
 }
 
 .trash-container {

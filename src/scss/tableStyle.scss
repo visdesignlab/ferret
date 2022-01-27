@@ -1,3 +1,5 @@
+@import './variables.scss';
+
 .lineupContainerOuter {
     transition: 0.25s;
     background: white;
@@ -14,36 +16,6 @@
     right: 5px;
     top: 5px;
     bottom: 5px;
-}
-
-.columnType {
-    font-size: 10px;
-    color: #757575;
-}
-
-.columnHidden {
-    visibility: hidden;
-}
-
-.highlighted {
-    background-color: #eeeeee;
-    animation-name: highlightEffect;
-    animation-duration: 3s;
-}
-
-.gram-highlighted {
-    background-color: #ffa533 !important;
-}
-
-/* Hide scrollbar for Chrome, Safari and Opera */
-.scrollbar::-webkit-scrollbar {
-    display: none;
-}
-
-/* Hide scrollbar for IE, Edge and Firefox */
-.scrollbar {
-    -ms-overflow-style: none; /* IE and Edge */
-    scrollbar-width: none; /* Firefox */
 }
 
 .vizContainer {
@@ -111,20 +83,20 @@
 }
 
 .ferretCellValue .highlight.value {
-    border-color: #e57373;
-    background-color: hsl(0, 100%, 82%);
+    border-color: $chart-fv;
+    background-color: $chart-fv-med;
     border-radius: 1px;
 }
 
 .ferretCellValue .highlight.ngram {
-    border-color: #ff8f00;
-    background-color: hsl(34, 89%, 72%);
+    border-color: $chart-ng;
+    background-color: $chart-ng-med;
     border-radius: 3px;
 }
 
 .ferretCellValue .highlight.leadingDigit {
-    border-color: #4db6ac;
-    background-color: hsl(174, 70%, 75%);
+    border-color: $chart-ldf;
+    background-color: $chart-ldf-med;
     border-radius: 5px;
 }
 

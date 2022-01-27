@@ -1,3 +1,5 @@
+@import './variables.scss';
+
 .controlsContainer {
     position: absolute;
     height: 100%;
@@ -47,10 +49,6 @@
     margin-bottom: 20px;
 }
 
-.item-group:nth-child(2) {
-    margin-top: 0px !important;
-}
-
 .item {
     margin-top: 10px;
     padding: 1px;
@@ -69,11 +67,6 @@
     margin-top: 5px;
 }
 
-.controlsHr {
-    margin-left: 10px;
-    border: 1px solid #eeeeee;
-}
-
 .controlsLabel {
     font-size: 14px;
     color: #757575;
@@ -88,25 +81,25 @@
     border: solid #eeeeee 2px;
 }
 
-.customButtonEyeIcon.yellow {
-    background-color: #ffb726;
-    border-color: #ffb726;
+.customButtonEyeIcon.chart-vd {
+    background-color: $chart-vd;
+    border-color: $chart-vd;
 }
-.customButtonEyeIcon.pink {
-    background-color: #e57373;
-    border-color: #e57373;
+.customButtonEyeIcon.chart-fv {
+    background-color: $chart-fv;
+    border-color: $chart-fv;
 }
-.customButtonEyeIcon.blue {
-    background-color: #4db6ac;
-    border-color: #4db6ac;
+.customButtonEyeIcon.chart-r {
+    background-color: $chart-r;
+    border-color: $chart-r;
 }
-.customButtonEyeIcon.orange {
-    background-color: #ff8f00;
-    border-color: #ff8f00;
+.customButtonEyeIcon.chart-ng {
+    background-color: $chart-ng;
+    border-color: $chart-ng;
 }
-.customButtonEyeIcon.sea-blue {
-    background-color: #0277bd;
-    border-color: #0277bd;
+.customButtonEyeIcon.chart-ldf {
+    background-color: $chart-ldf;
+    border-color: $chart-ldf;
 }
 
 .customButtonEyeIcon.hidden {
@@ -122,35 +115,35 @@
     border-color: grey !important;
 }
 
-.item.yellow {
-    border: 1px solid hsl(40, 100%, 57%);
+.item.chart-vd {
+    border: 1px solid $chart-vd;
 }
-.item.yellow:hover {
-    background-color: hsl(40, 100%, 95%);
+.item.chart-vd:hover {
+    background-color: $chart-vd-light;
 }
-.item.pink {
-    border: 1px solid hsl(0, 69%, 67%);
+.item.chart-fv {
+    border: 1px solid $chart-fv;
 }
-.item.pink:hover {
-    background-color: hsl(0, 69%, 97%);
+.item.chart-fv:hover {
+    background-color: $chart-fv-light;
 }
-.item.blue {
-    border: 1px solid hsl(174, 42%, 51%);
+.item.chart-r {
+    border: 1px solid $chart-r;
 }
-.item.blue:hover {
-    background-color: hsl(174, 42%, 91%);
+.item.chart-r:hover {
+    background-color: $chart-r-light;
 }
-.item.orange {
-    border: 1px solid hsl(34, 100%, 50%);
+.item.chart-ng {
+    border: 1px solid $chart-ng;
 }
-.item.orange:hover {
-    background-color: hsl(34, 100%, 90%);
+.item.chart-ng:hover {
+    background-color: $chart-ng-light;
 }
-.item.sea-blue {
-    border: 1px solid hsl(202, 98%, 37%);
+.item.chart-ldf {
+    border: 1px solid $chart-ldf;
 }
-.item.sea-blue:hover {
-    background-color: hsl(202, 98%, 87%);
+.item.chart-ldf:hover {
+    background-color: $chart-ldf-light;
 }
 
 .dropdown-content {

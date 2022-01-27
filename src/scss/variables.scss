@@ -2,7 +2,8 @@
 @import '../../node_modules/bootstrap/scss/functions';
 
 // 2. Include any default variable overrides here
-$primary: #565656;
+$primary: #666666;
+$line-height-base: 1.2;
 
 // 3. Include remainder of required Bootstrap stylesheets
 @import '../../node_modules/bootstrap/scss/variables';
@@ -47,3 +48,29 @@ $primary: #565656;
 
 // Utilities
 // @import '../../node_modules/bootstrap/scss/utilities/api';
+
+// My variables
+// chart colors.
+
+// Value Distribution
+$chart-vd: #ffb727;
+$chart-vd-light: #fff7e6;
+
+// Frequent Values
+$chart-fv: #e57373;
+$chart-fv-med: #ffa3a3;
+$chart-fv-light: #fdf2f2;
+
+// Replicates
+$chart-r: #0277bb;
+$chart-r-light: #bde7fe;
+
+// N-Grams
+$chart-ng: #ff9100;
+$chart-ng-med: #f7c078;
+$chart-ng-light: #ffe9cc;
+
+// Leading Digit Frequency
+$chart-ldf: #4eb7ac;
+$chart-ldf-med: #93ece3;
+$chart-ldf-light: #def2f0;
