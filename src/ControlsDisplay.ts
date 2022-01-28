@@ -119,7 +119,7 @@ export class ControlsDisplay {
 
         toolbarButton.id = ID;
         toolbarButton.setAttribute('data-bs-toggle', 'collapse');
-        toolbarButton.setAttribute('href', `#${collapseTargetID}`);
+        toolbarButton.setAttribute('data-bs-target', `#${collapseTargetID}`);
         toolbarButton.classList.add('btn', 'btn-outline-primary');
         toolbarButton.classList.add('selected');
         toolbarButton.addEventListener('click', e => {

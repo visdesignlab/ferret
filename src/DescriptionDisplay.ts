@@ -114,10 +114,10 @@ export class DescriptionDisplay {
         this._expanded = !this.expanded;
         if (this.expanded) {
             this.showMoreLessButton.innerText = 'Show less.';
-            this.longText.classList.remove('noDisp');
+            // this.longText.classList.remove('noDisp');
         } else {
             this.showMoreLessButton.innerText = 'Show more.';
-            this.longText.classList.add('noDisp');
+            // this.longText.classList.add('noDisp');
         }
     }
 }
