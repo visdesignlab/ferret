@@ -16,11 +16,12 @@
 
             </div>
         </div>
-        <div class="outerContainer noDisp" id="outerContainer">
+        <div class="container-fluid noDisp" id="outerContainer">
             <div class="toolbar" id="toolbar">
             </div>
-            <div class="controlsContainer" id="controlsContainer" style="width: 0px">
-                <div class="item-group"> 
+            <div class="row align-items-start">
+            <div class="col-sm-3 border rounded controlsContainer collapse-horizontal show" id="controlsContainer">
+                <div class="item-group">
                     <div class="button-grouper">
                         <button id='prev-step' class="prev step customButton"><i class="fas fa-chevron-left"></i> Previous</button>
                         <button id='next-step' class="next step customButton">Next <i class="fas fa-chevron-right"></i></button>
@@ -99,28 +100,31 @@
                 <div class="item-group" id="data-columns">                  
                         <div class="group-header" id="data-cols">Data</div>
                 </div>
-            </div>    
-            <div class="description" id="description" style="margin-left: 260px">
-                <div id="description-tab-row"></div>
-                <div class="description-short-wrapper">
-                    <img id="description-short-image" src="">
-                    <zero-md id="description-short-text" src=""></zero-md>
-                </div>
-                <zero-md id="description-long-text" class="noDisp" src=""></zero-md>
-                <div class="textButton"><button id="description-show-more-less">Show more.</button></div>
-            </div>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+            </div>
+            <div class="col">
+                <div class="description collapse show" id="description">
+                    <div id="description-tab-row"></div>
+                    <div class="description-short-wrapper">
+                        <img id="description-short-image" src="">
+                        <zero-md id="description-short-text" src=""></zero-md>
+                    </div>
+                    <zero-md id="description-long-text" class="noDisp" src=""></zero-md>
+                    <div class="textButton"><button id="description-show-more-less">Show more.</button></div>
+                </div>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
             <div class="lineupContainerOuter" id="lineupContainerOuter">
                 <div class="lineupContainer" id="lineupContainer">
 
                 </div>
             </div>
         </div>
+        </div>
+        </div>
         <div id="outerContextMenu" class="outerContextMenu noDisp">
             <div id="innerContextMenu" class="innerContextMenu">
 
             </div>
         </div>
-        <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script> -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
         <script src="bundle.js"></script>
     </body>
 </html>

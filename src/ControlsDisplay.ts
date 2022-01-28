@@ -84,20 +84,16 @@ export class ControlsDisplay {
         let settingsButton = this.createToolbarButton(
             'Settings',
             'settingsButton',
-            ['fas', 'fa-cogs'],
-            (e: MouseEvent) => {
-                this.toggleControlsPanel();
-            }
+            'controlsContainer',
+            ['fas', 'fa-cogs']
         );
         this._toolbarContainer.appendChild(settingsButton);
 
         let descriptionsButton = this.createToolbarButton(
             'Descriptions',
             'descriptionsButton',
-            ['fas', 'fa-info-circle'],
-            (e: MouseEvent) => {
-                this.toggleDescriptions();
-            }
+            'description',
+            ['fas', 'fa-info-circle']
         );
         descriptionsButton.classList.add('selected');
         this._toolbarContainer.appendChild(descriptionsButton);
@@ -113,8 +109,8 @@ export class ControlsDisplay {
     private createToolbarButton(
         label: string,
         ID: string,
-        iconClasses: string[],
-        callback: (e: MouseEvent) => void
+        collapseTargetID: string,
+        iconClasses: string[]
     ): HTMLButtonElement {
         let settingsButton = document.createElement('button');
 
@@ -128,10 +124,9 @@ export class ControlsDisplay {
         settingsButton.appendChild(settingsButtonText);
 
         settingsButton.id = ID;
+        settingsButton.setAttribute('data-bs-toggle', 'collapse');
+        settingsButton.setAttribute('href', `#${collapseTargetID}`);
         settingsButton.classList.add('customButton');
-        settingsButton.addEventListener('click', e => {
-            callback(e);
-        });
         return settingsButton;
     }
 
@@ -204,26 +199,26 @@ export class ControlsDisplay {
     }
 
     private showControlsPanel(): void {
-        const settingsContainerWidth = 250;
-        const padding = 5 + 2 + 7;
-        this._controlsContainer.style.width = `${settingsContainerWidth}px`;
-        this._controlsContainer.style.borderWidth = '1px';
-        this._descriptionContainer.style.marginLeft = `${
-            settingsContainerWidth + padding
-        }px`;
-        this._dataTableContainer.style.marginLeft = `${
-            settingsContainerWidth + padding
-        }px`;
+        // const settingsContainerWidth = 250;
+        // const padding = 5 + 2 + 7;
+        // this._controlsContainer.style.width = `${settingsContainerWidth}px`;
+        // this._controlsContainer.style.borderWidth = '1px';
+        // this._descriptionContainer.style.marginLeft = `${
+        //     settingsContainerWidth + padding
+        // }px`;
+        // this._dataTableContainer.style.marginLeft = `${
+        //     settingsContainerWidth + padding
+        // }px`;
         document.getElementById('settingsButton').classList.add('selected');
         this._showSettings = true;
     }
 
     private hideControlsPanel(): void {
-        const padding = 7;
-        this._controlsContainer.style.width = '0px';
-        this._controlsContainer.style.borderWidth = '0px';
-        this._descriptionContainer.style.marginLeft = `${padding}px`;
-        this._dataTableContainer.style.marginLeft = `${padding}px`;
+        // const padding = 7;
+        // this._controlsContainer.style.width = '0px';
+        // this._controlsContainer.style.borderWidth = '0px';
+        // this._descriptionContainer.style.marginLeft = `${padding}px`;
+        // this._dataTableContainer.style.marginLeft = `${padding}px`;
         document.getElementById('settingsButton').classList.remove('selected');
         this._showSettings = false;
     }
