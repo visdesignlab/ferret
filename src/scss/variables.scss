@@ -19,10 +19,10 @@ $line-height-base: 1.2;
 @import '../../node_modules/bootstrap/scss/grid';
 @import '../../node_modules/bootstrap/scss/tables';
 @import '../../node_modules/bootstrap/scss/forms';
-// @import '../../node_modules/bootstrap/scss/buttons';
+@import '../../node_modules/bootstrap/scss/buttons';
 @import '../../node_modules/bootstrap/scss/transitions';
 // @import '../../node_modules/bootstrap/scss/dropdown';
-// @import '../../node_modules/bootstrap/scss/button-group';
+@import '../../node_modules/bootstrap/scss/button-group';
 // @import '../../node_modules/bootstrap/scss/nav';
 // @import '../../node_modules/bootstrap/scss/navbar';
 // @import '../../node_modules/bootstrap/scss/card';
@@ -75,3 +75,5 @@ $chart-ng-light: #ffe9cc;
 $chart-ldf: #4eb7ac;
 $chart-ldf-med: #93ece3;
 $chart-ldf-light: #def2f0;
+
+$primary-light: #c5c5c5;

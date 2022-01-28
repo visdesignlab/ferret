@@ -41,7 +41,7 @@ export class UploadFileButton {
         this.fileInputElement.accept = 'text/plain, .csv';
 
         let labelEl: HTMLLabelElement = document.createElement('label');
-        labelEl.classList.add('customButton');
+        labelEl.classList.add('btn', 'btn-outline-primary');
         labelEl.htmlFor = uniqueId;
 
         let icon = document.createElement('i');

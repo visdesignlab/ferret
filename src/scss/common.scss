@@ -57,6 +57,11 @@
     color: white;
 }
 
+.btn.selected {
+    background: $primary-light;
+    color: black;
+}
+
 .customButtonIcon {
     padding-right: 6px;
 }
@@ -68,8 +73,7 @@
 }
 
 .customButtonIconRight {
-    padding-left: 40px;
-    color: $primary;
+    padding-left: 8px;
 }
 
 .buttonContainer {

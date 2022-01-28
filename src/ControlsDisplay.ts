@@ -36,8 +36,6 @@ export class ControlsDisplay {
         this._controlsContainer = controlsContainer;
         this._descriptionContainer = descriptionContainer;
         this._dataTableContainer = dataTableContainer;
-        this._showSettings = false;
-        this._showDescriptions = true;
     }
 
     private _toolbarContainer: HTMLElement;
@@ -65,16 +63,6 @@ export class ControlsDisplay {
         return this._data;
     }
 
-    private _showSettings: boolean;
-    public get showSettings(): boolean {
-        return this._showSettings;
-    }
-
-    private _showDescriptions: boolean;
-    public get showDescriptions(): boolean {
-        return this._showDescriptions;
-    }
-
     public SetData(data: TabularData, chartsShown: boolean[]): void {
         this._data = data;
         this._chartsShown = chartsShown;
@@ -85,7 +73,10 @@ export class ControlsDisplay {
             'Settings',
             'settingsButton',
             'controlsContainer',
-            ['fas', 'fa-cogs']
+            ['fas', 'fa-cogs'],
+            (e: MouseEvent) => {
+                this.toggleControlsPanel();
+            }
         );
         this._toolbarContainer.appendChild(settingsButton);
 
@@ -93,11 +84,13 @@ export class ControlsDisplay {
             'Descriptions',
             'descriptionsButton',
             'description',
-            ['fas', 'fa-info-circle']
+            ['fas', 'fa-info-circle'],
+            (e: MouseEvent) => {
+                this.toggleDescriptions();
+            }
         );
-        descriptionsButton.classList.add('selected');
+        // descriptionsButton.classList.add('selected');
         this._toolbarContainer.appendChild(descriptionsButton);
-        this.showControlsPanel();
         this.drawDataColumnRows(tabularData.columnList);
         this.drawSummaryRows(tabularData);
         this.attachChartControls();
@@ -110,24 +103,29 @@ export class ControlsDisplay {
         label: string,
         ID: string,
         collapseTargetID: string,
-        iconClasses: string[]
+        iconClasses: string[],
+        callback: (e: MouseEvent) => void
     ): HTMLButtonElement {
-        let settingsButton = document.createElement('button');
+        let toolbarButton = document.createElement('button');
 
         let icon = document.createElement('i');
         icon.classList.add(...iconClasses);
         icon.classList.add('customButtonIcon');
-        settingsButton.appendChild(icon);
+        toolbarButton.appendChild(icon);
 
         let settingsButtonText = document.createElement('span');
         settingsButtonText.innerHTML = label;
-        settingsButton.appendChild(settingsButtonText);
+        toolbarButton.appendChild(settingsButtonText);
 
-        settingsButton.id = ID;
-        settingsButton.setAttribute('data-bs-toggle', 'collapse');
-        settingsButton.setAttribute('href', `#${collapseTargetID}`);
-        settingsButton.classList.add('customButton');
-        return settingsButton;
+        toolbarButton.id = ID;
+        toolbarButton.setAttribute('data-bs-toggle', 'collapse');
+        toolbarButton.setAttribute('href', `#${collapseTargetID}`);
+        toolbarButton.classList.add('btn', 'btn-outline-primary');
+        toolbarButton.classList.add('selected');
+        toolbarButton.addEventListener('click', e => {
+            callback(e);
+        });
+        return toolbarButton;
     }
 
     private drawSummaryRows(tabularData: TabularData) {
@@ -191,48 +189,16 @@ export class ControlsDisplay {
     }
 
     private toggleControlsPanel(): void {
-        if (this.showSettings) {
-            this.hideControlsPanel();
-        } else {
-            this.showControlsPanel();
-        }
-    }
-
-    private showControlsPanel(): void {
-        // const settingsContainerWidth = 250;
-        // const padding = 5 + 2 + 7;
-        // this._controlsContainer.style.width = `${settingsContainerWidth}px`;
-        // this._controlsContainer.style.borderWidth = '1px';
-        // this._descriptionContainer.style.marginLeft = `${
-        //     settingsContainerWidth + padding
-        // }px`;
-        // this._dataTableContainer.style.marginLeft = `${
-        //     settingsContainerWidth + padding
-        // }px`;
-        document.getElementById('settingsButton').classList.add('selected');
-        this._showSettings = true;
-    }
-
-    private hideControlsPanel(): void {
-        // const padding = 7;
-        // this._controlsContainer.style.width = '0px';
-        // this._controlsContainer.style.borderWidth = '0px';
-        // this._descriptionContainer.style.marginLeft = `${padding}px`;
-        // this._dataTableContainer.style.marginLeft = `${padding}px`;
-        document.getElementById('settingsButton').classList.remove('selected');
-        this._showSettings = false;
+        ControlsDisplay.toggleElementClass('settingsButton', 'selected');
     }
 
     private toggleDescriptions(): void {
-        this._showDescriptions = !this.showDescriptions;
-        const toggleButton = document.getElementById('descriptionsButton');
-        if (this.showDescriptions) {
-            this.descriptionContainer.classList.remove('noDisp');
-            toggleButton.classList.add('selected');
-        } else {
-            this.descriptionContainer.classList.add('noDisp');
-            toggleButton.classList.remove('selected');
-        }
+        ControlsDisplay.toggleElementClass('descriptionsButton', 'selected');
+    }
+
+    private static toggleElementClass(id: string, cssClass: string): void {
+        const toggleButton = document.getElementById(id);
+        toggleButton.classList.toggle(cssClass);
     }
 
     public attachChartControls(): void {
