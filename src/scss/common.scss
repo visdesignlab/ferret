@@ -163,28 +163,6 @@
     background: white;
 }
 
-.des-header {
-    font-size: 14pt;
-    margin-top: 12px;
-    border-bottom: solid 1px;
-}
-
-.des-header.yellow {
-    color: #ffb726;
-}
-.des-header.pink {
-    color: #e57373;
-}
-.des-header.blue {
-    color: #4db6ac;
-}
-.des-header.orange {
-    color: #ff8f00;
-}
-.des-header.sea-blue {
-    color: #0277bd;
-}
-
 .outerContextMenu {
     position: absolute;
     width: 100%;
@@ -211,30 +189,6 @@
 }
 .innerContextMenu > button:hover {
     background: #e5e5e5;
-}
-
-.textButton {
-    display: flex;
-    flex-direction: column;
-}
-
-.textButton > button {
-    border: none;
-    background: white;
-    border-radius: 3px;
-    font-size: 9pt;
-    user-select: none;
-    cursor: pointer;
-    padding: 3px 5px;
-    color: #666666;
-    text-decoration: none;
-    margin: 1px;
-    margin-bottom: 5px;
-    margin-top: -5px;
-}
-
-.textButton > button:hover {
-    background: $button-hover-light;
 }
 
 .flex-basis-0 {

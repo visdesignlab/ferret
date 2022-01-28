@@ -35,13 +35,13 @@ export default class FerretRenderer implements ICellRendererFactory {
             <div class="vizContainer">
                 <div class="noDisp innerVizContainer"></div>
                 <div class="noDisp duplicateCountViz" data-show-all="false">
-                    <div class="innerVizContainer"></div><div class="textButton"></div>
+                    <div class="innerVizContainer"></div><div class="d-flex flex-column textButton"></div>
                 </div>
                 <div class="noDisp replicatesViz" data-show-all="false">
-                    <div class="innerVizContainer"></div><div class="textButton"></div>
+                    <div class="innerVizContainer"></div><div class="d-flex flex-column textButton"></div>
                 </div>
                 <div class="noDisp nGramViz" data-show-all="false">
-                    <div class="innerVizContainer"></div><div class="textButton"></div>
+                    <div class="innerVizContainer"></div><div class="d-flex flex-column textButton"></div>
                 </div>
                 <div class="noDisp innerVizContainer"></div>
             </div>`,
@@ -614,6 +614,7 @@ export default class FerretRenderer implements ICellRendererFactory {
 
         const showAll = container.dataset.showAll === 'true';
         const button = document.createElement('button');
+        button.classList.add('btn', 'btn-sm', 'btn-light');
         if (showAll) {
             button.textContent = 'collapse';
         } else {

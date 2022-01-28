@@ -4,6 +4,7 @@
 // 2. Include any default variable overrides here
 $primary: #161718;
 $line-height-base: 1.2;
+$font-size-sm: 0.75rem; // default is 0.85
 
 // 3. Include remainder of required Bootstrap stylesheets
 @import '../../node_modules/bootstrap/scss/variables';
