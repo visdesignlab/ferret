@@ -86,8 +86,6 @@ export class TableDisplay extends EventTarget {
     }
 
     public initLineup(data: TabularData): void {
-        ControlsDisplay.updateCurrentSummary(data);
-
         const rowFirstData = data.getRowList();
         const builder = LineUpJS.builder(rowFirstData);
         builder.registerColumnType('FerretColumn', FerretColumn);

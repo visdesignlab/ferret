@@ -130,16 +130,9 @@ export class ControlsDisplay {
 
     private drawSummaryRows(tabularData: TabularData) {
         document.getElementById('numberOfRecords').innerHTML =
-            '# of records: ' + tabularData.rowLength;
+            'Rows: ' + tabularData.rowLength;
         document.getElementById('numberOfColumns').innerHTML =
-            '# of columns: ' + tabularData.columnList.length;
-    }
-
-    public static updateCurrentSummary(data: TabularData) {
-        document.getElementById('currentNumberOfRecords').innerHTML =
-            '# of records: ' + data.rowLength;
-        document.getElementById('currentNumberOfColumns').innerHTML =
-            '# of columns: ' + data.columnList.length;
+            'Columns: ' + tabularData.columnList.length;
     }
 
     private drawDataColumnRows(columnList: Column<String | Number>[]): void {

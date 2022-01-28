@@ -66,7 +66,8 @@ gulp.task('initServer', function () {
 gulp.task(
     'default',
     gulp.series(
-        gulp.parallel('copy-html', 'css'),
+        'copy-html',
+        'css',
         'compileJS',
         gulp.parallel('initServer', 'watch')
     )

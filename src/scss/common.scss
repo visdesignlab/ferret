@@ -234,5 +234,9 @@
 }
 
 .textButton > button:hover {
-    background: #e0e7f0;
+    background: $button-hover-light;
+}
+
+.flex-basis-0 {
+    flex-basis: 0 !important;
 }

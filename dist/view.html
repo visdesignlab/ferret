@@ -23,13 +23,19 @@
             <div class="toolbar pb-1 pt-1 btn-toolbar btn-group" id="toolbar">
             </div>
             <div class="row gx-2 align-items-start flex-grow-1 overflow-hidden pb-1">
-                <div class="col-6 col-sm-5 col-md-4 col-lg-3 col-xxl-2 collapse-horizontal show h-100" id="controlsContainer">
+                <div class="col-6 col-sm-5 col-md-4 col-lg-3 col-xxl-2 collapse-horizontal show h-100"
+                    id="controlsContainer">
                     <div class="border border-primary p-1 rounded h-100 overflow-auto">
-                        <div class="item-group">
-                            <div class="button-grouper">
-                                <button id='prev-step' class="prev step customButton"><i
+                        <div class="border-bottom">
+                        <div class="d-flex">
+                            <button class="btn btn-light text-start btn-toggle flex-grow-1" data-bs-toggle="collapse"
+                                data-bs-target="#select-analysis-content" aria-expanded="true">Select Analysis</button>
+                        </div>
+                        <div class="p-2 collapse show" id="select-analysis-content">
+                            <div class="btn-group d-flex">
+                                <button id='prev-step' class="btn btn-outline-primary text-nowrap flex-grow-1 flex-basis-0"><i
                                         class="fas fa-chevron-left"></i> Previous</button>
-                                <button id='next-step' class="next step customButton">Next <i
+                                <button id='next-step' class="btn btn-outline-primary text-nowrap flex-grow-1 flex-basis-0">Next <i
                                         class="fas fa-chevron-right"></i></button>
                             </div>
                             <div id="overallDist">
@@ -101,19 +107,23 @@
                                 <div class="item-option-container"></div>
                             </div>
                         </div>
-                        <hr>
-                        <div class="item-group">
-                            <div class="group-header">Summary</div>
-                            <div class="group-sub-header">Original</div>
-                            <div class="controlsLabel" id="numberOfRecords"></div>
-                            <div class="controlsLabel" id="numberOfColumns"></div>
-                            <div class="group-sub-header">Current Selection</div>
-                            <div class="controlsLabel" id="currentNumberOfRecords"></div>
-                            <div class="controlsLabel" id="currentNumberOfColumns"></div>
                         </div>
-                        <hr>
-                        <div class="item-group" id="data-columns">
-                            <div class="group-header" id="data-cols">Data</div>
+                        <div class="border-bottom">
+                            <div class="d-flex">
+                                <button class="btn btn-light text-start btn-toggle flex-grow-1" data-bs-toggle="collapse"
+                                    data-bs-target="#summary-content">Summary Stats</button>
+                            </div>
+                            <div class="p-2 collapse" id="summary-content">
+                                <div class="controlsLabel" id="numberOfRecords"></div>
+                                <div class="controlsLabel" id="numberOfColumns"></div>
+                            </div>
+                        </div>
+                        <div class="border-bottom">
+                            <div class="d-flex">
+                                <button class="btn btn-light text-start btn-toggle flex-grow-1" data-bs-toggle="collapse"
+                                    data-bs-target="#data-columns">Select Columns</button>
+                            </div>
+                            <div class="p-2 collapse" id="data-columns"></div>
                         </div>
                     </div>
                 </div>
@@ -125,7 +135,9 @@
                             <zero-md id="description-short-text" src=""></zero-md>
                         </div>
                         <zero-md id="description-long-text" class="collapse" src=""></zero-md>
-                        <div class="textButton"><button data-bs-toggle="collapse" data-bs-target="#description-long-text" id="description-show-more-less">Show more.</button></div>
+                        <div class="textButton"><button data-bs-toggle="collapse"
+                                data-bs-target="#description-long-text" id="description-show-more-less">Show
+                                more.</button></div>
                     </div>
                     <div class="border border-primary rounded lineupContainerOuter" id="lineupContainerOuter">
                         <div class="lineupContainer" id="lineupContainer">

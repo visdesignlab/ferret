@@ -2,7 +2,7 @@
 @import '../../node_modules/bootstrap/scss/functions';
 
 // 2. Include any default variable overrides here
-$primary: #666666;
+$primary: #161718;
 $line-height-base: 1.2;
 
 // 3. Include remainder of required Bootstrap stylesheets
@@ -76,4 +76,5 @@ $chart-ldf: #4eb7ac;
 $chart-ldf-med: #93ece3;
 $chart-ldf-light: #def2f0;
 
-$primary-light: #c5c5c5;
+$primary-light: #b3b9c0;
+$button-hover-light: #e0e7f0;
