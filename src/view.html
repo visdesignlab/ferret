@@ -19,90 +19,92 @@
         <div class="container-fluid noDisp" id="outerContainer">
             <div class="toolbar btn-toolbar btn-group" id="toolbar">
             </div>
-            <div class="row align-items-start">
-            <div class="col-sm-3 border rounded controlsContainer collapse-horizontal show" id="controlsContainer">
-                <div class="item-group">
-                    <div class="button-grouper">
-                        <button id='prev-step' class="prev step customButton"><i class="fas fa-chevron-left"></i> Previous</button>
-                        <button id='next-step' class="next step customButton">Next <i class="fas fa-chevron-right"></i></button>
-                    </div>
-                    <div id="overallDist">
-                        <div class="item chart-vd">
-                            <div class="current-index"></div>
-                            <i id="val-dist-switch" class="fas fa-eye customButtonEyeIcon chart-vd"></i>
-                            Value Distribution
+            <div class="row gx-2 align-items-start">
+            <div class="col-sm-3 controlsContainer collapse-horizontal show" id="controlsContainer">
+                <div class="border p-1 rounded">
+                    <div class="item-group">
+                        <div class="button-grouper">
+                            <button id='prev-step' class="prev step customButton"><i class="fas fa-chevron-left"></i> Previous</button>
+                            <button id='next-step' class="next step customButton">Next <i class="fas fa-chevron-right"></i></button>
                         </div>
-                        <div class="item-option-container"></div>
-                    </div>
-                    <div id="duplicateCount">
-                        <div class="item chart-fv">
-                            <div class="current-index hide"></div>
-                            <i id="freq-val-switch" class="fas fa-eye customButtonEyeIcon chart-fv hidden"></i>
-                            Frequent Values
+                        <div id="overallDist">
+                            <div class="item chart-vd">
+                                <div class="current-index"></div>
+                                <i id="val-dist-switch" class="fas fa-eye customButtonEyeIcon chart-vd"></i>
+                                Value Distribution
+                            </div>
+                            <div class="item-option-container"></div>
                         </div>
-                        <div class="item-option-container">
-                            <div class="item-option">
-                                <input type="checkbox" id="unique-values-switch"></input><label for="unique-values-switch" class="controlsLabel">Show all unique values</label>
+                        <div id="duplicateCount">
+                            <div class="item chart-fv">
+                                <div class="current-index hide"></div>
+                                <i id="freq-val-switch" class="fas fa-eye customButtonEyeIcon chart-fv hidden"></i>
+                                Frequent Values
+                            </div>
+                            <div class="item-option-container">
+                                <div class="item-option">
+                                    <input type="checkbox" id="unique-values-switch"></input><label for="unique-values-switch" class="controlsLabel">Show all unique values</label>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div id="replicates">
-                        <div class="item chart-r">
-                            <div class="current-index hide"></div>
-                            <i id="rep-switch"  class="fas fa-eye customButtonEyeIcon chart-r hidden"></i>
-                            Replicates
-                        </div>
-                        <div class="item-option-container">
-                            <div class="item-option">
-                                <input type="checkbox" id="rep-count-switch"></input><label for="rep-count-switch" class="controlsLabel">Show all unique values</label>
+                        <div id="replicates">
+                            <div class="item chart-r">
+                                <div class="current-index hide"></div>
+                                <i id="rep-switch"  class="fas fa-eye customButtonEyeIcon chart-r hidden"></i>
+                                Replicates
+                            </div>
+                            <div class="item-option-container">
+                                <div class="item-option">
+                                    <input type="checkbox" id="rep-count-switch"></input><label for="rep-count-switch" class="controlsLabel">Show all unique values</label>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div id="nGram">
-                        <div class="item chart-ng">
-                            <div class="current-index hide"></div>
-                            <i id="n-gram-switch"  class="fas fa-eye customButtonEyeIcon chart-ng hidden"></i>
-                            N-Grams
-                        </div>
-                        <div class="item-option-container">
-                            <div class="item-option">
-                                <input type="radio" id="2-gram-switch" name="n-gram" value="2-gram" checked><label for="2-gram-switch" class="controlsLabel">2-gram</label>
-                                <input type="radio" id="3-gram-switch" name="n-gram" value="3-gram"><label for="3-gram-switch" class="controlsLabel">3-gram</label>
+                        <div id="nGram">
+                            <div class="item chart-ng">
+                                <div class="current-index hide"></div>
+                                <i id="n-gram-switch"  class="fas fa-eye customButtonEyeIcon chart-ng hidden"></i>
+                                N-Grams
                             </div>
-                            <div class="item-option">
-                                <input type="checkbox" id="ngram-count-switch"></input><label for="ngram-count-switch" class="controlsLabel">Show all unique values</label>
-                            </div>
-                            <div class="item-option">
-                                <input type="checkbox" id="lsd-switch"></input><label for="lsd-switch" class="controlsLabel">Least Significant Digits</label>
+                            <div class="item-option-container">
+                                <div class="item-option">
+                                    <input type="radio" id="2-gram-switch" name="n-gram" value="2-gram" checked><label for="2-gram-switch" class="controlsLabel">2-gram</label>
+                                    <input type="radio" id="3-gram-switch" name="n-gram" value="3-gram"><label for="3-gram-switch" class="controlsLabel">3-gram</label>
+                                </div>
+                                <div class="item-option">
+                                    <input type="checkbox" id="ngram-count-switch"></input><label for="ngram-count-switch" class="controlsLabel">Show all unique values</label>
+                                </div>
+                                <div class="item-option">
+                                    <input type="checkbox" id="lsd-switch"></input><label for="lsd-switch" class="controlsLabel">Least Significant Digits</label>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div id="benfordDist">
-                        <div class="item chart-ldf">
-                            <div class="current-index hide"></div>
-                            <i id="leading-digit-switch" class="fas fa-eye customButtonEyeIcon chart-ldf hidden"></i>
-                            Leading Digit Frequency
+                        <div id="benfordDist">
+                            <div class="item chart-ldf">
+                                <div class="current-index hide"></div>
+                                <i id="leading-digit-switch" class="fas fa-eye customButtonEyeIcon chart-ldf hidden"></i>
+                                Leading Digit Frequency
+                            </div>
+                            <div class="item-option-container"></div>
                         </div>
-                        <div class="item-option-container"></div>
                     </div>
-                </div>
-                <hr>
-                <div class="item-group">  
-                    <div class="group-header">Summary</div>
-                    <div class="group-sub-header">Original</div>
-                    <div class="controlsLabel" id="numberOfRecords"></div>
-                    <div class="controlsLabel" id="numberOfColumns"></div>
-                    <div class="group-sub-header">Current Selection</div>
-                    <div class="controlsLabel" id="currentNumberOfRecords"></div>
-                    <div class="controlsLabel" id="currentNumberOfColumns"></div>
-                </div>
-                <hr>
-                <div class="item-group" id="data-columns">                  
-                        <div class="group-header" id="data-cols">Data</div>
+                    <hr>
+                    <div class="item-group">  
+                        <div class="group-header">Summary</div>
+                        <div class="group-sub-header">Original</div>
+                        <div class="controlsLabel" id="numberOfRecords"></div>
+                        <div class="controlsLabel" id="numberOfColumns"></div>
+                        <div class="group-sub-header">Current Selection</div>
+                        <div class="controlsLabel" id="currentNumberOfRecords"></div>
+                        <div class="controlsLabel" id="currentNumberOfColumns"></div>
+                    </div>
+                    <hr>
+                    <div class="item-group" id="data-columns">                  
+                            <div class="group-header" id="data-cols">Data</div>
+                    </div>
                 </div>
             </div>
             <div class="col">
-                <div class="description collapse show" id="description">
+                <div class="border rounded collapse show mb-2" id="description">
                     <div id="description-tab-row"></div>
                     <div class="description-short-wrapper">
                         <img id="description-short-image" src="">
@@ -111,7 +113,7 @@
                     <zero-md id="description-long-text" class="noDisp" src=""></zero-md>
                     <div class="textButton"><button id="description-show-more-less">Show more.</button></div>
                 </div>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
-            <div class="lineupContainerOuter" id="lineupContainerOuter">
+            <div class="border rounded lineupContainerOuter" id="lineupContainerOuter">
                 <div class="lineupContainer" id="lineupContainer">
 
                 </div>
