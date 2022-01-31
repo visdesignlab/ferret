@@ -35,13 +35,13 @@ export default class FerretRenderer implements ICellRendererFactory {
             <div class="vizContainer">
                 <div class="noDisp innerVizContainer"></div>
                 <div class="noDisp duplicateCountViz" data-show-all="false">
-                    <div class="innerVizContainer"></div><div class="textButton"></div>
+                    <div class="innerVizContainer"></div><div class="d-flex flex-column textButton"></div>
                 </div>
                 <div class="noDisp replicatesViz" data-show-all="false">
-                    <div class="innerVizContainer"></div><div class="textButton"></div>
+                    <div class="innerVizContainer"></div><div class="d-flex flex-column textButton"></div>
                 </div>
                 <div class="noDisp nGramViz" data-show-all="false">
-                    <div class="innerVizContainer"></div><div class="textButton"></div>
+                    <div class="innerVizContainer"></div><div class="d-flex flex-column textButton"></div>
                 </div>
                 <div class="noDisp innerVizContainer"></div>
             </div>`,
@@ -167,7 +167,7 @@ export default class FerretRenderer implements ICellRendererFactory {
                     title: null
                 },
                 color: {
-                    value: '#ffb726'
+                    value: '#ffb727'
                 },
                 y: {
                     field: 'value',
@@ -357,7 +357,7 @@ export default class FerretRenderer implements ICellRendererFactory {
             encoding: {
                 x: { field: 'count', type: 'quantitative', title: null },
                 color: {
-                    value: '#0277BD'
+                    value: '#0277bb'
                 },
                 y: {
                     field: 'frequency',
@@ -460,7 +460,7 @@ export default class FerretRenderer implements ICellRendererFactory {
                 y: { field: 'value', type: 'ordinal', sort: '-x', title: null },
                 x: { field: 'count', type: 'quantitative', title: null },
                 color: {
-                    value: '#ff8f00'
+                    value: '#ff9100'
                 },
                 opacity: {
                     condition: {
@@ -569,7 +569,7 @@ export default class FerretRenderer implements ICellRendererFactory {
                 },
                 y: { field: 'frequency', type: 'quantitative', title: null },
                 color: {
-                    value: '#4db6ac'
+                    value: '#4eb7ac'
                 },
                 opacity: {
                     condition: {
@@ -614,6 +614,7 @@ export default class FerretRenderer implements ICellRendererFactory {
 
         const showAll = container.dataset.showAll === 'true';
         const button = document.createElement('button');
+        button.classList.add('btn', 'btn-sm', 'btn-light');
         if (showAll) {
             button.textContent = 'collapse';
         } else {
@@ -695,7 +696,7 @@ export default class FerretRenderer implements ICellRendererFactory {
             .on('click', d => d.func())
             .html(d => `<i class="fas fa-${d.iconKey}"></i> ` + d.label);
 
-        d3.select('#outerContextMenu').classed('noDisp', false);
+        d3.select('#outerContextMenu').classed('d-none', false);
     }
 
     private async getMatchingRowIndices(
@@ -786,6 +787,6 @@ export default class FerretRenderer implements ICellRendererFactory {
     }
 
     private hideContextMenu(): void {
-        d3.select('#outerContextMenu').classed('noDisp', true);
+        d3.select('#outerContextMenu').classed('d-none', true);
     }
 }

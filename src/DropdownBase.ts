@@ -112,7 +112,6 @@ export abstract class DropdownBase extends EventTarget {
         button.appendChild(dropdownIcon);
 
         button.id = this.id + 'Button';
-        button.classList.add('customButton');
 
         let dropdownMenu = document.createElement('div');
         dropdownMenu.id = this.id + 'DropdownMenu';
@@ -120,7 +119,7 @@ export abstract class DropdownBase extends EventTarget {
 
         div.appendChild(button);
         div.appendChild(dropdownMenu);
-        div.classList.add('dropdown');
+        div.classList.add('btn', 'btn-outline-primary');
 
         button.addEventListener('click', e =>
             this.toggleVisibility(this.id + 'DropdownMenu')

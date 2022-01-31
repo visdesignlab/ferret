@@ -43,13 +43,12 @@ let init = (data: string, filename: string) => {
     clear(); // clearing all the existing elements.
     const bigStyle = false;
 
-    let navigateHomeDiv = document.createElement('div');
-    navigateHomeDiv.classList.add('customButton');
     let navigateHomeLink = document.createElement('a');
+    navigateHomeLink.classList.add('btn', 'btn-outline-primary');
     navigateHomeLink.href = './';
-    navigateHomeLink.innerHTML = '<i class="fas fa-home"></i> Home';
-    navigateHomeDiv.appendChild(navigateHomeLink);
-    toolbarContainer.appendChild(navigateHomeDiv);
+    navigateHomeLink.innerHTML =
+        '<i class="fas fa-home customButtonIcon"></i>Home';
+    toolbarContainer.appendChild(navigateHomeLink);
 
     let fileLoadButton = new UploadFileButton(toolbarContainer, init, bigStyle);
     let tabularData: TabularData = TabularData.FromString(data);
@@ -65,8 +64,8 @@ let init = (data: string, filename: string) => {
     ignoreDropdown.drawSetup();
     highlightDropdown.drawSetup();
     document.title = filename;
-    uploadOnlyContainerOuter.classList.add('noDisp');
-    outerContainer.classList.remove('noDisp');
+    uploadOnlyContainerOuter.classList.add('d-none');
+    outerContainer.classList.remove('d-none');
 };
 
 let urlParams = new URLSearchParams(document.location.search);

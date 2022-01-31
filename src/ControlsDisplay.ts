@@ -36,8 +36,6 @@ export class ControlsDisplay {
         this._controlsContainer = controlsContainer;
         this._descriptionContainer = descriptionContainer;
         this._dataTableContainer = dataTableContainer;
-        this._showSettings = false;
-        this._showDescriptions = true;
     }
 
     private _toolbarContainer: HTMLElement;
@@ -65,16 +63,6 @@ export class ControlsDisplay {
         return this._data;
     }
 
-    private _showSettings: boolean;
-    public get showSettings(): boolean {
-        return this._showSettings;
-    }
-
-    private _showDescriptions: boolean;
-    public get showDescriptions(): boolean {
-        return this._showDescriptions;
-    }
-
     public SetData(data: TabularData, chartsShown: boolean[]): void {
         this._data = data;
         this._chartsShown = chartsShown;
@@ -84,6 +72,7 @@ export class ControlsDisplay {
         let settingsButton = this.createToolbarButton(
             'Settings',
             'settingsButton',
+            'controlsContainer',
             ['fas', 'fa-cogs'],
             (e: MouseEvent) => {
                 this.toggleControlsPanel();
@@ -94,14 +83,14 @@ export class ControlsDisplay {
         let descriptionsButton = this.createToolbarButton(
             'Descriptions',
             'descriptionsButton',
+            'description',
             ['fas', 'fa-info-circle'],
             (e: MouseEvent) => {
                 this.toggleDescriptions();
             }
         );
-        descriptionsButton.classList.add('selected');
+        // descriptionsButton.classList.add('selected');
         this._toolbarContainer.appendChild(descriptionsButton);
-        this.showControlsPanel();
         this.drawDataColumnRows(tabularData.columnList);
         this.drawSummaryRows(tabularData);
         this.attachChartControls();
@@ -113,40 +102,37 @@ export class ControlsDisplay {
     private createToolbarButton(
         label: string,
         ID: string,
+        collapseTargetID: string,
         iconClasses: string[],
         callback: (e: MouseEvent) => void
     ): HTMLButtonElement {
-        let settingsButton = document.createElement('button');
+        let toolbarButton = document.createElement('button');
 
         let icon = document.createElement('i');
         icon.classList.add(...iconClasses);
         icon.classList.add('customButtonIcon');
-        settingsButton.appendChild(icon);
+        toolbarButton.appendChild(icon);
 
         let settingsButtonText = document.createElement('span');
         settingsButtonText.innerHTML = label;
-        settingsButton.appendChild(settingsButtonText);
+        toolbarButton.appendChild(settingsButtonText);
 
-        settingsButton.id = ID;
-        settingsButton.classList.add('customButton');
-        settingsButton.addEventListener('click', e => {
+        toolbarButton.id = ID;
+        toolbarButton.setAttribute('data-bs-toggle', 'collapse');
+        toolbarButton.setAttribute('data-bs-target', `#${collapseTargetID}`);
+        toolbarButton.classList.add('btn', 'btn-outline-primary');
+        toolbarButton.classList.add('selected');
+        toolbarButton.addEventListener('click', e => {
             callback(e);
         });
-        return settingsButton;
+        return toolbarButton;
     }
 
     private drawSummaryRows(tabularData: TabularData) {
         document.getElementById('numberOfRecords').innerHTML =
-            '# of records: ' + tabularData.rowLength;
+            'Rows: ' + tabularData.rowLength;
         document.getElementById('numberOfColumns').innerHTML =
-            '# of columns: ' + tabularData.columnList.length;
-    }
-
-    public static updateCurrentSummary(data: TabularData) {
-        document.getElementById('currentNumberOfRecords').innerHTML =
-            '# of records: ' + data.rowLength;
-        document.getElementById('currentNumberOfColumns').innerHTML =
-            '# of columns: ' + data.columnList.length;
+            'Columns: ' + tabularData.columnList.length;
     }
 
     private drawDataColumnRows(columnList: Column<String | Number>[]): void {
@@ -168,11 +154,15 @@ export class ControlsDisplay {
             let label = document.createElement('label');
             label.innerHTML = column.id;
             label.htmlFor = uniqueId;
-            label.classList.add('controlsLabel');
-            label.classList.add('form-check-label');
+            label.classList.add(
+                'controlsLabel',
+                'form-check-label',
+                'fs-6',
+                'align-bottom'
+            );
 
             let div = document.createElement('div');
-            div.classList.add('form-check', 'form-switch');
+            div.classList.add('form-check');
             div.appendChild(input);
             div.appendChild(label);
             parentDiv.appendChild(div);
@@ -196,48 +186,16 @@ export class ControlsDisplay {
     }
 
     private toggleControlsPanel(): void {
-        if (this.showSettings) {
-            this.hideControlsPanel();
-        } else {
-            this.showControlsPanel();
-        }
-    }
-
-    private showControlsPanel(): void {
-        const settingsContainerWidth = 250;
-        const padding = 5 + 2 + 7;
-        this._controlsContainer.style.width = `${settingsContainerWidth}px`;
-        this._controlsContainer.style.borderWidth = '1px';
-        this._descriptionContainer.style.marginLeft = `${
-            settingsContainerWidth + padding
-        }px`;
-        this._dataTableContainer.style.marginLeft = `${
-            settingsContainerWidth + padding
-        }px`;
-        document.getElementById('settingsButton').classList.add('selected');
-        this._showSettings = true;
-    }
-
-    private hideControlsPanel(): void {
-        const padding = 7;
-        this._controlsContainer.style.width = '0px';
-        this._controlsContainer.style.borderWidth = '0px';
-        this._descriptionContainer.style.marginLeft = `${padding}px`;
-        this._dataTableContainer.style.marginLeft = `${padding}px`;
-        document.getElementById('settingsButton').classList.remove('selected');
-        this._showSettings = false;
+        ControlsDisplay.toggleElementClass('settingsButton', 'selected');
     }
 
     private toggleDescriptions(): void {
-        this._showDescriptions = !this.showDescriptions;
-        const toggleButton = document.getElementById('descriptionsButton');
-        if (this.showDescriptions) {
-            this.descriptionContainer.classList.remove('noDisp');
-            toggleButton.classList.add('selected');
-        } else {
-            this.descriptionContainer.classList.add('noDisp');
-            toggleButton.classList.remove('selected');
-        }
+        ControlsDisplay.toggleElementClass('descriptionsButton', 'selected');
+    }
+
+    private static toggleElementClass(id: string, cssClass: string): void {
+        const toggleButton = document.getElementById(id);
+        toggleButton.classList.toggle(cssClass);
     }
 
     public attachChartControls(): void {
@@ -388,12 +346,12 @@ export class ControlsDisplay {
 
             const lastIndex = this.data.columnList.length + LINEUP_COL_COUNT;
             for (let j = LINEUP_COL_COUNT; j < lastIndex; j++) {
-                d3.select(`#${chartKey}-col${j}`).classed('noDisp', !visible);
+                d3.select(`#${chartKey}-col${j}`).classed('d-none', !visible);
             }
         }
 
         d3.selectAll('.item-option-container')
             .data(this.chartsShown)
-            .classed('noDisp', d => !d);
+            .classed('d-none', d => !d);
     }
 }

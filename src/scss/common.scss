@@ -1,0 +1,120 @@
+@import './variables.scss';
+
+* {
+    font-family: 'Josefin Sans', sans-serif;
+}
+.uploadOnlyContainerOuter {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.btn.selected {
+    background: $primary-light;
+    color: black;
+}
+
+.customButtonIcon {
+    padding-right: 6px;
+}
+
+.customButtonIconRight {
+    padding-left: 8px;
+}
+
+.dropdown-item {
+    padding: 4px;
+    cursor: pointer;
+    border-bottom: 1px solid #eeeeee;
+    display: flex;
+    white-space: nowrap;
+    align-items: baseline;
+    color: #5c5c5c;
+    transition: background-color 0.4s;
+    font-size: 9pt;
+}
+
+.dropdown-item:hover {
+    background-color: #e5e5e5;
+}
+
+.column-label {
+    border-color: #565656 !important;
+}
+
+.selection-label {
+    margin-right: 5px;
+    margin-left: 5px;
+    padding: 3px 4px 2px 4px;
+    border-radius: 2px;
+    font-weight: 800;
+    font-size: 10pt;
+    color: black;
+    border: solid 1px;
+}
+
+.selection-label.value {
+    background-color: $chart-fv-med;
+    border: solid $chart-fv 1px;
+    border-radius: 1px;
+}
+
+.selection-label.nGram {
+    border-color: $chart-ng;
+    background-color: $chart-ng-med;
+    border-radius: 3px;
+}
+
+.selection-label.leadingDigit {
+    border-color: $chart-ldf;
+    background-color: $chart-ldf-med;
+    border-radius: 5px;
+}
+
+.trash-container {
+    opacity: 0;
+    transition: opacity 0.4s;
+    color: #3c3c3c;
+    margin-left: 4px;
+    margin-right: 4px;
+    font-size: 11pt;
+}
+
+.dropdown-item:hover .trash-container {
+    opacity: 1;
+}
+
+.outerContextMenu {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    z-index: 1;
+}
+
+.innerContextMenu {
+    display: flex;
+    flex-direction: column;
+    border: solid black 1px;
+    position: absolute;
+}
+
+.innerContextMenu > button {
+    background: white;
+    border: none;
+    text-align: left;
+    padding: 3px;
+    padding-right: 12px;
+    cursor: pointer;
+}
+.innerContextMenu > button:hover {
+    background: #e5e5e5;
+}
+
+.flex-basis-0 {
+    flex-basis: 0 !important;
+}

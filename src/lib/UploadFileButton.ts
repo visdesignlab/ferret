@@ -33,7 +33,7 @@ export class UploadFileButton {
 
     private draw(): void {
         this._fileInputElement = document.createElement('input');
-        this.fileInputElement.classList.add('noDisp');
+        this.fileInputElement.classList.add('d-none');
         let uniqueId: string = UploadFileButton.getUniqueId();
 
         this.fileInputElement.id = uniqueId;
@@ -41,7 +41,7 @@ export class UploadFileButton {
         this.fileInputElement.accept = 'text/plain, .csv';
 
         let labelEl: HTMLLabelElement = document.createElement('label');
-        labelEl.classList.add('customButton');
+        labelEl.classList.add('btn', 'btn-outline-primary');
         labelEl.htmlFor = uniqueId;
 
         let icon = document.createElement('i');

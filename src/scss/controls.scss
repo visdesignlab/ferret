@@ -1,0 +1,149 @@
+@import './variables.scss';
+
+.item {
+    padding: 1px;
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    user-select: none;
+}
+
+.item-option {
+    margin-top: 5px;
+}
+
+.customButtonEyeIcon {
+    padding: 4px;
+    cursor: pointer;
+    margin-right: 5px;
+    border-radius: 3px;
+    border: solid #eeeeee 2px;
+}
+
+.customButtonEyeIcon.chart-vd {
+    background-color: $chart-vd;
+    border-color: $chart-vd;
+}
+.customButtonEyeIcon.chart-fv {
+    background-color: $chart-fv;
+    border-color: $chart-fv;
+}
+.customButtonEyeIcon.chart-r {
+    background-color: $chart-r;
+    border-color: $chart-r;
+}
+.customButtonEyeIcon.chart-ng {
+    background-color: $chart-ng;
+    border-color: $chart-ng;
+}
+.customButtonEyeIcon.chart-ldf {
+    background-color: $chart-ldf;
+    border-color: $chart-ldf;
+}
+
+.customButtonEyeIcon.hidden {
+    background-color: #eeeeee !important;
+    border-color: #eeeeee !important;
+}
+
+.customButtonEyeIcon:hover {
+    border-color: grey;
+}
+
+.customButtonEyeIcon.hidden:hover {
+    border-color: grey !important;
+}
+
+.item.chart-vd {
+    border: 1px solid $chart-vd;
+}
+.item.chart-vd:hover {
+    background-color: $chart-vd-light;
+}
+.item.chart-fv {
+    border: 1px solid $chart-fv;
+}
+.item.chart-fv:hover {
+    background-color: $chart-fv-light;
+}
+.item.chart-r {
+    border: 1px solid $chart-r;
+}
+.item.chart-r:hover {
+    background-color: $chart-r-light;
+}
+.item.chart-ng {
+    border: 1px solid $chart-ng;
+}
+.item.chart-ng:hover {
+    background-color: $chart-ng-light;
+}
+.item.chart-ldf {
+    border: 1px solid $chart-ldf;
+}
+.item.chart-ldf:hover {
+    background-color: $chart-ldf-light;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #fff;
+    min-width: 180px;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+    border: solid black 1px;
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-content a:hover {
+    background-color: #ddd;
+}
+
+.show {
+    display: block;
+}
+
+.current-index {
+    background: #272727;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    margin: 6px;
+    border: solid black 1px;
+}
+
+.current-index.disable {
+    background: #eeeeee;
+}
+
+.hide {
+    visibility: hidden;
+}
+// CSS modified from bootstrap example: https://getbootstrap.com/docs/5.1/examples/sidebars/
+.btn-toggle {
+    display: inline-flex;
+}
+
+.btn-toggle::before {
+    width: 1.25em;
+    line-height: 0;
+    content: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='rgba%280,0,0,.5%29' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M5 14l6-6-6-6'/%3e%3c/svg%3e");
+    transition: transform 0.35s ease;
+    transform-origin: 0.5em 50%;
+    display: inline-block;
+}
+
+.btn-toggle[aria-expanded='true']::before {
+    transform: rotate(90deg);
+}
+
+// overwrite just the color for btn-light hover
+.btn-light:hover {
+    background: $button-hover-light !important;
+}

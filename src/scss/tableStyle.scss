@@ -1,0 +1,96 @@
+@import './variables.scss';
+
+.lineupContainerOuter {
+    transition: 0.25s;
+    background: white;
+    flex: 1 0 auto;
+    position: relative;
+    min-height: 75vh;
+}
+
+.lineupContainer {
+    position: absolute !important;
+    left: 5px;
+    right: 5px;
+    top: 5px;
+    bottom: 5px;
+}
+
+.vizContainer {
+    height: auto !important;
+    display: flex !important;
+    flex-direction: column;
+    align-items: center;
+}
+
+.innerVizContainer {
+    max-height: 120px;
+    overflow: scroll;
+}
+
+.ferretCell {
+    text-align: right;
+    padding-right: 1px;
+}
+
+.ferretCellValue {
+    font-family: 'Montserrat';
+}
+
+.paddingZeros {
+    color: #d3d3d3;
+    font-family: 'Montserrat';
+}
+
+.ignoredCell .ferretCellValue {
+    text-decoration: line-through;
+    opacity: 0.3;
+}
+
+.ferretCellValue .highlight {
+    border-width: 1px;
+    border-style: solid;
+    border-top-width: 0px;
+    border-bottom-width: 0px;
+    font-family: 'Montserrat';
+    margin-right: -1px;
+}
+
+.ferretCellValue .highlight.value {
+    border-color: $chart-fv;
+    background-color: $chart-fv-med;
+    border-radius: 1px;
+}
+
+.ferretCellValue .highlight.ngram {
+    border-color: $chart-ng;
+    background-color: $chart-ng-med;
+    border-radius: 3px;
+}
+
+.ferretCellValue .highlight.leadingDigit {
+    border-color: $chart-ldf;
+    background-color: $chart-ldf-med;
+    border-radius: 5px;
+}
+
+/* LINEUP OVERWRITES */
+
+/* change orange outline bar into grey */
+.le-tr.lu-selected {
+    box-shadow: 0 0 0 2px #d1d0d0 !important;
+}
+.le-tr:hover,
+.le-tr.le-highlighted {
+    box-shadow: 0 0 0 2px #d1d0d0 !important;
+}
+
+/* make string column right-aligned */
+.le-td.lu-renderer-string {
+    flex-direction: row-reverse;
+}
+
+/* make the teh table text font consistent */
+.le-tbody * {
+    font-family: 'Montserrat';
+}
