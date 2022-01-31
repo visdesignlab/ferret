@@ -154,8 +154,12 @@ export class ControlsDisplay {
             let label = document.createElement('label');
             label.innerHTML = column.id;
             label.htmlFor = uniqueId;
-            label.classList.add('controlsLabel');
-            label.classList.add('form-check-label');
+            label.classList.add(
+                'controlsLabel',
+                'form-check-label',
+                'fs-6',
+                'align-bottom'
+            );
 
             let div = document.createElement('div');
             div.classList.add('form-check');
