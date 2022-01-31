@@ -9,6 +9,7 @@
   "author": "Devin Lange",
   "license": "ISC",
   "devDependencies": {
+    "@types/bootstrap": "^5.1.9",
     "browserify": "^16.5.0",
     "fancy-log": "^1.3.3",
     "gulp": "^4.0.2",
