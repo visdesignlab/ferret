@@ -158,7 +158,7 @@ export class ControlsDisplay {
             label.classList.add('form-check-label');
 
             let div = document.createElement('div');
-            div.classList.add('form-check', 'form-switch');
+            div.classList.add('form-check');
             div.appendChild(input);
             div.appendChild(label);
             parentDiv.appendChild(div);
