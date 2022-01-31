@@ -28,30 +28,6 @@
     overflow: scroll;
 }
 
-.expandCollapseTail {
-    display: flex;
-    flex-direction: column;
-}
-
-.expandCollapseTail > button {
-    border: none;
-    background: white;
-    border-radius: 3px;
-    font-size: 9pt;
-    user-select: none;
-    cursor: pointer;
-    padding: 3px 5px;
-    color: #666666;
-    text-decoration: none;
-    margin: 1px;
-    margin-bottom: 5px;
-    margin-top: -5px;
-}
-
-.expandCollapseTail > button:hover {
-    background: $button-hover-light;
-}
-
 .ferretCell {
     text-align: right;
     padding-right: 1px;

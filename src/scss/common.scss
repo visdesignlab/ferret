@@ -1,17 +1,8 @@
 @import './variables.scss';
 
 * {
-    margin: 0px;
-    padding: 0px;
     font-family: 'Josefin Sans', sans-serif;
 }
-
-.outerContainer {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-}
-
 .uploadOnlyContainerOuter {
     width: 100vw;
     height: 100vh;
@@ -19,42 +10,6 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-}
-
-.customButton {
-    border: solid #212121 1px;
-    margin: 2px;
-    flex-basis: 146px;
-    text-align: center;
-    cursor: pointer;
-    border-radius: 3px;
-    font-size: 12pt;
-    user-select: none;
-    padding: 5px;
-    background: white;
-}
-
-.customButton a,
-.customButton a:visited {
-    color: black;
-    text-decoration: none;
-}
-
-.customButton:active a,
-.customButton:active a:visited {
-    color: white;
-}
-
-.big .customButton {
-    border-style: dashed;
-    padding: 200px;
-    font-size: 32pt;
-}
-
-.customButton:active,
-.selected {
-    background: #212121;
-    color: white;
 }
 
 .btn.selected {
@@ -66,30 +21,8 @@
     padding-right: 6px;
 }
 
-.customButtonSubIcon {
-    padding-right: 6px;
-    color: #212121;
-    font-size: 10px;
-}
-
 .customButtonIconRight {
     padding-left: 8px;
-}
-
-// .buttonContainer {
-//     display: flex;
-//     margin-top: 5px;
-//     margin-left: 5px;
-// }
-
-.buttonContainer.big {
-    flex-direction: row;
-    justify-content: center;
-}
-
-.filterContainer {
-    transition: 0.5s;
-    margin-left: 0px;
 }
 
 .dropdown-item {
@@ -109,7 +42,7 @@
 }
 
 .column-label {
-    border: solid #565656 1px;
+    border-color: #565656 !important;
 }
 
 .selection-label {
@@ -152,15 +85,6 @@
 
 .dropdown-item:hover .trash-container {
     opacity: 1;
-}
-
-.description {
-    margin-top: 5px;
-    transition: 0.25s;
-    margin-left: 0px;
-    padding: 5px;
-    border: 1px solid #d0d0d0;
-    background: white;
 }
 
 .outerContextMenu {

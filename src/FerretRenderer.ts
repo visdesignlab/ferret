@@ -696,7 +696,7 @@ export default class FerretRenderer implements ICellRendererFactory {
             .on('click', d => d.func())
             .html(d => `<i class="fas fa-${d.iconKey}"></i> ` + d.label);
 
-        d3.select('#outerContextMenu').classed('noDisp', false);
+        d3.select('#outerContextMenu').classed('d-none', false);
     }
 
     private async getMatchingRowIndices(
@@ -787,6 +787,6 @@ export default class FerretRenderer implements ICellRendererFactory {
     }
 
     private hideContextMenu(): void {
-        d3.select('#outerContextMenu').classed('noDisp', true);
+        d3.select('#outerContextMenu').classed('d-none', true);
     }
 }

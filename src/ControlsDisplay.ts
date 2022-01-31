@@ -346,12 +346,12 @@ export class ControlsDisplay {
 
             const lastIndex = this.data.columnList.length + LINEUP_COL_COUNT;
             for (let j = LINEUP_COL_COUNT; j < lastIndex; j++) {
-                d3.select(`#${chartKey}-col${j}`).classed('noDisp', !visible);
+                d3.select(`#${chartKey}-col${j}`).classed('d-none', !visible);
             }
         }
 
         d3.selectAll('.item-option-container')
             .data(this.chartsShown)
-            .classed('noDisp', d => !d);
+            .classed('d-none', d => !d);
     }
 }

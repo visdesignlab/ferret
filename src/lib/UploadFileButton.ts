@@ -33,7 +33,7 @@ export class UploadFileButton {
 
     private draw(): void {
         this._fileInputElement = document.createElement('input');
-        this.fileInputElement.classList.add('noDisp');
+        this.fileInputElement.classList.add('d-none');
         let uniqueId: string = UploadFileButton.getUniqueId();
 
         this.fileInputElement.id = uniqueId;

@@ -46,7 +46,8 @@ let init = (data: string, filename: string) => {
     let navigateHomeLink = document.createElement('a');
     navigateHomeLink.classList.add('btn', 'btn-outline-primary');
     navigateHomeLink.href = './';
-    navigateHomeLink.innerHTML = '<i class="fas fa-home"></i> Home';
+    navigateHomeLink.innerHTML =
+        '<i class="fas fa-home customButtonIcon"></i>Home';
     toolbarContainer.appendChild(navigateHomeLink);
 
     let fileLoadButton = new UploadFileButton(toolbarContainer, init, bigStyle);
@@ -63,8 +64,8 @@ let init = (data: string, filename: string) => {
     ignoreDropdown.drawSetup();
     highlightDropdown.drawSetup();
     document.title = filename;
-    uploadOnlyContainerOuter.classList.add('noDisp');
-    outerContainer.classList.remove('noDisp');
+    uploadOnlyContainerOuter.classList.add('d-none');
+    outerContainer.classList.remove('d-none');
 };
 
 let urlParams = new URLSearchParams(document.location.search);
