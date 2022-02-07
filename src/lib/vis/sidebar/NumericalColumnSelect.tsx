@@ -94,7 +94,7 @@ export function NumericalColumnSelect(props: NumericalColumnSelectProps) {
     return (
         <>
             <label className="pt-2 pb-1">Numerical Columns</label>
-            {/* <SortableSelect
+            <SortableSelect
                 useDragHandle
                 axis="xy"
                 onSortEnd={onSortEnd}
@@ -102,7 +102,7 @@ export function NumericalColumnSelect(props: NumericalColumnSelectProps) {
                 getHelperDimensions={({ node }) => node.getBoundingClientRect()}
                 closeMenuOnSelect={false}
                 isMulti
-                formatOptionLabel={formatOptionLabel}
+                // formatOptionLabel={formatOptionLabel}
                 getOptionLabel={option => option.name}
                 getOptionValue={option => option.id}
                 onChange={(e: ColumnInfo[]) => {
@@ -115,7 +115,7 @@ export function NumericalColumnSelect(props: NumericalColumnSelectProps) {
                 name="numColumns"
                 options={selectNumOptions}
                 value={props.currentSelected}
-            /> */}
+            />
         </>
     );
 }

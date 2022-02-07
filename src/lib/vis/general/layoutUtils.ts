@@ -1,6 +1,7 @@
 // import Plotly from 'plotly.js-dist-min';
 import { PlotlyInfo, VisColumn } from '../interfaces';
-import Plotly from 'plotly.js';
+// import { Plotly } from '../Plot';
+import Plotly from 'plotly.js-dist-min';
 
 /**
  * Truncate long texts (e.g., to use as axes title)

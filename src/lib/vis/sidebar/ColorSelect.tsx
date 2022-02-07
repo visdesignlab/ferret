@@ -8,7 +8,8 @@ import {
     VisNumericalColumn,
     VisColumn
 } from '../interfaces';
-import { formatOptionLabel, getCol } from './utils';
+// import { formatOptionLabel, getCol } from './utils';
+import { getCol } from './utils';
 import { NumericalColorButtons } from './NumericalColorButtons';
 
 interface ColorSelectProps {
@@ -33,7 +34,7 @@ export function ColorSelect({
                 isClearable
                 onChange={e => callback(e)}
                 name={'colorSelect'}
-                formatOptionLabel={formatOptionLabel}
+                // formatOptionLabel={formatOptionLabel}
                 getOptionLabel={option => option.name}
                 getOptionValue={option => option.id}
                 options={columns.map(c => c.info)}

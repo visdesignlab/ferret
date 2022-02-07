@@ -7,7 +7,7 @@ import {
     VisNumericalColumn,
     VisColumn
 } from '../interfaces';
-import { formatOptionLabel } from './utils';
+// import { formatOptionLabel } from './utils';
 
 interface GroupSelectProps {
     callback: (c: ColumnInfo) => void;
@@ -23,7 +23,7 @@ export function GroupSelect(props: GroupSelectProps) {
                 isClearable
                 onChange={e => props.callback(e)}
                 name={'groupSelect'}
-                formatOptionLabel={formatOptionLabel}
+                // formatOptionLabel={formatOptionLabel}
                 getOptionLabel={option => option.name}
                 getOptionValue={option => option.id}
                 options={props.columns

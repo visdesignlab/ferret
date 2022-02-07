@@ -6,7 +6,7 @@ export * from './sidebar';
 export * from './strip';
 export * from './violin';
 export * from './interfaces';
-export * from './Plot';
+// export * from './Plot';
 export * from './Vis';
 export * from './LineupVisWrapper';
 export * from './util';

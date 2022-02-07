@@ -7,7 +7,7 @@ import {
     VisNumericalColumn,
     VisColumn
 } from '../interfaces';
-import { formatOptionLabel } from './utils';
+// import { formatOptionLabel } from './utils';
 
 interface ShapeSelectProps {
     callback: (shape: ColumnInfo) => void;
@@ -23,7 +23,7 @@ export function ShapeSelect(props: ShapeSelectProps) {
                 isClearable
                 onChange={e => props.callback(e)}
                 name={'shapeSelect'}
-                formatOptionLabel={formatOptionLabel}
+                // formatOptionLabel={formatOptionLabel}
                 getOptionLabel={option => option.name}
                 getOptionValue={option => option.id}
                 options={props.columns

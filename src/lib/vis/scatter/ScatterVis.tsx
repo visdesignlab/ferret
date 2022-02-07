@@ -17,7 +17,9 @@ import {
     VisTypeSelect,
     WarningMessage
 } from '../sidebar';
-import { PlotlyComponent, Plotly } from '../Plot';
+// import { PlotlyComponent, Plotly } from '../Plot';
+import Plotly from 'plotly.js-dist-min';
+import Plot from 'react-plotly.js';
 import { InvalidCols } from '../general';
 import d3 from 'd3';
 import {
@@ -171,7 +173,7 @@ export function ScatterVis({
             >
                 {mergedExtensions.prePlot}
                 {traceStatus === 'success' && traces?.plots.length > 0 ? (
-                    <PlotlyComponent
+                    <Plot
                         divId={`plotlyDiv${id}`}
                         data={[
                             ...traces.plots.map(p => p.data),

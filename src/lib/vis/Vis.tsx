@@ -83,18 +83,18 @@ export function Vis({
         if (isScatter(visConfig)) {
             setVisConfig(scatterMergeDefaultConfig(columns, visConfig));
         }
-        // if (isViolin(visConfig)) {
-        //     setVisConfig(violinMergeDefaultConfig(columns, visConfig));
-        // }
-        // if (isStrip(visConfig)) {
-        //     setVisConfig(stripMergeDefaultConfig(columns, visConfig));
-        // }
-        // if (isPCP(visConfig)) {
-        //     setVisConfig(pcpMergeDefaultConfig(columns, visConfig));
-        // }
-        // if (isBar(visConfig)) {
-        //     setVisConfig(barMergeDefaultConfig(columns, visConfig));
-        // }
+        if (isViolin(visConfig)) {
+            setVisConfig(violinMergeDefaultConfig(columns, visConfig));
+        }
+        if (isStrip(visConfig)) {
+            setVisConfig(stripMergeDefaultConfig(columns, visConfig));
+        }
+        if (isPCP(visConfig)) {
+            setVisConfig(pcpMergeDefaultConfig(columns, visConfig));
+        }
+        if (isBar(visConfig)) {
+            setVisConfig(barMergeDefaultConfig(columns, visConfig));
+        }
     }, [visConfig.type]);
 
     const colorScale = React.useMemo(() => {
@@ -128,7 +128,7 @@ export function Vis({
                     scales={scales}
                 />
             ) : null}
-            {/* 
+
             {isViolin(visConfig) ? (
                 <ViolinVis
                     config={visConfig}
@@ -167,7 +167,7 @@ export function Vis({
                     columns={columns}
                     scales={scales}
                 />
-            ) : null} */}
+            ) : null}
         </>
     );
 }
