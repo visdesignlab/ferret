@@ -13,5 +13,5 @@ Installation steps:
 
 `npm install`
 
-To build:
+To build/run:
 `gulp`
