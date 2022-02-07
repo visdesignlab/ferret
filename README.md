@@ -15,6 +15,3 @@ Installation steps:
 
 To build:
 `gulp`
-
-To run:
-`python3 -m http.server`
