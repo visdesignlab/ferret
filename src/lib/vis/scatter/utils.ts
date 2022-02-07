@@ -11,7 +11,7 @@ import {
 } from '../interfaces';
 import { getCol } from '../sidebar';
 import { merge } from 'lodash';
-import d3 from 'd3';
+import * as d3 from 'd3';
 import { getCssValue } from '../util';
 import {
     resolveColumnValues,

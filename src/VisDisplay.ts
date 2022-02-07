@@ -41,12 +41,20 @@ export class VisDisplay {
             column: T
         ) => {
             // TODO: Refactor to use _visyn_id instead.
-            return data.map((d, i) => ({ id: d.v._id, val: column.getRaw(d) }));
+            return data.map((d, i) => ({
+                id: d.v['0'],
+                val: column.getRaw(d)
+            }));
         };
 
         const getColumnValue = async <T extends ValueColumn<any>>(
             column: T
         ) => {
+            const data: IDataRow[] = [];
+            const indices = ranking.getOrder();
+            for (let i of indices) {
+                data[i] = await lineup.data.getRow(i);
+            }
             if (column.isLoaded()) {
                 return mapData(data, column);
             }
@@ -63,12 +71,8 @@ export class VisDisplay {
                 });
             });
         };
-
         const ranking = lineup.data.getFirstRanking();
-        const data: IDataRow[] = [];
-        for (let i of ranking.getOrder()) {
-            data[i] = await lineup.data.getRow(i);
-        }
+
         // const data = lineup.data.getRow(5)
         // const data = lineup.data.viewRawRows(ranking.getOrder());
         const cols: VisColumn[] = [];

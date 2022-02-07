@@ -16,7 +16,7 @@ import {
 import Plotly from 'plotly.js-dist-min';
 import Plot from 'react-plotly.js';
 import { InvalidCols } from '../general';
-import d3 from 'd3';
+import * as d3 from 'd3';
 import { beautifyLayout } from '../general/layoutUtils';
 import { merge } from 'lodash';
 import { createStripTraces, IStripConfig } from './utils';
