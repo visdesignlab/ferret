@@ -1,7 +1,6 @@
 {
     "files": ["src/main.ts"],
     "compilerOptions": {
-        // "module": "ES2020",
         "target": "ES2019",
         "importHelpers": true,
         "sourceMap": true,
@@ -16,6 +15,5 @@
         "resolveJsonModule": true,
         "allowSyntheticDefaultImports": true,
         "preserveWatchOutput": true
-    },
-    "include": ["src/*.ts", "src/**/*.ts", "src/**/*.tsx", "tsd.d.ts"]
+    }
 }
