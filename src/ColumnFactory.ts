@@ -42,6 +42,15 @@ export class ColumnFactory {
         return col;
     }
 
+    public static Count(size: number, name: string): Column<number> {
+        const data = Array(size)
+            .fill(null)
+            .map((_d, i) => i + 1);
+        const col: Column<number> = new ColumnNumeric(data);
+        col.id = name;
+        return col;
+    }
+
     private static isNumeric(val: string): boolean {
         if (val === '') {
             return false;
