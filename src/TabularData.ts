@@ -13,15 +13,17 @@ export class TabularData {
     }
 
     public static FromDSVRowArray(data: d3.DSVRowArray<string>): TabularData {
-        let tabularData = new TabularData();
+        const tabularData = new TabularData();
         for (let header of data.columns) {
-            let column = ColumnFactory.FromDSVRowArray(data, header);
+            const column = ColumnFactory.FromDSVRowArray(data, header);
             tabularData.columnList.push(column);
         }
         tabularData._rowLength = d3.max(
             tabularData.columnList,
             d => d.values.length
         );
+        const rowColumn = ColumnFactory.Count(tabularData.rowLength, 'ROW');
+        tabularData.columnList.unshift(rowColumn);
         return tabularData;
     }
 
