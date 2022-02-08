@@ -7,7 +7,7 @@ import {
     IVisConfig
 } from '../interfaces';
 // import { PlotlyComponent, Plotly } from '../Plot';
-import Plotly from 'plotly.js-dist-min';
+import * as Plotly from 'plotly.js-dist-min';
 import Plot from 'react-plotly.js';
 import { InvalidCols } from '../general';
 import * as d3 from 'd3';

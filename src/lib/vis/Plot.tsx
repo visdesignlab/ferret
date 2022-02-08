@@ -1,5 +1,5 @@
 // // Use minified bundle: https://github.com/plotly/react-plotly.js#customizing-the-plotlyjs-bundle
-// import Plotly from 'plotly.js-dist-min';
+// import * as Plotly from 'plotly.js-dist-min';;
 // // Use your own `Plotly` object
 // import createPlotlyComponent from 'react-plotly.js/factory';
 // // tslint:disable-next-line:variable-name

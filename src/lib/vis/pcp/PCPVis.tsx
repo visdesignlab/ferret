@@ -12,7 +12,7 @@ import {
     WarningMessage
 } from '../sidebar';
 // import { PlotlyComponent, Plotly } from '../Plot';
-import Plotly from 'plotly.js-dist-min';
+import * as Plotly from 'plotly.js-dist-min';
 import Plot from 'react-plotly.js';
 import { InvalidCols } from '../general';
 import { merge, uniqueId } from 'lodash';
@@ -68,15 +68,11 @@ export function PCPVis({
         const menu = document.getElementById(`generalVisBurgerMenu${id}`);
 
         menu.addEventListener('hidden.bs.collapse', () => {
-            Plotly.Plots.resize(
-                document.getElementById(`plotlyDiv${uniqueId}`)
-            );
+            Plotly.Plots.resize(document.getElementById(`plotlyDiv${id}`));
         });
 
         menu.addEventListener('shown.bs.collapse', () => {
-            Plotly.Plots.resize(
-                document.getElementById(`plotlyDiv${uniqueId}`)
-            );
+            Plotly.Plots.resize(document.getElementById(`plotlyDiv${id}`));
         });
     }, []);
 

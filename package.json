@@ -40,6 +40,8 @@
         "jquery": "^3.6.0",
         "lineupjs": "^4.2.0",
         "lodash": "^4.17.21",
+        "plotly.js": "^2.9.0",
+        "plotly.js-dist": "^2.9.0",
         "plotly.js-dist-min": "^2.8.3",
         "react": "^16.14.0",
         "react-dom": "^16.14.0",

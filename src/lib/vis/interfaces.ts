@@ -1,5 +1,5 @@
 // import { Plotly } from './Plot';
-import { Plotly } from 'plotly.js-dist-min';
+import * as Plotly from 'plotly.js-dist-min';
 import { IBarConfig } from './bar/utils';
 import { IPCPConfig } from './pcp/utils';
 import { IScatterConfig } from './scatter/utils';
