@@ -69,7 +69,7 @@ export class ControlsDisplay {
     }
 
     public drawControls(tabularData: TabularData): void {
-        let settingsButton = this.createToolbarButton(
+        const settingsButton = this.createToolbarButton(
             'Settings',
             'settingsButton',
             'controlsContainer',
@@ -80,17 +80,28 @@ export class ControlsDisplay {
         );
         this._toolbarContainer.appendChild(settingsButton);
 
-        let descriptionsButton = this.createToolbarButton(
+        const descriptionsButton = this.createToolbarButton(
             'Descriptions',
             'descriptionsButton',
-            'description',
+            'descriptions',
             ['fas', 'fa-info-circle'],
             (e: MouseEvent) => {
                 this.toggleDescriptions();
             }
         );
-        // descriptionsButton.classList.add('selected');
         this._toolbarContainer.appendChild(descriptionsButton);
+
+        const visualizationsButton = this.createToolbarButton(
+            'Visualizations',
+            'visualizationsButton',
+            'visualizations',
+            ['fas', 'fa-chart-area'],
+            (e: MouseEvent) => {
+                this.toggleVisualizations();
+            }
+        );
+        this._toolbarContainer.appendChild(visualizationsButton);
+
         this.drawDataColumnRows(tabularData.columnList);
         this.drawSummaryRows(tabularData);
         this.attachChartControls();
@@ -186,16 +197,30 @@ export class ControlsDisplay {
     }
 
     private toggleControlsPanel(): void {
-        ControlsDisplay.toggleElementClass('settingsButton', 'selected');
+        const settingsSidebarPresent = ControlsDisplay.toggleElementClass(
+            'settingsButton',
+            'selected'
+        );
+        const visContainer = document.getElementById('visualizations');
+        if (settingsSidebarPresent) {
+            visContainer.classList.replace('col-6', 'col-5');
+        } else {
+            visContainer.classList.replace('col-5', 'col-6');
+        }
     }
 
     private toggleDescriptions(): void {
         ControlsDisplay.toggleElementClass('descriptionsButton', 'selected');
     }
 
-    private static toggleElementClass(id: string, cssClass: string): void {
+    private toggleVisualizations(): void {
+        ControlsDisplay.toggleElementClass('visualizationsButton', 'selected');
+        ControlsDisplay.toggleElementClass('visualizations', 'd-flex');
+    }
+
+    private static toggleElementClass(id: string, cssClass: string): boolean {
         const toggleButton = document.getElementById(id);
-        toggleButton.classList.toggle(cssClass);
+        return toggleButton.classList.toggle(cssClass);
     }
 
     public attachChartControls(): void {

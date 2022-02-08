@@ -1,12 +1,21 @@
 {
     "files": ["src/main.ts"],
     "compilerOptions": {
-        "noImplicitAny": true,
-        "target": "es2019",
-        "allowSyntheticDefaultImports": true,
+        // "module": "ES2020",
+        "target": "ES2019",
+        "importHelpers": true,
+        "sourceMap": true,
+        "declaration": true,
         "moduleResolution": "node",
+        "jsx": "react",
+        "allowJs": true,
+        "experimentalDecorators": true,
+        "noImplicitAny": false,
+        "skipLibCheck": true,
+        "esModuleInterop": false,
         "resolveJsonModule": true,
-        "types": ["jquery"],
-        "downlevelIteration": true
-    }
+        "allowSyntheticDefaultImports": true,
+        "preserveWatchOutput": true
+    },
+    "include": ["src/*.ts", "src/**/*.ts", "src/**/*.tsx", "tsd.d.ts"]
 }

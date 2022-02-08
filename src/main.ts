@@ -2,6 +2,7 @@ import * as d3 from 'd3';
 import { UploadFileButton } from './lib/UploadFileButton';
 import { TabularData } from './TabularData';
 import { TableDisplay } from './TableDisplay';
+import { VisDisplay } from './VisDisplay';
 import { DescriptionDisplay } from './DescriptionDisplay';
 import { ControlsDisplay } from './ControlsDisplay';
 import { DropdownIgnore } from './DropdownIgnore';
@@ -9,6 +10,8 @@ import { DropdownHighlight } from './DropdownHighlight';
 
 let dataTableContainer = document.getElementById('lineupContainerOuter');
 let tableDisplay = new TableDisplay();
+let visContainer = document.getElementById('customChartContainer');
+let visDisplay = new VisDisplay(visContainer);
 
 let outerContainer = document.getElementById('outerContainer');
 let uploadOnlyContainerOuter = document.getElementById(
@@ -56,6 +59,7 @@ let init = (data: string, filename: string) => {
     const defaultVizShown = [true, false, false, false, false];
     controlsDisplay.SetData(tabularData, defaultVizShown);
     tableDisplay.SetData(tabularData);
+    visDisplay.SetData(tableDisplay.lineup);
     ignoreDropdown.SetData(tableDisplay.lineup);
     highlightDropdown.SetData(tableDisplay.lineup);
 

@@ -40,15 +40,6 @@ export class TableDisplay extends EventTarget {
         );
     }
 
-    private _container: HTMLElement;
-    public get container(): HTMLElement {
-        return this._container;
-    }
-
-    public SetContainer(container: HTMLElement): void {
-        this._container = container;
-    }
-
     private _data: TabularData;
     public get data(): TabularData {
         return this._data;

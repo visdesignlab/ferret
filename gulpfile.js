@@ -5,6 +5,7 @@ var browserSync = require('browser-sync').create();
 const concat = require('gulp-concat');
 const cleanCSS = require('gulp-clean-css');
 var browserify = require('browserify');
+// var babelify = require('babelify');
 var source = require('vinyl-source-stream');
 var watchify = require('watchify');
 var tsify = require('tsify');
@@ -20,7 +21,13 @@ var watchedBrowserify = watchify(
         entries: ['src/main.ts'],
         cache: {},
         packageCache: {}
-    }).plugin(tsify)
+    })
+        // .transform(
+        //     babelify.configure({
+        //         presets: ['es2015']
+        //     })
+        // )
+        .plugin(tsify)
 );
 
 gulp.task('copy-html', function () {
