@@ -8,8 +8,7 @@ import {
 import {
     CategoricalColumnSelect,
     NumericalColumnSelect,
-    VisTypeSelect,
-    WarningMessage
+    VisTypeSelect
 } from '../sidebar';
 // import { PlotlyComponent, Plotly } from '../Plot';
 import * as Plotly from 'plotly.js-dist-min';
@@ -151,7 +150,6 @@ export function PCPVis({
                     id={`generalVisBurgerMenu${id}`}
                 >
                     <div className="container pb-3" style={{ width: '20rem' }}>
-                        {/* <WarningMessage /> */}
                         <VisTypeSelect
                             callback={(type: ESupportedPlotlyVis) =>
                                 setConfig({ ...(config as any), type })

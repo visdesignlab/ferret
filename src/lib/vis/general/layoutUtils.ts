@@ -1,6 +1,4 @@
-// import * as Plotly from 'plotly.js-dist-min';;
 import { PlotlyInfo, VisColumn } from '../interfaces';
-// import { Plotly } from '../Plot';
 import * as Plotly from 'plotly.js-dist-min';
 
 /**

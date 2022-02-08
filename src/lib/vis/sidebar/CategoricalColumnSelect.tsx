@@ -1,7 +1,6 @@
 import * as React from 'react';
 import Select from 'react-select';
 import { ColumnInfo, EColumnTypes, VisColumn } from '../interfaces';
-// import { formatOptionLabel } from './utils';
 
 interface CategoricalColumnSelectProps {
     callback: (s: ColumnInfo[]) => void;
@@ -22,7 +21,6 @@ export function CategoricalColumnSelect(props: CategoricalColumnSelectProps) {
             <Select
                 closeMenuOnSelect={false}
                 isMulti
-                // formatOptionLabel={formatOptionLabel}
                 getOptionLabel={option => option.name}
                 getOptionValue={option => option.id}
                 onChange={e => props.callback(e.map(c => c))}

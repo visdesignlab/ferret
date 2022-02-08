@@ -6,7 +6,6 @@ import {
     VisColumn,
     IVisConfig
 } from '../interfaces';
-// import { PlotlyComponent, Plotly } from '../Plot';
 import * as Plotly from 'plotly.js-dist-min';
 import Plot from 'react-plotly.js';
 import { InvalidCols } from '../general';
@@ -28,8 +27,7 @@ import {
     CategoricalColumnSelect,
     GroupSelect,
     MultiplesSelect,
-    VisTypeSelect,
-    WarningMessage
+    VisTypeSelect
 } from '../sidebar';
 
 interface BarVisProps {
@@ -229,7 +227,6 @@ export function BarVis({
                     id={`generalVisBurgerMenu${uniqueId}`}
                 >
                     <div className="container pb-3" style={{ width: '20rem' }}>
-                        {/* <WarningMessage /> */}
                         <VisTypeSelect
                             callback={(type: ESupportedPlotlyVis) =>
                                 setConfig({ ...(config as any), type })

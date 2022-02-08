@@ -7,20 +7,6 @@ import {
     VisColumn
 } from '../interfaces';
 
-// export const formatOptionLabel = (option, ctx) => {
-//     return (
-//         <>
-//             <Highlighter
-//                 searchWords={[ctx.inputValue]}
-//                 autoEscape={true}
-//                 textToHighlight={option.name}
-//             />
-//             {option.description &&
-//                 <span className="small text-muted ms-1">{option.description}</span>}
-//         </>
-//     );
-// };
-
 export function getCol(
     columns: VisColumn[],
     info: ColumnInfo | null

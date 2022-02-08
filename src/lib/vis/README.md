@@ -1,9 +1,14 @@
 ## 'Vis'
 
-This package is primarily a react component that allows for the viewing of a number of different types of visualizations. Currently that includes Scatterplots, Bar plots, Strip plots, violin plots, and limited support of parallel coordinate plots. All plots include additional options that are a part of the UI of this component, and are built on top of plotly. 
+This package was copied and modified from https://github.com/datavisyn/tdp_core/tree/general-purpose-vis/src/vis
+
+It was copied around the state of this commit: https://github.com/datavisyn/tdp_core/tree/777dfca421470704a1a994a7c5e0c5f3e7ff9f1d
+
+This package is primarily a react component that allows for the viewing of a number of different types of visualizations. Currently that includes Scatterplots, Bar plots, Strip plots, violin plots, and limited support of parallel coordinate plots. All plots include additional options that are a part of the UI of this component, and are built on top of plotly.
 
 ### 'Props'
-Using this component in react is designed to be simple, with the only necessary prop being the data. The data must be an array of columns, with each column being either a NumericalColumn or a CategoricalColumn, with those definitions being 
+
+Using this component in react is designed to be simple, with the only necessary prop being the data. The data must be an array of columns, with each column being either a NumericalColumn or a CategoricalColumn, with those definitions being
 
 ```javascript
 export interface NumericalColumn {
@@ -37,7 +42,7 @@ export interface VisProps {
     /**
      * Optional Prop for identifying which points are selected. The keys of the map should be the same ids that are passed into the columns prop.
      */
-    selected?: {[key: number]: boolean};
+    selected?: { [key: number]: boolean };
     /**
      * Optional Prop for changing the colors that are used in color mapping. Defaults to the Datavisyn categorical color scheme
      */
@@ -61,14 +66,14 @@ Currently, there is no way to limit or edit the options that are presented withi
 
 ### 'Known Problems'
 
-A Few of the known problems/limitations. 
+A Few of the known problems/limitations.
 
-1. Labels are not always properly truncated, and if too many small multiples are created at once, this can cause problems. 
+1. Labels are not always properly truncated, and if too many small multiples are created at once, this can cause problems.
 2. Scatterplots numerical color scale does not have a legend
-3. Scatterplots shape mapping has too few shapes, quickly runs into duplicates. 
+3. Scatterplots shape mapping has too few shapes, quickly runs into duplicates.
 4. Only one filter can be applied at a time. Applying a second one simply erases the first. This is due to a limitation in how the LineupDataProvider creates global filters. will be solved in Ordino 2.0
-5. Adding extra categorical Columns to the Bar chart does nothing. Should instead be a single select dropdown. This is an easy fix but I just noticed it. 
-6. Parallel Coordinates are overall useless as they don't have any opacity applied to them, cant select. 
-7. Changing Opacity can get slow in the scatterplot if you have many points/plots. 
-8. Closing/opening the sidebar has a small delay before resizing the plotly canvas. 
-9. Should include an error boundary on the component, so that it doesnt unmount when an error is thrown. 
+5. Adding extra categorical Columns to the Bar chart does nothing. Should instead be a single select dropdown. This is an easy fix but I just noticed it.
+6. Parallel Coordinates are overall useless as they don't have any opacity applied to them, cant select.
+7. Changing Opacity can get slow in the scatterplot if you have many points/plots.
+8. Closing/opening the sidebar has a small delay before resizing the plotly canvas.
+9. Should include an error boundary on the component, so that it doesnt unmount when an error is thrown.

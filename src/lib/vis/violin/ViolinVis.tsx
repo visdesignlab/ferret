@@ -11,16 +11,13 @@ import {
     NumericalColumnSelect,
     ViolinOverlayButtons,
     VisTypeSelect
-    // WarningMessage
 } from '../sidebar';
-// import { PlotlyComponent, Plotly } from '../Plot';
 
 import * as Plotly from 'plotly.js-dist-min';
 import Plot from 'react-plotly.js';
 
 import { InvalidCols, beautifyLayout } from '../general';
 import * as d3 from 'd3';
-// import { beautifyLayout } from '../general/layoutUtils';
 import { createViolinTraces, IViolinConfig } from './utils';
 import { EViolinOverlay } from '../bar';
 import { merge } from 'lodash';
@@ -190,7 +187,6 @@ export function ViolinVis({
                     id={`generalVisBurgerMenu${uniqueId}`}
                 >
                     <div className="container pb-3" style={{ width: '20rem' }}>
-                        {/* <WarningMessage /> */}
                         <VisTypeSelect
                             callback={(type: ESupportedPlotlyVis) =>
                                 setConfig({ ...(config as any), type })

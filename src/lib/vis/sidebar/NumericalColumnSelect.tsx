@@ -1,13 +1,5 @@
 import * as React from 'react';
-// import {
-//     Select,
-//     components,
-//     MultiValueGenericProps,
-//     MultiValueProps,
-//     Props
-// } from 'react-select';
 import { ColumnInfo, EColumnTypes, VisColumn } from '../interfaces';
-// import { formatOptionLabel } from './utils';
 import {
     SortableContainer,
     SortableContainerProps,
@@ -21,14 +13,6 @@ import Select, {
     MultiValueProps,
     Props
 } from 'react-select';
-// import * as reactSelect from 'react-select';
-// import Select from 'react-select';
-// import components from 'react-select';
-// import MultiValueGenericProps from 'react-select';
-// import MultiValueProps from 'react-select';
-// import Props from 'react-select';
-// import {MultiValueGenericProps} from 'react-select/src/components/MultiValue';
-
 interface NumericalColumnSelectProps {
     callback: (s: ColumnInfo[]) => void;
     columns: VisColumn[];
@@ -73,11 +57,6 @@ const SortableSelect = SortableContainer(
 ) as unknown as React.ComponentClass<
     Props<ColumnInfo, boolean> & SortableContainerProps
 >;
-// const SortableSelect = SortableContainer(
-//     ({ children }) => children
-// ) as unknown as React.ComponentClass<
-//     Props<ColumnInfo, boolean> & SortableContainerProps
-// >;
 
 export function NumericalColumnSelect(props: NumericalColumnSelectProps) {
     const selectNumOptions = React.useMemo(() => {
@@ -102,7 +81,6 @@ export function NumericalColumnSelect(props: NumericalColumnSelectProps) {
                 getHelperDimensions={({ node }) => node.getBoundingClientRect()}
                 closeMenuOnSelect={false}
                 isMulti
-                // formatOptionLabel={formatOptionLabel}
                 getOptionLabel={option => option.name}
                 getOptionValue={option => option.id}
                 onChange={(e: ColumnInfo[]) => {

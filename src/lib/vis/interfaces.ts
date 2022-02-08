@@ -1,4 +1,3 @@
-// import { Plotly } from './Plot';
 import * as Plotly from 'plotly.js-dist-min';
 import { IBarConfig } from './bar/utils';
 import { IPCPConfig } from './pcp/utils';

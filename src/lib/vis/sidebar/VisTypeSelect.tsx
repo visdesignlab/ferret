@@ -13,7 +13,6 @@ export function VisTypeSelect(props: VisTypeSelectProps) {
             <label className="pt-2 pb-1">Visualization Type</label>
             <Select
                 closeMenuOnSelect={true}
-                // components={{Option: optionLayout}}
                 onChange={e => props.callback(e.value)}
                 name="visTypes"
                 options={allVisTypes.map(t => {

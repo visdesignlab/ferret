@@ -1,7 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import * as LineUpJS from 'lineupjs';
-// import { ColumnInfo, EColumnTypes, VisColumn } from './lib/vis/interfaces';
 import { Vis, ColumnInfo, EColumnTypes, VisColumn } from './lib/vis';
 import {
     CategoricalColumn,
@@ -23,15 +22,20 @@ export class VisDisplay {
         return this._container;
     }
 
+    private _lineup: LineUpJS.LineUp;
+    public get lineup(): LineUpJS.LineUp {
+        return this._lineup;
+    }
+
     public async SetData(lineup: LineUpJS.LineUp): Promise<void> {
+        const ranking = lineup.data.getFirstRanking();
+        this._lineup = lineup;
+
         const getColumnInfo = (column: Column): ColumnInfo => {
             return {
                 // This regex strips any html off of the label and summary, leaving only the center text. For example, <div><span>Hello</span></div> would be hello.
                 name: column.getMetaData().label.replace(/(<([^>]+)>)/gi, ''),
-                description: 'awesome_desxcript',
-                // description: column
-                //     .getMetaData()
-                //     .summary.replace(/(<([^>]+)>)/gi, ''),
+                description: 'column_description_placeholder',
                 id: column.fqid
             };
         };
@@ -40,9 +44,8 @@ export class VisDisplay {
             data: IDataRow[],
             column: T
         ) => {
-            // TODO: Refactor to use _visyn_id instead.
             return data.map((d, i) => ({
-                id: d.v['0'],
+                id: i,
                 val: column.getRaw(d)
             }));
         };
@@ -71,10 +74,7 @@ export class VisDisplay {
                 });
             });
         };
-        const ranking = lineup.data.getFirstRanking();
 
-        // const data = lineup.data.getRow(5)
-        // const data = lineup.data.viewRawRows(ranking.getOrder());
         const cols: VisColumn[] = [];
         for (const c of ranking.flatColumns) {
             if (c instanceof FerretColumn) {
@@ -102,7 +102,6 @@ export class VisDisplay {
             }
         }
 
-        // const selectedMap: { [key: number]: boolean } = {};
         const someReactThing = React.createElement(Vis, {
             columns: cols,
             // selected: selectedMap,

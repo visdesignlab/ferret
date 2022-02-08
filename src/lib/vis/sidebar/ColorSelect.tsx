@@ -1,14 +1,7 @@
 import * as React from 'react';
 import Select from 'react-select';
 import { ENumericalColorScaleType } from '../scatter/utils';
-import {
-    VisCategoricalColumn,
-    ColumnInfo,
-    EColumnTypes,
-    VisNumericalColumn,
-    VisColumn
-} from '../interfaces';
-// import { formatOptionLabel, getCol } from './utils';
+import { ColumnInfo, EColumnTypes, VisColumn } from '../interfaces';
 import { getCol } from './utils';
 import { NumericalColorButtons } from './NumericalColorButtons';
 
@@ -34,7 +27,6 @@ export function ColorSelect({
                 isClearable
                 onChange={e => callback(e)}
                 name={'colorSelect'}
-                // formatOptionLabel={formatOptionLabel}
                 getOptionLabel={option => option.name}
                 getOptionValue={option => option.id}
                 options={columns.map(c => c.info)}

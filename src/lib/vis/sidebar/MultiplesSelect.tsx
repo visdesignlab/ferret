@@ -1,13 +1,6 @@
 import * as React from 'react';
 import Select from 'react-select';
-import {
-    VisCategoricalColumn,
-    ColumnInfo,
-    EColumnTypes,
-    VisNumericalColumn,
-    VisColumn
-} from '../interfaces';
-// import { formatOptionLabel } from './utils';
+import { ColumnInfo, EColumnTypes, VisColumn } from '../interfaces';
 
 interface MultiplesSelectProps {
     callback: (c: ColumnInfo) => void;
@@ -23,7 +16,6 @@ export function MultiplesSelect(props: MultiplesSelectProps) {
                 isClearable
                 onChange={e => props.callback(e)}
                 name={'multiplesSelect'}
-                // formatOptionLabel={formatOptionLabel}
                 getOptionLabel={option => option.name}
                 getOptionValue={option => option.id}
                 options={props.columns
