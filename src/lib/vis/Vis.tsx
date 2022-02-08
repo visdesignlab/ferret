@@ -18,11 +18,6 @@ import { isViolin, violinMergeDefaultConfig, ViolinVis } from './violin';
 import { isStrip, stripMergeDefaultConfig, StripVis } from './strip';
 import { isPCP, pcpMergeDefaultConfig, PCPVis } from './pcp';
 import { getCssValue } from './util';
-
-// export function getCssValue(key: string): string {
-//     return 'tomato';
-// }
-
 export interface VisProps {
     /**
      * Required data columns which are displayed.
@@ -98,9 +93,7 @@ export function Vis({
     }, [visConfig.type]);
 
     const colorScale = React.useMemo(() => {
-        return something => 'bisque';
-        // return d3.scaleOrdinal(colors);
-        // return d3.scaleOrdinal().range(colors);
+        return d3.scaleOrdinal().range(colors);
     }, [visConfig]);
 
     const scales: Scales = React.useMemo(() => {

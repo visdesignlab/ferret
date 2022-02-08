@@ -23,10 +23,6 @@ export enum ENumericalColorScaleType {
     DIVERGENT = 'Divergent'
 }
 
-// export function getCssValue(key: string): string {
-//     return 'tomato';
-// }
-
 export function isScatter(s: IVisConfig): s is IScatterConfig {
     return s.type === ESupportedPlotlyVis.SCATTER;
 }
