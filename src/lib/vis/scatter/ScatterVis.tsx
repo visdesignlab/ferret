@@ -261,7 +261,7 @@ export function ScatterVis({
                     id={`generalVisBurgerMenu${id}`}
                 >
                     <div className="container pb-3" style={{ width: '20rem' }}>
-                        <WarningMessage />
+                        {/* <WarningMessage /> */}
                         <VisTypeSelect
                             callback={(type: ESupportedPlotlyVis) =>
                                 setConfig({ ...(config as any), type })

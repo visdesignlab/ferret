@@ -10,8 +10,8 @@ import {
     CategoricalColumnSelect,
     NumericalColumnSelect,
     ViolinOverlayButtons,
-    VisTypeSelect,
-    WarningMessage
+    VisTypeSelect
+    // WarningMessage
 } from '../sidebar';
 // import { PlotlyComponent, Plotly } from '../Plot';
 
@@ -190,7 +190,7 @@ export function ViolinVis({
                     id={`generalVisBurgerMenu${uniqueId}`}
                 >
                     <div className="container pb-3" style={{ width: '20rem' }}>
-                        <WarningMessage />
+                        {/* <WarningMessage /> */}
                         <VisTypeSelect
                             callback={(type: ESupportedPlotlyVis) =>
                                 setConfig({ ...(config as any), type })

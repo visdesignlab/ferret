@@ -176,7 +176,7 @@ export function StripVis({
                     id={`generalVisBurgerMenu${uniqueId}`}
                 >
                     <div className="container pb-3" style={{ width: '20rem' }}>
-                        <WarningMessage />
+                        {/* <WarningMessage /> */}
                         <VisTypeSelect
                             callback={(type: ESupportedPlotlyVis) =>
                                 setConfig({ ...(config as any), type })
