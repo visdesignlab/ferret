@@ -66,14 +66,16 @@ export function PCPVis({
 
     React.useEffect(() => {
         const menu = document.getElementById(`generalVisBurgerMenu${id}`);
+        const controlsContainer = document.getElementById(`controlsContainer`);
+        for (let triggerEl of [menu, controlsContainer]) {
+            triggerEl.addEventListener('hidden.bs.collapse', () => {
+                Plotly.Plots.resize(document.getElementById(`plotlyDiv${id}`));
+            });
 
-        menu.addEventListener('hidden.bs.collapse', () => {
-            Plotly.Plots.resize(document.getElementById(`plotlyDiv${id}`));
-        });
-
-        menu.addEventListener('shown.bs.collapse', () => {
-            Plotly.Plots.resize(document.getElementById(`plotlyDiv${id}`));
-        });
+            triggerEl.addEventListener('shown.bs.collapse', () => {
+                Plotly.Plots.resize(document.getElementById(`plotlyDiv${id}`));
+            });
+        }
     }, []);
 
     const layout = React.useMemo<Partial<Plotly.Layout> | null>(

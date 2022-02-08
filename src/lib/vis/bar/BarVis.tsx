@@ -125,18 +125,20 @@ export function BarVis({
 
     React.useEffect(() => {
         const menu = document.getElementById(`generalVisBurgerMenu${uniqueId}`);
+        const controlsContainer = document.getElementById(`controlsContainer`);
+        for (let triggerEl of [menu, controlsContainer]) {
+            triggerEl.addEventListener('hidden.bs.collapse', () => {
+                Plotly.Plots.resize(
+                    document.getElementById(`plotlyDiv${uniqueId}`)
+                );
+            });
 
-        menu.addEventListener('hidden.bs.collapse', () => {
-            Plotly.Plots.resize(
-                document.getElementById(`plotlyDiv${uniqueId}`)
-            );
-        });
-
-        menu.addEventListener('shown.bs.collapse', () => {
-            Plotly.Plots.resize(
-                document.getElementById(`plotlyDiv${uniqueId}`)
-            );
-        });
+            triggerEl.addEventListener('shown.bs.collapse', () => {
+                Plotly.Plots.resize(
+                    document.getElementById(`plotlyDiv${uniqueId}`)
+                );
+            });
+        }
     }, []);
 
     const layout = React.useMemo(() => {
