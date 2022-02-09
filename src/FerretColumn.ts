@@ -332,6 +332,9 @@ export default class FerretColumn extends ValueColumn<number> {
         };
 
         const thisValue: number = this.getValue(row);
+        if (new Set([354.62, 204.62, 154.62, 594.62]).has(thisValue)) {
+            console.log('HERE');
+        }
 
         // value filter
         if (global.values.has(thisValue)) {
@@ -345,7 +348,10 @@ export default class FerretColumn extends ValueColumn<number> {
 
         // ngram filter
         const valueString: string = thisValue.toString();
-        for (let N of [2, 3]) {
+        for (let N of [2, 3, 4]) {
+            // 4 is included here since it is the easiest solution
+            // to the fact that I count '.' here, but not in ChartCalculations.ts
+            // including 4 is the lazy way to catch substrings of max length 3 + '.'
             for (let i = 0; i < valueString.length - N + 1; i++) {
                 const endIdx = i + N;
                 const substring = valueString.substring(i, endIdx);
