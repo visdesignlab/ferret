@@ -332,9 +332,6 @@ export default class FerretColumn extends ValueColumn<number> {
         };
 
         const thisValue: number = this.getValue(row);
-        if (new Set([354.62, 204.62, 154.62, 594.62]).has(thisValue)) {
-            console.log('HERE');
-        }
 
         // value filter
         if (global.values.has(thisValue)) {
