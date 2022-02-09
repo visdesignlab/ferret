@@ -12,7 +12,11 @@ import {
     renderMissingDOM
 } from 'lineupjs';
 import { ChartCalculations } from './ChartCalculations';
-import FerretColumn from './FerretColumn';
+import FerretColumn, {
+    FerretSelectionExplanation,
+    Range
+} from './FerretColumn';
+import clog from './lib/clog';
 
 export default class FerretCellRenderer implements ICellRendererFactory {
     readonly title: string = 'FerretCellRenderer';
@@ -33,7 +37,8 @@ export default class FerretCellRenderer implements ICellRendererFactory {
                 let cellLabel = col.getLabel(d);
                 n.title = cellLabel;
 
-                const selectionExplanation = col.highlightValueExplanation(d);
+                const selectionExplanation: FerretSelectionExplanation =
+                    col.highlightValueExplanation(d);
                 const cellLabelSpan = document.createElement('span');
                 cellLabelSpan.classList.add('ferretCellValue');
                 let currentSpan = cellLabelSpan;
@@ -49,44 +54,46 @@ export default class FerretCellRenderer implements ICellRendererFactory {
                         currentSpan.appendChild(highlightValueSpan);
                         currentSpan = highlightValueSpan;
                     }
-                    let leadingDigitIndex: number = 0;
+                    let leadDigitIdx: number = 0;
                     if (selectionExplanation.why.leadingDigit.cause) {
-                        leadingDigitIndex =
+                        leadDigitIdx =
                             ChartCalculations.getLeadingDigitIndex(cellLabel);
                     }
 
                     if (selectionExplanation.why.nGram.length > 0) {
-                        const minStart = d3.min(
-                            selectionExplanation.why.nGram,
-                            d => d.start
+                        let nextSpan: HTMLSpanElement = currentSpan;
+                        let ranges = selectionExplanation.why.nGram.map(
+                            x => x.range
                         );
-                        const maxStop = d3.max(
-                            selectionExplanation.why.nGram,
-                            d => d.end
-                        );
-                        const highlightNGramSpan =
-                            FerretCellRenderer.highlightSpanSubstring(
-                                currentSpan,
-                                minStart,
-                                maxStop,
-                                ['highlight', 'ngram']
-                            );
+                        ranges = FerretCellRenderer.consolidateRanges(ranges);
+                        clog.h1('Ranges:');
+                        console.log(JSON.stringify(ranges));
+                        for (let range of ranges) {
+                            let { start, end } = range;
+                            const highlightNGramSpan =
+                                FerretCellRenderer.highlightSpanSubstring(
+                                    currentSpan,
+                                    start,
+                                    end,
+                                    ['highlight', 'ngram']
+                                );
 
-                        if (
-                            minStart <= leadingDigitIndex &&
-                            leadingDigitIndex < maxStop
-                        ) {
-                            currentSpan = highlightNGramSpan;
-                            leadingDigitIndex -= minStart;
-                            cellLabel = cellLabel.substring(minStart, maxStop);
+                            if (
+                                FerretCellRenderer.inRange(leadDigitIdx, range)
+                            ) {
+                                nextSpan = highlightNGramSpan;
+                                leadDigitIdx -= start;
+                                cellLabel = cellLabel.substring(start, end);
+                            }
                         }
+                        currentSpan = nextSpan;
                     }
                     if (selectionExplanation.why.leadingDigit.cause) {
                         const highlightNGramSpan =
                             FerretCellRenderer.highlightSpanSubstring(
                                 currentSpan,
-                                leadingDigitIndex,
-                                leadingDigitIndex + 1,
+                                leadDigitIdx,
+                                leadDigitIdx + 1,
                                 ['highlight', 'leadingDigit']
                             );
                     }
@@ -100,6 +107,45 @@ export default class FerretCellRenderer implements ICellRendererFactory {
                 n.classList.toggle('ignoredCell', col.ignoreInAnalysis(d));
             }
         };
+    }
+
+    private static consolidateRanges(ranges: Range[]): Range[] {
+        const out: Range[] = [];
+        while (ranges.length > 0) {
+            let r1 = ranges.pop();
+            for (let i = ranges.length - 1; i >= 0; i--) {
+                let r2 = ranges[i];
+                if (FerretCellRenderer.canMerge(r1, r2)) {
+                    r1 = FerretCellRenderer.merge(r1, r2);
+                    ranges.splice(i, 1);
+                    // remove element and restart loop.
+                    i = ranges.length;
+                }
+            }
+            // since we made it through the loop r1 doesn't match any range in ranges
+            out.push(r1);
+        }
+        return out;
+    }
+
+    private static merge(r1: Range, r2: Range): Range {
+        return {
+            start: Math.min(r1.start, r2.start),
+            end: Math.max(r1.end, r2.end)
+        };
+    }
+
+    private static canMerge(r1: Range, r2: Range): boolean {
+        return (
+            FerretCellRenderer.inRange(r1.start, r2) ||
+            FerretCellRenderer.inRange(r1.end - 1, r2) ||
+            FerretCellRenderer.inRange(r2.start, r1) ||
+            FerretCellRenderer.inRange(r2.end - 1, r1)
+        );
+    }
+
+    private static inRange(n: number, r: Range): boolean {
+        return r.start <= n && n < r.end;
     }
 
     private static highlightSpanSubstring(

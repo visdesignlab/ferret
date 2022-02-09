@@ -12,9 +12,14 @@ export interface FerretSelectionExplanation {
     selected: boolean;
     why: {
         value: { cause: boolean; col: FerretColumn | null };
-        nGram: { start: number; end: number; col: FerretColumn | null }[];
+        nGram: { range: Range; col: FerretColumn | null }[];
         leadingDigit: { cause: boolean; col: FerretColumn | null };
     };
+}
+
+export interface Range {
+    start: number;
+    end: number;
 }
 
 export type SelectionType = 'value' | 'nGram' | 'leadingDigit';
@@ -355,15 +360,19 @@ export default class FerretColumn extends ValueColumn<number> {
                 if (global.ngrams.has(substring)) {
                     explanation.selected = true;
                     explanation.why.nGram.push({
-                        start: i,
-                        end: endIdx,
+                        range: {
+                            start: i,
+                            end: endIdx
+                        },
                         col: null
                     });
                 } else if (local.ngrams.has(substring)) {
                     explanation.selected = true;
                     explanation.why.nGram.push({
-                        start: i,
-                        end: endIdx,
+                        range: {
+                            start: i,
+                            end: endIdx
+                        },
                         col: this
                     });
                 }
