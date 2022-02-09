@@ -1,13 +1,11 @@
 import { DropdownBase, SelectionVal } from './DropdownBase';
 import FerretColumn from './FerretColumn';
 export class DropdownHighlight extends DropdownBase {
-    constructor(container: HTMLElement) {
+    constructor(toggleButton: HTMLButtonElement) {
         super();
         super.Init(
-            'highlight',
-            container,
+            toggleButton,
             'Highlight',
-            'highlighter',
             'highlighted',
             () => FerretColumn.globalHighlight,
             (col: FerretColumn) => col.localHighlight,

@@ -2,13 +2,11 @@ import { DropdownBase, SelectionVal } from './DropdownBase';
 import FerretColumn from './FerretColumn';
 
 export class DropdownIgnore extends DropdownBase {
-    constructor(container: HTMLElement) {
+    constructor(toggleButton: HTMLButtonElement) {
         super();
         super.Init(
-            'ignore',
-            container,
+            toggleButton,
             'Ignore',
-            'eye-slash',
             'ignored',
             () => FerretColumn.globalIgnore,
             (col: FerretColumn) => col.localIgnore,

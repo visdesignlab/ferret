@@ -11,14 +11,9 @@ export interface SelectionVal {
     type: SelectionType;
 }
 export abstract class DropdownBase extends EventTarget {
-    private _id: string;
-    public get id(): string {
-        return this._id;
-    }
-
-    private _toolbarContainer: HTMLElement;
-    public get container(): HTMLElement {
-        return this._toolbarContainer;
+    private _toggleButton: HTMLButtonElement;
+    public get toggleButton(): HTMLButtonElement {
+        return this._toggleButton;
     }
 
     private _lineupInstance: LineUp;
@@ -29,11 +24,6 @@ export abstract class DropdownBase extends EventTarget {
     private _title: string;
     public get title(): string {
         return this._title;
-    }
-
-    private _iconType: string;
-    public get iconType(): string {
-        return this._iconType;
     }
 
     private _actionWord: string;
@@ -67,72 +57,19 @@ export abstract class DropdownBase extends EventTarget {
     }
 
     public Init(
-        id: string,
-        container: HTMLElement,
+        toggleButton: HTMLButtonElement,
         title: string,
-        iconType: string,
         actionWord: string,
         globalAccessor: () => FerretSelection,
         localAccessor: (col: FerretColumn) => FerretSelection,
         onRowClick: (val: SelectionVal, allColumns: FerretColumn[]) => void
     ): void {
-        this._id = id;
-        this._toolbarContainer = container;
+        this._toggleButton = toggleButton;
         this._title = title;
-        this._iconType = iconType;
         this._actionWord = actionWord;
         this._localAccessor = localAccessor;
         this._globalAccessor = globalAccessor;
         this._onRowclick = onRowClick;
-    }
-
-    public drawSetup(): void {
-        let div = document.createElement('div');
-
-        let button = document.createElement('div');
-
-        let icon = document.createElement('i');
-        icon.classList.add('fas', 'fa-' + this.iconType, 'customButtonIcon');
-        button.appendChild(icon);
-
-        let buttonText = document.createElement('span');
-        buttonText.innerHTML = this.title;
-        button.appendChild(buttonText);
-
-        let countText = document.createElement('span');
-        countText.id = this.id + 'Count';
-        button.appendChild(countText);
-
-        let dropdownIcon = document.createElement('i');
-        dropdownIcon.classList.add(
-            'fas',
-            'fa-chevron-circle-down',
-            'customButtonIconRight'
-        );
-        button.appendChild(dropdownIcon);
-
-        button.id = this.id + 'Button';
-
-        let dropdownMenu = document.createElement('div');
-        dropdownMenu.id = this.id + 'DropdownMenu';
-        dropdownMenu.classList.add('dropdown-content');
-
-        div.appendChild(button);
-        div.appendChild(dropdownMenu);
-        div.classList.add('btn', 'btn-outline-primary');
-
-        button.addEventListener('click', e =>
-            this.toggleVisibility(this.id + 'DropdownMenu')
-        );
-        this._toolbarContainer.appendChild(div);
-        this.drawFilterCount();
-    }
-
-    private toggleVisibility(selectionDropdownMenuID: string) {
-        let dropdownMenu = document.getElementById(selectionDropdownMenuID);
-        if (dropdownMenu.classList.contains('show'))
-            dropdownMenu.classList.remove('show');
-        else dropdownMenu.classList.add('show');
     }
 
     private getListOfSelectionValues(): {
@@ -219,7 +156,7 @@ export abstract class DropdownBase extends EventTarget {
         const { selectionVals: selectionVals, allColumns: allColumns } =
             this.getListOfSelectionValues();
 
-        const selectorString = '#' + this._id + 'DropdownMenu';
+        const selectorString = this.toggleButton.dataset.bsTarget;
         const dropdownMenuSelect = d3.select(selectorString);
 
         dropdownMenuSelect
@@ -257,9 +194,8 @@ export abstract class DropdownBase extends EventTarget {
     }
 
     public drawFilterCount(): void {
-        let filterCountText = document.getElementById(this._id + 'Count');
         let filterList = this.getListOfSelectionValues();
-        filterCountText.innerHTML = '(' + filterList.selectionVals.length + ')';
+        this.toggleButton.innerText = `${this.title} (${filterList.selectionVals.length})`;
     }
 
     public onSelectionChange(): void {
