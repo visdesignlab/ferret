@@ -49,18 +49,18 @@
 }
 
 .ferretCellValue .highlight {
-    border-width: 1px;
+    border-width: 0px;
     border-style: solid;
     border-top-width: 0px;
     border-bottom-width: 0px;
     font-family: 'Montserrat';
-    margin-right: -1px;
 }
 
 .ferretCellValue .highlight.value {
     border-color: $chart-fv;
     background-color: $chart-fv-med;
     border-radius: 1px;
+    padding-left: 2px;
 }
 
 .ferretCellValue .highlight.ngram {

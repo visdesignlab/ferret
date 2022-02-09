@@ -66,7 +66,7 @@ export default class FerretCellRenderer implements ICellRendererFactory {
                             x => x.range
                         );
                         ranges = FerretCellRenderer.consolidateRanges(ranges);
-                        clog.h1('Ranges:');
+
                         console.log(JSON.stringify(ranges));
                         for (let range of ranges) {
                             let { start, end } = range;
