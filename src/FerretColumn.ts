@@ -6,7 +6,11 @@ import {
     IRenderContext
 } from 'lineupjs';
 import { IEventListener } from 'lineupjs/build/src/internal';
-import { ChartCalculations, LeadDigitCountMetadata } from './ChartCalculations';
+import {
+    ChartCalculations,
+    FreqValsMetadata,
+    LeadDigitCountMetadata
+} from './ChartCalculations';
 
 export interface FerretSelection {
     values: Set<number>;
@@ -59,6 +63,14 @@ export default class FerretColumn extends ValueColumn<number> {
     }
     public set leadingDigitCounts(v: LeadDigitCountMetadata) {
         this._leadingDigitCounts = v;
+    }
+
+    private _freqVals: FreqValsMetadata;
+    public get freqVals(): FreqValsMetadata {
+        return this._freqVals;
+    }
+    public set freqVals(v: FreqValsMetadata) {
+        this._freqVals = v;
     }
 
     private static _globalIgnore: FerretSelection = {

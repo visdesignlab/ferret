@@ -204,10 +204,17 @@ export default class FerretRenderer implements ICellRendererFactory {
         chartKey: string,
         colKey: string
     ): Promise<void> {
-        let dupCounts = await ChartCalculations.GetDuplicateCounts(
-            column,
-            context
-        );
+        const elementID = chartKey + colKey;
+        container.id = elementID;
+        const vizContainer = container.querySelector('.innerVizContainer');
+        vizContainer.id = elementID + '-inner';
+
+        let dupCounts = column?.freqVals?.acknowledged ?? [];
+        if (dupCounts.length === 0) {
+            vizContainer.innerHTML = '...';
+            return;
+        }
+
         let selectionName = filterNames.FREQUENT_VALUES_SELECTION;
         let dataValues: Array<any> = [];
         let index = 0;
@@ -234,10 +241,6 @@ export default class FerretRenderer implements ICellRendererFactory {
                 count: count
             });
         }
-
-        const elementID = chartKey + colKey;
-        container.id = elementID;
-        container.querySelector('.innerVizContainer').id = elementID + '-inner';
 
         var yourVlSpec: VisualizationSpec = {
             width: 85,

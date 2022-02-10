@@ -6,6 +6,7 @@ export interface SelectionMetadata<T> {
     acknowledged: T;
 }
 
+export type FreqValsMetadata = SelectionMetadata<[number, number][]>;
 export type LeadDigitCountMetadata = SelectionMetadata<Map<number, number>>;
 
 export class ChartCalculations {
@@ -125,20 +126,20 @@ export class ChartCalculations {
 
     public static async GetDuplicateCounts(
         column: FerretColumn,
-        context: IRenderContext
-    ): Promise<[number, number][]> {
-        let duplicateCountMap: Map<number, number> = new Map<number, number>();
+        provider: IDataProvider
+    ): Promise<FreqValsMetadata> {
+        const ignoredCountMap = new Map<number, number>();
+        const acknowledgedCountMap = new Map<number, number>();
 
         const ranking = column.findMyRanker();
         const indices = ranking.getOrder();
         for (let i of indices) {
-            const dataRow = await context.provider.getRow(i);
-
-            if (column.ignoreInAnalysis(dataRow)) {
-                continue;
-            }
-
+            const dataRow = await provider.getRow(i);
             const val = column.getRaw(dataRow);
+
+            let duplicateCountMap = column.ignoreInAnalysis(dataRow)
+                ? ignoredCountMap
+                : acknowledgedCountMap;
 
             let currentCount = 0;
             if (duplicateCountMap.has(val)) {
@@ -147,17 +148,17 @@ export class ChartCalculations {
             duplicateCountMap.set(val, currentCount + 1);
         }
 
-        let duplicateCounts = Array.from(duplicateCountMap);
+        let ignored = Array.from(ignoredCountMap);
+        let acknowledged = Array.from(acknowledgedCountMap);
 
-        duplicateCounts.sort((a: [number, number], b: [number, number]) => {
-            if (a[1] > b[1]) {
-                return -1;
-            } else if (a[1] < b[1]) {
-                return 1;
-            }
-            return 0;
-        });
-        return duplicateCounts;
+        for (let countList of [ignored, acknowledged]) {
+            countList.sort((a: [number, number], b: [number, number]) => {
+                if (a[1] > b[1]) return -1;
+                else if (a[1] < b[1]) return 1;
+                return 0;
+            });
+        }
+        return { ignored, acknowledged };
     }
 
     public static async GetReplicates(
@@ -165,10 +166,9 @@ export class ChartCalculations {
         context: IRenderContext
     ): Promise<[number, number][]> {
         let duplicateCountMap: [number, number][];
-        duplicateCountMap = await ChartCalculations.GetDuplicateCounts(
-            column,
-            context
-        );
+        duplicateCountMap = (
+            await ChartCalculations.GetDuplicateCounts(column, context.provider)
+        ).acknowledged;
         let replicateCountMap: Map<number, number> = new Map<number, number>();
         for (let duplicateCount of duplicateCountMap) {
             if (duplicateCount[1] > 1) {

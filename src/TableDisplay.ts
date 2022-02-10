@@ -7,7 +7,11 @@ import FerretCellRenderer from './FerretCellRenderer';
 import FerretColumn from './FerretColumn';
 import { LINEUP_COL_COUNT } from './lib/constants';
 import clog from './lib/clog';
-import { ChartCalculations, LeadDigitCountMetadata } from './ChartCalculations';
+import {
+    ChartCalculations,
+    LeadDigitCountMetadata,
+    FreqValsMetadata
+} from './ChartCalculations';
 
 export class TableDisplay extends EventTarget {
     charts = [
@@ -171,14 +175,26 @@ export class TableDisplay extends EventTarget {
     private async updateFerretColumnMetaData(): Promise<void> {
         clog.h1('updateFerretColumnMetaData');
 
-        const promiseList: Promise<LeadDigitCountMetadata>[] = [];
+        const freqValPromises: Promise<FreqValsMetadata>[] = [];
+        // const leadingDigitPromises: Promise<LeadDigitCountMetadata>[] = [];
+        const leadingDigitPromises: Promise<LeadDigitCountMetadata>[] = [];
         for (let col of this.ferretColumns) {
-            // todo refactor to a Promse.all
-            promiseList.push(
+            freqValPromises.push(
+                ChartCalculations.GetDuplicateCounts(col, this.lineup.data)
+            );
+            leadingDigitPromises.push(
                 ChartCalculations.getLeadingDigitCounts(col, this.lineup.data)
             );
         }
-        let digitCountsList = await Promise.all(promiseList);
+        // Frequent Values
+        let freqValsList = await Promise.all(freqValPromises);
+        for (let i = 0; i < this.ferretColumns.length; i++) {
+            let col = this.ferretColumns[i];
+            let freqVals = freqValsList[i];
+            col.freqVals = freqVals;
+        }
+        // Leading Digit Frequency
+        let digitCountsList = await Promise.all(leadingDigitPromises);
         for (let i = 0; i < this.ferretColumns.length; i++) {
             let col = this.ferretColumns[i];
             let digitCounts = digitCountsList[i];

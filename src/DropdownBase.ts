@@ -216,29 +216,66 @@ export abstract class DropdownBase extends EventTarget {
         allColumns: FerretColumn[]
     ): number {
         let count: number;
-        switch (type) {
-            case 'value':
-                break;
-            case 'nGram':
-                break;
-            case 'leadingDigit':
-                let num_val = +val;
-                switch (this.countType) {
-                    case 'acknowledged':
-                        count =
-                            col?.leadingDigitCounts.acknowledged.get(num_val) ??
-                            d3.sum(allColumns, d =>
-                                d.leadingDigitCounts.acknowledged.get(num_val)
-                            );
-                        break;
-                    case 'ignored':
-                        count =
-                            col?.leadingDigitCounts.ignored.get(num_val) ??
-                            d3.sum(allColumns, d =>
-                                d.leadingDigitCounts.ignored.get(num_val)
-                            );
-                        break;
+        let num_val = +val;
+        type ValType =
+            | 'value.acknowledged'
+            | 'value.ignored'
+            | 'nGram.acknowledged'
+            | 'nGram.ignored'
+            | 'leadingDigit.acknowledged'
+            | 'leadingDigit.ignored';
+        let valType: ValType = (type + '.' + this.countType) as ValType;
+        console.log(valType);
+        switch (valType) {
+            case 'value.acknowledged':
+                if (col) {
+                    count =
+                        col.freqVals.acknowledged.find(
+                            ([val, _count]) => val === num_val
+                        )?.[1] ?? 0;
+                } else {
+                    count = d3.sum(
+                        allColumns,
+                        d =>
+                            d?.freqVals.acknowledged.find(
+                                ([val, _count]) => val === num_val
+                            )?.[1] ?? 0
+                    );
                 }
+                break;
+            case 'value.ignored':
+                if (col) {
+                    count =
+                        col.freqVals.ignored.find(
+                            ([val, _count]) => val === num_val
+                        )?.[1] ?? 0;
+                } else {
+                    count = d3.sum(
+                        allColumns,
+                        d =>
+                            d?.freqVals.ignored.find(
+                                ([val, _count]) => val === num_val
+                            )?.[1] ?? 0
+                    );
+                }
+                break;
+            case 'nGram.acknowledged':
+                break;
+            case 'nGram.ignored':
+                break;
+            case 'leadingDigit.acknowledged':
+                count =
+                    col?.leadingDigitCounts.acknowledged.get(num_val) ??
+                    d3.sum(allColumns, d =>
+                        d.leadingDigitCounts.acknowledged.get(num_val)
+                    );
+                break;
+            case 'leadingDigit.ignored':
+                count =
+                    col?.leadingDigitCounts.ignored.get(num_val) ??
+                    d3.sum(allColumns, d =>
+                        d.leadingDigitCounts.ignored.get(num_val)
+                    );
                 break;
         }
         return count;
@@ -247,23 +284,6 @@ export abstract class DropdownBase extends EventTarget {
     public drawFilterCount(): void {
         let filterList = this.getListOfSelectionValues();
         this.toggleButton.innerText = `${this.title} (${filterList.selectionVals.length})`;
-    }
-
-    public async updateDataStucture(): Promise<void> {
-        clog.h1('updateDataStucture');
-        const firstRanking = this.lineupInstance.data.getFirstRanking();
-        const ferretColumns: FerretColumn[] = firstRanking.flatColumns.filter(
-            col => col instanceof FerretColumn
-        ) as FerretColumn[];
-
-        for (let col of ferretColumns) {
-            this.lineupInstance.data;
-            const digitCounts = await ChartCalculations.getLeadingDigitCounts(
-                col,
-                this.lineupInstance.data
-            );
-            col.leadingDigitCounts = digitCounts;
-        }
     }
 
     public onSelectionChange(): void {
