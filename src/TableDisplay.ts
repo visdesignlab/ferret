@@ -1,12 +1,13 @@
 import { TabularData } from './TabularData';
 import * as LineUpJS from 'lineupjs';
 import { ColumnNumeric } from './ColumnNumeric';
-import { ControlsDisplay } from './ControlsDisplay';
 import { ColumnBuilder, ICategory } from 'lineupjs';
 import FerretRenderer from './FerretRenderer';
 import FerretCellRenderer from './FerretCellRenderer';
 import FerretColumn from './FerretColumn';
 import { LINEUP_COL_COUNT } from './lib/constants';
+import clog from './lib/clog';
+import { ChartCalculations } from './ChartCalculations';
 
 export class TableDisplay extends EventTarget {
     charts = [
@@ -53,6 +54,11 @@ export class TableDisplay extends EventTarget {
     private _allColumns: LineUpJS.Column[];
     public get allColumns(): LineUpJS.Column[] {
         return this._allColumns;
+    }
+
+    private _ferretColumns: FerretColumn[];
+    public get ferretColumns(): FerretColumn[] {
+        return this._ferretColumns;
     }
 
     public SetData(data: TabularData): void {
@@ -136,20 +142,42 @@ export class TableDisplay extends EventTarget {
         // get the first ranking from the data provider
         const firstRanking = this.lineup.data.getFirstRanking();
         this._allColumns = firstRanking.flatColumns;
-        for (let col of this.allColumns) {
-            if (col instanceof FerretColumn) {
-                col.on('filterChanged', () => {
-                    document.dispatchEvent(new CustomEvent('filterChanged'));
-                });
-                col.on('highlightChanged', () => {
-                    document.dispatchEvent(new CustomEvent('highlightChanged'));
-                });
-                col.on('visibilityChanged', () => {
-                    document.dispatchEvent(
-                        new CustomEvent('visibilityChanged')
-                    );
-                });
+        this._ferretColumns = this.allColumns.filter(
+            col => col instanceof FerretColumn
+        ) as FerretColumn[];
+        for (let col of this.ferretColumns) {
+            col.on('filterChanged', async () => {
+                await this.updateFerretColumnMetaData();
+                document.dispatchEvent(new CustomEvent('filterChanged'));
+            });
+            col.on('highlightChanged', async () => {
+                await this.updateFerretColumnMetaData();
+                document.dispatchEvent(new CustomEvent('highlightChanged'));
+            });
+            col.on('visibilityChanged', () => {
+                document.dispatchEvent(new CustomEvent('visibilityChanged'));
+            });
+        }
+
+        let firstRun = true;
+        this.lineup.data.on('busy', busy => {
+            if (!busy && firstRun) {
+                firstRun = false;
+                this.updateFerretColumnMetaData();
             }
+        });
+    }
+
+    private async updateFerretColumnMetaData(): Promise<void> {
+        clog.h1('updateFerretColumnMetaData');
+
+        for (let col of this.ferretColumns) {
+            // todo refactor to a Promse.all
+            const digitCounts = await ChartCalculations.getLeadingDigitCounts(
+                col,
+                this.lineup.data
+            );
+            col.leadingDigitCounts = digitCounts;
         }
     }
 

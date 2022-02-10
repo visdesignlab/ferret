@@ -7,6 +7,7 @@ export class DropdownHighlight extends DropdownBase {
             toggleButton,
             'Highlight',
             'highlighted',
+            'acknowledged',
             () => FerretColumn.globalHighlight,
             (col: FerretColumn) => col.localHighlight,
             (val: SelectionVal, allColumns: FerretColumn[]) => {
@@ -34,7 +35,11 @@ export class DropdownHighlight extends DropdownBase {
                 }
             }
         );
+
         document.addEventListener('highlightChanged', () => {
+            this.onSelectionChange();
+        });
+        document.addEventListener('filterChanged', () => {
             this.onSelectionChange();
         });
     }

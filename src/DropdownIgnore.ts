@@ -8,6 +8,7 @@ export class DropdownIgnore extends DropdownBase {
             toggleButton,
             'Ignore',
             'ignored',
+            'ignored',
             () => FerretColumn.globalIgnore,
             (col: FerretColumn) => col.localIgnore,
             (val: SelectionVal, allColumns: FerretColumn[]) => {
@@ -35,6 +36,7 @@ export class DropdownIgnore extends DropdownBase {
                 }
             }
         );
+
         document.addEventListener('filterChanged', () => {
             this.onSelectionChange();
         });

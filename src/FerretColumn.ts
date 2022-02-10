@@ -1,13 +1,18 @@
-import { Column, IDataRow, ValueColumn, ECompareValueType } from 'lineupjs';
+import {
+    Column,
+    IDataRow,
+    ValueColumn,
+    ECompareValueType,
+    IRenderContext
+} from 'lineupjs';
 import { IEventListener } from 'lineupjs/build/src/internal';
-import { ChartCalculations } from './ChartCalculations';
+import { ChartCalculations, LeadDigitCountMetadata } from './ChartCalculations';
 
 export interface FerretSelection {
     values: Set<number>;
     ngrams: Set<string>;
     leadingDigits: Set<string>;
 }
-
 export interface FerretSelectionExplanation {
     selected: boolean;
     why: {
@@ -47,6 +52,14 @@ export default class FerretColumn extends ValueColumn<number> {
     static readonly EVENT_HIGHLIGHT_CHANGED = 'highlightChanged';
 
     private _defaultDecimalPlaces: number = 6;
+
+    private _leadingDigitCounts: LeadDigitCountMetadata;
+    public get leadingDigitCounts(): LeadDigitCountMetadata {
+        return this._leadingDigitCounts;
+    }
+    public set leadingDigitCounts(v: LeadDigitCountMetadata) {
+        this._leadingDigitCounts = v;
+    }
 
     private static _globalIgnore: FerretSelection = {
         values: new Set<number>(),

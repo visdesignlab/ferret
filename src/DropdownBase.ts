@@ -1,3 +1,4 @@
+import { ChartCalculations } from './ChartCalculations';
 import * as d3 from 'd3';
 import LineUp from 'lineupjs';
 import FerretColumn, {
@@ -5,11 +6,15 @@ import FerretColumn, {
     SelectionType,
     SelectionTypeString
 } from './FerretColumn';
+import clog from './lib/clog';
 export interface SelectionVal {
     col: FerretColumn | null;
     val: number | string;
     type: SelectionType;
 }
+
+export type CountType = 'ignored' | 'acknowledged';
+
 export abstract class DropdownBase extends EventTarget {
     private _toggleButton: HTMLButtonElement;
     public get toggleButton(): HTMLButtonElement {
@@ -29,6 +34,11 @@ export abstract class DropdownBase extends EventTarget {
     private _actionWord: string;
     public get actionWord(): string {
         return this._actionWord;
+    }
+
+    private _countType: CountType;
+    public get countType(): CountType {
+        return this._countType;
     }
 
     private _globalAccessor: () => FerretSelection;
@@ -60,6 +70,7 @@ export abstract class DropdownBase extends EventTarget {
         toggleButton: HTMLButtonElement,
         title: string,
         actionWord: string,
+        countType: CountType,
         globalAccessor: () => FerretSelection,
         localAccessor: (col: FerretColumn) => FerretSelection,
         onRowClick: (val: SelectionVal, allColumns: FerretColumn[]) => void
@@ -67,6 +78,7 @@ export abstract class DropdownBase extends EventTarget {
         this._toggleButton = toggleButton;
         this._title = title;
         this._actionWord = actionWord;
+        this._countType = countType;
         this._localAccessor = localAccessor;
         this._globalAccessor = globalAccessor;
         this._onRowclick = onRowClick;
@@ -189,8 +201,47 @@ export abstract class DropdownBase extends EventTarget {
                 trashSpan.classList.add('trash-container');
                 trashSpan.innerHTML = '<i class="fas fa-trash"></i>';
 
-                element.innerHTML = `${selectionTypeWord} ${valueSpan.outerHTML} ${this.actionWord} in ${columnSpan.outerHTML}${trashSpan.outerHTML}`;
+                const selectionCount = this.getSelectionCount(d, allColumns);
+                const selectionCountString =
+                    selectionCount != 1
+                        ? `${selectionCount} times`
+                        : `${selectionCount} time`;
+
+                element.innerHTML = `${selectionTypeWord} ${valueSpan.outerHTML} ${this.actionWord} ${selectionCountString} in ${columnSpan.outerHTML}${trashSpan.outerHTML}`;
             });
+    }
+
+    private getSelectionCount(
+        { col, val, type }: SelectionVal,
+        allColumns: FerretColumn[]
+    ): number {
+        let count: number;
+        switch (type) {
+            case 'value':
+                break;
+            case 'nGram':
+                break;
+            case 'leadingDigit':
+                let num_val = +val;
+                switch (this.countType) {
+                    case 'acknowledged':
+                        count =
+                            col?.leadingDigitCounts.acknowledged.get(num_val) ??
+                            d3.sum(allColumns, d =>
+                                d.leadingDigitCounts.acknowledged.get(num_val)
+                            );
+                        break;
+                    case 'ignored':
+                        count =
+                            col?.leadingDigitCounts.ignored.get(num_val) ??
+                            d3.sum(allColumns, d =>
+                                d.leadingDigitCounts.ignored.get(num_val)
+                            );
+                        break;
+                }
+                break;
+        }
+        return count;
     }
 
     public drawFilterCount(): void {
@@ -198,7 +249,25 @@ export abstract class DropdownBase extends EventTarget {
         this.toggleButton.innerText = `${this.title} (${filterList.selectionVals.length})`;
     }
 
+    public async updateDataStucture(): Promise<void> {
+        clog.h1('updateDataStucture');
+        const firstRanking = this.lineupInstance.data.getFirstRanking();
+        const ferretColumns: FerretColumn[] = firstRanking.flatColumns.filter(
+            col => col instanceof FerretColumn
+        ) as FerretColumn[];
+
+        for (let col of ferretColumns) {
+            this.lineupInstance.data;
+            const digitCounts = await ChartCalculations.getLeadingDigitCounts(
+                col,
+                this.lineupInstance.data
+            );
+            col.leadingDigitCounts = digitCounts;
+        }
+    }
+
     public onSelectionChange(): void {
+        clog.h1('onSelectionChange');
         this.drawFilterCount();
         this.drawDropdown();
     }

@@ -1,51 +1,58 @@
-import { IRenderContext } from 'lineupjs';
+import { IDataProvider, IRenderContext, LineUp } from 'lineupjs';
 import FerretColumn from './FerretColumn';
+
+export interface SelectionMetadata<T> {
+    ignored: T;
+    acknowledged: T;
+}
+
+export type LeadDigitCountMetadata = SelectionMetadata<Map<number, number>>;
 
 export class ChartCalculations {
     public static async GetLeadingDigitFreqs(
         column: FerretColumn,
-        context: IRenderContext
+        provider: IDataProvider,
+        counts?: Map<number, number>
     ): Promise<Map<number, number>> {
-        let digitCounts = await ChartCalculations.getLeadingDigitCounts(
-            column,
-            context
-        );
+        let digitCounts =
+            counts ??
+            (await ChartCalculations.getLeadingDigitCounts(column, provider))
+                .acknowledged;
         for (let digit of digitCounts.keys()) {
             let count = digitCounts.get(digit);
-            digitCounts.set(
-                digit,
-                count / context.provider.getTotalNumberOfRows()
-            );
+            digitCounts.set(digit, count / provider.getTotalNumberOfRows());
         }
 
         return digitCounts;
     }
 
-    private static async getLeadingDigitCounts(
+    public static async getLeadingDigitCounts(
         column: FerretColumn,
-        context: IRenderContext
-    ): Promise<Map<number, number>> {
-        let digitCounts = new Map<number, number>();
+        provider: IDataProvider
+    ): Promise<LeadDigitCountMetadata> {
+        let acknowledged = new Map<number, number>();
+        let ignored = new Map<number, number>();
 
         for (let i = 0; i <= 9; i++) {
-            digitCounts.set(i, 0);
+            acknowledged.set(i, 0);
+            ignored.set(i, 0);
         }
 
         const ranking = column.findMyRanker();
         const indices = ranking.getOrder();
         for (let i of indices) {
-            const dataRow = await context.provider.getRow(i);
-            if (column.ignoreInAnalysis(dataRow)) {
-                continue;
-            }
+            const dataRow = await provider.getRow(i);
             const dataValue = column.getRaw(dataRow);
 
             let digit = ChartCalculations.getLeadingDigit(dataValue);
-            let oldVal = digitCounts.get(digit);
-            digitCounts.set(digit, oldVal + 1);
+            let relevantMap = column.ignoreInAnalysis(dataRow)
+                ? ignored
+                : acknowledged;
+            let oldVal = relevantMap.get(digit);
+            relevantMap.set(digit, oldVal + 1);
         }
 
-        return digitCounts;
+        return { acknowledged, ignored };
     }
 
     public static getLeadingDigitIndex(val: number | string): number | null {
