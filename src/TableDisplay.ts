@@ -7,7 +7,7 @@ import FerretCellRenderer from './FerretCellRenderer';
 import FerretColumn from './FerretColumn';
 import { LINEUP_COL_COUNT } from './lib/constants';
 import clog from './lib/clog';
-import { ChartCalculations } from './ChartCalculations';
+import { ChartCalculations, LeadDigitCountMetadata } from './ChartCalculations';
 
 export class TableDisplay extends EventTarget {
     charts = [
@@ -171,12 +171,17 @@ export class TableDisplay extends EventTarget {
     private async updateFerretColumnMetaData(): Promise<void> {
         clog.h1('updateFerretColumnMetaData');
 
+        const promiseList: Promise<LeadDigitCountMetadata>[] = [];
         for (let col of this.ferretColumns) {
             // todo refactor to a Promse.all
-            const digitCounts = await ChartCalculations.getLeadingDigitCounts(
-                col,
-                this.lineup.data
+            promiseList.push(
+                ChartCalculations.getLeadingDigitCounts(col, this.lineup.data)
             );
+        }
+        let digitCountsList = await Promise.all(promiseList);
+        for (let i = 0; i < this.ferretColumns.length; i++) {
+            let col = this.ferretColumns[i];
+            let digitCounts = digitCountsList[i];
             col.leadingDigitCounts = digitCounts;
         }
     }
@@ -190,3 +195,4 @@ export class TableDisplay extends EventTarget {
         this.lineup.update();
     }
 }
+[];
