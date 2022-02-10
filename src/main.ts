@@ -35,8 +35,12 @@ let controlsDisplay = new ControlsDisplay(
     dataTableContainer
 );
 
-let ignoreDropdown = new DropdownIgnore(toolbarContainer);
-let highlightDropdown = new DropdownHighlight(toolbarContainer);
+let ignoreDropdown = new DropdownIgnore(
+    document.getElementById('ignore-toggle') as HTMLButtonElement
+);
+let highlightDropdown = new DropdownHighlight(
+    document.getElementById('highlight-toggle') as HTMLButtonElement
+);
 
 let clear = (): void => {
     toolbarContainer.innerHTML = '';
@@ -65,8 +69,6 @@ let init = (data: string, filename: string) => {
 
     descriptionDisplay.init();
 
-    ignoreDropdown.drawSetup();
-    highlightDropdown.drawSetup();
     document.title = filename;
     uploadOnlyContainerOuter.classList.add('d-none');
     outerContainer.classList.remove('d-none');

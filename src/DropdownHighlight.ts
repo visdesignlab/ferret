@@ -1,14 +1,13 @@
 import { DropdownBase, SelectionVal } from './DropdownBase';
 import FerretColumn from './FerretColumn';
 export class DropdownHighlight extends DropdownBase {
-    constructor(container: HTMLElement) {
+    constructor(toggleButton: HTMLButtonElement) {
         super();
         super.Init(
-            'highlight',
-            container,
+            toggleButton,
             'Highlight',
-            'highlighter',
             'highlighted',
+            'acknowledged',
             () => FerretColumn.globalHighlight,
             (col: FerretColumn) => col.localHighlight,
             (val: SelectionVal, allColumns: FerretColumn[]) => {
@@ -36,7 +35,11 @@ export class DropdownHighlight extends DropdownBase {
                 }
             }
         );
+
         document.addEventListener('highlightChanged', () => {
+            this.onSelectionChange();
+        });
+        document.addEventListener('filterChanged', () => {
             this.onSelectionChange();
         });
     }

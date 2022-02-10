@@ -1,51 +1,62 @@
-import { IRenderContext } from 'lineupjs';
+import { IDataProvider, IRenderContext, LineUp } from 'lineupjs';
 import FerretColumn from './FerretColumn';
+
+export interface SelectionMetadata<T> {
+    ignored: T;
+    acknowledged: T;
+}
+
+export type MetaDataAccessor<T> = (d: SelectionMetadata<T>) => T;
+
+export type FreqValsMetadata = SelectionMetadata<[number, number][]>;
+export type NGramMetadata = SelectionMetadata<[string, number][]>;
+export type LeadDigitCountMetadata = SelectionMetadata<Map<number, number>>;
 
 export class ChartCalculations {
     public static async GetLeadingDigitFreqs(
         column: FerretColumn,
-        context: IRenderContext
+        provider: IDataProvider,
+        counts?: Map<number, number>
     ): Promise<Map<number, number>> {
-        let digitCounts = await ChartCalculations.getLeadingDigitCounts(
-            column,
-            context
-        );
+        let digitCounts =
+            counts ??
+            (await ChartCalculations.getLeadingDigitCounts(column, provider))
+                .acknowledged;
         for (let digit of digitCounts.keys()) {
             let count = digitCounts.get(digit);
-            digitCounts.set(
-                digit,
-                count / context.provider.getTotalNumberOfRows()
-            );
+            digitCounts.set(digit, count / provider.getTotalNumberOfRows());
         }
 
         return digitCounts;
     }
 
-    private static async getLeadingDigitCounts(
+    public static async getLeadingDigitCounts(
         column: FerretColumn,
-        context: IRenderContext
-    ): Promise<Map<number, number>> {
-        let digitCounts = new Map<number, number>();
+        provider: IDataProvider
+    ): Promise<LeadDigitCountMetadata> {
+        let acknowledged = new Map<number, number>();
+        let ignored = new Map<number, number>();
 
         for (let i = 0; i <= 9; i++) {
-            digitCounts.set(i, 0);
+            acknowledged.set(i, 0);
+            ignored.set(i, 0);
         }
 
         const ranking = column.findMyRanker();
         const indices = ranking.getOrder();
         for (let i of indices) {
-            const dataRow = await context.provider.getRow(i);
-            if (column.ignoreInAnalysis(dataRow)) {
-                continue;
-            }
+            const dataRow = await provider.getRow(i);
             const dataValue = column.getRaw(dataRow);
 
             let digit = ChartCalculations.getLeadingDigit(dataValue);
-            let oldVal = digitCounts.get(digit);
-            digitCounts.set(digit, oldVal + 1);
+            let relevantMap = column.ignoreInAnalysis(dataRow)
+                ? ignored
+                : acknowledged;
+            let oldVal = relevantMap.get(digit);
+            relevantMap.set(digit, oldVal + 1);
         }
 
-        return digitCounts;
+        return { acknowledged, ignored };
     }
 
     public static getLeadingDigitIndex(val: number | string): number | null {
@@ -118,20 +129,20 @@ export class ChartCalculations {
 
     public static async GetDuplicateCounts(
         column: FerretColumn,
-        context: IRenderContext
-    ): Promise<[number, number][]> {
-        let duplicateCountMap: Map<number, number> = new Map<number, number>();
+        provider: IDataProvider
+    ): Promise<FreqValsMetadata> {
+        const ignoredCountMap = new Map<number, number>();
+        const acknowledgedCountMap = new Map<number, number>();
 
         const ranking = column.findMyRanker();
         const indices = ranking.getOrder();
         for (let i of indices) {
-            const dataRow = await context.provider.getRow(i);
-
-            if (column.ignoreInAnalysis(dataRow)) {
-                continue;
-            }
-
+            const dataRow = await provider.getRow(i);
             const val = column.getRaw(dataRow);
+
+            let duplicateCountMap = column.ignoreInAnalysis(dataRow)
+                ? ignoredCountMap
+                : acknowledgedCountMap;
 
             let currentCount = 0;
             if (duplicateCountMap.has(val)) {
@@ -140,17 +151,17 @@ export class ChartCalculations {
             duplicateCountMap.set(val, currentCount + 1);
         }
 
-        let duplicateCounts = Array.from(duplicateCountMap);
+        let ignored = Array.from(ignoredCountMap);
+        let acknowledged = Array.from(acknowledgedCountMap);
 
-        duplicateCounts.sort((a: [number, number], b: [number, number]) => {
-            if (a[1] > b[1]) {
-                return -1;
-            } else if (a[1] < b[1]) {
-                return 1;
-            }
-            return 0;
-        });
-        return duplicateCounts;
+        for (let countList of [ignored, acknowledged]) {
+            countList.sort((a: [number, number], b: [number, number]) => {
+                if (a[1] > b[1]) return -1;
+                else if (a[1] < b[1]) return 1;
+                return 0;
+            });
+        }
+        return { ignored, acknowledged };
     }
 
     public static async GetReplicates(
@@ -158,10 +169,9 @@ export class ChartCalculations {
         context: IRenderContext
     ): Promise<[number, number][]> {
         let duplicateCountMap: [number, number][];
-        duplicateCountMap = await ChartCalculations.GetDuplicateCounts(
-            column,
-            context
-        );
+        duplicateCountMap = (
+            await ChartCalculations.GetDuplicateCounts(column, context.provider)
+        ).acknowledged;
         let replicateCountMap: Map<number, number> = new Map<number, number>();
         for (let duplicateCount of duplicateCountMap) {
             if (duplicateCount[1] > 1) {
@@ -190,18 +200,17 @@ export class ChartCalculations {
 
     public static async GetNGramFrequency(
         column: FerretColumn,
-        context: IRenderContext,
+        provider: IDataProvider,
         n: number,
         lsd: boolean
-    ): Promise<[string, number][]> {
-        let nGramFrequencyMap: Map<string, number> = new Map<string, number>();
+    ): Promise<NGramMetadata> {
+        let ignoredFrequencyMap = new Map<string, number>();
+        let acknowledgedFrequencyMap = new Map<string, number>();
+
         const ranking = column.findMyRanker();
         const indices = ranking.getOrder();
         for (let i of indices) {
-            const dataRow = await context.provider.getRow(i);
-            if (column.ignoreInAnalysis(dataRow)) {
-                continue;
-            }
+            const dataRow = await provider.getRow(i);
             const val = column.getRaw(dataRow);
 
             let valString = val.toString();
@@ -211,6 +220,10 @@ export class ChartCalculations {
             valString = lsd
                 ? valString.substr(valString.indexOf('.'))
                 : valString;
+
+            let nGramFrequencyMap = column.ignoreInAnalysis(dataRow)
+                ? ignoredFrequencyMap
+                : acknowledgedFrequencyMap;
             for (let i = 0; i < valString.length; i++) {
                 let currentCount = 0;
                 let nGram = valString.substr(i, n);
@@ -230,17 +243,20 @@ export class ChartCalculations {
             }
         }
 
-        let nGramFrequency = Array.from(nGramFrequencyMap);
+        let ignored = Array.from(ignoredFrequencyMap);
+        let acknowledged = Array.from(acknowledgedFrequencyMap);
 
-        nGramFrequency.sort((a: [string, number], b: [string, number]) => {
-            if (a[1] > b[1]) {
-                return -1;
-            } else if (a[1] < b[1]) {
-                return 1;
-            }
-            return 0;
-        });
+        for (let nGramFrequency of [ignored, acknowledged]) {
+            nGramFrequency.sort((a: [string, number], b: [string, number]) => {
+                if (a[1] > b[1]) {
+                    return -1;
+                } else if (a[1] < b[1]) {
+                    return 1;
+                }
+                return 0;
+            });
+        }
 
-        return nGramFrequency;
+        return { ignored, acknowledged };
     }
 }

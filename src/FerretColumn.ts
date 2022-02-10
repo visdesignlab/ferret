@@ -1,20 +1,29 @@
 import { Column, IDataRow, ValueColumn, ECompareValueType } from 'lineupjs';
 import { IEventListener } from 'lineupjs/build/src/internal';
-import { ChartCalculations } from './ChartCalculations';
+import {
+    ChartCalculations,
+    FreqValsMetadata,
+    LeadDigitCountMetadata,
+    NGramMetadata
+} from './ChartCalculations';
 
 export interface FerretSelection {
     values: Set<number>;
     ngrams: Set<string>;
     leadingDigits: Set<string>;
 }
-
 export interface FerretSelectionExplanation {
     selected: boolean;
     why: {
         value: { cause: boolean; col: FerretColumn | null };
-        nGram: { start: number; end: number; col: FerretColumn | null }[];
+        nGram: { range: Range; col: FerretColumn | null }[];
         leadingDigit: { cause: boolean; col: FerretColumn | null };
     };
+}
+
+export interface Range {
+    start: number;
+    end: number;
 }
 
 export type SelectionType = 'value' | 'nGram' | 'leadingDigit';
@@ -42,6 +51,30 @@ export default class FerretColumn extends ValueColumn<number> {
     static readonly EVENT_HIGHLIGHT_CHANGED = 'highlightChanged';
 
     private _defaultDecimalPlaces: number = 6;
+
+    private _leadingDigitCounts: LeadDigitCountMetadata;
+    public get leadingDigitCounts(): LeadDigitCountMetadata {
+        return this._leadingDigitCounts;
+    }
+    public set leadingDigitCounts(v: LeadDigitCountMetadata) {
+        this._leadingDigitCounts = v;
+    }
+
+    private _freqVals: FreqValsMetadata;
+    public get freqVals(): FreqValsMetadata {
+        return this._freqVals;
+    }
+    public set freqVals(v: FreqValsMetadata) {
+        this._freqVals = v;
+    }
+
+    private _ngramCounts: NGramMetadata;
+    public get ngramCounts(): NGramMetadata {
+        return this._ngramCounts;
+    }
+    public set ngramCounts(v: NGramMetadata) {
+        this._ngramCounts = v;
+    }
 
     private static _globalIgnore: FerretSelection = {
         values: new Set<number>(),
@@ -345,22 +378,29 @@ export default class FerretColumn extends ValueColumn<number> {
 
         // ngram filter
         const valueString: string = thisValue.toString();
-        for (let N of [2, 3]) {
+        for (let N of [2, 3, 4]) {
+            // 4 is included here since it is the easiest solution
+            // to the fact that I count '.' here, but not in ChartCalculations.ts
+            // including 4 is the lazy way to catch substrings of max length 3 + '.'
             for (let i = 0; i < valueString.length - N + 1; i++) {
                 const endIdx = i + N;
                 const substring = valueString.substring(i, endIdx);
                 if (global.ngrams.has(substring)) {
                     explanation.selected = true;
                     explanation.why.nGram.push({
-                        start: i,
-                        end: endIdx,
+                        range: {
+                            start: i,
+                            end: endIdx
+                        },
                         col: null
                     });
                 } else if (local.ngrams.has(substring)) {
                     explanation.selected = true;
                     explanation.why.nGram.push({
-                        start: i,
-                        end: endIdx,
+                        range: {
+                            start: i,
+                            end: endIdx
+                        },
                         col: this
                     });
                 }

@@ -1,3 +1,8 @@
+import {
+    ChartCalculations,
+    MetaDataAccessor,
+    SelectionMetadata
+} from './ChartCalculations';
 import * as d3 from 'd3';
 import LineUp from 'lineupjs';
 import FerretColumn, {
@@ -5,20 +10,19 @@ import FerretColumn, {
     SelectionType,
     SelectionTypeString
 } from './FerretColumn';
+
 export interface SelectionVal {
     col: FerretColumn | null;
     val: number | string;
     type: SelectionType;
 }
-export abstract class DropdownBase extends EventTarget {
-    private _id: string;
-    public get id(): string {
-        return this._id;
-    }
 
-    private _toolbarContainer: HTMLElement;
-    public get container(): HTMLElement {
-        return this._toolbarContainer;
+export type CountType = 'ignored' | 'acknowledged';
+
+export abstract class DropdownBase extends EventTarget {
+    private _toggleButton: HTMLButtonElement;
+    public get toggleButton(): HTMLButtonElement {
+        return this._toggleButton;
     }
 
     private _lineupInstance: LineUp;
@@ -31,14 +35,14 @@ export abstract class DropdownBase extends EventTarget {
         return this._title;
     }
 
-    private _iconType: string;
-    public get iconType(): string {
-        return this._iconType;
-    }
-
     private _actionWord: string;
     public get actionWord(): string {
         return this._actionWord;
+    }
+
+    private _countType: CountType;
+    public get countType(): CountType {
+        return this._countType;
     }
 
     private _globalAccessor: () => FerretSelection;
@@ -67,72 +71,21 @@ export abstract class DropdownBase extends EventTarget {
     }
 
     public Init(
-        id: string,
-        container: HTMLElement,
+        toggleButton: HTMLButtonElement,
         title: string,
-        iconType: string,
         actionWord: string,
+        countType: CountType,
         globalAccessor: () => FerretSelection,
         localAccessor: (col: FerretColumn) => FerretSelection,
         onRowClick: (val: SelectionVal, allColumns: FerretColumn[]) => void
     ): void {
-        this._id = id;
-        this._toolbarContainer = container;
+        this._toggleButton = toggleButton;
         this._title = title;
-        this._iconType = iconType;
         this._actionWord = actionWord;
+        this._countType = countType;
         this._localAccessor = localAccessor;
         this._globalAccessor = globalAccessor;
         this._onRowclick = onRowClick;
-    }
-
-    public drawSetup(): void {
-        let div = document.createElement('div');
-
-        let button = document.createElement('div');
-
-        let icon = document.createElement('i');
-        icon.classList.add('fas', 'fa-' + this.iconType, 'customButtonIcon');
-        button.appendChild(icon);
-
-        let buttonText = document.createElement('span');
-        buttonText.innerHTML = this.title;
-        button.appendChild(buttonText);
-
-        let countText = document.createElement('span');
-        countText.id = this.id + 'Count';
-        button.appendChild(countText);
-
-        let dropdownIcon = document.createElement('i');
-        dropdownIcon.classList.add(
-            'fas',
-            'fa-chevron-circle-down',
-            'customButtonIconRight'
-        );
-        button.appendChild(dropdownIcon);
-
-        button.id = this.id + 'Button';
-
-        let dropdownMenu = document.createElement('div');
-        dropdownMenu.id = this.id + 'DropdownMenu';
-        dropdownMenu.classList.add('dropdown-content');
-
-        div.appendChild(button);
-        div.appendChild(dropdownMenu);
-        div.classList.add('btn', 'btn-outline-primary');
-
-        button.addEventListener('click', e =>
-            this.toggleVisibility(this.id + 'DropdownMenu')
-        );
-        this._toolbarContainer.appendChild(div);
-        this.drawFilterCount();
-    }
-
-    private toggleVisibility(selectionDropdownMenuID: string) {
-        let dropdownMenu = document.getElementById(selectionDropdownMenuID);
-        if (dropdownMenu.classList.contains('show'))
-            dropdownMenu.classList.remove('show');
-        else dropdownMenu.classList.add('show');
     }
 
     private getListOfSelectionValues(): {
@@ -219,7 +172,7 @@ export abstract class DropdownBase extends EventTarget {
         const { selectionVals: selectionVals, allColumns: allColumns } =
             this.getListOfSelectionValues();
 
-        const selectorString = '#' + this._id + 'DropdownMenu';
+        const selectorString = this.toggleButton.dataset.bsTarget;
         const dropdownMenuSelect = d3.select(selectorString);
 
         dropdownMenuSelect
@@ -252,14 +205,99 @@ export abstract class DropdownBase extends EventTarget {
                 trashSpan.classList.add('trash-container');
                 trashSpan.innerHTML = '<i class="fas fa-trash"></i>';
 
-                element.innerHTML = `${selectionTypeWord} ${valueSpan.outerHTML} ${this.actionWord} in ${columnSpan.outerHTML}${trashSpan.outerHTML}`;
+                const selectionCount = this.getSelectionCount(d, allColumns);
+                const selectionCountString =
+                    selectionCount != 1
+                        ? `${selectionCount} times`
+                        : `${selectionCount} time`;
+
+                element.innerHTML = `${selectionTypeWord} ${valueSpan.outerHTML} ${this.actionWord} ${selectionCountString} in ${columnSpan.outerHTML}${trashSpan.outerHTML}`;
             });
     }
 
+    private getSelectionCount(
+        { col, val, type }: SelectionVal,
+        allColumns: FerretColumn[]
+    ): number {
+        let count: number;
+        let num_val = +val;
+        let num_str = val.toString();
+        type ValType =
+            | 'value.acknowledged'
+            | 'value.ignored'
+            | 'nGram.acknowledged'
+            | 'nGram.ignored'
+            | 'leadingDigit.acknowledged'
+            | 'leadingDigit.ignored';
+        let valType: ValType = (type + '.' + this.countType) as ValType;
+
+        const getCount = (
+            getMetadata: (column: FerretColumn) => SelectionMetadata<any>,
+            getSubMetadata: MetaDataAccessor<any>,
+            compareValue: number | string
+        ): number => {
+            let count: number;
+            if (col) {
+                count =
+                    getSubMetadata(getMetadata(col)).find(
+                        ([val, _count]) => val === compareValue
+                    )?.[1] ?? 0;
+            } else {
+                count = d3.sum(
+                    allColumns,
+                    d =>
+                        getSubMetadata(getMetadata(d)).find(
+                            ([val, _count]) => val === compareValue
+                        )?.[1] ?? 0
+                );
+            }
+            return count;
+        };
+
+        const getAcknowledged = (metadata: SelectionMetadata<any>) => {
+            return metadata.acknowledged;
+        };
+        const getIgnored = (metadata: SelectionMetadata<any>) => {
+            return metadata.ignored;
+        };
+
+        const getFreqVals = (col: FerretColumn) => col?.freqVals;
+        const getNGramCounts = (col: FerretColumn) => col?.ngramCounts;
+
+        switch (valType) {
+            case 'value.acknowledged':
+                count = getCount(getFreqVals, getAcknowledged, num_val);
+                break;
+            case 'value.ignored':
+                count = getCount(getFreqVals, getIgnored, num_val);
+                break;
+            case 'nGram.acknowledged':
+                count = getCount(getNGramCounts, getAcknowledged, num_str);
+                break;
+            case 'nGram.ignored':
+                count = getCount(getNGramCounts, getIgnored, num_str);
+                break;
+            case 'leadingDigit.acknowledged':
+                count =
+                    col?.leadingDigitCounts.acknowledged.get(num_val) ??
+                    d3.sum(allColumns, d =>
+                        d.leadingDigitCounts.acknowledged.get(num_val)
+                    );
+                break;
+            case 'leadingDigit.ignored':
+                count =
+                    col?.leadingDigitCounts.ignored.get(num_val) ??
+                    d3.sum(allColumns, d =>
+                        d.leadingDigitCounts.ignored.get(num_val)
+                    );
+                break;
+        }
+        return count;
+    }
+
     public drawFilterCount(): void {
-        let filterCountText = document.getElementById(this._id + 'Count');
         let filterList = this.getListOfSelectionValues();
-        filterCountText.innerHTML = '(' + filterList.selectionVals.length + ')';
+        this.toggleButton.innerText = `${this.title} (${filterList.selectionVals.length})`;
     }
 
     public onSelectionChange(): void {

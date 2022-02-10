@@ -31,6 +31,7 @@
 .ferretCell {
     text-align: right;
     padding-right: 1px;
+    letter-spacing: 2px;
 }
 
 .ferretCellValue {
@@ -48,28 +49,21 @@
 }
 
 .ferretCellValue .highlight {
-    border-width: 1px;
-    border-style: solid;
-    border-top-width: 0px;
-    border-bottom-width: 0px;
     font-family: 'Montserrat';
-    margin-right: -1px;
 }
 
 .ferretCellValue .highlight.value {
-    border-color: $chart-fv;
     background-color: $chart-fv-med;
     border-radius: 1px;
+    padding-left: 2px;
 }
 
 .ferretCellValue .highlight.ngram {
-    border-color: $chart-ng;
     background-color: $chart-ng-med;
     border-radius: 3px;
 }
 
 .ferretCellValue .highlight.leadingDigit {
-    border-color: $chart-ldf;
     background-color: $chart-ldf-med;
     border-radius: 5px;
 }
