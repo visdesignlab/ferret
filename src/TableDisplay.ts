@@ -6,7 +6,7 @@ import FerretRenderer from './FerretRenderer';
 import FerretCellRenderer from './FerretCellRenderer';
 import FerretColumn from './FerretColumn';
 import { LINEUP_COL_COUNT } from './lib/constants';
-import clog from './lib/clog';
+
 import {
     ChartCalculations,
     LeadDigitCountMetadata,
@@ -175,8 +175,6 @@ export class TableDisplay extends EventTarget {
     }
 
     private async updateFerretColumnMetaData(): Promise<void> {
-        clog.h1('updateFerretColumnMetaData');
-
         const freqValPromises: Promise<FreqValsMetadata>[] = [];
         const nGramPromises: Promise<NGramMetadata>[] = [];
         const leadingDigitPromises: Promise<LeadDigitCountMetadata>[] = [];

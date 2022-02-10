@@ -12,7 +12,7 @@ import FerretColumn, {
     SelectionType,
     SelectionTypeString
 } from './FerretColumn';
-import clog from './lib/clog';
+
 export default class FerretRenderer implements ICellRendererFactory {
     readonly title: string = 'Ferret Visualizations';
     readonly maxCollapseCount: number = 5;
@@ -510,7 +510,6 @@ export default class FerretRenderer implements ICellRendererFactory {
         chartKey: string,
         colKey: string
     ): Promise<void> {
-        clog.h1('drawLeadingDigitDist');
         let digitCounts: Map<number, number>;
         digitCounts = new Map(column?.leadingDigitCounts?.acknowledged);
         const leadDictFreq = await ChartCalculations.GetLeadingDigitFreqs(

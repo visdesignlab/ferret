@@ -16,7 +16,6 @@ import FerretColumn, {
     FerretSelectionExplanation,
     Range
 } from './FerretColumn';
-import clog from './lib/clog';
 
 export default class FerretCellRenderer implements ICellRendererFactory {
     readonly title: string = 'FerretCellRenderer';
@@ -67,7 +66,6 @@ export default class FerretCellRenderer implements ICellRendererFactory {
                         );
                         ranges = FerretCellRenderer.consolidateRanges(ranges);
 
-                        console.log(JSON.stringify(ranges));
                         for (let range of ranges) {
                             let { start, end } = range;
                             const highlightNGramSpan =

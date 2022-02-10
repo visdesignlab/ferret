@@ -10,7 +10,7 @@ import FerretColumn, {
     SelectionType,
     SelectionTypeString
 } from './FerretColumn';
-import clog from './lib/clog';
+
 export interface SelectionVal {
     col: FerretColumn | null;
     val: number | string;
@@ -301,7 +301,6 @@ export abstract class DropdownBase extends EventTarget {
     }
 
     public onSelectionChange(): void {
-        clog.h1('onSelectionChange');
         this.drawFilterCount();
         this.drawDropdown();
     }
