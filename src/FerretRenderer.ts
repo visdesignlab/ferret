@@ -79,22 +79,12 @@ export default class FerretRenderer implements ICellRendererFactory {
                 );
 
                 vizContainer = container.children[childIndex++] as HTMLElement;
-                const twoGramSwitch = document.getElementById(
-                    '2-gram-switch'
-                ) as HTMLInputElement;
-                const nGram = twoGramSwitch.checked ? 2 : 3;
-                const lsdSwitch = document.getElementById(
-                    'lsd-switch'
-                ) as HTMLInputElement;
-                const lsd = lsdSwitch.checked;
                 this.drawNGramFrequency(
                     vizContainer,
                     col,
                     context,
                     'newNGram-',
-                    col.id,
-                    nGram,
-                    lsd
+                    col.id
                 );
 
                 vizContainer = container.children[childIndex++] as HTMLElement;
@@ -413,16 +403,8 @@ export default class FerretRenderer implements ICellRendererFactory {
         column: FerretColumn,
         context: IRenderContext,
         chartKey: string,
-        colKey: string,
-        n: number,
-        lsd: boolean
+        colKey: string
     ): Promise<void> {
-        // let nGramFrequency = await ChartCalculations.GetNGramFrequency(
-        //     column,
-        //     context.provider,
-        //     n,
-        //     lsd
-        // );
         const elementID = chartKey + colKey;
         container.id = elementID;
         const vizContainer = container.querySelector('.innerVizContainer');
