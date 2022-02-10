@@ -31,7 +31,8 @@ export class TableDisplay extends EventTarget {
     ];
     constructor() {
         super();
-        document.addEventListener('updateLineup', (e: CustomEvent) => {
+        document.addEventListener('updateLineup', async (e: CustomEvent) => {
+            await this.updateFerretColumnMetaData();
             this.lineup.update();
         });
         document.addEventListener('highlightRows', (e: CustomEvent) => {

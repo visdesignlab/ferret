@@ -200,10 +200,6 @@ export default class FerretRenderer implements ICellRendererFactory {
         vizContainer.id = elementID + '-inner';
 
         let dupCounts = column?.freqVals?.acknowledged ?? [];
-        if (dupCounts.length === 0) {
-            vizContainer.innerHTML = '...';
-            return;
-        }
 
         let selectionName = filterNames.FREQUENT_VALUES_SELECTION;
         let dataValues: Array<any> = [];
@@ -411,10 +407,6 @@ export default class FerretRenderer implements ICellRendererFactory {
         vizContainer.id = elementID + '-inner';
 
         let nGramFrequency = column?.ngramCounts?.acknowledged ?? [];
-        if (nGramFrequency.length === 0) {
-            vizContainer.innerHTML = '...';
-            return;
-        }
 
         let dataValues: Array<any> = [];
         let index = 0;
@@ -521,10 +513,6 @@ export default class FerretRenderer implements ICellRendererFactory {
         clog.h1('drawLeadingDigitDist');
         let digitCounts: Map<number, number>;
         digitCounts = new Map(column?.leadingDigitCounts?.acknowledged);
-        if (digitCounts.size === 0) {
-            container.innerHTML = '...';
-            return;
-        }
         const leadDictFreq = await ChartCalculations.GetLeadingDigitFreqs(
             column,
             context.provider,
