@@ -10,7 +10,8 @@ import clog from './lib/clog';
 import {
     ChartCalculations,
     LeadDigitCountMetadata,
-    FreqValsMetadata
+    FreqValsMetadata,
+    NGramMetadata
 } from './ChartCalculations';
 
 export class TableDisplay extends EventTarget {
@@ -176,12 +177,31 @@ export class TableDisplay extends EventTarget {
         clog.h1('updateFerretColumnMetaData');
 
         const freqValPromises: Promise<FreqValsMetadata>[] = [];
-        // const leadingDigitPromises: Promise<LeadDigitCountMetadata>[] = [];
+        const nGramPromises: Promise<NGramMetadata>[] = [];
         const leadingDigitPromises: Promise<LeadDigitCountMetadata>[] = [];
         for (let col of this.ferretColumns) {
+            // Frequent Values
             freqValPromises.push(
                 ChartCalculations.GetDuplicateCounts(col, this.lineup.data)
             );
+            // N-Grams
+            const twoGramSwitch = document.getElementById(
+                '2-gram-switch'
+            ) as HTMLInputElement;
+            const nGram = twoGramSwitch.checked ? 2 : 3;
+            const lsdSwitch = document.getElementById(
+                'lsd-switch'
+            ) as HTMLInputElement;
+            const lsd = lsdSwitch.checked;
+            nGramPromises.push(
+                ChartCalculations.GetNGramFrequency(
+                    col,
+                    this.lineup.data,
+                    nGram,
+                    lsd
+                )
+            );
+            // Leading Digit Frequency
             leadingDigitPromises.push(
                 ChartCalculations.getLeadingDigitCounts(col, this.lineup.data)
             );
@@ -192,6 +212,13 @@ export class TableDisplay extends EventTarget {
             let col = this.ferretColumns[i];
             let freqVals = freqValsList[i];
             col.freqVals = freqVals;
+        }
+        // N-Grams
+        let nGramsList = await Promise.all(nGramPromises);
+        for (let i = 0; i < this.ferretColumns.length; i++) {
+            let col = this.ferretColumns[i];
+            let nGramCounts = nGramsList[i];
+            col.ngramCounts = nGramCounts;
         }
         // Leading Digit Frequency
         let digitCountsList = await Promise.all(leadingDigitPromises);

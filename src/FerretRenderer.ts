@@ -417,12 +417,23 @@ export default class FerretRenderer implements ICellRendererFactory {
         n: number,
         lsd: boolean
     ): Promise<void> {
-        let nGramFrequency = await ChartCalculations.GetNGramFrequency(
-            column,
-            context,
-            n,
-            lsd
-        );
+        // let nGramFrequency = await ChartCalculations.GetNGramFrequency(
+        //     column,
+        //     context.provider,
+        //     n,
+        //     lsd
+        // );
+        const elementID = chartKey + colKey;
+        container.id = elementID;
+        const vizContainer = container.querySelector('.innerVizContainer');
+        vizContainer.id = elementID + '-inner';
+
+        let nGramFrequency = column?.ngramCounts?.acknowledged ?? [];
+        if (nGramFrequency.length === 0) {
+            vizContainer.innerHTML = '...';
+            return;
+        }
+
         let dataValues: Array<any> = [];
         let index = 0;
         let multiFrequentGrams: Array<any> = [];
@@ -447,10 +458,6 @@ export default class FerretRenderer implements ICellRendererFactory {
                 count: count
             });
         }
-
-        const elementID = chartKey + colKey;
-        container.id = elementID;
-        container.querySelector('.innerVizContainer').id = elementID + '-inner';
 
         var yourVlSpec: VisualizationSpec = {
             width: 85,

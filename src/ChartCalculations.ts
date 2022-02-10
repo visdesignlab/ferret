@@ -7,6 +7,7 @@ export interface SelectionMetadata<T> {
 }
 
 export type FreqValsMetadata = SelectionMetadata<[number, number][]>;
+export type NGramMetadata = SelectionMetadata<[string, number][]>;
 export type LeadDigitCountMetadata = SelectionMetadata<Map<number, number>>;
 
 export class ChartCalculations {
@@ -197,18 +198,17 @@ export class ChartCalculations {
 
     public static async GetNGramFrequency(
         column: FerretColumn,
-        context: IRenderContext,
+        provider: IDataProvider,
         n: number,
         lsd: boolean
-    ): Promise<[string, number][]> {
-        let nGramFrequencyMap: Map<string, number> = new Map<string, number>();
+    ): Promise<NGramMetadata> {
+        let ignoredFrequencyMap = new Map<string, number>();
+        let acknowledgedFrequencyMap = new Map<string, number>();
+
         const ranking = column.findMyRanker();
         const indices = ranking.getOrder();
         for (let i of indices) {
-            const dataRow = await context.provider.getRow(i);
-            if (column.ignoreInAnalysis(dataRow)) {
-                continue;
-            }
+            const dataRow = await provider.getRow(i);
             const val = column.getRaw(dataRow);
 
             let valString = val.toString();
@@ -218,6 +218,10 @@ export class ChartCalculations {
             valString = lsd
                 ? valString.substr(valString.indexOf('.'))
                 : valString;
+
+            let nGramFrequencyMap = column.ignoreInAnalysis(dataRow)
+                ? ignoredFrequencyMap
+                : acknowledgedFrequencyMap;
             for (let i = 0; i < valString.length; i++) {
                 let currentCount = 0;
                 let nGram = valString.substr(i, n);
@@ -237,17 +241,20 @@ export class ChartCalculations {
             }
         }
 
-        let nGramFrequency = Array.from(nGramFrequencyMap);
+        let ignored = Array.from(ignoredFrequencyMap);
+        let acknowledged = Array.from(acknowledgedFrequencyMap);
 
-        nGramFrequency.sort((a: [string, number], b: [string, number]) => {
-            if (a[1] > b[1]) {
-                return -1;
-            } else if (a[1] < b[1]) {
-                return 1;
-            }
-            return 0;
-        });
+        for (let nGramFrequency of [ignored, acknowledged]) {
+            nGramFrequency.sort((a: [string, number], b: [string, number]) => {
+                if (a[1] > b[1]) {
+                    return -1;
+                } else if (a[1] < b[1]) {
+                    return 1;
+                }
+                return 0;
+            });
+        }
 
-        return nGramFrequency;
+        return { ignored, acknowledged };
     }
 }

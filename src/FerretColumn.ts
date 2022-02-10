@@ -1,15 +1,10 @@
-import {
-    Column,
-    IDataRow,
-    ValueColumn,
-    ECompareValueType,
-    IRenderContext
-} from 'lineupjs';
+import { Column, IDataRow, ValueColumn, ECompareValueType } from 'lineupjs';
 import { IEventListener } from 'lineupjs/build/src/internal';
 import {
     ChartCalculations,
     FreqValsMetadata,
-    LeadDigitCountMetadata
+    LeadDigitCountMetadata,
+    NGramMetadata
 } from './ChartCalculations';
 
 export interface FerretSelection {
@@ -71,6 +66,14 @@ export default class FerretColumn extends ValueColumn<number> {
     }
     public set freqVals(v: FreqValsMetadata) {
         this._freqVals = v;
+    }
+
+    private _ngramCounts: NGramMetadata;
+    public get ngramCounts(): NGramMetadata {
+        return this._ngramCounts;
+    }
+    public set ngramCounts(v: NGramMetadata) {
+        this._ngramCounts = v;
     }
 
     private static _globalIgnore: FerretSelection = {

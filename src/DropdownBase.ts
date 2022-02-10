@@ -217,6 +217,7 @@ export abstract class DropdownBase extends EventTarget {
     ): number {
         let count: number;
         let num_val = +val;
+        let num_str = val.toString();
         type ValType =
             | 'value.acknowledged'
             | 'value.ignored'
@@ -260,8 +261,36 @@ export abstract class DropdownBase extends EventTarget {
                 }
                 break;
             case 'nGram.acknowledged':
+                if (col) {
+                    count =
+                        col.ngramCounts.acknowledged.find(
+                            ([val, _count]) => val === num_str
+                        )?.[1] ?? 0;
+                } else {
+                    count = d3.sum(
+                        allColumns,
+                        d =>
+                            d?.ngramCounts.acknowledged.find(
+                                ([val, _count]) => val === num_str
+                            )?.[1] ?? 0
+                    );
+                }
                 break;
             case 'nGram.ignored':
+                if (col) {
+                    count =
+                        col.ngramCounts.ignored.find(
+                            ([val, _count]) => val === num_str
+                        )?.[1] ?? 0;
+                } else {
+                    count = d3.sum(
+                        allColumns,
+                        d =>
+                            d?.ngramCounts.ignored.find(
+                                ([val, _count]) => val === num_str
+                            )?.[1] ?? 0
+                    );
+                }
                 break;
             case 'leadingDigit.acknowledged':
                 count =
