@@ -1,4 +1,8 @@
-import { ChartCalculations } from './ChartCalculations';
+import {
+    ChartCalculations,
+    MetaDataAccessor,
+    SelectionMetadata
+} from './ChartCalculations';
 import * as d3 from 'd3';
 import LineUp from 'lineupjs';
 import FerretColumn, {
@@ -226,71 +230,52 @@ export abstract class DropdownBase extends EventTarget {
             | 'leadingDigit.acknowledged'
             | 'leadingDigit.ignored';
         let valType: ValType = (type + '.' + this.countType) as ValType;
-        console.log(valType);
+
+        const getCount = (
+            getMetadata: (column: FerretColumn) => SelectionMetadata<any>,
+            getSubMetadata: MetaDataAccessor<any>,
+            compareValue: number | string
+        ): number => {
+            let count: number;
+            if (col) {
+                count =
+                    getSubMetadata(getMetadata(col)).find(
+                        ([val, _count]) => val === compareValue
+                    )?.[1] ?? 0;
+            } else {
+                count = d3.sum(
+                    allColumns,
+                    d =>
+                        getSubMetadata(getMetadata(d)).find(
+                            ([val, _count]) => val === compareValue
+                        )?.[1] ?? 0
+                );
+            }
+            return count;
+        };
+
+        const getAcknowledged = (metadata: SelectionMetadata<any>) => {
+            return metadata.acknowledged;
+        };
+        const getIgnored = (metadata: SelectionMetadata<any>) => {
+            return metadata.ignored;
+        };
+
+        const getFreqVals = (col: FerretColumn) => col?.freqVals;
+        const getNGramCounts = (col: FerretColumn) => col?.ngramCounts;
+
         switch (valType) {
             case 'value.acknowledged':
-                if (col) {
-                    count =
-                        col.freqVals.acknowledged.find(
-                            ([val, _count]) => val === num_val
-                        )?.[1] ?? 0;
-                } else {
-                    count = d3.sum(
-                        allColumns,
-                        d =>
-                            d?.freqVals.acknowledged.find(
-                                ([val, _count]) => val === num_val
-                            )?.[1] ?? 0
-                    );
-                }
+                count = getCount(getFreqVals, getAcknowledged, num_val);
                 break;
             case 'value.ignored':
-                if (col) {
-                    count =
-                        col.freqVals.ignored.find(
-                            ([val, _count]) => val === num_val
-                        )?.[1] ?? 0;
-                } else {
-                    count = d3.sum(
-                        allColumns,
-                        d =>
-                            d?.freqVals.ignored.find(
-                                ([val, _count]) => val === num_val
-                            )?.[1] ?? 0
-                    );
-                }
+                count = getCount(getFreqVals, getIgnored, num_val);
                 break;
             case 'nGram.acknowledged':
-                if (col) {
-                    count =
-                        col.ngramCounts.acknowledged.find(
-                            ([val, _count]) => val === num_str
-                        )?.[1] ?? 0;
-                } else {
-                    count = d3.sum(
-                        allColumns,
-                        d =>
-                            d?.ngramCounts.acknowledged.find(
-                                ([val, _count]) => val === num_str
-                            )?.[1] ?? 0
-                    );
-                }
+                count = getCount(getNGramCounts, getAcknowledged, num_str);
                 break;
             case 'nGram.ignored':
-                if (col) {
-                    count =
-                        col.ngramCounts.ignored.find(
-                            ([val, _count]) => val === num_str
-                        )?.[1] ?? 0;
-                } else {
-                    count = d3.sum(
-                        allColumns,
-                        d =>
-                            d?.ngramCounts.ignored.find(
-                                ([val, _count]) => val === num_str
-                            )?.[1] ?? 0
-                    );
-                }
+                count = getCount(getNGramCounts, getIgnored, num_str);
                 break;
             case 'leadingDigit.acknowledged':
                 count =

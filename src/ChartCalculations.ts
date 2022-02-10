@@ -6,6 +6,8 @@ export interface SelectionMetadata<T> {
     acknowledged: T;
 }
 
+export type MetaDataAccessor<T> = (d: SelectionMetadata<T>) => T;
+
 export type FreqValsMetadata = SelectionMetadata<[number, number][]>;
 export type NGramMetadata = SelectionMetadata<[string, number][]>;
 export type LeadDigitCountMetadata = SelectionMetadata<Map<number, number>>;
