@@ -45,6 +45,7 @@ export default class FerretRenderer implements ICellRendererFactory {
                     <div class="innerVizContainer"></div><div class="d-flex flex-column textButton"></div>
                 </div>
                 <div class="noDisp innerVizContainer"></div>
+                <div class="noDisp innerVizContainer"></div>
             </div>`,
             update: (container: HTMLElement) => {
                 let childIndex = 0;
@@ -93,6 +94,15 @@ export default class FerretRenderer implements ICellRendererFactory {
                     col,
                     context,
                     'benfordDist-',
+                    col.id
+                );
+
+                vizContainer = container.children[childIndex++] as HTMLElement;
+                this.drawTextPrecision(
+                    vizContainer,
+                    col,
+                    context,
+                    'textPrecision-',
                     col.id
                 );
 
@@ -580,6 +590,89 @@ export default class FerretRenderer implements ICellRendererFactory {
                     event.preventDefault();
                     this.drawContextMenu(
                         'leadingDigit',
+                        value.datum.digit.toString(),
+                        column,
+                        context,
+                        event.pageX,
+                        event.pageY
+                    );
+                });
+            })
+            .catch(console.warn);
+    }
+
+    private async drawTextPrecision(
+        container: HTMLElement,
+        column: FerretColumn,
+        context: IRenderContext,
+        chartKey: string,
+        colKey: string
+    ): Promise<void> {
+        let decimalCounts: Map<number, number>;
+        decimalCounts = new Map(column?.decimalCounts?.acknowledged);
+        const leadDictFreq = await ChartCalculations.GetPecisionFreqs(
+            column,
+            context.provider,
+            decimalCounts
+        );
+
+        let dataValues: Array<any> = [];
+        for (let [digit, freq] of leadDictFreq) {
+            dataValues.push({
+                digit: digit,
+                frequency: freq
+            });
+        }
+
+        const elementID = chartKey + colKey;
+        container.id = elementID;
+
+        var yourVlSpec: VisualizationSpec = {
+            width: 85,
+            height: 50,
+            $schema: 'https://vega.github.io/schema/vega-lite/v4.json',
+            description: 'Text Precision',
+            data: {
+                values: dataValues
+            },
+            mark: 'bar',
+            selection: {
+                highlightBar: {
+                    type: 'single',
+                    empty: 'none',
+                    on: 'mouseover'
+                }
+            },
+            encoding: {
+                x: {
+                    field: 'digit',
+                    type: 'ordinal',
+                    title: null
+                },
+                y: { field: 'frequency', type: 'quantitative', title: null },
+                color: {
+                    value: '#ac53af'
+                },
+                opacity: {
+                    condition: {
+                        selection: 'highlightBar',
+                        value: 0.7
+                    },
+                    value: 1
+                }
+            }
+        };
+
+        vegaEmbed('#' + elementID, yourVlSpec, { actions: false })
+            .then(result => {
+                result.view.addEventListener('contextmenu', (event, value) => {
+                    if (!value || !value.datum) {
+                        return;
+                    }
+                    event = event as PointerEvent;
+                    event.preventDefault();
+                    this.drawContextMenu(
+                        'leadingDigit', // todo remove or make work
                         value.datum.digit.toString(),
                         column,
                         context,

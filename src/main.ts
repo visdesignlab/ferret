@@ -60,7 +60,7 @@ let init = (data: string, filename: string) => {
     let fileLoadButton = new UploadFileButton(toolbarContainer, init, bigStyle);
     let tabularData: TabularData = TabularData.FromString(data);
     controlsDisplay.drawControls(tabularData);
-    const defaultVizShown = [true, false, false, false, false];
+    const defaultVizShown = [true, false, false, false, false, false];
     controlsDisplay.SetData(tabularData, defaultVizShown);
     tableDisplay.SetData(tabularData);
     visDisplay.SetData(tableDisplay.lineup);

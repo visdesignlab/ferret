@@ -11,7 +11,8 @@ import {
     ChartCalculations,
     LeadDigitCountMetadata,
     FreqValsMetadata,
-    NGramMetadata
+    NGramMetadata,
+    DecimalMetadata
 } from './ChartCalculations';
 
 export class TableDisplay extends EventTarget {
@@ -178,6 +179,7 @@ export class TableDisplay extends EventTarget {
         const freqValPromises: Promise<FreqValsMetadata>[] = [];
         const nGramPromises: Promise<NGramMetadata>[] = [];
         const leadingDigitPromises: Promise<LeadDigitCountMetadata>[] = [];
+        const decimalCountPromises: Promise<DecimalMetadata>[] = [];
         for (let col of this.ferretColumns) {
             // Frequent Values
             freqValPromises.push(
@@ -204,6 +206,10 @@ export class TableDisplay extends EventTarget {
             leadingDigitPromises.push(
                 ChartCalculations.getLeadingDigitCounts(col, this.lineup.data)
             );
+            // decimal count
+            decimalCountPromises.push(
+                ChartCalculations.getPecisionCounts(col, this.lineup.data)
+            );
         }
         // Frequent Values
         let freqValsList = await Promise.all(freqValPromises);
@@ -225,6 +231,13 @@ export class TableDisplay extends EventTarget {
             let col = this.ferretColumns[i];
             let digitCounts = digitCountsList[i];
             col.leadingDigitCounts = digitCounts;
+        }
+        // Decimal Counts
+        let decimalCountList = await Promise.all(decimalCountPromises);
+        for (let i = 0; i < this.ferretColumns.length; i++) {
+            let col = this.ferretColumns[i];
+            let decimalCounts = decimalCountList[i];
+            col.decimalCounts = decimalCounts;
         }
     }
 

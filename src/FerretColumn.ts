@@ -4,7 +4,8 @@ import {
     ChartCalculations,
     FreqValsMetadata,
     LeadDigitCountMetadata,
-    NGramMetadata
+    NGramMetadata,
+    DecimalMetadata
 } from './ChartCalculations';
 
 export interface FerretSelection {
@@ -74,6 +75,14 @@ export default class FerretColumn extends ValueColumn<number> {
     }
     public set ngramCounts(v: NGramMetadata) {
         this._ngramCounts = v;
+    }
+
+    private _decimalCounts: DecimalMetadata;
+    public get decimalCounts(): DecimalMetadata {
+        return this._decimalCounts;
+    }
+    public set decimalCounts(v: DecimalMetadata) {
+        this._decimalCounts = v;
     }
 
     private static _globalIgnore: FerretSelection = {

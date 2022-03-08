@@ -9,14 +9,16 @@ export class ControlsDisplay {
         'duplicateCount',
         'replicates',
         'nGram',
-        'benfordDist'
+        'benfordDist',
+        'textPrecision'
     ];
     chartNames = [
         'Value Distribution',
         'Frequent Values',
         'Replicates',
         'N Grams',
-        'Leading Digit Frequency'
+        'Leading Digit Frequency',
+        'Text Precision'
     ];
 
     private _chartsShown: boolean[];
@@ -241,20 +243,24 @@ export class ControlsDisplay {
         let threeGramSwitch = document.getElementById('3-gram-switch');
         let nGramSwitch = document.getElementById('n-gram-switch');
         let lsdSwitch = document.getElementById('lsd-switch');
+        let dcSwitch = document.getElementById('decimal-count-switch');
 
         d3.selectAll('.item').on('click', (_d, i) => {
             this.showOnly(i);
         });
 
         valueDistSwitch.addEventListener('click', e => this.toggleChart(0, e));
-        frequentValueSwitch.addEventListener('click', e =>
-            this.toggleChart(1, e)
-        );
+        frequentValueSwitch.addEventListener('click', e => {
+            this.toggleChart(1, e);
+        });
         repSwitch.addEventListener('click', e => this.toggleChart(2, e));
         nGramSwitch.addEventListener('click', e => this.toggleChart(3, e));
-        leadingDigitSwitch.addEventListener('click', e =>
-            this.toggleChart(4, e)
-        );
+        leadingDigitSwitch.addEventListener('click', e => {
+            this.toggleChart(4, e);
+        });
+        dcSwitch.addEventListener('click', e => {
+            this.toggleChart(5, e);
+        });
 
         uniqueValuesSwitch.addEventListener('click', e => {
             this.setShowAll('.duplicateCountViz', e);

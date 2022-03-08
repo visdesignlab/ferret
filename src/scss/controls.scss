@@ -41,6 +41,10 @@
     background-color: $chart-ldf;
     border-color: $chart-ldf;
 }
+.customButtonEyeIcon.chart-dc {
+    background-color: $chart-dc;
+    border-color: $chart-dc;
+}
 
 .customButtonEyeIcon.hidden {
     background-color: #eeeeee !important;
@@ -84,6 +88,12 @@
 }
 .item.chart-ldf:hover {
     background-color: $chart-ldf-light;
+}
+.item.chart-dc {
+    border: 1px solid $chart-dc;
+}
+.item.chart-dc:hover {
+    background-color: $chart-dc-light;
 }
 
 .dropdown-content {
