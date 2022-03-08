@@ -56,7 +56,7 @@ export default class FerretRenderer implements ICellRendererFactory {
                     col,
                     context,
                     interactive,
-                    'newOverallDist-',
+                    'overallDist-',
                     col.id
                 );
 
@@ -65,7 +65,7 @@ export default class FerretRenderer implements ICellRendererFactory {
                     vizContainer,
                     col,
                     context,
-                    'newDuplicateCount-',
+                    'duplicateCount-',
                     col.id
                 );
 
@@ -74,7 +74,7 @@ export default class FerretRenderer implements ICellRendererFactory {
                     vizContainer,
                     col,
                     context,
-                    'newReplicates-',
+                    'replicates-',
                     col.id
                 );
 
@@ -83,7 +83,7 @@ export default class FerretRenderer implements ICellRendererFactory {
                     vizContainer,
                     col,
                     context,
-                    'newNGram-',
+                    'nGram-',
                     col.id
                 );
 
@@ -92,7 +92,7 @@ export default class FerretRenderer implements ICellRendererFactory {
                     vizContainer,
                     col,
                     context,
-                    'newBenfordDist-',
+                    'benfordDist-',
                     col.id
                 );
 

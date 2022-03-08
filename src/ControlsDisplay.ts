@@ -5,11 +5,11 @@ import { DuplicateCountType, LINEUP_COL_COUNT } from './lib/constants';
 
 export class ControlsDisplay {
     charts = [
-        'newOverallDist',
-        'newDuplicateCount',
-        'newReplicates',
-        'newNGram',
-        'newBenfordDist'
+        'overallDist',
+        'duplicateCount',
+        'replicates',
+        'nGram',
+        'benfordDist'
     ];
     chartNames = [
         'Value Distribution',
