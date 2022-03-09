@@ -1,3 +1,11 @@
+import {
+    CHART_DC,
+    CHART_FV,
+    CHART_LDF,
+    CHART_NG,
+    CHART_R,
+    CHART_VD
+} from './colors';
 import * as d3 from 'd3';
 import { Column, IImposer } from 'lineupjs';
 import type {
@@ -172,7 +180,7 @@ export default class FerretRenderer implements ICellRendererFactory {
                     title: null
                 },
                 color: {
-                    value: '#ffb727'
+                    value: CHART_VD
                 },
                 y: {
                     field: 'value',
@@ -263,7 +271,7 @@ export default class FerretRenderer implements ICellRendererFactory {
                 },
                 x: { field: 'count', type: 'quantitative', title: null },
                 color: {
-                    value: '#e57373'
+                    value: CHART_FV
                 },
                 opacity: {
                     condition: {
@@ -367,7 +375,7 @@ export default class FerretRenderer implements ICellRendererFactory {
             encoding: {
                 x: { field: 'count', type: 'quantitative', title: null },
                 color: {
-                    value: '#0277bb'
+                    value: CHART_R
                 },
                 y: {
                     field: 'frequency',
@@ -468,7 +476,7 @@ export default class FerretRenderer implements ICellRendererFactory {
                 y: { field: 'value', type: 'ordinal', sort: '-x', title: null },
                 x: { field: 'count', type: 'quantitative', title: null },
                 color: {
-                    value: '#ff9100'
+                    value: CHART_NG
                 },
                 opacity: {
                     condition: {
@@ -583,7 +591,7 @@ export default class FerretRenderer implements ICellRendererFactory {
                 },
                 y: { field: 'frequency', type: 'quantitative', title: null },
                 color: {
-                    value: '#4eb7ac'
+                    value: CHART_LDF
                 },
                 opacity: {
                     condition: {
@@ -668,7 +676,7 @@ export default class FerretRenderer implements ICellRendererFactory {
                 },
                 y: { field: 'frequency', type: 'quantitative', title: null },
                 color: {
-                    value: '#ac53af'
+                    value: CHART_DC
                 },
                 opacity: {
                     condition: {

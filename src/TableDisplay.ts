@@ -151,6 +151,9 @@ export class TableDisplay extends EventTarget {
             'FerretCellRenderer',
             new FerretCellRenderer()
         );
+        // - todo, remove this is for faster testing.
+        builder.overviewMode();
+        //
         this._lineup = builder.buildTaggle(
             lineupContainer
         ) as unknown as LineUp;
