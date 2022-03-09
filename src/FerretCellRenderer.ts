@@ -11,6 +11,7 @@ import {
     renderMissingDOM
 } from 'lineupjs';
 import { ChartCalculations } from './ChartCalculations';
+import { CHART_FV, CHART_LDF, CHART_NG } from './colors';
 import FerretColumn, {
     FerretSelectionExplanation,
     Range
@@ -105,18 +106,36 @@ export default class FerretCellRenderer implements ICellRendererFactory {
                 n.classList.toggle('ignoredCell', col.ignoreInAnalysis(d));
             },
             render: (ctx: CanvasRenderingContext2D, d: IDataRow) => {
-                // Circle
-                const data = col.getValue(d);
-
                 ctx.save();
-                ctx.fillStyle = 'grey';
-
-                const value = col.getScaledNumber(d);
-                const w = width * value;
-                // ctx.fillRect(0, 0, Number.isNaN(w) ? 0 : w, CANVAS_HEIGHT);
-
+                const ignored = col.ignoreInAnalysis(d);
+                if (ignored) {
+                    ctx.fillStyle = '#f1f1f1';
+                } else {
+                    ctx.fillStyle = '#c1c1c1';
+                }
+                const w = width * col.getScaledNumber(d);
                 ctx.fillRect(0, 0, w, 4);
                 ctx.fill();
+
+                if (!ignored) {
+                    const selectionExplanation: FerretSelectionExplanation =
+                        col.highlightValueExplanation(d);
+                    if (selectionExplanation.why.value.cause) {
+                        ctx.fillStyle = CHART_FV;
+                        ctx.fillRect(0, 0, w, 4);
+                        ctx.fill();
+                    }
+                    if (selectionExplanation.why.nGram.length > 0) {
+                        ctx.fillStyle = CHART_NG;
+                        ctx.fillRect(w / 3, 0, w / 3, 4);
+                        ctx.fill();
+                    }
+                    if (selectionExplanation.why.leadingDigit.cause) {
+                        ctx.fillStyle = CHART_LDF;
+                        ctx.fillRect(0, 0, w / 3, 4);
+                        ctx.fill();
+                    }
+                }
 
                 ctx.restore();
             }
