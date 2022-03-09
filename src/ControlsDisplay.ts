@@ -377,7 +377,10 @@ export class ControlsDisplay {
 
             const lastIndex = this.data.columnList.length + LINEUP_COL_COUNT;
             for (let j = LINEUP_COL_COUNT; j < lastIndex; j++) {
-                d3.select(`#${chartKey}-col${j}`).classed('d-none', !visible);
+                d3.selectAll(`.${chartKey}-col${j}`).classed(
+                    'd-none',
+                    !visible
+                );
             }
         }
 

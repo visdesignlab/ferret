@@ -1,4 +1,3 @@
-import * as d3 from 'd3';
 import {
     Column,
     ERenderMode,
@@ -29,6 +28,7 @@ export default class FerretCellRenderer implements ICellRendererFactory {
         context: IRenderContext,
         imposer?: IImposer
     ): ICellRenderer {
+        const width = context.colWidth(col);
         return {
             template: `<div title="" class="ferretCell"></div>`,
             update: (n: HTMLElement, d: IDataRow) => {
@@ -103,6 +103,22 @@ export default class FerretCellRenderer implements ICellRendererFactory {
                     d
                 )}</span>`;
                 n.classList.toggle('ignoredCell', col.ignoreInAnalysis(d));
+            },
+            render: (ctx: CanvasRenderingContext2D, d: IDataRow) => {
+                // Circle
+                const data = col.getValue(d);
+
+                ctx.save();
+                ctx.fillStyle = 'grey';
+
+                const value = col.getScaledNumber(d);
+                const w = width * value;
+                // ctx.fillRect(0, 0, Number.isNaN(w) ? 0 : w, CANVAS_HEIGHT);
+
+                ctx.fillRect(0, 0, w, 4);
+                ctx.fill();
+
+                ctx.restore();
             }
         };
     }

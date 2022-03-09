@@ -12,6 +12,7 @@ import FerretColumn, {
     SelectionType,
     SelectionTypeString
 } from './FerretColumn';
+import { uniqueId } from 'lodash';
 
 export default class FerretRenderer implements ICellRendererFactory {
     readonly title: string = 'Ferret Visualizations';
@@ -138,8 +139,11 @@ export default class FerretRenderer implements ICellRendererFactory {
             }
         }
 
-        const elementID = chartKey + colKey;
+        const prefix = chartKey + colKey;
+        const elementID = uniqueId(prefix + '-');
+        container.classList.add(prefix);
         container.id = elementID;
+
         const isNumeric =
             column.desc.type === 'number' ||
             column.desc.type === 'FerretColumn';
@@ -204,8 +208,11 @@ export default class FerretRenderer implements ICellRendererFactory {
         chartKey: string,
         colKey: string
     ): Promise<void> {
-        const elementID = chartKey + colKey;
+        const prefix = chartKey + colKey;
+        const elementID = uniqueId(prefix + '-');
+        container.classList.add(prefix);
         container.id = elementID;
+
         const vizContainer = container.querySelector('.innerVizContainer');
         vizContainer.id = elementID + '-inner';
 
@@ -332,8 +339,11 @@ export default class FerretRenderer implements ICellRendererFactory {
             ? replicateCount.length
             : this.maxCollapseCount;
 
-        const elementID = chartKey + colKey;
+        const prefix = chartKey + colKey;
+        const elementID = uniqueId(prefix + '-');
+        container.classList.add(prefix);
         container.id = elementID;
+
         container.querySelector('.innerVizContainer').id = elementID + '-inner';
         for (let [frequency, count] of replicateCount) {
             if (index >= maxIndex) {
@@ -411,8 +421,11 @@ export default class FerretRenderer implements ICellRendererFactory {
         chartKey: string,
         colKey: string
     ): Promise<void> {
-        const elementID = chartKey + colKey;
+        const prefix = chartKey + colKey;
+        const elementID = uniqueId(prefix + '-');
+        container.classList.add(prefix);
         container.id = elementID;
+
         const vizContainer = container.querySelector('.innerVizContainer');
         vizContainer.id = elementID + '-inner';
 
@@ -537,7 +550,9 @@ export default class FerretRenderer implements ICellRendererFactory {
             });
         }
 
-        const elementID = chartKey + colKey;
+        const prefix = chartKey + colKey;
+        const elementID = uniqueId(prefix + '-');
+        container.classList.add(prefix);
         container.id = elementID;
 
         var yourVlSpec: VisualizationSpec = {
@@ -624,7 +639,9 @@ export default class FerretRenderer implements ICellRendererFactory {
             });
         }
 
-        const elementID = chartKey + colKey;
+        const prefix = chartKey + colKey;
+        const elementID = uniqueId(prefix + '-');
+        container.classList.add(prefix);
         container.id = elementID;
 
         var yourVlSpec: VisualizationSpec = {

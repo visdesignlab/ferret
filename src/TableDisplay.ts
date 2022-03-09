@@ -1,7 +1,19 @@
+import * as d3 from 'd3';
 import { TabularData } from './TabularData';
-import * as LineUpJS from 'lineupjs';
+
+import {
+    Column,
+    builder as lineupBuilder,
+    toolbar,
+    buildCategoricalColumn,
+    buildStringColumn,
+    buildColumn,
+    LineUp,
+    ColumnBuilder,
+    ICategory,
+    Taggle
+} from 'lineupjs';
 import { ColumnNumeric } from './ColumnNumeric';
-import { ColumnBuilder, ICategory } from 'lineupjs';
 import FerretRenderer from './FerretRenderer';
 import FerretCellRenderer from './FerretCellRenderer';
 import FerretColumn from './FerretColumn';
@@ -53,13 +65,13 @@ export class TableDisplay extends EventTarget {
         return this._data;
     }
 
-    private _lineup: LineUpJS.LineUp;
-    public get lineup(): LineUpJS.LineUp {
+    private _lineup: LineUp;
+    public get lineup(): LineUp {
         return this._lineup;
     }
 
-    private _allColumns: LineUpJS.Column[];
-    public get allColumns(): LineUpJS.Column[] {
+    private _allColumns: Column[];
+    public get allColumns(): Column[] {
         return this._allColumns;
     }
 
@@ -91,27 +103,24 @@ export class TableDisplay extends EventTarget {
 
     public initLineup(data: TabularData): void {
         const rowFirstData = data.getRowList();
-        const builder = LineUpJS.builder(rowFirstData);
+        const builder = lineupBuilder(rowFirstData);
         builder.registerColumnType('FerretColumn', FerretColumn);
-        LineUpJS.toolbar(
-            'rename',
-            'sort',
-            'sortBy',
-            'filterNumber'
-        )(FerretColumn);
-
+        toolbar('rename', 'sort', 'sortBy', 'filterNumber')(FerretColumn);
+        const extentLookup = new Map<string, [number, number]>();
         for (let i = 0; i < data.columnList.length; i++) {
             const key = i.toString();
             const column = data.columnList[i];
             const label = column.id;
             let columnBuilder: ColumnBuilder;
             if (column.type === 'Number') {
-                columnBuilder = LineUpJS.buildColumn('FerretColumn', key);
+                columnBuilder = buildColumn('FerretColumn', key);
                 columnBuilder.renderer(
                     'FerretCellRenderer',
                     '',
                     'FerretRenderer'
                 );
+                const extent = d3.extent(column.values as number[]);
+                extentLookup.set(label, extent);
                 const decimalPlaces = (
                     column as ColumnNumeric
                 ).getDecimalPlaces();
@@ -125,13 +134,10 @@ export class TableDisplay extends EventTarget {
                     };
                     categoryList.push(category);
                 }
-                columnBuilder = LineUpJS.buildCategoricalColumn(
-                    key,
-                    categoryList
-                );
+                columnBuilder = buildCategoricalColumn(key, categoryList);
                 columnBuilder.renderer('string', '', '');
             } else {
-                columnBuilder = LineUpJS.buildStringColumn(key);
+                columnBuilder = buildStringColumn(key);
             }
             builder.column(columnBuilder.label(label).width(140));
         }
@@ -145,7 +151,10 @@ export class TableDisplay extends EventTarget {
             'FerretCellRenderer',
             new FerretCellRenderer()
         );
-        this._lineup = builder.build(lineupContainer);
+        this._lineup = builder.buildTaggle(
+            lineupContainer
+        ) as unknown as LineUp;
+        // this._lineup = builder.build(lineupContainer);
         // get the first ranking from the data provider
         const firstRanking = this.lineup.data.getFirstRanking();
         this._allColumns = firstRanking.flatColumns;
@@ -153,6 +162,9 @@ export class TableDisplay extends EventTarget {
             col => col instanceof FerretColumn
         ) as FerretColumn[];
         for (let col of this.ferretColumns) {
+            const extent = extentLookup.get(col.label);
+            col.normalize = d3.scaleLinear().domain(extent).range([0, 1]);
+
             col.on('filterChanged', async () => {
                 await this.updateFerretColumnMetaData();
                 document.dispatchEvent(new CustomEvent('filterChanged'));

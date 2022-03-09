@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import * as LineUpJS from 'lineupjs';
+import { LineUp } from 'lineupjs';
 import { Vis, ColumnInfo, EColumnTypes, VisColumn } from './lib/vis';
 import {
     CategoricalColumn,
@@ -9,7 +9,6 @@ import {
     NumberColumn,
     ValueColumn
 } from 'lineupjs';
-import { line } from 'd3';
 import FerretColumn from './FerretColumn';
 
 export class VisDisplay {
@@ -22,12 +21,12 @@ export class VisDisplay {
         return this._container;
     }
 
-    private _lineup: LineUpJS.LineUp;
-    public get lineup(): LineUpJS.LineUp {
+    private _lineup: LineUp;
+    public get lineup(): LineUp {
         return this._lineup;
     }
 
-    public async SetData(lineup: LineUpJS.LineUp): Promise<void> {
+    public async SetData(lineup: LineUp): Promise<void> {
         const ranking = lineup.data.getFirstRanking();
         this._lineup = lineup;
 
