@@ -21,6 +21,10 @@
     border: solid #eeeeee 2px;
 }
 
+.customButtonEyeIcon.chart- {
+    background-color: #b3b3b3;
+    border-color: #3a3939;
+}
 .customButtonEyeIcon.chart-vd {
     background-color: $chart-vd;
     border-color: $chart-vd;
@@ -59,6 +63,12 @@
     border-color: grey !important;
 }
 
+.item.chart- {
+    border: 1px solid rgb(119, 119, 119);
+}
+.item.chart-:hover {
+    background-color: #d3d3d3;
+}
 .item.chart-vd {
     border: 1px solid $chart-vd;
 }

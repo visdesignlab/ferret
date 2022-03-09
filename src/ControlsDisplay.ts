@@ -10,7 +10,9 @@ export class ControlsDisplay {
         'replicates',
         'nGram',
         'benfordDist',
-        'textPrecision'
+        'textPrecision',
+        'sorting',
+        'general'
     ];
     chartNames = [
         'Value Distribution',
@@ -18,7 +20,9 @@ export class ControlsDisplay {
         'Replicates',
         'N Grams',
         'Leading Digit Frequency',
-        'Text Precision'
+        'Text Precision',
+        'Sorting',
+        'General'
     ];
 
     private _chartsShown: boolean[];
