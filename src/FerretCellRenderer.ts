@@ -114,7 +114,7 @@ export default class FerretCellRenderer implements ICellRendererFactory {
                     ctx.fillStyle = '#c1c1c1';
                 }
                 const w = width * col.getScaledNumber(d);
-                ctx.fillRect(0, 0, w, 4);
+                ctx.fillRect(width - w, 0, w, 4);
                 ctx.fill();
 
                 if (!ignored) {
@@ -122,17 +122,17 @@ export default class FerretCellRenderer implements ICellRendererFactory {
                         col.highlightValueExplanation(d);
                     if (selectionExplanation.why.value.cause) {
                         ctx.fillStyle = CHART_FV;
-                        ctx.fillRect(0, 0, w, 4);
+                        ctx.fillRect(width - w, 0, w, 4);
                         ctx.fill();
                     }
                     if (selectionExplanation.why.nGram.length > 0) {
                         ctx.fillStyle = CHART_NG;
-                        ctx.fillRect(w / 3, 0, w / 3, 4);
+                        ctx.fillRect(width - w + w / 3, 0, w / 3, 4);
                         ctx.fill();
                     }
                     if (selectionExplanation.why.leadingDigit.cause) {
                         ctx.fillStyle = CHART_LDF;
-                        ctx.fillRect(0, 0, w / 3, 4);
+                        ctx.fillRect(width - w, 0, w / 3, 4);
                         ctx.fill();
                     }
                 }
