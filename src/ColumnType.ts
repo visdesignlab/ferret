@@ -33,5 +33,5 @@ export function isNumericArray(arr: any[]) {
 
 function isCategoricalArray(arr: any[]) {
     let uniqueVals = [...new Set(arr)];
-    return uniqueVals.length > 1 && uniqueVals.length < 12;
+    return uniqueVals.length > 1 && uniqueVals.length < 5;
 }
