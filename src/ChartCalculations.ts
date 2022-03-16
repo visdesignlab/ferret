@@ -86,6 +86,46 @@ export class ChartCalculations {
         column: FerretColumn,
         provider: IDataProvider
     ): Promise<LeadDigitCountMetadata> {
+        return ChartCalculations.getDigitCounts(
+            column,
+            provider,
+            ChartCalculations.getLeadingDigit
+        );
+    }
+
+    public static async GetTerminalDigitFreqs(
+        column: FerretColumn,
+        provider: IDataProvider,
+        counts?: Map<number, number>
+    ): Promise<Map<number, number>> {
+        let digitCounts =
+            counts ??
+            (await ChartCalculations.getTerminalDigitCounts(column, provider))
+                .acknowledged;
+        for (let digit of digitCounts.keys()) {
+            let count = digitCounts.get(digit);
+            digitCounts.set(digit, count / provider.getTotalNumberOfRows());
+        }
+
+        return digitCounts;
+    }
+
+    public static async getTerminalDigitCounts(
+        column: FerretColumn,
+        provider: IDataProvider
+    ): Promise<LeadDigitCountMetadata> {
+        return ChartCalculations.getDigitCounts(
+            column,
+            provider,
+            ChartCalculations.getTerminalDigit
+        );
+    }
+
+    private static async getDigitCounts(
+        column: FerretColumn,
+        provider: IDataProvider,
+        getDigit: (number) => 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
+    ): Promise<LeadDigitCountMetadata> {
         let acknowledged = new Map<number, number>();
         let ignored = new Map<number, number>();
 
@@ -100,7 +140,7 @@ export class ChartCalculations {
             const dataRow = await provider.getRow(i);
             const dataValue = column.getRaw(dataRow);
 
-            let digit = ChartCalculations.getLeadingDigit(dataValue);
+            let digit = getDigit(dataValue);
             let relevantMap = column.ignoreInAnalysis(dataRow)
                 ? ignored
                 : acknowledged;
@@ -149,6 +189,23 @@ export class ChartCalculations {
         }
         let valString = val.toString();
         return +valString[leadingDigitIndex] as
+            | 1
+            | 2
+            | 3
+            | 4
+            | 5
+            | 6
+            | 7
+            | 8
+            | 9;
+    }
+    public static getTerminalDigit(
+        val: number
+    ): 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | null {
+        let valString = val.toString();
+        let terminalDigitIndex = valString.length - 1;
+        return +valString[terminalDigitIndex] as
+            | 0
             | 1
             | 2
             | 3

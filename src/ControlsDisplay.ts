@@ -10,6 +10,8 @@ export class ControlsDisplay {
         'replicates',
         'nGram',
         'benfordDist',
+        'terminalDigit',
+        'parityCount',
         'textPrecision',
         'sorting',
         'general'
@@ -20,6 +22,8 @@ export class ControlsDisplay {
         'Replicates',
         'N Grams',
         'Leading Digit Frequency',
+        'Terminal Digit Frequency',
+        'Odd/Even Count',
         'Text Precision',
         'Sorting',
         'General'
