@@ -118,15 +118,6 @@ export default class FerretRenderer implements ICellRendererFactory {
                 );
 
                 vizContainer = container.children[childIndex++] as HTMLElement;
-                this.drawParityCount(
-                    vizContainer,
-                    col,
-                    context,
-                    'parityCount-',
-                    col.id
-                );
-
-                vizContainer = container.children[childIndex++] as HTMLElement;
                 this.drawTextPrecision(
                     vizContainer,
                     col,
@@ -700,95 +691,6 @@ export default class FerretRenderer implements ICellRendererFactory {
                 y: { field: 'frequency', type: 'quantitative', title: null },
                 color: {
                     value: 'black'
-                },
-                opacity: {
-                    condition: {
-                        selection: 'highlightBar',
-                        value: 0.7
-                    },
-                    value: 1
-                }
-            }
-        };
-
-        vegaEmbed('#' + elementID, yourVlSpec, { actions: false })
-            .then(result => {
-                result.view.addEventListener('contextmenu', (event, value) => {
-                    if (!value || !value.datum) {
-                        return;
-                    }
-                    event = event as PointerEvent;
-                    event.preventDefault();
-                    this.drawContextMenu(
-                        'leadingDigit',
-                        value.datum.digit.toString(),
-                        column,
-                        context,
-                        event.pageX,
-                        event.pageY
-                    );
-                });
-            })
-            .catch(console.warn);
-    }
-    private async drawParityCount(
-        container: HTMLElement,
-        column: FerretColumn,
-        context: IRenderContext,
-        chartKey: string,
-        colKey: string
-    ): Promise<void> {
-        let digitCounts: Map<number, number>;
-        digitCounts = new Map(column?.leadingDigitCounts?.acknowledged);
-        const leadDictFreq = await ChartCalculations.GetLeadingDigitFreqs(
-            column,
-            context.provider,
-            digitCounts
-        );
-
-        let selectionName = filterNames.LEADING_DIGIT_FREQ_SELECTION;
-        let dataValues: Array<any> = [];
-        for (let [digit, freq] of leadDictFreq) {
-            dataValues.push({
-                digit: digit,
-                frequency: freq
-            });
-        }
-
-        const prefix = chartKey + colKey;
-        const elementID = uniqueId(prefix + '-');
-        container.classList.add(prefix);
-        container.id = elementID;
-
-        var yourVlSpec: VisualizationSpec = {
-            width: 85,
-            height: 50,
-            $schema: 'https://vega.github.io/schema/vega-lite/v4.json',
-            description: 'Leading Digit frequencies',
-            data: {
-                values: dataValues
-            },
-            mark: 'bar',
-            selection: {
-                highlightBar: {
-                    type: 'single',
-                    empty: 'none',
-                    on: 'mouseover'
-                },
-                LEADING_DIGIT_FREQ_SELECTION: {
-                    type: 'multi',
-                    clear: 'dblclick'
-                }
-            },
-            encoding: {
-                x: {
-                    field: 'digit',
-                    type: 'ordinal',
-                    title: null
-                },
-                y: { field: 'frequency', type: 'quantitative', title: null },
-                color: {
-                    value: 'grey'
                 },
                 opacity: {
                     condition: {
