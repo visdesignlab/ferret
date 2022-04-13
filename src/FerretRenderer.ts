@@ -7,12 +7,12 @@ import {
     CHART_VD
 } from './colors';
 import * as d3 from 'd3';
-import { Column, IImposer } from 'lineupjs';
+import { Column, IImposer } from './lib/lineup/lineupjs';
 import type {
     ICellRendererFactory,
     IRenderContext,
     ISummaryRenderer
-} from 'lineupjs';
+} from './lib/lineup/lineupjs';
 import { ChartCalculations } from './ChartCalculations';
 import * as filterNames from './lib/constants';
 import vegaEmbed, { VisualizationSpec } from 'vega-embed';

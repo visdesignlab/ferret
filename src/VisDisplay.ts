@@ -1,14 +1,14 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { LineUp } from 'lineupjs';
 import { Vis, ColumnInfo, EColumnTypes, VisColumn } from './lib/vis';
 import {
+    LineUp,
     CategoricalColumn,
     Column,
     IDataRow,
     NumberColumn,
     ValueColumn
-} from 'lineupjs';
+} from './lib/lineup/lineupjs';
 import FerretColumn from './FerretColumn';
 
 export class VisDisplay {

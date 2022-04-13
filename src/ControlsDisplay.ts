@@ -226,6 +226,7 @@ export class ControlsDisplay {
     private toggleVisualizations(): void {
         ControlsDisplay.toggleElementClass('visualizationsButton', 'selected');
         ControlsDisplay.toggleElementClass('visualizations', 'd-flex');
+        document.dispatchEvent(new CustomEvent('toggleOverview'));
     }
 
     private static toggleElementClass(id: string, cssClass: string): boolean {

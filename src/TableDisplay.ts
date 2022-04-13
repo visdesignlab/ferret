@@ -12,7 +12,7 @@ import {
     ColumnBuilder,
     ICategory,
     Taggle
-} from 'lineupjs';
+} from './lib/lineup/lineupjs';
 import { ColumnNumeric } from './ColumnNumeric';
 import FerretRenderer from './FerretRenderer';
 import FerretCellRenderer from './FerretCellRenderer';
@@ -47,6 +47,9 @@ export class TableDisplay extends EventTarget {
         document.addEventListener('updateLineup', async (e: CustomEvent) => {
             await this.updateFerretColumnMetaData();
             this.lineup.update();
+        });
+        document.addEventListener('toggleOverview', async (e: CustomEvent) => {
+            this.lineup.setOverviewMode(!this.lineup.isOverviewMode());
         });
         document.addEventListener('highlightRows', (e: CustomEvent) => {
             this.onHighlightRows(e);
@@ -145,7 +148,7 @@ export class TableDisplay extends EventTarget {
         const lineupContainer = document.getElementById('lineupContainer');
 
         builder.disableAdvancedModelFeatures();
-        builder.sidePanel(false, true);
+        builder.sidePanel(false);
         builder.registerRenderer('FerretRenderer', new FerretRenderer());
         builder.registerRenderer(
             'FerretCellRenderer',

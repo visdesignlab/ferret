@@ -9,7 +9,7 @@ import {
     IRenderContext,
     ISummaryRenderer,
     renderMissingDOM
-} from 'lineupjs';
+} from './lib/lineup/lineupjs';
 import { ChartCalculations } from './ChartCalculations';
 import { CHART_FV, CHART_LDF, CHART_NG } from './colors';
 import FerretColumn, {
