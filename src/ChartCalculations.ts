@@ -1,4 +1,4 @@
-import { IDataProvider, IRenderContext, LineUp } from './lib/lineup/lineupjs';
+import { IDataProvider, IRenderContext } from 'lineupjs';
 import FerretColumn from './FerretColumn';
 
 export interface SelectionMetadata<T> {

@@ -12,7 +12,7 @@ import {
     ColumnBuilder,
     ICategory,
     Taggle
-} from './lib/lineup/lineupjs';
+} from 'lineupjs';
 import { ColumnNumeric } from './ColumnNumeric';
 import FerretRenderer from './FerretRenderer';
 import FerretCellRenderer from './FerretCellRenderer';
@@ -28,20 +28,6 @@ import {
 } from './ChartCalculations';
 
 export class TableDisplay extends EventTarget {
-    charts = [
-        'overallDist',
-        'duplicateCount',
-        'replicates',
-        'nGram',
-        'benfordDist'
-    ];
-    chartNames = [
-        'Value Distribution',
-        'Frequent Values',
-        'Replicates',
-        'N Grams',
-        'Leading Digit Frequency'
-    ];
     constructor() {
         super();
         document.addEventListener('updateLineup', async (e: CustomEvent) => {
@@ -49,7 +35,13 @@ export class TableDisplay extends EventTarget {
             this.lineup.update();
         });
         document.addEventListener('toggleOverview', async (e: CustomEvent) => {
-            this.lineup.setOverviewMode(!this.lineup.isOverviewMode());
+            // this.lineup.setOverviewMode(!this.lineup.isOverviewMode());
+            // workaround until https://github.com/lineupjs/lineupengine/issues/53 is fixed
+            for (let i = 0; i < 8; i++) {
+                try {
+                    this.lineup.setOverviewMode(e.detail.overviewMode);
+                } catch {}
+            }
         });
         document.addEventListener('highlightRows', (e: CustomEvent) => {
             this.onHighlightRows(e);
@@ -154,9 +146,6 @@ export class TableDisplay extends EventTarget {
             'FerretCellRenderer',
             new FerretCellRenderer()
         );
-        // - todo, remove, this is for faster testing.
-        // builder.overviewMode();
-        //
         this._lineup = builder.buildTaggle(
             lineupContainer
         ) as unknown as LineUp;

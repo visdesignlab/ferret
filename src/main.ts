@@ -68,6 +68,7 @@ let init = (data: string, filename: string) => {
         false,
         false,
         false,
+        false,
         false
     ];
     controlsDisplay.SetData(tabularData, defaultVizShown);

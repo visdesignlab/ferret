@@ -8,7 +8,7 @@ import {
     IDataRow,
     NumberColumn,
     ValueColumn
-} from './lib/lineup/lineupjs';
+} from 'lineupjs';
 import FerretColumn from './FerretColumn';
 
 export class VisDisplay {

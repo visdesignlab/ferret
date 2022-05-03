@@ -15,17 +15,6 @@ export class ControlsDisplay {
         'sorting',
         'general'
     ];
-    chartNames = [
-        'Value Distribution',
-        'Frequent Values',
-        'Replicates',
-        'N Grams',
-        'Leading Digit Frequency',
-        'Terminal Digit Frequency',
-        'Text Precision',
-        'Sorting',
-        'General'
-    ];
 
     private _chartsShown: boolean[];
     public get chartsShown(): boolean[] {
@@ -224,7 +213,6 @@ export class ControlsDisplay {
     private toggleVisualizations(): void {
         ControlsDisplay.toggleElementClass('visualizationsButton', 'selected');
         ControlsDisplay.toggleElementClass('visualizations', 'd-flex');
-        document.dispatchEvent(new CustomEvent('toggleOverview'));
     }
 
     private static toggleElementClass(id: string, cssClass: string): boolean {
@@ -250,7 +238,15 @@ export class ControlsDisplay {
         let threeGramSwitch = document.getElementById('3-gram-switch');
         let nGramSwitch = document.getElementById('n-gram-switch');
         let lsdSwitch = document.getElementById('lsd-switch');
+
+        let terminalDigitSwitch = document.getElementById(
+            'terminal-digit-switch'
+        );
+
         let dcSwitch = document.getElementById('decimal-count-switch');
+
+        let sortingSwitch = document.getElementById('sorting-switch');
+        let generalSwitch = document.getElementById('general-switch');
 
         d3.selectAll('.item').on('click', (_d, i) => {
             this.showOnly(i);
@@ -265,8 +261,18 @@ export class ControlsDisplay {
         leadingDigitSwitch.addEventListener('click', e => {
             this.toggleChart(4, e);
         });
-        dcSwitch.addEventListener('click', e => {
+        terminalDigitSwitch.addEventListener('click', e => {
             this.toggleChart(5, e);
+        });
+
+        dcSwitch.addEventListener('click', e => {
+            this.toggleChart(6, e);
+        });
+        sortingSwitch.addEventListener('click', e => {
+            this.toggleChart(7, e);
+        });
+        generalSwitch.addEventListener('click', e => {
+            this.toggleChart(8, e);
         });
 
         uniqueValuesSwitch.addEventListener('click', e => {
@@ -394,5 +400,13 @@ export class ControlsDisplay {
         d3.selectAll('.item-option-container')
             .data(this.chartsShown)
             .classed('d-none', d => !d);
+
+        const sortingIndex = 7;
+        document.dispatchEvent(
+            new CustomEvent('toggleOverview', {
+                detail: { overviewMode: this.chartsShown[sortingIndex] }
+            })
+        );
+        const generalIndex = 8;
     }
 }

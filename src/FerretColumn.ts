@@ -1,11 +1,6 @@
 import * as d3 from 'd3';
-import {
-    Column,
-    IDataRow,
-    ValueColumn,
-    ECompareValueType
-} from './lib/lineup/lineupjs';
-import { IEventListener } from './lib/lineup/lineupjs/build/src/internal';
+import { Column, IDataRow, ValueColumn, ECompareValueType } from 'lineupjs';
+import { IEventListener } from 'lineupjs/build/src/internal';
 import {
     ChartCalculations,
     FreqValsMetadata,
