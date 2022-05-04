@@ -209,7 +209,7 @@ export default class FerretRenderer implements ICellRendererFactory {
                 }
             }
         };
-        vegaEmbed('#' + elementID, yourVlSpec, { actions: false }).then(
+        vegaEmbed('#' + elementID, yourVlSpec, { actions: true }).then(
             result => {
                 // TODO - add back some interactivity here
                 //   result.view.addSignalListener(selectionName, (name, value) => {
@@ -321,7 +321,7 @@ export default class FerretRenderer implements ICellRendererFactory {
         this.drawExpandCollapseTail(container, tailCount);
 
         vegaEmbed('#' + elementID + '-inner', yourVlSpec, {
-            actions: false
+            actions: true
         }).then(result => {
             result.view.addEventListener('contextmenu', (event, value) => {
                 if (!value || !value.datum) {
@@ -430,7 +430,7 @@ export default class FerretRenderer implements ICellRendererFactory {
         const tailCount = replicateCount.length - this.maxCollapseCount;
         this.drawExpandCollapseTail(container, tailCount);
         vegaEmbed('#' + elementID + '-inner', yourVlSpec, {
-            actions: false
+            actions: true
         }).catch(console.warn);
     }
 
@@ -526,7 +526,7 @@ export default class FerretRenderer implements ICellRendererFactory {
         this.drawExpandCollapseTail(container, tailCount);
 
         vegaEmbed('#' + elementID + '-inner', yourVlSpec, {
-            actions: false
+            actions: true
         }).then(result => {
             result.view.addEventListener('contextmenu', (event, value) => {
                 if (!value || !value.datum) {
@@ -615,7 +615,7 @@ export default class FerretRenderer implements ICellRendererFactory {
             }
         };
 
-        vegaEmbed('#' + elementID, yourVlSpec, { actions: false })
+        vegaEmbed('#' + elementID, yourVlSpec, { actions: true })
             .then(result => {
                 result.view.addEventListener('contextmenu', (event, value) => {
                     if (!value || !value.datum) {
@@ -703,7 +703,7 @@ export default class FerretRenderer implements ICellRendererFactory {
             }
         };
 
-        vegaEmbed('#' + elementID, yourVlSpec, { actions: false })
+        vegaEmbed('#' + elementID, yourVlSpec, { actions: true })
             .then(result => {
                 result.view.addEventListener('contextmenu', (event, value) => {
                     if (!value || !value.datum) {
@@ -788,7 +788,7 @@ export default class FerretRenderer implements ICellRendererFactory {
             }
         };
 
-        vegaEmbed('#' + elementID, yourVlSpec, { actions: false })
+        vegaEmbed('#' + elementID, yourVlSpec, { actions: true })
             .then(result => {
                 result.view.addEventListener('contextmenu', (event, value) => {
                     if (!value || !value.datum) {
