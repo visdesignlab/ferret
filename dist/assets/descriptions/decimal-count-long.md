@@ -1,1 +1,2 @@
-TODO placeholder for long description of decimal count analysis.
+-   expect fall off
+-   same caveat for fractions

@@ -1,1 +1,1 @@
-TODO placeholder for short description of decimal count analysis.
+This chart shows the distribution of the number of digits after the decimal place. The y-axis encodes the frequency of decimal place counts, between 0 and 1. The x-axis encodes the decimal place count.

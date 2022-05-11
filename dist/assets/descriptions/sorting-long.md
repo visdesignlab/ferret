@@ -1,1 +1,2 @@
-This chart gives a rough overview so you can see if the data match your expectations.
+-   can look for weird sorting effects, e.g. manual sorting
+-   can look in combination with other analysis
