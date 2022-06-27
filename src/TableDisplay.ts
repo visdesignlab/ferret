@@ -35,13 +35,7 @@ export class TableDisplay extends EventTarget {
             this.lineup.update();
         });
         document.addEventListener('toggleOverview', async (e: CustomEvent) => {
-            // this.lineup.setOverviewMode(!this.lineup.isOverviewMode());
-            // workaround until https://github.com/lineupjs/lineupengine/issues/53 is fixed
-            for (let i = 0; i < 8; i++) {
-                try {
-                    this.lineup.setOverviewMode(e.detail.overviewMode);
-                } catch {}
-            }
+            this.lineup.setOverviewMode(e.detail.overviewMode);
         });
         document.addEventListener('highlightRows', (e: CustomEvent) => {
             this.onHighlightRows(e);
