@@ -44,20 +44,26 @@ export default class FerretRenderer implements ICellRendererFactory {
         return {
             template: `
             <div class="vizContainer">
-                <div class="noDisp innerVizContainer"></div>
-                <div class="noDisp duplicateCountViz" data-show-all="false">
+                <div class="${this.shownClass(0)} innerVizContainer"></div>
+                <div class="${this.shownClass(
+                    1
+                )} duplicateCountViz" data-show-all="false">
                     <div class="innerVizContainer"></div><div class="d-flex flex-column textButton"></div>
                 </div>
-                <div class="noDisp replicatesViz" data-show-all="false">
+                <div class="${this.shownClass(
+                    2
+                )} replicatesViz" data-show-all="false">
                     <div class="innerVizContainer"></div><div class="d-flex flex-column textButton"></div>
                 </div>
-                <div class="noDisp nGramViz" data-show-all="false">
+                <div class="${this.shownClass(
+                    3
+                )} nGramViz" data-show-all="false">
                     <div class="innerVizContainer"></div><div class="d-flex flex-column textButton"></div>
                 </div>
-                <div class="noDisp innerVizContainer"></div>
-                <div class="noDisp innerVizContainer"></div>
-                <div class="noDisp innerVizContainer"></div>
-                <div class="noDisp innerVizContainer"></div>
+                <div class="${this.shownClass(4)} innerVizContainer"></div>
+                <div class="${this.shownClass(5)} innerVizContainer"></div>
+                <div class="${this.shownClass(6)} innerVizContainer"></div>
+                <div class="${this.shownClass(7)} innerVizContainer"></div>
             </div>`,
             update: (container: HTMLElement) => {
                 let childIndex = 0;
@@ -126,16 +132,12 @@ export default class FerretRenderer implements ICellRendererFactory {
                     'textPrecision-',
                     col.id
                 );
-
-                // triggering this here ensures the right charts are shown
-                // the setTimeout(0) is required so it will update correctly
-                setTimeout(() => {
-                    document.dispatchEvent(
-                        new CustomEvent('visibilityChanged')
-                    );
-                }, 0);
             }
         };
+    }
+
+    private shownClass(index: number): string {
+        return globalThis?.chartsShown?.[index] ? '' : 'd-none';
     }
 
     private async drawOverallDist(

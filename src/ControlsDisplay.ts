@@ -63,6 +63,7 @@ export class ControlsDisplay {
     public SetData(data: TabularData, chartsShown: boolean[]): void {
         this._data = data;
         this._chartsShown = chartsShown;
+        globalThis.chartsShown = this.chartsShown;
     }
 
     public drawControls(tabularData: TabularData): void {
