@@ -161,9 +161,8 @@ export default class FerretRenderer implements ICellRendererFactory {
             }
         }
 
-        const prefix = chartKey + colKey;
-        const elementID = uniqueId(prefix + '-');
-        container.classList.add(prefix);
+        const elementID = chartKey + colKey;
+        container.classList.add(elementID);
         container.id = elementID;
 
         const isNumeric =
@@ -230,9 +229,8 @@ export default class FerretRenderer implements ICellRendererFactory {
         chartKey: string,
         colKey: string
     ): Promise<void> {
-        const prefix = chartKey + colKey;
-        const elementID = uniqueId(prefix + '-');
-        container.classList.add(prefix);
+        const elementID = chartKey + colKey;
+        container.classList.add(elementID);
         container.id = elementID;
 
         const vizContainer = container.querySelector('.innerVizContainer');
@@ -244,7 +242,13 @@ export default class FerretRenderer implements ICellRendererFactory {
         let dataValues: Array<any> = [];
         let index = 0;
         let multiFrequentValues: Array<any> = [];
-        const showAll = container.dataset.showAll === 'true';
+
+        const showAllKey = 'duplicateCountViz';
+        const showAll = globalThis.chartExpanded.get(showAllKey).get(elementID);
+        globalThis.chartExpanded
+            .get(showAllKey)
+            .set(container.id, showAll ? true : false); // needed to set undefined to false
+
         for (let [val, count] of dupCounts) {
             if (count === 1) {
                 continue;
@@ -320,7 +324,7 @@ export default class FerretRenderer implements ICellRendererFactory {
         };
 
         const tailCount = multiFrequentValues.length - this.maxCollapseCount;
-        this.drawExpandCollapseTail(container, tailCount);
+        this.drawExpandCollapseTail(container, tailCount, showAllKey);
 
         vegaEmbed('#' + elementID + '-inner', yourVlSpec, {
             actions: false
@@ -356,15 +360,20 @@ export default class FerretRenderer implements ICellRendererFactory {
         );
         let dataValues: Array<any> = [];
         let index = 0;
-        const showAll = container.dataset.showAll === 'true';
+
+        const elementID = chartKey + colKey;
+        container.classList.add(elementID);
+        container.id = elementID;
+
+        const showAllKey = 'replicatesViz';
+        const showAll = globalThis.chartExpanded.get(showAllKey).get(elementID);
+        globalThis.chartExpanded
+            .get(showAllKey)
+            .set(container.id, showAll ? true : false); // needed to set undefined to false
+
         const maxIndex = showAll
             ? replicateCount.length
             : this.maxCollapseCount;
-
-        const prefix = chartKey + colKey;
-        const elementID = uniqueId(prefix + '-');
-        container.classList.add(prefix);
-        container.id = elementID;
 
         container.querySelector('.innerVizContainer').id = elementID + '-inner';
         for (let [frequency, count] of replicateCount) {
@@ -430,7 +439,7 @@ export default class FerretRenderer implements ICellRendererFactory {
         };
 
         const tailCount = replicateCount.length - this.maxCollapseCount;
-        this.drawExpandCollapseTail(container, tailCount);
+        this.drawExpandCollapseTail(container, tailCount, showAllKey);
         vegaEmbed('#' + elementID + '-inner', yourVlSpec, {
             actions: false
         }).catch(console.warn);
@@ -443,9 +452,8 @@ export default class FerretRenderer implements ICellRendererFactory {
         chartKey: string,
         colKey: string
     ): Promise<void> {
-        const prefix = chartKey + colKey;
-        const elementID = uniqueId(prefix + '-');
-        container.classList.add(prefix);
+        const elementID = chartKey + colKey;
+        container.classList.add(elementID);
         container.id = elementID;
 
         const vizContainer = container.querySelector('.innerVizContainer');
@@ -462,7 +470,12 @@ export default class FerretRenderer implements ICellRendererFactory {
             if (count === 1) continue;
             multiFrequentGrams.push([val, count]);
         }
-        const showAll = container.dataset.showAll === 'true';
+        const showAllKey = 'nGramViz';
+        const showAll = globalThis.chartExpanded.get(showAllKey).get(elementID);
+        globalThis.chartExpanded
+            .get(showAllKey)
+            .set(container.id, showAll ? true : false); // needed to set undefined to false
+
         const maxIndex = showAll
             ? multiFrequentGrams.length
             : this.maxCollapseCount;
@@ -525,7 +538,7 @@ export default class FerretRenderer implements ICellRendererFactory {
         };
 
         const tailCount = multiFrequentGrams.length - this.maxCollapseCount;
-        this.drawExpandCollapseTail(container, tailCount);
+        this.drawExpandCollapseTail(container, tailCount, showAllKey);
 
         vegaEmbed('#' + elementID + '-inner', yourVlSpec, {
             actions: false
@@ -572,9 +585,8 @@ export default class FerretRenderer implements ICellRendererFactory {
             });
         }
 
-        const prefix = chartKey + colKey;
-        const elementID = uniqueId(prefix + '-');
-        container.classList.add(prefix);
+        const elementID = chartKey + colKey;
+        container.classList.add(elementID);
         container.id = elementID;
 
         var yourVlSpec: VisualizationSpec = {
@@ -660,9 +672,8 @@ export default class FerretRenderer implements ICellRendererFactory {
             });
         }
 
-        const prefix = chartKey + colKey;
-        const elementID = uniqueId(prefix + '-');
-        container.classList.add(prefix);
+        const elementID = chartKey + colKey;
+        container.classList.add(elementID);
         container.id = elementID;
 
         var yourVlSpec: VisualizationSpec = {
@@ -749,9 +760,8 @@ export default class FerretRenderer implements ICellRendererFactory {
             });
         }
 
-        const prefix = chartKey + colKey;
-        const elementID = uniqueId(prefix + '-');
-        container.classList.add(prefix);
+        const elementID = chartKey + colKey;
+        container.classList.add(elementID);
         container.id = elementID;
 
         var yourVlSpec: VisualizationSpec = {
@@ -813,7 +823,8 @@ export default class FerretRenderer implements ICellRendererFactory {
 
     private drawExpandCollapseTail(
         container: HTMLElement,
-        count: number
+        count: number,
+        showAllKey: string
     ): void {
         const buttonContainer = container.querySelector('.textButton');
         buttonContainer.innerHTML = '';
@@ -821,7 +832,10 @@ export default class FerretRenderer implements ICellRendererFactory {
             return;
         }
 
-        const showAll = container.dataset.showAll === 'true';
+        const showAll = globalThis.chartExpanded
+            .get(showAllKey)
+            .get(container.id);
+
         const button = document.createElement('button');
         button.classList.add('btn', 'btn-sm', 'btn-light');
         if (showAll) {
@@ -830,7 +844,9 @@ export default class FerretRenderer implements ICellRendererFactory {
             button.textContent = `expand ${count} more items`;
         }
         button.onclick = () => {
-            container.dataset.showAll = showAll ? 'false' : 'true';
+            globalThis.chartExpanded
+                .get(showAllKey)
+                .set(container.id, showAll ? false : true);
             document.dispatchEvent(new CustomEvent('updateLineup'));
         };
         buttonContainer.appendChild(button);

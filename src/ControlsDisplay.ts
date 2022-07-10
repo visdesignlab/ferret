@@ -33,6 +33,7 @@ export class ControlsDisplay {
         this._controlsContainer = controlsContainer;
         this._descriptionContainer = descriptionContainer;
         this._dataTableContainer = dataTableContainer;
+        this.initGlobalChartExpandedMap();
     }
 
     private _toolbarContainer: HTMLElement;
@@ -58,6 +59,14 @@ export class ControlsDisplay {
     private _data: TabularData;
     public get data(): TabularData {
         return this._data;
+    }
+
+    private initGlobalChartExpandedMap(): void {
+        let chartExpandedMap = new Map<string, Map<string, boolean>>();
+        chartExpandedMap.set('duplicateCountViz', new Map<string, boolean>());
+        chartExpandedMap.set('replicatesViz', new Map<string, boolean>());
+        chartExpandedMap.set('nGramViz', new Map<string, boolean>());
+        globalThis.chartExpanded = chartExpandedMap;
     }
 
     public SetData(data: TabularData, chartsShown: boolean[]): void {
@@ -277,13 +286,13 @@ export class ControlsDisplay {
         });
 
         uniqueValuesSwitch.addEventListener('click', e => {
-            this.setShowAll('.duplicateCountViz', e);
+            this.setShowAll('duplicateCountViz', e);
         });
         repCountSwitch.addEventListener('click', e => {
-            this.setShowAll('.replicatesViz', e);
+            this.setShowAll('replicatesViz', e);
         });
         ngramCountSwitch.addEventListener('click', e => {
-            this.setShowAll('.nGramViz', e);
+            this.setShowAll('nGramViz', e);
         });
 
         twoGramSwitch.addEventListener('click', e => this.updateLineUp());
@@ -299,9 +308,13 @@ export class ControlsDisplay {
         });
     }
 
-    private setShowAll(selector: string, e: MouseEvent): void {
+    private setShowAll(showAllKey: string, e: MouseEvent): void {
         const value = (e.target as HTMLInputElement).checked;
-        d3.selectAll(selector).attr('data-show-all', value);
+        const showAllMap: Map<string, boolean> =
+            globalThis.chartExpanded.get(showAllKey);
+        for (let key of showAllMap.keys()) {
+            showAllMap.set(key, value);
+        }
         this.updateLineUp();
     }
 
