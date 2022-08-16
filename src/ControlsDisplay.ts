@@ -2,6 +2,7 @@ import * as d3 from 'd3';
 import { TabularData } from './TabularData';
 import { Column } from './Column';
 import { DuplicateCountType, LINEUP_COL_COUNT } from './lib/constants';
+import { Collapse } from 'bootstrap';
 
 export class ControlsDisplay {
     charts = [
@@ -98,16 +99,16 @@ export class ControlsDisplay {
         );
         this._toolbarContainer.appendChild(descriptionsButton);
 
-        const visualizationsButton = this.createToolbarButton(
-            'Visualizations',
-            'visualizationsButton',
-            'visualizations',
-            ['fas', 'fa-chart-area'],
-            (e: MouseEvent) => {
-                this.toggleVisualizations();
-            }
-        );
-        this._toolbarContainer.appendChild(visualizationsButton);
+        // const visualizationsButton = this.createToolbarButton(
+        //     'Visualizations',
+        //     'visualizationsButton',
+        //     'visualizations',
+        //     ['fas', 'fa-chart-area'],
+        //     (e: MouseEvent) => {
+        //         this.toggleVisualizations();
+        //     }
+        // );
+        // this._toolbarContainer.appendChild(visualizationsButton);
 
         this.drawDataColumnRows(tabularData.columnList);
         this.drawSummaryRows(tabularData);
@@ -115,6 +116,12 @@ export class ControlsDisplay {
         document.addEventListener('visibilityChanged', () => {
             this.updateChartVisibility();
         });
+        document.addEventListener(
+            'toggleVisualizations',
+            (event: CustomEvent) => {
+                this.toggleVisualizations(event.detail.visualizationsShown);
+            }
+        );
     }
 
     private createToolbarButton(
@@ -220,9 +227,16 @@ export class ControlsDisplay {
         ControlsDisplay.toggleElementClass('descriptionsButton', 'selected');
     }
 
-    private toggleVisualizations(): void {
-        ControlsDisplay.toggleElementClass('visualizationsButton', 'selected');
-        ControlsDisplay.toggleElementClass('visualizations', 'd-flex');
+    private toggleVisualizations(show: boolean): void {
+        const panel = document.getElementById('visualizations');
+
+        if (show) {
+            panel.classList.remove('d-none');
+            panel.classList.add('d-flex');
+        } else {
+            panel.classList.remove('d-flex');
+            panel.classList.add('d-none');
+        }
     }
 
     private static toggleElementClass(id: string, cssClass: string): boolean {
@@ -422,5 +436,10 @@ export class ControlsDisplay {
             })
         );
         const generalIndex = 8;
+        document.dispatchEvent(
+            new CustomEvent('toggleVisualizations', {
+                detail: { visualizationsShown: this.chartsShown[generalIndex] }
+            })
+        );
     }
 }
