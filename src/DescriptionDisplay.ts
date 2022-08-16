@@ -22,6 +22,26 @@ export class DescriptionDisplay {
             key: 'leading-digit-frequency',
             label: 'Leading Digit Frequency',
             color: 'blue'
+        },
+        {
+            key: 'terminal-digit-frequency',
+            label: 'Terminal Digit Frequency',
+            color: 'null'
+        },
+        {
+            key: 'decimal-count',
+            label: 'Decimal Places',
+            color: 'null'
+        },
+        {
+            key: 'sorting',
+            label: 'Sorting',
+            color: 'null'
+        },
+        {
+            key: 'general',
+            label: 'General',
+            color: 'null'
         }
     ];
 

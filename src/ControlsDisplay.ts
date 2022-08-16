@@ -2,21 +2,19 @@ import * as d3 from 'd3';
 import { TabularData } from './TabularData';
 import { Column } from './Column';
 import { DuplicateCountType, LINEUP_COL_COUNT } from './lib/constants';
+import { Collapse } from 'bootstrap';
 
 export class ControlsDisplay {
     charts = [
-        'newOverallDist',
-        'newDuplicateCount',
-        'newReplicates',
-        'newNGram',
-        'newBenfordDist'
-    ];
-    chartNames = [
-        'Value Distribution',
-        'Frequent Values',
-        'Replicates',
-        'N Grams',
-        'Leading Digit Frequency'
+        'overallDist',
+        'duplicateCount',
+        'replicates',
+        'nGram',
+        'benfordDist',
+        'terminalDigit',
+        'textPrecision',
+        'sorting',
+        'general'
     ];
 
     private _chartsShown: boolean[];
@@ -36,6 +34,7 @@ export class ControlsDisplay {
         this._controlsContainer = controlsContainer;
         this._descriptionContainer = descriptionContainer;
         this._dataTableContainer = dataTableContainer;
+        this.initGlobalChartExpandedMap();
     }
 
     private _toolbarContainer: HTMLElement;
@@ -63,9 +62,18 @@ export class ControlsDisplay {
         return this._data;
     }
 
+    private initGlobalChartExpandedMap(): void {
+        let chartExpandedMap = new Map<string, Map<string, boolean>>();
+        chartExpandedMap.set('duplicateCountViz', new Map<string, boolean>());
+        chartExpandedMap.set('replicatesViz', new Map<string, boolean>());
+        chartExpandedMap.set('nGramViz', new Map<string, boolean>());
+        globalThis.chartExpanded = chartExpandedMap;
+    }
+
     public SetData(data: TabularData, chartsShown: boolean[]): void {
         this._data = data;
         this._chartsShown = chartsShown;
+        globalThis.chartsShown = this.chartsShown;
     }
 
     public drawControls(tabularData: TabularData): void {
@@ -91,16 +99,16 @@ export class ControlsDisplay {
         );
         this._toolbarContainer.appendChild(descriptionsButton);
 
-        const visualizationsButton = this.createToolbarButton(
-            'Visualizations',
-            'visualizationsButton',
-            'visualizations',
-            ['fas', 'fa-chart-area'],
-            (e: MouseEvent) => {
-                this.toggleVisualizations();
-            }
-        );
-        this._toolbarContainer.appendChild(visualizationsButton);
+        // const visualizationsButton = this.createToolbarButton(
+        //     'Visualizations',
+        //     'visualizationsButton',
+        //     'visualizations',
+        //     ['fas', 'fa-chart-area'],
+        //     (e: MouseEvent) => {
+        //         this.toggleVisualizations();
+        //     }
+        // );
+        // this._toolbarContainer.appendChild(visualizationsButton);
 
         this.drawDataColumnRows(tabularData.columnList);
         this.drawSummaryRows(tabularData);
@@ -108,6 +116,12 @@ export class ControlsDisplay {
         document.addEventListener('visibilityChanged', () => {
             this.updateChartVisibility();
         });
+        document.addEventListener(
+            'toggleVisualizations',
+            (event: CustomEvent) => {
+                this.toggleVisualizations(event.detail.visualizationsShown);
+            }
+        );
     }
 
     private createToolbarButton(
@@ -213,9 +227,16 @@ export class ControlsDisplay {
         ControlsDisplay.toggleElementClass('descriptionsButton', 'selected');
     }
 
-    private toggleVisualizations(): void {
-        ControlsDisplay.toggleElementClass('visualizationsButton', 'selected');
-        ControlsDisplay.toggleElementClass('visualizations', 'd-flex');
+    private toggleVisualizations(show: boolean): void {
+        const panel = document.getElementById('visualizations');
+
+        if (show) {
+            panel.classList.remove('d-none');
+            panel.classList.add('d-flex');
+        } else {
+            panel.classList.remove('d-flex');
+            panel.classList.add('d-none');
+        }
     }
 
     private static toggleElementClass(id: string, cssClass: string): boolean {
@@ -242,28 +263,50 @@ export class ControlsDisplay {
         let nGramSwitch = document.getElementById('n-gram-switch');
         let lsdSwitch = document.getElementById('lsd-switch');
 
+        let terminalDigitSwitch = document.getElementById(
+            'terminal-digit-switch'
+        );
+
+        let dcSwitch = document.getElementById('decimal-count-switch');
+
+        let sortingSwitch = document.getElementById('sorting-switch');
+        let generalSwitch = document.getElementById('general-switch');
+
         d3.selectAll('.item').on('click', (_d, i) => {
             this.showOnly(i);
         });
 
         valueDistSwitch.addEventListener('click', e => this.toggleChart(0, e));
-        frequentValueSwitch.addEventListener('click', e =>
-            this.toggleChart(1, e)
-        );
+        frequentValueSwitch.addEventListener('click', e => {
+            this.toggleChart(1, e);
+        });
         repSwitch.addEventListener('click', e => this.toggleChart(2, e));
         nGramSwitch.addEventListener('click', e => this.toggleChart(3, e));
-        leadingDigitSwitch.addEventListener('click', e =>
-            this.toggleChart(4, e)
-        );
+        leadingDigitSwitch.addEventListener('click', e => {
+            this.toggleChart(4, e);
+        });
+        terminalDigitSwitch.addEventListener('click', e => {
+            this.toggleChart(5, e);
+        });
+
+        dcSwitch.addEventListener('click', e => {
+            this.toggleChart(6, e);
+        });
+        sortingSwitch.addEventListener('click', e => {
+            this.toggleChart(7, e);
+        });
+        generalSwitch.addEventListener('click', e => {
+            this.toggleChart(8, e);
+        });
 
         uniqueValuesSwitch.addEventListener('click', e => {
-            this.setShowAll('.duplicateCountViz', e);
+            this.setShowAll('duplicateCountViz', e);
         });
         repCountSwitch.addEventListener('click', e => {
-            this.setShowAll('.replicatesViz', e);
+            this.setShowAll('replicatesViz', e);
         });
         ngramCountSwitch.addEventListener('click', e => {
-            this.setShowAll('.nGramViz', e);
+            this.setShowAll('nGramViz', e);
         });
 
         twoGramSwitch.addEventListener('click', e => this.updateLineUp());
@@ -279,9 +322,13 @@ export class ControlsDisplay {
         });
     }
 
-    private setShowAll(selector: string, e: MouseEvent): void {
+    private setShowAll(showAllKey: string, e: MouseEvent): void {
         const value = (e.target as HTMLInputElement).checked;
-        d3.selectAll(selector).attr('data-show-all', value);
+        const showAllMap: Map<string, boolean> =
+            globalThis.chartExpanded.get(showAllKey);
+        for (let key of showAllMap.keys()) {
+            showAllMap.set(key, value);
+        }
         this.updateLineUp();
     }
 
@@ -371,12 +418,28 @@ export class ControlsDisplay {
 
             const lastIndex = this.data.columnList.length + LINEUP_COL_COUNT;
             for (let j = LINEUP_COL_COUNT; j < lastIndex; j++) {
-                d3.select(`#${chartKey}-col${j}`).classed('d-none', !visible);
+                d3.selectAll(`.${chartKey}-col${j}`).classed(
+                    'd-none',
+                    !visible
+                );
             }
         }
 
         d3.selectAll('.item-option-container')
             .data(this.chartsShown)
             .classed('d-none', d => !d);
+
+        const sortingIndex = 7;
+        document.dispatchEvent(
+            new CustomEvent('toggleOverview', {
+                detail: { overviewMode: this.chartsShown[sortingIndex] }
+            })
+        );
+        const generalIndex = 8;
+        document.dispatchEvent(
+            new CustomEvent('toggleVisualizations', {
+                detail: { visualizationsShown: this.chartsShown[generalIndex] }
+            })
+        );
     }
 }

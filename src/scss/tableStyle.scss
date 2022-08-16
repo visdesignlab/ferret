@@ -88,3 +88,9 @@
 .le-tbody * {
     font-family: 'Montserrat';
 }
+
+// essentially hack in my fix for https://github.com/lineupjs/lineupjs/issues/344
+// (shouldn't need this after updating lineup)
+.le-td {
+    overflow-y: hidden !important;
+}

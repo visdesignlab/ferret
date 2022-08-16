@@ -1,7 +1,19 @@
+import * as d3 from 'd3';
 import { TabularData } from './TabularData';
-import * as LineUpJS from 'lineupjs';
+
+import {
+    Column,
+    builder as lineupBuilder,
+    toolbar,
+    buildCategoricalColumn,
+    buildStringColumn,
+    buildColumn,
+    LineUp,
+    ColumnBuilder,
+    ICategory,
+    Taggle
+} from 'lineupjs';
 import { ColumnNumeric } from './ColumnNumeric';
-import { ColumnBuilder, ICategory } from 'lineupjs';
 import FerretRenderer from './FerretRenderer';
 import FerretCellRenderer from './FerretCellRenderer';
 import FerretColumn from './FerretColumn';
@@ -11,29 +23,19 @@ import {
     ChartCalculations,
     LeadDigitCountMetadata,
     FreqValsMetadata,
-    NGramMetadata
+    NGramMetadata,
+    DecimalMetadata
 } from './ChartCalculations';
 
 export class TableDisplay extends EventTarget {
-    charts = [
-        'overallDist',
-        'duplicateCount',
-        'replicates',
-        'nGram',
-        'benfordDist'
-    ];
-    chartNames = [
-        'Value Distribution',
-        'Frequent Values',
-        'Replicates',
-        'N Grams',
-        'Leading Digit Frequency'
-    ];
     constructor() {
         super();
         document.addEventListener('updateLineup', async (e: CustomEvent) => {
             await this.updateFerretColumnMetaData();
             this.lineup.update();
+        });
+        document.addEventListener('toggleOverview', async (e: CustomEvent) => {
+            this.lineup.setOverviewMode(e.detail.overviewMode);
         });
         document.addEventListener('highlightRows', (e: CustomEvent) => {
             this.onHighlightRows(e);
@@ -52,13 +54,13 @@ export class TableDisplay extends EventTarget {
         return this._data;
     }
 
-    private _lineup: LineUpJS.LineUp;
-    public get lineup(): LineUpJS.LineUp {
+    private _lineup: LineUp;
+    public get lineup(): LineUp {
         return this._lineup;
     }
 
-    private _allColumns: LineUpJS.Column[];
-    public get allColumns(): LineUpJS.Column[] {
+    private _allColumns: Column[];
+    public get allColumns(): Column[] {
         return this._allColumns;
     }
 
@@ -90,27 +92,24 @@ export class TableDisplay extends EventTarget {
 
     public initLineup(data: TabularData): void {
         const rowFirstData = data.getRowList();
-        const builder = LineUpJS.builder(rowFirstData);
+        const builder = lineupBuilder(rowFirstData);
         builder.registerColumnType('FerretColumn', FerretColumn);
-        LineUpJS.toolbar(
-            'rename',
-            'sort',
-            'sortBy',
-            'filterNumber'
-        )(FerretColumn);
-
+        toolbar('rename', 'sort', 'sortBy', 'filterNumber')(FerretColumn);
+        const extentLookup = new Map<string, [number, number]>();
         for (let i = 0; i < data.columnList.length; i++) {
             const key = i.toString();
             const column = data.columnList[i];
             const label = column.id;
             let columnBuilder: ColumnBuilder;
             if (column.type === 'Number') {
-                columnBuilder = LineUpJS.buildColumn('FerretColumn', key);
+                columnBuilder = buildColumn('FerretColumn', key);
                 columnBuilder.renderer(
                     'FerretCellRenderer',
                     '',
                     'FerretRenderer'
                 );
+                const extent = d3.extent(column.values as number[]);
+                extentLookup.set(label, extent);
                 const decimalPlaces = (
                     column as ColumnNumeric
                 ).getDecimalPlaces();
@@ -124,13 +123,10 @@ export class TableDisplay extends EventTarget {
                     };
                     categoryList.push(category);
                 }
-                columnBuilder = LineUpJS.buildCategoricalColumn(
-                    key,
-                    categoryList
-                );
+                columnBuilder = buildCategoricalColumn(key, categoryList);
                 columnBuilder.renderer('string', '', '');
             } else {
-                columnBuilder = LineUpJS.buildStringColumn(key);
+                columnBuilder = buildStringColumn(key);
             }
             builder.column(columnBuilder.label(label).width(140));
         }
@@ -138,13 +134,16 @@ export class TableDisplay extends EventTarget {
         const lineupContainer = document.getElementById('lineupContainer');
 
         builder.disableAdvancedModelFeatures();
-        builder.sidePanel(false, true);
+        builder.sidePanel(false);
         builder.registerRenderer('FerretRenderer', new FerretRenderer());
         builder.registerRenderer(
             'FerretCellRenderer',
             new FerretCellRenderer()
         );
-        this._lineup = builder.build(lineupContainer);
+        this._lineup = builder.buildTaggle(
+            lineupContainer
+        ) as unknown as LineUp;
+        // this._lineup = builder.build(lineupContainer);
         // get the first ranking from the data provider
         const firstRanking = this.lineup.data.getFirstRanking();
         this._allColumns = firstRanking.flatColumns;
@@ -152,6 +151,9 @@ export class TableDisplay extends EventTarget {
             col => col instanceof FerretColumn
         ) as FerretColumn[];
         for (let col of this.ferretColumns) {
+            const extent = extentLookup.get(col.label);
+            col.normalize = d3.scaleLinear().domain(extent).range([0, 1]);
+
             col.on('filterChanged', async () => {
                 await this.updateFerretColumnMetaData();
                 document.dispatchEvent(new CustomEvent('filterChanged'));
@@ -178,6 +180,7 @@ export class TableDisplay extends EventTarget {
         const freqValPromises: Promise<FreqValsMetadata>[] = [];
         const nGramPromises: Promise<NGramMetadata>[] = [];
         const leadingDigitPromises: Promise<LeadDigitCountMetadata>[] = [];
+        const decimalCountPromises: Promise<DecimalMetadata>[] = [];
         for (let col of this.ferretColumns) {
             // Frequent Values
             freqValPromises.push(
@@ -204,6 +207,10 @@ export class TableDisplay extends EventTarget {
             leadingDigitPromises.push(
                 ChartCalculations.getLeadingDigitCounts(col, this.lineup.data)
             );
+            // decimal count
+            decimalCountPromises.push(
+                ChartCalculations.getPecisionCounts(col, this.lineup.data)
+            );
         }
         // Frequent Values
         let freqValsList = await Promise.all(freqValPromises);
@@ -225,6 +232,13 @@ export class TableDisplay extends EventTarget {
             let col = this.ferretColumns[i];
             let digitCounts = digitCountsList[i];
             col.leadingDigitCounts = digitCounts;
+        }
+        // Decimal Counts
+        let decimalCountList = await Promise.all(decimalCountPromises);
+        for (let i = 0; i < this.ferretColumns.length; i++) {
+            let col = this.ferretColumns[i];
+            let decimalCounts = decimalCountList[i];
+            col.decimalCounts = decimalCounts;
         }
     }
 

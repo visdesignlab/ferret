@@ -1,85 +1,85 @@
-﻿Accession,Symbol,Description,Fold change,Functional Gene Grouping (I),Functional Gene Grouping (II),
-NM_010425,Foxd3,Forkhead box D3,14.7938,ESC-specific genes,"Transcription factors maintaining ""stem-ness""",
-NM_010258,Gata6,GATA binding protein 6,0.4636,ESC-specific genes,"Transcription factors maintaining ""stem-ness""",
-NM_010262,Gbx2,Gastrulation brain homeobox 2,50.5090,ESC-specific genes,"Transcription factors maintaining ""stem-ness""",
-NM_028016,Nanog,Nanog homeobox,272.7907,ESC-specific genes,"Transcription factors maintaining ""stem-ness""",
-NM_030676,Nr5a2,"Nuclear receptor subfamily 5, group A, member 2",150.5208,ESC-specific genes,"Transcription factors maintaining ""stem-ness""",
-NM_010264,Nr6a1,"Nuclear receptor subfamily 6, group A, member 1",14.4670,ESC-specific genes,"Transcription factors maintaining ""stem-ness""",
-NM_013633,Pou5f1,"POU domain, class 5, transcription factor 1",2017.5435,ESC-specific genes,"Transcription factors maintaining ""stem-ness""",
-NM_011443,Sox2,SRY-box containing gene 2,218.4054,ESC-specific genes,"Transcription factors maintaining ""stem-ness""",
-NM_023755,Tcfcp2l1,Transcription factor CP2-like 1,228.8357,ESC-specific genes,"Transcription factors maintaining ""stem-ness""",
-NM_009482,Utf1,Undifferentiated embryonic cell transcription factor 1,1194.5975,ESC-specific genes,"Transcription factors maintaining ""stem-ness""",
-NM_009556,Zfp42,Zinc finger protein 42,1106.6193,ESC-specific genes,"Transcription factors maintaining ""stem-ness""",
-NM_147778,Commd3,COMM domain containing 3,0.3192,ESC-specific genes,Signalling molecules required for pluripotency and self-Renewal ,
-NM_007759,Crabp2,Cellular retinoic acid binding protein II,0.3381,ESC-specific genes,Signalling molecules required for pluripotency and self-Renewal ,
-NM_007904,Ednrb,Endothelin receptor type B,0.1798,ESC-specific genes,Signalling molecules required for pluripotency and self-Renewal ,
-NM_010202,Fgf4,Fibroblast growth factor 4,346.5816,ESC-specific genes,Signalling molecules required for pluripotency and self-Renewal ,
-NM_010203,Fgf5,Fibroblast growth factor 5,0.7147,ESC-specific genes,Signalling molecules required for pluripotency and self-Renewal ,
-NM_008071,Gabrb3,"Gamma-aminobutyric acid (GABA) A receptor, subunit beta 3",2.8777,ESC-specific genes,Signalling molecules required for pluripotency and self-Renewal ,
-NM_010253,Gal,Galanin,5.0343,ESC-specific genes,Signalling molecules required for pluripotency and self-Renewal ,
-NM_010346,Grb7,Growth factor receptor bound protein 7,27.4283,ESC-specific genes,Signalling molecules required for pluripotency and self-Renewal ,
-NM_010407,Hck,Hemopoietic cell kinase,2.9869,ESC-specific genes,Signalling molecules required for pluripotency and self-Renewal ,
-NM_026820,Ifitm1,Interferon induced transmembrane protein 1,27.1546,ESC-specific genes,Signalling molecules required for pluripotency and self-Renewal ,
-NM_010560,Il6st,Interleukin 6 signal transducer,0.9224,ESC-specific genes,Signalling molecules required for pluripotency and self-Renewal ,
-NM_021099,Kit,Kit oncogene,36.3721,ESC-specific genes,Signalling molecules required for pluripotency and self-Renewal ,
-NM_010094,Lefty1,Left right determination factor 1,212.8439,ESC-specific genes,Signalling molecules required for pluripotency and self-Renewal ,
-NM_177099,Lefty2,Left-right determination factor 2,287.4606,ESC-specific genes,Signalling molecules required for pluripotency and self-Renewal ,
-NM_013584,Lifr,Leukemia inhibitory factor receptor,0.1562,ESC-specific genes,Signalling molecules required for pluripotency and self-Renewal ,
-NM_013611,Nodal,Nodal,40.6486,ESC-specific genes,Signalling molecules required for pluripotency and self-Renewal ,
-NM_008711,Nog,Noggin,0.1023,ESC-specific genes,Signalling molecules required for pluripotency and self-Renewal ,
-NM_010949,Numb,Numb gene homolog (Drosophila),0.5352,ESC-specific genes,Signalling molecules required for pluripotency and self-Renewal ,
-NM_008960,Pten,Phosphatase and tensin homolog,0.4161,ESC-specific genes,Signalling molecules required for pluripotency and self-Renewal ,
-NM_009144,Sfrp2,Secreted frizzled-related protein 2,0.1661,ESC-specific genes,Signalling molecules required for pluripotency and self-Renewal ,
-NM_011562,Tdgf1,Teratocarcinoma-derived growth factor 1,897.2167,ESC-specific genes,Signalling molecules required for pluripotency and self-Renewal ,
-NM_026396,Bxdc2,Brix domain containing 2,1.2078,ESC-specific genes,other ESC-specific genes,
-NM_007657,Cd9,CD9 antigen,0.5989,ESC-specific genes,other ESC-specific genes,
-NM_017398,Diap2,Diaphanous homolog 2 (Drosophila),1.1919,ESC-specific genes,other ESC-specific genes,
-NM_010068,Dnmt3b,DNA methyltransferase 3B,15.6366,ESC-specific genes,other ESC-specific genes,
-NM_030694,Ifitm2,Interferon induced transmembrane protein 2,0.8363,ESC-specific genes,other ESC-specific genes,
-NM_183029,Igf2bp2,Insulin-like growth factor 2 mRNA binding protein 2,0.8695,ESC-specific genes,other ESC-specific genes,
-NM_145833,Lin28,Lin-28 homolog (C. elegans),100.8125,ESC-specific genes,other ESC-specific genes,
-NM_013723,Podxl,Podocalyxin-like,35.1346,ESC-specific genes,other ESC-specific genes,
-NM_011263,Rest,RE1-silencing transcription factor,1.5946,ESC-specific genes,other ESC-specific genes,
-NM_009152,Sema3a,"Sema domain, immunoglobulin domain (Ig), short basic domain, secreted, (semaphorin) 3A",0.0148,ESC-specific genes,other ESC-specific genes,
-NM_009354,Tert,Telomerase reverse transcriptase,1.8776,ESC-specific genes,other ESC-specific genes,
-NM_008108,Gdf3,Growth differentiation factor 3,48.2211,ESC-specific genes,other ESC-specific genes,
-NM_007423,Afp,Alpha fetoprotein,5.2917,ESC differentiation/lineage markers,Visceral endoderm markers ,
-NM_009243,Serpina1a,"Serine (or cysteine) peptidase inhibitor, clade A, member 1a",4.8206,ESC differentiation/lineage markers,Visceral endoderm markers ,
-NM_007673,Cdx2,Caudal type homeo box 2,6.6428,ESC differentiation/lineage markers,Trophoblast markers ,
-NM_010136,Eomes,Eomesodermin homolog (Xenopus laevis),26.0377,ESC differentiation/lineage markers,Trophoblast markers ,
-NM_008103,Gcm1,Glial cells missing homolog 1 (Drosophila),8.6956,ESC differentiation/lineage markers,Trophoblast markers ,
-NM_008473,Krt1,Keratin 1,8.0067,ESC differentiation/lineage markers,Trophoblast markers ,
-NM_010233,Fn1,Fibronectin 1,0.0321,ESC differentiation/lineage markers,Parietal endoderm marker,
-NM_008480,Lama1,"Laminin, alpha 1",21.2864,ESC differentiation/lineage markers,Parietal endoderm marker,
-NM_008482,Lamb1-1,Laminin B1 subunit 1,0.2644,ESC differentiation/lineage markers,Parietal endoderm marker,
-NM_010683,Lamc1,"Laminin, gamma 1",0.0787,ESC differentiation/lineage markers,Parietal endoderm marker,
-NM_011441,Sox17,SRY-box containing gene 17,4.8206,ESC differentiation/lineage markers,Parietal endoderm marker,
-NM_008100,Gcg,Glucagon,4.8206,ESC differentiation/lineage markers,Pancreas,
-NM_010491,Iapp,Islet amyloid polypeptide,4.8206,ESC differentiation/lineage markers,Pancreas,
-NM_008387,Ins2,Insulin II,4.8206,ESC differentiation/lineage markers,Pancreas,
-NM_011038,Pax4,Paired box gene 4,4.8206,ESC differentiation/lineage markers,Pancreas,
-NM_008814,Pdx1,Pancreatic and duodenal homeobox 1,5.0451,ESC differentiation/lineage markers,Pancreas,
-NM_009215,Sst,Somatostatin,4.8206,ESC differentiation/lineage markers,Pancreas,
-NM_016967,Olig2,Oligodendrocyte transcription factor 2,4.8206,ESC differentiation/lineage markers,other differentiation/lineage marker,
-NM_146214,Tat,Tyrosine aminotransferase,4.8206,ESC differentiation/lineage markers,other differentiation/lineage marker,
-NM_016701,Nes,Nestin,0.0754,ESC differentiation/lineage markers,Neural ,
-NM_010894,Neurod1,Neurogenic differentiation 1,26.7290,ESC differentiation/lineage markers,Neural ,
-NM_013627,Pax6,Paired box gene 6,6.2588,ESC differentiation/lineage markers,Neural ,
-NM_010043,Des,Desmin,0.1522,ESC differentiation/lineage markers,Muscle,
-NM_008656,Myf5,Myogenic factor 5,4.8206,ESC differentiation/lineage markers,Muscle,
-NM_010866,Myod1,Myogenic differentiation 1,0.8989,ESC differentiation/lineage markers,Muscle,
-NM_009309,T,Brachyury,97.1862,ESC differentiation/lineage markers,Mesoderm marker,
-NM_144783,Wt1,Wilms tumor 1 homolog,1.2919,ESC differentiation/lineage markers,Mesoderm marker,
-NM_010029,Ddx4,DEAD (Asp-Glu-Ala-Asp) box polypeptide 4,7.4654,ESC differentiation/lineage markers,Germ cell,
-NM_011517,Sycp3,Synaptonemal complex protein 3,140.2405,ESC differentiation/lineage markers,Germ cell,
-NM_008092,Gata4,GATA binding protein 4,4.7737,ESC differentiation/lineage markers,Extra-embryonic endoderm markers ,
-NM_018809,Ptf1a,"Pancreas specific transcription factor, 1a",4.8206,ESC differentiation/lineage markers,Extra-embryonic endoderm markers ,
-NM_010446,Foxa2,Forkhead box A2,4.8206,ESC differentiation/lineage markers,Extra-embryonic endoderm markers,
-NM_133654,Cd34,CD34 antigen,0.1356,ESC differentiation/lineage markers,Endothelial ,
-NM_009868,Cdh5,Cadherin 5,2.0680,ESC differentiation/lineage markers,Endothelial ,
-NM_010228,Flt1,FMS-like tyrosine kinase 1,0.3230,ESC differentiation/lineage markers,Endothelial ,
-NM_008816,Pecam1,Platelet/endothelial cell adhesion molecule 1,79.0540,ESC differentiation/lineage markers,Endothelial ,
-NM_007742,Col1a1,"Collagen, type I, alpha 1",0.0005,ESC differentiation/lineage markers,Bone,
-NM_009820,Runx2,Runt related transcription factor 2,0.0385,ESC differentiation/lineage markers,Bone,
-NM_010405,Hba-x,"Hemoglobin X, alpha-like embryonic chain in Hba complex",4.8206,ESC differentiation/lineage markers,Blood,
+﻿Accession,Symbol,Description,Fold change,Functional Gene Grouping (I),Functional Gene Grouping (II)
+NM_010425,Foxd3,Forkhead box D3,14.7938,ESC-specific genes,"Transcription factors maintaining ""stem-ness"""
+NM_010258,Gata6,GATA binding protein 6,0.4636,ESC-specific genes,"Transcription factors maintaining ""stem-ness"""
+NM_010262,Gbx2,Gastrulation brain homeobox 2,50.5090,ESC-specific genes,"Transcription factors maintaining ""stem-ness"""
+NM_028016,Nanog,Nanog homeobox,272.7907,ESC-specific genes,"Transcription factors maintaining ""stem-ness"""
+NM_030676,Nr5a2,"Nuclear receptor subfamily 5, group A, member 2",150.5208,ESC-specific genes,"Transcription factors maintaining ""stem-ness"""
+NM_010264,Nr6a1,"Nuclear receptor subfamily 6, group A, member 1",14.4670,ESC-specific genes,"Transcription factors maintaining ""stem-ness"""
+NM_013633,Pou5f1,"POU domain, class 5, transcription factor 1",2017.5435,ESC-specific genes,"Transcription factors maintaining ""stem-ness"""
+NM_011443,Sox2,SRY-box containing gene 2,218.4054,ESC-specific genes,"Transcription factors maintaining ""stem-ness"""
+NM_023755,Tcfcp2l1,Transcription factor CP2-like 1,228.8357,ESC-specific genes,"Transcription factors maintaining ""stem-ness"""
+NM_009482,Utf1,Undifferentiated embryonic cell transcription factor 1,1194.5975,ESC-specific genes,"Transcription factors maintaining ""stem-ness"""
+NM_009556,Zfp42,Zinc finger protein 42,1106.6193,ESC-specific genes,"Transcription factors maintaining ""stem-ness"""
+NM_147778,Commd3,COMM domain containing 3,0.3192,ESC-specific genes,Signalling molecules required for pluripotency and self-Renewal 
+NM_007759,Crabp2,Cellular retinoic acid binding protein II,0.3381,ESC-specific genes,Signalling molecules required for pluripotency and self-Renewal 
+NM_007904,Ednrb,Endothelin receptor type B,0.1798,ESC-specific genes,Signalling molecules required for pluripotency and self-Renewal 
+NM_010202,Fgf4,Fibroblast growth factor 4,346.5816,ESC-specific genes,Signalling molecules required for pluripotency and self-Renewal 
+NM_010203,Fgf5,Fibroblast growth factor 5,0.7147,ESC-specific genes,Signalling molecules required for pluripotency and self-Renewal 
+NM_008071,Gabrb3,"Gamma-aminobutyric acid (GABA) A receptor, subunit beta 3",2.8777,ESC-specific genes,Signalling molecules required for pluripotency and self-Renewal 
+NM_010253,Gal,Galanin,5.0343,ESC-specific genes,Signalling molecules required for pluripotency and self-Renewal 
+NM_010346,Grb7,Growth factor receptor bound protein 7,27.4283,ESC-specific genes,Signalling molecules required for pluripotency and self-Renewal 
+NM_010407,Hck,Hemopoietic cell kinase,2.9869,ESC-specific genes,Signalling molecules required for pluripotency and self-Renewal 
+NM_026820,Ifitm1,Interferon induced transmembrane protein 1,27.1546,ESC-specific genes,Signalling molecules required for pluripotency and self-Renewal 
+NM_010560,Il6st,Interleukin 6 signal transducer,0.9224,ESC-specific genes,Signalling molecules required for pluripotency and self-Renewal 
+NM_021099,Kit,Kit oncogene,36.3721,ESC-specific genes,Signalling molecules required for pluripotency and self-Renewal 
+NM_010094,Lefty1,Left right determination factor 1,212.8439,ESC-specific genes,Signalling molecules required for pluripotency and self-Renewal 
+NM_177099,Lefty2,Left-right determination factor 2,287.4606,ESC-specific genes,Signalling molecules required for pluripotency and self-Renewal 
+NM_013584,Lifr,Leukemia inhibitory factor receptor,0.1562,ESC-specific genes,Signalling molecules required for pluripotency and self-Renewal 
+NM_013611,Nodal,Nodal,40.6486,ESC-specific genes,Signalling molecules required for pluripotency and self-Renewal 
+NM_008711,Nog,Noggin,0.1023,ESC-specific genes,Signalling molecules required for pluripotency and self-Renewal 
+NM_010949,Numb,Numb gene homolog (Drosophila),0.5352,ESC-specific genes,Signalling molecules required for pluripotency and self-Renewal 
+NM_008960,Pten,Phosphatase and tensin homolog,0.4161,ESC-specific genes,Signalling molecules required for pluripotency and self-Renewal 
+NM_009144,Sfrp2,Secreted frizzled-related protein 2,0.1661,ESC-specific genes,Signalling molecules required for pluripotency and self-Renewal 
+NM_011562,Tdgf1,Teratocarcinoma-derived growth factor 1,897.2167,ESC-specific genes,Signalling molecules required for pluripotency and self-Renewal 
+NM_026396,Bxdc2,Brix domain containing 2,1.2078,ESC-specific genes,other ESC-specific genes
+NM_007657,Cd9,CD9 antigen,0.5989,ESC-specific genes,other ESC-specific genes
+NM_017398,Diap2,Diaphanous homolog 2 (Drosophila),1.1919,ESC-specific genes,other ESC-specific genes
+NM_010068,Dnmt3b,DNA methyltransferase 3B,15.6366,ESC-specific genes,other ESC-specific genes
+NM_030694,Ifitm2,Interferon induced transmembrane protein 2,0.8363,ESC-specific genes,other ESC-specific genes
+NM_183029,Igf2bp2,Insulin-like growth factor 2 mRNA binding protein 2,0.8695,ESC-specific genes,other ESC-specific genes
+NM_145833,Lin28,Lin-28 homolog (C. elegans),100.8125,ESC-specific genes,other ESC-specific genes
+NM_013723,Podxl,Podocalyxin-like,35.1346,ESC-specific genes,other ESC-specific genes
+NM_011263,Rest,RE1-silencing transcription factor,1.5946,ESC-specific genes,other ESC-specific genes
+NM_009152,Sema3a,"Sema domain, immunoglobulin domain (Ig), short basic domain, secreted, (semaphorin) 3A",0.0148,ESC-specific genes,other ESC-specific genes
+NM_009354,Tert,Telomerase reverse transcriptase,1.8776,ESC-specific genes,other ESC-specific genes
+NM_008108,Gdf3,Growth differentiation factor 3,48.2211,ESC-specific genes,other ESC-specific genes
+NM_007423,Afp,Alpha fetoprotein,5.2917,ESC differentiation/lineage markers,Visceral endoderm markers 
+NM_009243,Serpina1a,"Serine (or cysteine) peptidase inhibitor, clade A, member 1a",4.8206,ESC differentiation/lineage markers,Visceral endoderm markers 
+NM_007673,Cdx2,Caudal type homeo box 2,6.6428,ESC differentiation/lineage markers,Trophoblast markers 
+NM_010136,Eomes,Eomesodermin homolog (Xenopus laevis),26.0377,ESC differentiation/lineage markers,Trophoblast markers 
+NM_008103,Gcm1,Glial cells missing homolog 1 (Drosophila),8.6956,ESC differentiation/lineage markers,Trophoblast markers 
+NM_008473,Krt1,Keratin 1,8.0067,ESC differentiation/lineage markers,Trophoblast markers 
+NM_010233,Fn1,Fibronectin 1,0.0321,ESC differentiation/lineage markers,Parietal endoderm marker
+NM_008480,Lama1,"Laminin, alpha 1",21.2864,ESC differentiation/lineage markers,Parietal endoderm marker
+NM_008482,Lamb1-1,Laminin B1 subunit 1,0.2644,ESC differentiation/lineage markers,Parietal endoderm marker
+NM_010683,Lamc1,"Laminin, gamma 1",0.0787,ESC differentiation/lineage markers,Parietal endoderm marker
+NM_011441,Sox17,SRY-box containing gene 17,4.8206,ESC differentiation/lineage markers,Parietal endoderm marker
+NM_008100,Gcg,Glucagon,4.8206,ESC differentiation/lineage markers,Pancreas
+NM_010491,Iapp,Islet amyloid polypeptide,4.8206,ESC differentiation/lineage markers,Pancreas
+NM_008387,Ins2,Insulin II,4.8206,ESC differentiation/lineage markers,Pancreas
+NM_011038,Pax4,Paired box gene 4,4.8206,ESC differentiation/lineage markers,Pancreas
+NM_008814,Pdx1,Pancreatic and duodenal homeobox 1,5.0451,ESC differentiation/lineage markers,Pancreas
+NM_009215,Sst,Somatostatin,4.8206,ESC differentiation/lineage markers,Pancreas
+NM_016967,Olig2,Oligodendrocyte transcription factor 2,4.8206,ESC differentiation/lineage markers,other differentiation/lineage marker
+NM_146214,Tat,Tyrosine aminotransferase,4.8206,ESC differentiation/lineage markers,other differentiation/lineage marker
+NM_016701,Nes,Nestin,0.0754,ESC differentiation/lineage markers,Neural 
+NM_010894,Neurod1,Neurogenic differentiation 1,26.7290,ESC differentiation/lineage markers,Neural 
+NM_013627,Pax6,Paired box gene 6,6.2588,ESC differentiation/lineage markers,Neural 
+NM_010043,Des,Desmin,0.1522,ESC differentiation/lineage markers,Muscle
+NM_008656,Myf5,Myogenic factor 5,4.8206,ESC differentiation/lineage markers,Muscle
+NM_010866,Myod1,Myogenic differentiation 1,0.8989,ESC differentiation/lineage markers,Muscle
+NM_009309,T,Brachyury,97.1862,ESC differentiation/lineage markers,Mesoderm marker
+NM_144783,Wt1,Wilms tumor 1 homolog,1.2919,ESC differentiation/lineage markers,Mesoderm marker
+NM_010029,Ddx4,DEAD (Asp-Glu-Ala-Asp) box polypeptide 4,7.4654,ESC differentiation/lineage markers,Germ cell
+NM_011517,Sycp3,Synaptonemal complex protein 3,140.2405,ESC differentiation/lineage markers,Germ cell
+NM_008092,Gata4,GATA binding protein 4,4.7737,ESC differentiation/lineage markers,Extra-embryonic endoderm markers 
+NM_018809,Ptf1a,"Pancreas specific transcription factor, 1a",4.8206,ESC differentiation/lineage markers,Extra-embryonic endoderm markers 
+NM_010446,Foxa2,Forkhead box A2,4.8206,ESC differentiation/lineage markers,Extra-embryonic endoderm markers
+NM_133654,Cd34,CD34 antigen,0.1356,ESC differentiation/lineage markers,Endothelial 
+NM_009868,Cdh5,Cadherin 5,2.0680,ESC differentiation/lineage markers,Endothelial 
+NM_010228,Flt1,FMS-like tyrosine kinase 1,0.3230,ESC differentiation/lineage markers,Endothelial 
+NM_008816,Pecam1,Platelet/endothelial cell adhesion molecule 1,79.0540,ESC differentiation/lineage markers,Endothelial 
+NM_007742,Col1a1,"Collagen, type I, alpha 1",0.0005,ESC differentiation/lineage markers,Bone
+NM_009820,Runx2,Runt related transcription factor 2,0.0385,ESC differentiation/lineage markers,Bone
+NM_010405,Hba-x,"Hemoglobin X, alpha-like embryonic chain in Hba complex",4.8206,ESC differentiation/lineage markers,Blood
 NM_008221,Hbb-y,"Hemoglobin Y, beta-like embryonic chain",4.9755,ESC differentiation/lineage markers,Blood,

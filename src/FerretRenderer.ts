@@ -1,6 +1,15 @@
+import {
+    CHART_DC,
+    CHART_FV,
+    CHART_LDF,
+    CHART_NG,
+    CHART_R,
+    CHART_VD
+} from './colors';
 import * as d3 from 'd3';
-import { Column, IImposer } from 'lineupjs';
 import type {
+    Column,
+    IImposer,
     ICellRendererFactory,
     IRenderContext,
     ISummaryRenderer
@@ -12,6 +21,7 @@ import FerretColumn, {
     SelectionType,
     SelectionTypeString
 } from './FerretColumn';
+import { uniqueId } from 'lodash';
 
 export default class FerretRenderer implements ICellRendererFactory {
     readonly title: string = 'Ferret Visualizations';
@@ -34,17 +44,26 @@ export default class FerretRenderer implements ICellRendererFactory {
         return {
             template: `
             <div class="vizContainer">
-                <div class="noDisp innerVizContainer"></div>
-                <div class="noDisp duplicateCountViz" data-show-all="false">
+                <div class="${this.shownClass(0)} innerVizContainer"></div>
+                <div class="${this.shownClass(
+                    1
+                )} duplicateCountViz" data-show-all="false">
                     <div class="innerVizContainer"></div><div class="d-flex flex-column textButton"></div>
                 </div>
-                <div class="noDisp replicatesViz" data-show-all="false">
+                <div class="${this.shownClass(
+                    2
+                )} replicatesViz" data-show-all="false">
                     <div class="innerVizContainer"></div><div class="d-flex flex-column textButton"></div>
                 </div>
-                <div class="noDisp nGramViz" data-show-all="false">
+                <div class="${this.shownClass(
+                    3
+                )} nGramViz" data-show-all="false">
                     <div class="innerVizContainer"></div><div class="d-flex flex-column textButton"></div>
                 </div>
-                <div class="noDisp innerVizContainer"></div>
+                <div class="${this.shownClass(4)} innerVizContainer"></div>
+                <div class="${this.shownClass(5)} innerVizContainer"></div>
+                <div class="${this.shownClass(6)} innerVizContainer"></div>
+                <div class="${this.shownClass(7)} innerVizContainer"></div>
             </div>`,
             update: (container: HTMLElement) => {
                 let childIndex = 0;
@@ -56,7 +75,7 @@ export default class FerretRenderer implements ICellRendererFactory {
                     col,
                     context,
                     interactive,
-                    'newOverallDist-',
+                    'overallDist-',
                     col.id
                 );
 
@@ -65,7 +84,7 @@ export default class FerretRenderer implements ICellRendererFactory {
                     vizContainer,
                     col,
                     context,
-                    'newDuplicateCount-',
+                    'duplicateCount-',
                     col.id
                 );
 
@@ -74,7 +93,7 @@ export default class FerretRenderer implements ICellRendererFactory {
                     vizContainer,
                     col,
                     context,
-                    'newReplicates-',
+                    'replicates-',
                     col.id
                 );
 
@@ -83,7 +102,7 @@ export default class FerretRenderer implements ICellRendererFactory {
                     vizContainer,
                     col,
                     context,
-                    'newNGram-',
+                    'nGram-',
                     col.id
                 );
 
@@ -92,19 +111,33 @@ export default class FerretRenderer implements ICellRendererFactory {
                     vizContainer,
                     col,
                     context,
-                    'newBenfordDist-',
+                    'benfordDist-',
                     col.id
                 );
 
-                // triggering this here ensures the right charts are shown
-                // the setTimeout(0) is required so it will update correctly
-                setTimeout(() => {
-                    document.dispatchEvent(
-                        new CustomEvent('visibilityChanged')
-                    );
-                }, 0);
+                vizContainer = container.children[childIndex++] as HTMLElement;
+                this.drawTerminalDigitDist(
+                    vizContainer,
+                    col,
+                    context,
+                    'terminalDigit-',
+                    col.id
+                );
+
+                vizContainer = container.children[childIndex++] as HTMLElement;
+                this.drawTextPrecision(
+                    vizContainer,
+                    col,
+                    context,
+                    'textPrecision-',
+                    col.id
+                );
             }
         };
+    }
+
+    private shownClass(index: number): string {
+        return globalThis?.chartsShown?.[index] ? '' : 'd-none';
     }
 
     private async drawOverallDist(
@@ -129,7 +162,9 @@ export default class FerretRenderer implements ICellRendererFactory {
         }
 
         const elementID = chartKey + colKey;
+        container.classList.add(elementID);
         container.id = elementID;
+
         const isNumeric =
             column.desc.type === 'number' ||
             column.desc.type === 'FerretColumn';
@@ -158,7 +193,7 @@ export default class FerretRenderer implements ICellRendererFactory {
                     title: null
                 },
                 color: {
-                    value: '#ffb727'
+                    value: CHART_VD
                 },
                 y: {
                     field: 'value',
@@ -195,7 +230,9 @@ export default class FerretRenderer implements ICellRendererFactory {
         colKey: string
     ): Promise<void> {
         const elementID = chartKey + colKey;
+        container.classList.add(elementID);
         container.id = elementID;
+
         const vizContainer = container.querySelector('.innerVizContainer');
         vizContainer.id = elementID + '-inner';
 
@@ -205,7 +242,13 @@ export default class FerretRenderer implements ICellRendererFactory {
         let dataValues: Array<any> = [];
         let index = 0;
         let multiFrequentValues: Array<any> = [];
-        const showAll = container.dataset.showAll === 'true';
+
+        const showAllKey = 'duplicateCountViz';
+        const showAll = globalThis.chartExpanded.get(showAllKey).get(elementID);
+        globalThis.chartExpanded
+            .get(showAllKey)
+            .set(container.id, showAll ? true : false); // needed to set undefined to false
+
         for (let [val, count] of dupCounts) {
             if (count === 1) {
                 continue;
@@ -246,7 +289,7 @@ export default class FerretRenderer implements ICellRendererFactory {
                 },
                 x: { field: 'count', type: 'quantitative', title: null },
                 color: {
-                    value: '#e57373'
+                    value: CHART_FV
                 },
                 opacity: {
                     condition: {
@@ -281,7 +324,7 @@ export default class FerretRenderer implements ICellRendererFactory {
         };
 
         const tailCount = multiFrequentValues.length - this.maxCollapseCount;
-        this.drawExpandCollapseTail(container, tailCount);
+        this.drawExpandCollapseTail(container, tailCount, showAllKey);
 
         vegaEmbed('#' + elementID + '-inner', yourVlSpec, {
             actions: false
@@ -317,13 +360,21 @@ export default class FerretRenderer implements ICellRendererFactory {
         );
         let dataValues: Array<any> = [];
         let index = 0;
-        const showAll = container.dataset.showAll === 'true';
+
+        const elementID = chartKey + colKey;
+        container.classList.add(elementID);
+        container.id = elementID;
+
+        const showAllKey = 'replicatesViz';
+        const showAll = globalThis.chartExpanded.get(showAllKey).get(elementID);
+        globalThis.chartExpanded
+            .get(showAllKey)
+            .set(container.id, showAll ? true : false); // needed to set undefined to false
+
         const maxIndex = showAll
             ? replicateCount.length
             : this.maxCollapseCount;
 
-        const elementID = chartKey + colKey;
-        container.id = elementID;
         container.querySelector('.innerVizContainer').id = elementID + '-inner';
         for (let [frequency, count] of replicateCount) {
             if (index >= maxIndex) {
@@ -347,7 +398,7 @@ export default class FerretRenderer implements ICellRendererFactory {
             encoding: {
                 x: { field: 'count', type: 'quantitative', title: null },
                 color: {
-                    value: '#0277bb'
+                    value: CHART_R
                 },
                 y: {
                     field: 'frequency',
@@ -388,7 +439,7 @@ export default class FerretRenderer implements ICellRendererFactory {
         };
 
         const tailCount = replicateCount.length - this.maxCollapseCount;
-        this.drawExpandCollapseTail(container, tailCount);
+        this.drawExpandCollapseTail(container, tailCount, showAllKey);
         vegaEmbed('#' + elementID + '-inner', yourVlSpec, {
             actions: false
         }).catch(console.warn);
@@ -402,7 +453,9 @@ export default class FerretRenderer implements ICellRendererFactory {
         colKey: string
     ): Promise<void> {
         const elementID = chartKey + colKey;
+        container.classList.add(elementID);
         container.id = elementID;
+
         const vizContainer = container.querySelector('.innerVizContainer');
         vizContainer.id = elementID + '-inner';
 
@@ -417,7 +470,12 @@ export default class FerretRenderer implements ICellRendererFactory {
             if (count === 1) continue;
             multiFrequentGrams.push([val, count]);
         }
-        const showAll = container.dataset.showAll === 'true';
+        const showAllKey = 'nGramViz';
+        const showAll = globalThis.chartExpanded.get(showAllKey).get(elementID);
+        globalThis.chartExpanded
+            .get(showAllKey)
+            .set(container.id, showAll ? true : false); // needed to set undefined to false
+
         const maxIndex = showAll
             ? multiFrequentGrams.length
             : this.maxCollapseCount;
@@ -445,7 +503,7 @@ export default class FerretRenderer implements ICellRendererFactory {
                 y: { field: 'value', type: 'ordinal', sort: '-x', title: null },
                 x: { field: 'count', type: 'quantitative', title: null },
                 color: {
-                    value: '#ff9100'
+                    value: CHART_NG
                 },
                 opacity: {
                     condition: {
@@ -480,7 +538,7 @@ export default class FerretRenderer implements ICellRendererFactory {
         };
 
         const tailCount = multiFrequentGrams.length - this.maxCollapseCount;
-        this.drawExpandCollapseTail(container, tailCount);
+        this.drawExpandCollapseTail(container, tailCount, showAllKey);
 
         vegaEmbed('#' + elementID + '-inner', yourVlSpec, {
             actions: false
@@ -528,6 +586,7 @@ export default class FerretRenderer implements ICellRendererFactory {
         }
 
         const elementID = chartKey + colKey;
+        container.classList.add(elementID);
         container.id = elementID;
 
         var yourVlSpec: VisualizationSpec = {
@@ -558,7 +617,94 @@ export default class FerretRenderer implements ICellRendererFactory {
                 },
                 y: { field: 'frequency', type: 'quantitative', title: null },
                 color: {
-                    value: '#4eb7ac'
+                    value: CHART_LDF
+                },
+                opacity: {
+                    condition: {
+                        selection: 'highlightBar',
+                        value: 0.7
+                    },
+                    value: 1
+                }
+            }
+        };
+
+        vegaEmbed('#' + elementID, yourVlSpec, { actions: false })
+            .then(result => {
+                result.view.addEventListener('contextmenu', (event, value) => {
+                    if (!value || !value.datum) {
+                        return;
+                    }
+                    event = event as PointerEvent;
+                    event.preventDefault();
+                    this.drawContextMenu(
+                        'leadingDigit',
+                        value.datum.digit.toString(),
+                        column,
+                        context,
+                        event.pageX,
+                        event.pageY
+                    );
+                });
+            })
+            .catch(console.warn);
+    }
+    private async drawTerminalDigitDist(
+        container: HTMLElement,
+        column: FerretColumn,
+        context: IRenderContext,
+        chartKey: string,
+        colKey: string
+    ): Promise<void> {
+        // let digitCounts: Map<number, number>;
+        // digitCounts = new Map(column?.leadingDigitCounts?.acknowledged);
+        const leadDictFreq = await ChartCalculations.GetTerminalDigitFreqs(
+            column,
+            context.provider
+        );
+
+        let selectionName = filterNames.LEADING_DIGIT_FREQ_SELECTION;
+        let dataValues: Array<any> = [];
+        for (let [digit, freq] of leadDictFreq) {
+            dataValues.push({
+                digit: digit,
+                frequency: freq
+            });
+        }
+
+        const elementID = chartKey + colKey;
+        container.classList.add(elementID);
+        container.id = elementID;
+
+        var yourVlSpec: VisualizationSpec = {
+            width: 85,
+            height: 50,
+            $schema: 'https://vega.github.io/schema/vega-lite/v4.json',
+            description: 'Terminal Digit frequencies',
+            data: {
+                values: dataValues
+            },
+            mark: 'bar',
+            selection: {
+                highlightBar: {
+                    type: 'single',
+                    empty: 'none',
+                    on: 'mouseover'
+                },
+                LEADING_DIGIT_FREQ_SELECTION: {
+                    type: 'multi',
+                    clear: 'dblclick'
+                }
+            },
+            encoding: {
+                x: {
+                    field: 'digit',
+                    type: 'ordinal',
+                    title: null
+                },
+                y: { field: 'frequency', type: 'quantitative', title: null },
+                color: {
+                    value: 'black'
                 },
                 opacity: {
                     condition: {
@@ -591,9 +737,94 @@ export default class FerretRenderer implements ICellRendererFactory {
             .catch(console.warn);
     }
 
+    private async drawTextPrecision(
+        container: HTMLElement,
+        column: FerretColumn,
+        context: IRenderContext,
+        chartKey: string,
+        colKey: string
+    ): Promise<void> {
+        let decimalCounts: Map<number, number>;
+        decimalCounts = new Map(column?.decimalCounts?.acknowledged);
+        const leadDictFreq = await ChartCalculations.GetPecisionFreqs(
+            column,
+            context.provider,
+            decimalCounts
+        );
+
+        let dataValues: Array<any> = [];
+        for (let [digit, freq] of leadDictFreq) {
+            dataValues.push({
+                digit: digit,
+                frequency: freq
+            });
+        }
+
+        const elementID = chartKey + colKey;
+        container.classList.add(elementID);
+        container.id = elementID;
+
+        var yourVlSpec: VisualizationSpec = {
+            width: 85,
+            height: 50,
+            $schema: 'https://vega.github.io/schema/vega-lite/v4.json',
+            description: 'Text Precision',
+            data: {
+                values: dataValues
+            },
+            mark: 'bar',
+            selection: {
+                highlightBar: {
+                    type: 'single',
+                    empty: 'none',
+                    on: 'mouseover'
+                }
+            },
+            encoding: {
+                x: {
+                    field: 'digit',
+                    type: 'ordinal',
+                    title: null
+                },
+                y: { field: 'frequency', type: 'quantitative', title: null },
+                color: {
+                    value: CHART_DC
+                },
+                opacity: {
+                    condition: {
+                        selection: 'highlightBar',
+                        value: 0.7
+                    },
+                    value: 1
+                }
+            }
+        };
+
+        vegaEmbed('#' + elementID, yourVlSpec, { actions: false })
+            .then(result => {
+                result.view.addEventListener('contextmenu', (event, value) => {
+                    if (!value || !value.datum) {
+                        return;
+                    }
+                    event = event as PointerEvent;
+                    event.preventDefault();
+                    this.drawContextMenu(
+                        'leadingDigit', // todo remove or make work
+                        value.datum.digit.toString(),
+                        column,
+                        context,
+                        event.pageX,
+                        event.pageY
+                    );
+                });
+            })
+            .catch(console.warn);
+    }
+
     private drawExpandCollapseTail(
         container: HTMLElement,
-        count: number
+        count: number,
+        showAllKey: string
     ): void {
         const buttonContainer = container.querySelector('.textButton');
         buttonContainer.innerHTML = '';
@@ -601,7 +832,10 @@ export default class FerretRenderer implements ICellRendererFactory {
             return;
         }
 
-        const showAll = container.dataset.showAll === 'true';
+        const showAll = globalThis.chartExpanded
+            .get(showAllKey)
+            .get(container.id);
+
         const button = document.createElement('button');
         button.classList.add('btn', 'btn-sm', 'btn-light');
         if (showAll) {
@@ -610,7 +844,9 @@ export default class FerretRenderer implements ICellRendererFactory {
             button.textContent = `expand ${count} more items`;
         }
         button.onclick = () => {
-            container.dataset.showAll = showAll ? 'false' : 'true';
+            globalThis.chartExpanded
+                .get(showAllKey)
+                .set(container.id, showAll ? false : true);
             document.dispatchEvent(new CustomEvent('updateLineup'));
         };
         buttonContainer.appendChild(button);

@@ -1,10 +1,12 @@
+import * as d3 from 'd3';
 import { Column, IDataRow, ValueColumn, ECompareValueType } from 'lineupjs';
 import { IEventListener } from 'lineupjs/build/src/internal';
 import {
     ChartCalculations,
     FreqValsMetadata,
     LeadDigitCountMetadata,
-    NGramMetadata
+    NGramMetadata,
+    DecimalMetadata
 } from './ChartCalculations';
 
 export interface FerretSelection {
@@ -76,6 +78,14 @@ export default class FerretColumn extends ValueColumn<number> {
         this._ngramCounts = v;
     }
 
+    private _decimalCounts: DecimalMetadata;
+    public get decimalCounts(): DecimalMetadata {
+        return this._decimalCounts;
+    }
+    public set decimalCounts(v: DecimalMetadata) {
+        this._decimalCounts = v;
+    }
+
     private static _globalIgnore: FerretSelection = {
         values: new Set<number>(),
         ngrams: new Set<string>(),
@@ -112,6 +122,14 @@ export default class FerretColumn extends ValueColumn<number> {
         return this._localHighlight;
     }
 
+    private _normalize: d3.ScaleLinear<number, number>;
+    public get normalize(): d3.ScaleLinear<number, number> {
+        return this._normalize;
+    }
+    public set normalize(v: d3.ScaleLinear<number, number>) {
+        this._normalize = v;
+    }
+
     protected createEventList() {
         return super
             .createEventList()
@@ -135,6 +153,11 @@ export default class FerretColumn extends ValueColumn<number> {
 
     public getNumber(row: IDataRow): number {
         return this.getRaw(row);
+    }
+
+    public getScaledNumber(row: IDataRow): number {
+        const raw = this.getRaw(row);
+        return this.normalize(raw);
     }
 
     public getRightPaddingString(row: IDataRow): string {

@@ -21,6 +21,10 @@
     border: solid #eeeeee 2px;
 }
 
+.customButtonEyeIcon.chart- {
+    background-color: #b3b3b3;
+    border-color: #3a3939;
+}
 .customButtonEyeIcon.chart-vd {
     background-color: $chart-vd;
     border-color: $chart-vd;
@@ -41,6 +45,10 @@
     background-color: $chart-ldf;
     border-color: $chart-ldf;
 }
+.customButtonEyeIcon.chart-dc {
+    background-color: $chart-dc;
+    border-color: $chart-dc;
+}
 
 .customButtonEyeIcon.hidden {
     background-color: #eeeeee !important;
@@ -55,6 +63,12 @@
     border-color: grey !important;
 }
 
+.item.chart- {
+    border: 1px solid rgb(119, 119, 119);
+}
+.item.chart-:hover {
+    background-color: #d3d3d3;
+}
 .item.chart-vd {
     border: 1px solid $chart-vd;
 }
@@ -84,6 +98,12 @@
 }
 .item.chart-ldf:hover {
     background-color: $chart-ldf-light;
+}
+.item.chart-dc {
+    border: 1px solid $chart-dc;
+}
+.item.chart-dc:hover {
+    background-color: $chart-dc-light;
 }
 
 .dropdown-content {

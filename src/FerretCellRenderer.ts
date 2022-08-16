@@ -1,4 +1,3 @@
-import * as d3 from 'd3';
 import {
     Column,
     ERenderMode,
@@ -12,6 +11,7 @@ import {
     renderMissingDOM
 } from 'lineupjs';
 import { ChartCalculations } from './ChartCalculations';
+import { CHART_FV, CHART_LDF, CHART_NG } from './colors';
 import FerretColumn, {
     FerretSelectionExplanation,
     Range
@@ -29,6 +29,7 @@ export default class FerretCellRenderer implements ICellRendererFactory {
         context: IRenderContext,
         imposer?: IImposer
     ): ICellRenderer {
+        const width = context.colWidth(col);
         return {
             template: `<div title="" class="ferretCell"></div>`,
             update: (n: HTMLElement, d: IDataRow) => {
@@ -103,6 +104,40 @@ export default class FerretCellRenderer implements ICellRendererFactory {
                     d
                 )}</span>`;
                 n.classList.toggle('ignoredCell', col.ignoreInAnalysis(d));
+            },
+            render: (ctx: CanvasRenderingContext2D, d: IDataRow) => {
+                ctx.save();
+                const ignored = col.ignoreInAnalysis(d);
+                if (ignored) {
+                    ctx.fillStyle = '#f1f1f1';
+                } else {
+                    ctx.fillStyle = '#c1c1c1';
+                }
+                const w = width * col.getScaledNumber(d);
+                ctx.fillRect(width - w, 0, w, 4);
+                ctx.fill();
+
+                if (!ignored) {
+                    const selectionExplanation: FerretSelectionExplanation =
+                        col.highlightValueExplanation(d);
+                    if (selectionExplanation.why.value.cause) {
+                        ctx.fillStyle = CHART_FV;
+                        ctx.fillRect(width - w, 0, w, 4);
+                        ctx.fill();
+                    }
+                    if (selectionExplanation.why.nGram.length > 0) {
+                        ctx.fillStyle = CHART_NG;
+                        ctx.fillRect(width - w + w / 3, 0, w / 3, 4);
+                        ctx.fill();
+                    }
+                    if (selectionExplanation.why.leadingDigit.cause) {
+                        ctx.fillStyle = CHART_LDF;
+                        ctx.fillRect(width - w, 0, w / 3, 4);
+                        ctx.fill();
+                    }
+                }
+
+                ctx.restore();
             }
         };
     }

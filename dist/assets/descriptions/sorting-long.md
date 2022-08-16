@@ -1,0 +1,2 @@
+-   can look for weird sorting effects, e.g. manual sorting
+-   can look in combination with other analysis

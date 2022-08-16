@@ -1,10 +1,6 @@
-import {
-    ChartCalculations,
-    MetaDataAccessor,
-    SelectionMetadata
-} from './ChartCalculations';
+import { MetaDataAccessor, SelectionMetadata } from './ChartCalculations';
 import * as d3 from 'd3';
-import LineUp from 'lineupjs';
+import { LineUp } from 'lineupjs';
 import FerretColumn, {
     FerretSelection,
     SelectionType,
