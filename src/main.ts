@@ -46,7 +46,7 @@ let clear = (): void => {
     toolbarContainer.innerHTML = '';
 };
 
-let init = (data: string, filename: string) => {
+let init = async (data: string | ArrayBuffer, filename: string) => {
     clear(); // clearing all the existing elements.
     const bigStyle = false;
 
@@ -58,7 +58,13 @@ let init = (data: string, filename: string) => {
     toolbarContainer.appendChild(navigateHomeLink);
 
     let fileLoadButton = new UploadFileButton(toolbarContainer, init, bigStyle);
-    let tabularData: TabularData = TabularData.FromString(data);
+
+    let tabularData: TabularData;
+    if (typeof data == 'string') {
+        tabularData = TabularData.FromString(data);
+    } else {
+        tabularData = await TabularData.FromExcel(data);
+    }
     controlsDisplay.drawControls(tabularData);
     const defaultVizShown = [
         true,
@@ -87,7 +93,11 @@ let init = (data: string, filename: string) => {
 let urlParams = new URLSearchParams(document.location.search);
 if (urlParams.has('data_path')) {
     let filename = urlParams.get('data_path');
-    d3.text(filename).then(data => {
+    // d3.text(filename).then(data => {
+    //     init(data, filename);
+    // });
+
+    d3.buffer(filename).then(data => {
         init(data, filename);
     });
 } else {

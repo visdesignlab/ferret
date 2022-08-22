@@ -4,8 +4,22 @@ import { ColumnCategorical } from './ColumnCategorical';
 import { ColumnLabel } from './ColumnLabel';
 import { ColumnMixed } from './ColumnMixed';
 import { getColumnType } from './ColumnType';
+import { Cell, CellValue, Column as ExcelColumn } from 'exceljs';
 
 export class ColumnFactory {
+    public static FromExcelColumn(data: ExcelColumn): Column<string | number> {
+        let valList: CellValue[] = [];
+        let key: string = null;
+        data.eachCell((cell: Cell, num) => {
+            if (key === null) {
+                key = cell.toString();
+            } else {
+                valList.push(cell.value);
+            }
+        });
+        return this.fromValList(valList, key);
+    }
+
     public static FromDSVRowArray(
         data: d3.DSVRowArray<string>,
         key: string,
@@ -21,6 +35,10 @@ export class ColumnFactory {
             valList.push(val);
         }
 
+        return this.fromValList(valList, key);
+    }
+
+    private static fromValList(valList: any[], key: string): Column<any> {
         let col: Column<string | number>;
 
         switch (getColumnType(valList)) {
