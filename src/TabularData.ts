@@ -4,7 +4,7 @@ import * as d3 from 'd3';
 // import * as XLSX from 'xlsx';
 // import * as XLSX from 'sheetjs-style';
 // import * as excelJS from 'exceljs';
-import { Workbook, CellValue } from 'exceljs';
+import { Workbook, Cell } from 'exceljs';
 import { Column } from './Column';
 import { ColumnFactory } from './ColumnFactory';
 
@@ -24,17 +24,7 @@ export class TabularData {
         for (let i = 1; i <= numCols; i++) {
             const column = ColumnFactory.FromExcelColumn(ws.getColumn(i));
             tabularData.columnList.push(column);
-            // ws.getColumn(i).eachCell((cell, num) => {
-            //     let blarg: CellValue;
-            //     console.log(cell, cell.value, i, num);
-            //     // cell.value can be a string, number, date, or formula {formula: string, result: any?}
-            // });
         }
-
-        // for (let header of data.columns) {
-        //     const column = ColumnFactory.FromDSVRowArray(data, header);
-        //     tabularData.columnList.push(column);
-        // }
         tabularData._rowLength = ws.rowCount - 1; // subtract one because the first row is consumed as a label.
         const rowColumn = ColumnFactory.Count(tabularData.rowLength, 'ROW');
         tabularData.columnList.unshift(rowColumn);
@@ -61,8 +51,8 @@ export class TabularData {
         return tabularData;
     }
 
-    private _columnList: Column<string | number>[];
-    public get columnList(): Column<string | number>[] {
+    private _columnList: Column<string | number | Cell>[];
+    public get columnList(): Column<string | number | Cell>[] {
         return this._columnList;
     }
 
@@ -75,24 +65,24 @@ export class TabularData {
         return this._rowLength;
     }
 
-    public getRowList(): Record<string, string | number>[] {
-        const rowList: Record<string, string | number>[] = [];
+    public getRowList(): Record<string, string | number | Cell>[] {
+        const rowList: Record<string, string | number | Cell>[] = [];
         for (let i = 0; i < this.rowLength; i++) {
             rowList.push(this.getRowRecord(i));
         }
         return rowList;
     }
 
-    public getRowRecord(index: number): Record<string, string | number> {
-        let rowRecord: Record<string, string | number> = {};
+    public getRowRecord(index: number): Record<string, string | number | Cell> {
+        let rowRecord: Record<string, string | number | Cell> = {};
         for (let i = 0; i < this.columnList.length; i++) {
             rowRecord[i.toString()] = this.columnList[i].values[index];
         }
         return rowRecord;
     }
 
-    public getRow(index: number): (string | number)[] {
-        let row: (string | number)[] = [];
+    public getRow(index: number): (string | number | Cell)[] {
+        let row: (string | number | Cell)[] = [];
         for (let column of this.columnList) {
             row.push(column.values[index]);
         }

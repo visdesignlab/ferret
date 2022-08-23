@@ -1,4 +1,9 @@
-export type ColumnTypes = 'Number' | 'Label' | 'Mixed' | 'Categorical';
+export type ColumnTypes =
+    | 'Number'
+    | 'Label'
+    | 'Mixed'
+    | 'Categorical'
+    | 'Excel';
 
 export abstract class Column<T> {
     public constructor() {

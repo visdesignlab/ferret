@@ -1,20 +1,28 @@
+import { ColumnExcelData } from './ColumnExcelData';
 import { Column } from './Column';
 import { ColumnNumeric } from './ColumnNumeric';
 import { ColumnCategorical } from './ColumnCategorical';
 import { ColumnLabel } from './ColumnLabel';
 import { ColumnMixed } from './ColumnMixed';
 import { getColumnType } from './ColumnType';
-import { Cell, CellValue, Column as ExcelColumn } from 'exceljs';
+import { Cell, Column as ExcelColumn, Style } from 'exceljs';
+
+// export interface CellWithStyle {
+//     value: any;
+//     style: Partial<Style>;
+// }
 
 export class ColumnFactory {
-    public static FromExcelColumn(data: ExcelColumn): Column<string | number> {
-        let valList: CellValue[] = [];
+    public static FromExcelColumn(data: ExcelColumn): Column<Cell> {
+        let valList: Cell[] = [];
         let key: string = null;
         data.eachCell((cell: Cell, num) => {
+            let style: Partial<Style> = cell.style;
             if (key === null) {
                 key = cell.toString();
             } else {
-                valList.push(cell.value);
+                valList.push(cell);
+                console.log(cell);
             }
         });
         return this.fromValList(valList, key);
@@ -39,9 +47,12 @@ export class ColumnFactory {
     }
 
     private static fromValList(valList: any[], key: string): Column<any> {
-        let col: Column<string | number>;
+        let col: Column<string | number | Cell>;
 
         switch (getColumnType(valList)) {
+            case 'Excel':
+                col = new ColumnExcelData(valList as Cell[]);
+                break;
             case 'Categorical':
                 col = new ColumnCategorical(valList as string[]);
                 break;

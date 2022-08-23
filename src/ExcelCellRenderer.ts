@@ -1,3 +1,4 @@
+import { Cell, CellValue } from 'exceljs';
 import {
     Column,
     ERenderMode,
@@ -13,6 +14,7 @@ import {
 } from 'lineupjs';
 import { ChartCalculations } from './ChartCalculations';
 import { CHART_FV, CHART_LDF, CHART_NG } from './colors';
+import ExcelColumn from './ExcelColumn';
 import FerretColumn, {
     FerretSelectionExplanation,
     Range
@@ -26,7 +28,7 @@ export default class ExcelCellRenderer implements ICellRendererFactory {
     }
 
     create(
-        col: StringColumn,
+        col: ExcelColumn,
         context: IRenderContext,
         imposer?: IImposer
     ): ICellRenderer {
@@ -35,9 +37,10 @@ export default class ExcelCellRenderer implements ICellRendererFactory {
             template: `<div title="" class="excelCell"></div>`,
             update: (n: HTMLElement, d: IDataRow) => {
                 const missing = renderMissingDOM(n, col, d);
-                let cellLabel = col.getLabel(d);
-                n.title = cellLabel;
-                n.innerHTML = `!! ${cellLabel} !!`;
+                const cell: Cell = col.getRaw(d);
+                console.log(cell);
+                n.title = cell.text;
+                n.innerHTML = `!! ${cell} !!`;
             },
             render: (ctx: CanvasRenderingContext2D, d: IDataRow) => {
                 ctx.save();

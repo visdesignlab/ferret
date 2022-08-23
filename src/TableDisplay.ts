@@ -15,6 +15,7 @@ import {
 } from 'lineupjs';
 import { ColumnNumeric } from './ColumnNumeric';
 import FerretRenderer from './FerretRenderer';
+import ExcelColumn from './ExcelColumn';
 import FerretCellRenderer from './FerretCellRenderer';
 import ExcelCellRenderer from './ExcelCellRenderer';
 import FerretColumn from './FerretColumn';
@@ -95,6 +96,7 @@ export class TableDisplay extends EventTarget {
         const rowFirstData = data.getRowList();
         const builder = lineupBuilder(rowFirstData);
         builder.registerColumnType('FerretColumn', FerretColumn);
+        builder.registerColumnType('ExcelColumn', ExcelColumn);
         toolbar('rename', 'sort', 'sortBy', 'filterNumber')(FerretColumn);
         const extentLookup = new Map<string, [number, number]>();
         for (let i = 0; i < data.columnList.length; i++) {
@@ -104,7 +106,7 @@ export class TableDisplay extends EventTarget {
             let columnBuilder: ColumnBuilder;
             const excelMode = true;
             if (excelMode) {
-                columnBuilder = buildStringColumn(key);
+                columnBuilder = buildColumn('ExcelColumn', key);
                 columnBuilder.renderer('ExcelCellRenderer');
             } else if (column.type === 'Number') {
                 columnBuilder = buildColumn('FerretColumn', key);
@@ -257,4 +259,3 @@ export class TableDisplay extends EventTarget {
         this.lineup.update();
     }
 }
-[];
