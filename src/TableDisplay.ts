@@ -16,6 +16,7 @@ import {
 import { ColumnNumeric } from './ColumnNumeric';
 import FerretRenderer from './FerretRenderer';
 import FerretCellRenderer from './FerretCellRenderer';
+import ExcelCellRenderer from './ExcelCellRenderer';
 import FerretColumn from './FerretColumn';
 import { LINEUP_COL_COUNT } from './lib/constants';
 
@@ -101,7 +102,11 @@ export class TableDisplay extends EventTarget {
             const column = data.columnList[i];
             const label = column.id;
             let columnBuilder: ColumnBuilder;
-            if (column.type === 'Number') {
+            const excelMode = true;
+            if (excelMode) {
+                columnBuilder = buildStringColumn(key);
+                columnBuilder.renderer('ExcelCellRenderer');
+            } else if (column.type === 'Number') {
                 columnBuilder = buildColumn('FerretColumn', key);
                 columnBuilder.renderer(
                     'FerretCellRenderer',
@@ -140,6 +145,7 @@ export class TableDisplay extends EventTarget {
             'FerretCellRenderer',
             new FerretCellRenderer()
         );
+        builder.registerRenderer('ExcelCellRenderer', new ExcelCellRenderer());
         this._lineup = builder.buildTaggle(
             lineupContainer
         ) as unknown as LineUp;
