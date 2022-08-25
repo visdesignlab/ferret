@@ -53,7 +53,13 @@ export default class ExcelCellRenderer implements ICellRendererFactory {
                     if (font.underline) span.style.textDecoration = 'underline';
                 }
                 span.innerText = cell.text;
-                n.innerHTML = span.outerHTML;
+                // <i class="fa-info-circle fa"></i>
+                const helpIcon = document.createElement('i');
+                helpIcon.classList.add('fa', 'fa-info-circle');
+
+                n.innerHTML = '';
+                n.appendChild(span);
+                n.appendChild(helpIcon);
             },
             render: (ctx: CanvasRenderingContext2D, d: IDataRow) => {
                 const cell: Cell = col.getRaw(d);
