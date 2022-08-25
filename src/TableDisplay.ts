@@ -104,8 +104,7 @@ export class TableDisplay extends EventTarget {
             const column = data.columnList[i];
             const label = column.id;
             let columnBuilder: ColumnBuilder;
-            const excelMode = true;
-            if (excelMode) {
+            if (column.type === 'Excel') {
                 columnBuilder = buildColumn('ExcelColumn', key);
                 columnBuilder.renderer('ExcelCellRenderer');
             } else if (column.type === 'Number') {

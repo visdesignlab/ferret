@@ -22,7 +22,6 @@ export class ColumnFactory {
                 key = cell.toString();
             } else {
                 valList.push(cell);
-                console.log(cell);
             }
         });
         return this.fromValList(valList, key);

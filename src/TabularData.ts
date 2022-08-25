@@ -1,11 +1,6 @@
 import * as d3 from 'd3';
-// import * as XLSX from 'xlsx/xlsx.mjs';
-// import {Xlsx}
-// import * as XLSX from 'xlsx';
-// import * as XLSX from 'sheetjs-style';
-// import * as excelJS from 'exceljs';
 import { Workbook, Cell } from 'exceljs';
-import { Column } from './Column';
+import { Column, ColumnTypes } from './Column';
 import { ColumnFactory } from './ColumnFactory';
 
 export class TabularData {
@@ -18,8 +13,7 @@ export class TabularData {
 
         let workbook = new Workbook();
         await workbook.xlsx.load(data);
-        console.log(workbook);
-        const ws = workbook.getWorksheet(1);
+        const ws = workbook.worksheets[0];
         const numCols = ws.columnCount;
         for (let i = 1; i <= numCols; i++) {
             const column = ColumnFactory.FromExcelColumn(ws.getColumn(i));
@@ -28,6 +22,7 @@ export class TabularData {
         tabularData._rowLength = ws.rowCount - 1; // subtract one because the first row is consumed as a label.
         const rowColumn = ColumnFactory.Count(tabularData.rowLength, 'ROW');
         tabularData.columnList.unshift(rowColumn);
+        tabularData.buildStyleMap();
         return tabularData;
     }
 
@@ -51,6 +46,43 @@ export class TabularData {
         return tabularData;
     }
 
+    private buildStyleMap() {
+        const styleCounts = new Map<string, number>();
+        for (let column of this.columnList) {
+            if (column.type !== 'Excel') continue;
+            for (let value of (column as Column<Cell>).values) {
+                const key = TabularData.getStyleHash(value);
+                if (styleCounts.has(key)) {
+                    styleCounts.set(key, styleCounts.get(key) + 1);
+                } else {
+                    styleCounts.set(key, 1);
+                }
+            }
+        }
+
+        const entries = Array.from(styleCounts.entries());
+        entries.sort((a: [string, number], b: [string, number]) => {
+            return b[1] - a[1];
+        });
+        for (let i = 0; i < entries.length; i++) {
+            entries[i][1] = i - 1; // the default style of -1 will have no style
+        }
+        TabularData._styleMap = new Map<string, number>(entries);
+    }
+
+    public static getStyleHash(cell: Cell): string {
+        const b: string = cell.font?.bold ? '1' : '0';
+        const i: string = cell.font?.italic ? '1' : '0';
+        const u: string = cell.font?.underline ? '1' : '0';
+        const size: string = cell.font?.size
+            ? cell.font?.size.toString()
+            : 'default';
+        // : '12'; // on my mac the default is 12
+        // const font: string = cell.font?.name ?? 'Calibri'; // on my mac the default is Calibri
+        const font: string = cell.font?.name ?? 'default'; // on my mac the default is Calibri
+        return `${b}_${i}_${u}_${size}_${font}`;
+    }
+
     private _columnList: Column<string | number | Cell>[];
     public get columnList(): Column<string | number | Cell>[] {
         return this._columnList;
@@ -58,6 +90,11 @@ export class TabularData {
 
     public SetColumnList(columnList: Column<string | number>[]): void {
         this._columnList = columnList;
+    }
+
+    private static _styleMap: Map<string, number>;
+    public static get styleMap(): Map<string, number> {
+        return TabularData._styleMap;
     }
 
     private _rowLength: number;

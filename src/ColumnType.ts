@@ -20,14 +20,14 @@ export const ReverseColumnTypeMap: { [K in ColumnTypeValues]: ColumnTypeKeys } =
 export type ColumnMap = { [key: string]: ColumnTypeValues };
 
 export function getColumnType(arr: any[]): ColumnTypeValues {
+    if (isNumericArray(arr)) {
+        return 'Number';
+    }
     if (isExcelArray(arr)) {
         return 'Excel';
     }
     if (isCategoricalArray(arr)) {
         return 'Categorical';
-    }
-    if (isNumericArray(arr)) {
-        return 'Number';
     }
     return 'Label';
 }
@@ -37,7 +37,7 @@ function isExcelArray(arr: any[]): boolean {
 }
 
 export function isNumericArray(arr: any[]) {
-    return !arr.every(isNaN);
+    return arr.every((val: any) => typeof val == 'number');
 }
 
 function isCategoricalArray(arr: any[]) {
