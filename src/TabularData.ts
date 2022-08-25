@@ -71,6 +71,7 @@ export class TabularData {
     }
 
     public static getStyleHash(cell: Cell): string {
+        const t: number = cell.type; // cell type, number, string, etc
         const b: string = cell.font?.bold ? '1' : '0';
         const i: string = cell.font?.italic ? '1' : '0';
         const u: string = cell.font?.underline ? '1' : '0';
@@ -80,7 +81,7 @@ export class TabularData {
         // : '12'; // on my mac the default is 12
         // const font: string = cell.font?.name ?? 'Calibri'; // on my mac the default is Calibri
         const font: string = cell.font?.name ?? 'default'; // on my mac the default is Calibri
-        return `${b}_${i}_${u}_${size}_${font}`;
+        return `${t}_${b}_${i}_${u}_${size}_${font}`;
     }
 
     private _columnList: Column<string | number | Cell>[];
