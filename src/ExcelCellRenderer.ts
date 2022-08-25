@@ -38,7 +38,7 @@ export default class ExcelCellRenderer implements ICellRendererFactory {
         return {
             template: `<div title="" class="excelCell"></div>`,
             update: (n: HTMLElement, d: IDataRow) => {
-                const missing = renderMissingDOM(n, col, d);
+                // const missing = renderMissingDOM(n, col, d);
                 const cell: Cell = col.getRaw(d);
                 const styleHash = TabularData.getStyleHash(cell);
                 const styleGroup = TabularData.styleMap.get(styleHash);
@@ -56,10 +56,17 @@ export default class ExcelCellRenderer implements ICellRendererFactory {
                 n.innerHTML = span.outerHTML;
             },
             render: (ctx: CanvasRenderingContext2D, d: IDataRow) => {
+                const cell: Cell = col.getRaw(d);
+                const styleHash = TabularData.getStyleHash(cell);
+                const styleGroup = TabularData.styleMap.get(styleHash);
+                let primaryColorHex: string = '#FFF';
+                if (styleGroup >= 0) {
+                    primaryColorHex = ExcelCellRenderer.getColor(styleGroup);
+                }
+
                 ctx.save();
-                ctx.fillStyle = '#FF0000';
-                const w = width * 0.75;
-                ctx.fillRect(width - w, 0, w, 4);
+                ctx.fillStyle = primaryColorHex;
+                ctx.fillRect(0, 0, width, 4);
                 ctx.fill();
 
                 ctx.restore();
@@ -71,6 +78,17 @@ export default class ExcelCellRenderer implements ICellRendererFactory {
         if (group === -1) {
             return '';
         }
+        const primaryColorHex = ExcelCellRenderer.getColor(group);
+        const primaryColor = color(primaryColorHex);
+        const secondaryColorHex = primaryColor.brighter(0.3).formatHex();
+        return ExcelCellRenderer.getTextureCss(
+            group,
+            secondaryColorHex,
+            primaryColorHex
+        );
+    }
+
+    private static getColor(group: number): string {
         const colors = [
             '#8dd3c7',
             '#e5e5a1', //'#ffffb3', original yellow
@@ -81,14 +99,7 @@ export default class ExcelCellRenderer implements ICellRendererFactory {
             '#b3de69'
         ];
         // https://colorbrewer2.org/#type=qualitative&scheme=Set3&n=7
-        const primaryColorHex = colors[group % colors.length];
-        const primaryColor = color(primaryColorHex);
-        const secondaryColorHex = primaryColor.brighter(0.3).formatHex();
-        return ExcelCellRenderer.getTextureCss(
-            group,
-            secondaryColorHex,
-            primaryColorHex
-        );
+        return colors[group % colors.length];
     }
 
     private static getTextureCss(
@@ -106,6 +117,7 @@ export default class ExcelCellRenderer implements ICellRendererFactory {
                     bg +
                     `background-image: repeating-linear-gradient(-45deg, ${c2} 0, ${c2} 2px, ${c1} 0, ${c1} 50%); background-size: 8px 8px;`
                 );
+            // stiped angle
             case 1:
                 return (
                     bg +
@@ -113,16 +125,19 @@ export default class ExcelCellRenderer implements ICellRendererFactory {
                      background-size: 8px 14px;
                      background-position: 0 0, 0 0, 4px 7px, 4px 7px, 0 0, 4px 7px;`
                 );
+            // isometric
             case 2:
                 return (
                     bg +
                     `background-image: linear-gradient(to right,${c1} , ${c1} 6px, ${c2} 6px, ${c2} ); background-size: 8px 100%;`
                 );
+            // verticle striped
             case 3:
                 return (
                     bg +
                     `background-image: radial-gradient( ellipse farthest-corner at 8px 8px , ${c1}, ${c1} 50%, ${c2} 50%); background-size: 8px 8px;`
                 );
+            // quarter moon
             case 4:
                 return (
                     bg +
@@ -131,7 +146,9 @@ export default class ExcelCellRenderer implements ICellRendererFactory {
                      background-size: 8px 8px;
                      background-repeat: repeat;`
                 );
+            // checkerboard
             default:
+                // should never be reached
                 return 'background-color: magenta;';
         }
     }
