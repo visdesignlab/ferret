@@ -21,6 +21,7 @@ import FerretColumn, {
     Range
 } from './FerretColumn';
 import { color } from 'd3';
+import { Popover } from 'bootstrap';
 
 export default class ExcelCellRenderer implements ICellRendererFactory {
     readonly title: string = 'ExcelCellRenderer';
@@ -56,6 +57,7 @@ export default class ExcelCellRenderer implements ICellRendererFactory {
                 // <i class="fa-info-circle fa"></i>
                 const helpIcon = document.createElement('i');
                 helpIcon.classList.add('fa', 'fa-info-circle');
+                ExcelCellRenderer.addBootstrapPopover(helpIcon);
 
                 n.innerHTML = '';
                 n.appendChild(span);
@@ -78,6 +80,17 @@ export default class ExcelCellRenderer implements ICellRendererFactory {
                 ctx.restore();
             }
         };
+    }
+
+    private static addBootstrapPopover(element: HTMLElement): void {
+        element.dataset.bsToggle = 'popover';
+        element.dataset.bsHtml = 'true';
+        element.dataset.trigger = 'hover';
+        element.dataset.bsPlacement = 'bottom';
+        element.dataset.bsTitle = 'A <b>bold</b> title.';
+        element.dataset.bsContent =
+            'This is a <b>bold</b> body, can not <i>emphasize</i> enough how much this should be <u>underlined</u>';
+        new Popover(element, { trigger: 'hover' });
     }
 
     private static getFontStyleGroupCss(group: number): string {
