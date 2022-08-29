@@ -111,7 +111,7 @@ export default class ExcelCellRenderer implements ICellRendererFactory {
         );
         if (cell.type === ValueType.Formula) {
             div.appendChild(
-                ExcelCellRenderer.buildLabelValue('Equation', cell.formula)
+                ExcelCellRenderer.buildSecondaryValue(cell.formula)
             );
         }
         if (cell.font) {
@@ -145,6 +145,21 @@ export default class ExcelCellRenderer implements ICellRendererFactory {
             );
         }
 
+        div.appendChild(ExcelCellRenderer.buildStyleCount(cell));
+
+        return div;
+    }
+
+    private static buildStyleCount(cell: Cell): HTMLElement {
+        const div = document.createElement('div');
+        const styleHash = TabularData.getStyleHash(cell);
+        const styleGroup = TabularData.styleMap.get(styleHash);
+        div.style.cssText = ExcelCellRenderer.getFontStyleGroupCss(styleGroup);
+        const cellCount = 123;
+        div.innerHTML = `<span class="fs-5">${cellCount}</span> cell${
+            cellCount > 1 ? 's' : ''
+        } have the same format`;
+        div.classList.add('fs-6', 'badge', 'text-black');
         return div;
     }
 
@@ -205,6 +220,20 @@ export default class ExcelCellRenderer implements ICellRendererFactory {
         }
         div.classList.add('mb-2', 'd-flex', 'align-items-center');
         return div;
+    }
+
+    private static buildSecondaryValue(value: string): HTMLElement {
+        const valueSpan = document.createElement('span');
+        valueSpan.classList.add(
+            'badge',
+            'text-black',
+            'bg-light',
+            'fs-6',
+            'mb-1',
+            'ms-2'
+        );
+        valueSpan.innerText = value;
+        return valueSpan;
     }
 
     private static addBootstrapPopover(element: HTMLElement, cell: Cell): void {
