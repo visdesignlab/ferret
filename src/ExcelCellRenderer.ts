@@ -1,5 +1,5 @@
 import { TabularData } from './TabularData';
-import { Cell, CellValue } from 'exceljs';
+import { Cell, CellValue, ValueType } from 'exceljs';
 import {
     Column,
     ERenderMode,
@@ -46,18 +46,11 @@ export default class ExcelCellRenderer implements ICellRendererFactory {
                 n.style.cssText =
                     ExcelCellRenderer.getFontStyleGroupCss(styleGroup);
                 n.title = cell.text;
-                const span = document.createElement('span');
-                const font = cell.font;
-                if (font) {
-                    if (font.bold) span.style.fontWeight = 'bold';
-                    if (font.italic) span.style.fontStyle = 'italic';
-                    if (font.underline) span.style.textDecoration = 'underline';
-                }
-                span.innerText = cell.text;
+                const span = ExcelCellRenderer.buildCellLabelSpan(cell);
                 // <i class="fa-info-circle fa"></i>
                 const helpIcon = document.createElement('i');
                 helpIcon.classList.add('fa', 'fa-info-circle');
-                ExcelCellRenderer.addBootstrapPopover(helpIcon);
+                ExcelCellRenderer.addBootstrapPopover(helpIcon, cell);
 
                 n.innerHTML = '';
                 n.appendChild(span);
@@ -82,15 +75,150 @@ export default class ExcelCellRenderer implements ICellRendererFactory {
         };
     }
 
-    private static addBootstrapPopover(element: HTMLElement): void {
+    private static buildCellLabelSpan(
+        cell: Cell,
+        includeSize = false,
+        includeFont = false
+    ): HTMLSpanElement {
+        const span = document.createElement('span');
+        const font = cell.font;
+        if (font) {
+            if (font.bold) span.style.fontWeight = 'bold';
+            if (font.italic) span.style.fontStyle = 'italic';
+            if (font.underline) span.style.textDecoration = 'underline';
+            if (includeSize && font.size) {
+                span.style.fontSize = `${font.size}pt`;
+            }
+            if (includeFont && font.name) {
+                span.style.fontFamily = `${font.name}, Josefin Sans, sans-serif`;
+            }
+        }
+        span.innerText = cell.text;
+        return span;
+    }
+
+    private static buildCellContent(cell: Cell): HTMLElement {
+        const div = document.createElement('div');
+        div.appendChild(
+            ExcelCellRenderer.buildLabelValue('Address', cell.address)
+        );
+
+        div.appendChild(
+            ExcelCellRenderer.buildLabelValue(
+                'Cell Format',
+                ExcelCellRenderer.getCellFormatLabel(cell.type)
+            )
+        );
+        if (cell.type === ValueType.Formula) {
+            div.appendChild(
+                ExcelCellRenderer.buildLabelValue('Equation', cell.formula)
+            );
+        }
+        if (cell.font) {
+            const font = cell.font;
+            const labels: string[] = [];
+            if (font.bold) labels.push('Bold');
+            if (font.italic) labels.push('Italic');
+            if (font.underline) labels.push('Underline');
+
+            if (labels.length > 0) {
+                div.appendChild(
+                    ExcelCellRenderer.buildLabelValue('Text Format', ...labels)
+                );
+            }
+            if (font.size) {
+                div.appendChild(
+                    ExcelCellRenderer.buildLabelValue(
+                        'Font Size',
+                        font.size.toFixed(0)
+                    )
+                );
+            }
+            if (font.name) {
+                div.appendChild(
+                    ExcelCellRenderer.buildLabelValue('Font', font.name)
+                );
+            }
+        } else {
+            div.appendChild(
+                ExcelCellRenderer.buildLabelValue('Font Style', 'Default')
+            );
+        }
+
+        return div;
+    }
+
+    private static getCellFormatLabel(valueType: ValueType): string {
+        switch (valueType) {
+            case ValueType.Null:
+                return 'Default';
+            case ValueType.Merge:
+                return 'Merge';
+            case ValueType.Number:
+                return 'Number';
+            case ValueType.String:
+                return 'String';
+            case ValueType.Date:
+                return 'Date';
+            case ValueType.Hyperlink:
+                return 'Hyperlink';
+            case ValueType.Formula:
+                return 'Formula';
+            case ValueType.SharedString:
+                return 'SharedString';
+            case ValueType.RichText:
+                return 'RichText';
+            case ValueType.Boolean:
+                return 'Boolean';
+            case ValueType.Error:
+                return 'Error';
+        }
+    }
+
+    private static buildLabelValue(
+        label: string,
+        ...values: string[]
+    ): HTMLElement {
+        const div = document.createElement('div');
+
+        const labelSpan = document.createElement('span');
+        labelSpan.innerText = label + ': ';
+        labelSpan.classList.add('me-1');
+
+        const valueSpans: HTMLSpanElement[] = [];
+        for (let value of values) {
+            const valueSpan = document.createElement('span');
+            valueSpan.classList.add(
+                'badge',
+                'text-bg-dark',
+                'bg-dark',
+                'fs-6',
+                'me-1'
+            );
+            valueSpan.innerText = value;
+            valueSpans.push(valueSpan);
+        }
+
+        div.appendChild(labelSpan);
+        for (let valueSpan of valueSpans) {
+            div.appendChild(valueSpan);
+        }
+        div.classList.add('mb-2', 'd-flex', 'align-items-center');
+        return div;
+    }
+
+    private static addBootstrapPopover(element: HTMLElement, cell: Cell): void {
         element.dataset.bsToggle = 'popover';
         element.dataset.bsHtml = 'true';
         element.dataset.trigger = 'hover';
         element.dataset.bsPlacement = 'bottom';
-        element.dataset.bsTitle = 'A <b>bold</b> title.';
+        const span = ExcelCellRenderer.buildCellLabelSpan(cell, true, true);
+
+        element.dataset.bsTitle = span.outerHTML;
         element.dataset.bsContent =
-            'This is a <b>bold</b> body, can not <i>emphasize</i> enough how much this should be <u>underlined</u>';
-        new Popover(element, { trigger: 'hover' });
+            ExcelCellRenderer.buildCellContent(cell).outerHTML;
+        new Popover(element);
+        // new Popover(element, { trigger: 'hover' });
     }
 
     private static getFontStyleGroupCss(group: number): string {

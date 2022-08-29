@@ -1,3 +1,4 @@
+import { Popover } from 'bootstrap';
 import * as d3 from 'd3';
 import { UploadFileButton } from './lib/UploadFileButton';
 import { TabularData } from './TabularData';
@@ -88,6 +89,10 @@ let init = async (data: string | ArrayBuffer, filename: string) => {
     document.title = filename;
     uploadOnlyContainerOuter.classList.add('d-none');
     outerContainer.classList.remove('d-none');
+
+    // Update bootstrap popover sanitation allow-list
+    const myDefaultAllowList = Popover.Default.allowList;
+    myDefaultAllowList['*'].push('style');
 };
 
 let urlParams = new URLSearchParams(document.location.search);
