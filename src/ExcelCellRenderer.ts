@@ -43,8 +43,9 @@ export default class ExcelCellRenderer implements ICellRendererFactory {
                 const cell: Cell = col.getRaw(d);
                 const styleHash = TabularData.getStyleHash(cell);
                 const styleGroup = TabularData.styleMap.get(styleHash);
-                n.style.cssText =
-                    ExcelCellRenderer.getFontStyleGroupCss(styleGroup);
+                n.style.cssText = ExcelCellRenderer.getFontStyleGroupCss(
+                    styleGroup.rank
+                );
                 n.title = cell.text;
                 const span = ExcelCellRenderer.buildCellLabelSpan(cell);
                 // <i class="fa-info-circle fa"></i>
@@ -61,8 +62,10 @@ export default class ExcelCellRenderer implements ICellRendererFactory {
                 const styleHash = TabularData.getStyleHash(cell);
                 const styleGroup = TabularData.styleMap.get(styleHash);
                 let primaryColorHex: string = '#FFF';
-                if (styleGroup >= 0) {
-                    primaryColorHex = ExcelCellRenderer.getColor(styleGroup);
+                if (styleGroup.rank >= 0) {
+                    primaryColorHex = ExcelCellRenderer.getColor(
+                        styleGroup.rank
+                    );
                 }
 
                 ctx.save();
@@ -154,11 +157,13 @@ export default class ExcelCellRenderer implements ICellRendererFactory {
         const div = document.createElement('div');
         const styleHash = TabularData.getStyleHash(cell);
         const styleGroup = TabularData.styleMap.get(styleHash);
-        div.style.cssText = ExcelCellRenderer.getFontStyleGroupCss(styleGroup);
-        const cellCount = 123;
+        div.style.cssText = ExcelCellRenderer.getFontStyleGroupCss(
+            styleGroup.rank
+        );
+        const cellCount = styleGroup.count;
         div.innerHTML = `<span class="fs-5">${cellCount}</span> cell${
-            cellCount > 1 ? 's' : ''
-        } have the same format`;
+            cellCount > 1 ? 's have' : ' has'
+        } this format`;
         div.classList.add('fs-6', 'badge', 'text-black');
         return div;
     }
@@ -246,8 +251,7 @@ export default class ExcelCellRenderer implements ICellRendererFactory {
         element.dataset.bsTitle = span.outerHTML;
         element.dataset.bsContent =
             ExcelCellRenderer.buildCellContent(cell).outerHTML;
-        new Popover(element);
-        // new Popover(element, { trigger: 'hover' });
+        new Popover(element, { trigger: 'hover' });
     }
 
     private static getFontStyleGroupCss(group: number): string {

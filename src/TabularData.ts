@@ -3,6 +3,10 @@ import { Workbook, Cell } from 'exceljs';
 import { Column, ColumnTypes } from './Column';
 import { ColumnFactory } from './ColumnFactory';
 
+export interface StyleCount {
+    count: number;
+    rank: number;
+}
 export class TabularData {
     public constructor() {
         this._columnList = [];
@@ -60,14 +64,22 @@ export class TabularData {
             }
         }
 
-        const entries = Array.from(styleCounts.entries());
+        const entries: [string, number | StyleCount][] = Array.from(
+            styleCounts.entries()
+        );
         entries.sort((a: [string, number], b: [string, number]) => {
             return b[1] - a[1];
         });
         for (let i = 0; i < entries.length; i++) {
-            entries[i][1] = i - 1; // the default style of -1 will have no style
+            // entries[i][1] = i - 1;
+            entries[i][1] = {
+                count: entries[i][1] as number,
+                rank: i - 1 // the default style of -1 will have no style
+            };
         }
-        TabularData._styleMap = new Map<string, number>(entries);
+        TabularData._styleMap = new Map<string, StyleCount>(
+            entries as [string, StyleCount][]
+        );
     }
 
     public static getStyleHash(cell: Cell): string {
@@ -93,8 +105,8 @@ export class TabularData {
         this._columnList = columnList;
     }
 
-    private static _styleMap: Map<string, number>;
-    public static get styleMap(): Map<string, number> {
+    private static _styleMap: Map<string, StyleCount>;
+    public static get styleMap(): Map<string, StyleCount> {
         return TabularData._styleMap;
     }
 
