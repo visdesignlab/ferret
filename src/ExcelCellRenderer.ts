@@ -258,7 +258,7 @@ export default class ExcelCellRenderer implements ICellRendererFactory {
         }
         const primaryColorHex = ExcelCellRenderer.getColor(group);
         const primaryColor = color(primaryColorHex);
-        const secondaryColorHex = primaryColor.brighter(0.3).formatHex();
+        const secondaryColorHex = primaryColor.brighter(0.5).formatHex();
         return ExcelCellRenderer.getTextureCss(
             group,
             secondaryColorHex,
@@ -271,7 +271,7 @@ export default class ExcelCellRenderer implements ICellRendererFactory {
             '#8dd3c7',
             '#e5e5a1', //'#ffffb3', original yellow
             '#bebada',
-            '#fb8072',
+            '#ee796b', // '#fb8072', original red
             '#80b1d3',
             '#fdb462',
             '#b3de69'
