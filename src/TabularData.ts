@@ -90,7 +90,7 @@ export class TabularData {
         const size: string = cell.font?.size
             ? cell.font?.size.toString()
             : 'default';
-        // : '12'; // on my mac the default is 12
+        // : '12'; // on the file I made on my machine the default is 12, on another file, the default seems to be 11.
         // const font: string = cell.font?.name ?? 'Calibri'; // on my mac the default is Calibri
         const font: string = cell.font?.name ?? 'default'; // on my mac the default is Calibri
         return `${t}_${b}_${i}_${u}_${size}_${font}`;

@@ -13,13 +13,8 @@ import {
     renderMissingDOM,
     StringColumn
 } from 'lineupjs';
-import { ChartCalculations } from './ChartCalculations';
-import { CHART_FV, CHART_LDF, CHART_NG } from './colors';
+
 import ExcelColumn from './ExcelColumn';
-import FerretColumn, {
-    FerretSelectionExplanation,
-    Range
-} from './FerretColumn';
 import { color } from 'd3';
 import { Popover } from 'bootstrap';
 
@@ -39,7 +34,10 @@ export default class ExcelCellRenderer implements ICellRendererFactory {
         return {
             template: `<div title="" class="excelCell"></div>`,
             update: (n: HTMLElement, d: IDataRow) => {
-                // const missing = renderMissingDOM(n, col, d);
+                n.innerHTML = '';
+                n.style.cssText = '';
+                const missing = renderMissingDOM(n, col, d);
+                if (missing) return;
                 const cell: Cell = col.getRaw(d);
                 const styleHash = TabularData.getStyleHash(cell);
                 const styleGroup = TabularData.styleMap.get(styleHash);
@@ -53,12 +51,12 @@ export default class ExcelCellRenderer implements ICellRendererFactory {
                 helpIcon.classList.add('fa', 'fa-info-circle');
                 ExcelCellRenderer.addBootstrapPopover(helpIcon, cell);
 
-                n.innerHTML = '';
                 n.appendChild(span);
                 n.appendChild(helpIcon);
             },
             render: (ctx: CanvasRenderingContext2D, d: IDataRow) => {
                 const cell: Cell = col.getRaw(d);
+                if (cell == null) return;
                 const styleHash = TabularData.getStyleHash(cell);
                 const styleGroup = TabularData.styleMap.get(styleHash);
                 let primaryColorHex: string = '#FFF';
