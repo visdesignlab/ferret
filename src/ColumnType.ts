@@ -33,7 +33,7 @@ export function getColumnType(arr: any[]): ColumnTypeValues {
 }
 
 function isExcelArray(arr: any[]): boolean {
-    return true; // todo
+    return arr.every((val: any) => typeof val == 'object');
 }
 
 export function isNumericArray(arr: any[]) {
