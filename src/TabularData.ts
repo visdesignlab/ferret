@@ -94,6 +94,7 @@ export class TabularData {
         // const font: string = cell.font?.name ?? 'Calibri'; // on my mac the default is Calibri
         const font: string = cell.font?.name ?? 'default'; // on my mac the default is Calibri
         return `${t}_${b}_${i}_${u}_${size}_${font}`;
+        // return `${b}_${i}_${u}_${size}_${font}`;
     }
 
     private _columnList: Column<string | number | Cell>[];
