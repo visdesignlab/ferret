@@ -1,4 +1,4 @@
-import { Cell } from 'exceljs';
+import { Cell, ValueType } from 'exceljs';
 import * as d3 from 'd3';
 import { Column, IDataRow, ValueColumn, ECompareValueType } from 'lineupjs';
 import { IEventListener } from 'lineupjs/build/src/internal';
@@ -9,6 +9,7 @@ import {
     NGramMetadata,
     DecimalMetadata
 } from './ChartCalculations';
+import { Value } from 'sass';
 
 // MIGHT NOT NEED THIS FILE.
 
@@ -51,7 +52,7 @@ import {
 //     }[selectionType];
 // }
 
-export default class ExcelColumn extends ValueColumn<Cell> {
+export default class ExcelColumn extends ValueColumn<number> {
     // static readonly EVENT_FILTER_CHANGED = 'filterChanged';
     // static readonly EVENT_HIGHLIGHT_CHANGED = 'highlightChanged';
 
@@ -146,11 +147,26 @@ export default class ExcelColumn extends ValueColumn<Cell> {
         return super.on(type as any, listener);
     }
 
-    public getValue(row: IDataRow): Cell {
+    public getValue(row: IDataRow): number {
         return this.getRaw(row);
     }
 
-    public getRaw(row: IDataRow): Cell {
+    public getRaw(row: IDataRow): number {
+        let cell: Cell = this.getRawCell(row);
+        if (cell.type == ValueType.Number) {
+            return cell.value as number;
+        }
+        if (cell.type == ValueType.Formula) {
+            return cell.result as number;
+        }
+        return 0;
+    }
+
+    public getNumber(row: IDataRow): number {
+        return this.getRaw(row);
+    }
+
+    public getRawCell(row: IDataRow): Cell {
         return row.v[(this.desc as any).column];
     }
 
@@ -210,11 +226,11 @@ export default class ExcelColumn extends ValueColumn<Cell> {
         return true;
     }
 
-    // toCompareValue(row: IDataRow, valueCache?: any) {
-    //     return valueCache != null ? valueCache : this.getNumber(row);
-    // }
+    toCompareValue(row: IDataRow, valueCache?: any) {
+        return valueCache != null ? valueCache : this.getNumber(row);
+    }
 
-    // toCompareValueType() {
-    //     return ECompareValueType.FLOAT;
-    // }
+    toCompareValueType() {
+        return ECompareValueType.FLOAT;
+    }
 }

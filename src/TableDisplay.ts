@@ -98,6 +98,7 @@ export class TableDisplay extends EventTarget {
         builder.registerColumnType('FerretColumn', FerretColumn);
         builder.registerColumnType('ExcelColumn', ExcelColumn);
         toolbar('rename', 'sort', 'sortBy', 'filterNumber')(FerretColumn);
+        toolbar('rename', 'sort', 'sortBy')(ExcelColumn);
         const extentLookup = new Map<string, [number, number]>();
         for (let i = 0; i < data.columnList.length; i++) {
             const key = i.toString();
@@ -106,7 +107,7 @@ export class TableDisplay extends EventTarget {
             let columnBuilder: ColumnBuilder;
             if (column.type === 'Excel') {
                 columnBuilder = buildColumn('ExcelColumn', key);
-                columnBuilder.renderer('ExcelCellRenderer');
+                columnBuilder.renderer('ExcelCellRenderer', '', '');
             } else if (column.type === 'Number') {
                 columnBuilder = buildColumn('FerretColumn', key);
                 columnBuilder.renderer(

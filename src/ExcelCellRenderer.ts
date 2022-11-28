@@ -36,9 +36,9 @@ export default class ExcelCellRenderer implements ICellRendererFactory {
             update: (n: HTMLElement, d: IDataRow) => {
                 n.innerHTML = '';
                 n.style.cssText = '';
-                const missing = renderMissingDOM(n, col, d);
-                if (missing) return;
-                const cell: Cell = col.getRaw(d);
+                // const missing = renderMissingDOM(n, col, d);
+                // if (missing) return;
+                const cell: Cell = col.getRawCell(d);
                 const styleHash = TabularData.getStyleHash(cell);
                 const styleGroup = TabularData.styleMap.get(styleHash);
                 n.style.cssText = ExcelCellRenderer.getFontStyleGroupCss(
@@ -55,7 +55,7 @@ export default class ExcelCellRenderer implements ICellRendererFactory {
                 n.appendChild(helpIcon);
             },
             render: (ctx: CanvasRenderingContext2D, d: IDataRow) => {
-                const cell: Cell = col.getRaw(d);
+                const cell: Cell = col.getRawCell(d);
                 if (cell == null) return;
                 const styleHash = TabularData.getStyleHash(cell);
                 const styleGroup = TabularData.styleMap.get(styleHash);
@@ -268,11 +268,11 @@ export default class ExcelCellRenderer implements ICellRendererFactory {
 
     private static getColor(group: number): string {
         const colors = [
+            '#80b1d3',
             '#8dd3c7',
             '#e5e5a1', //'#ffffb3', original yellow
             '#bebada',
             '#ee796b', // '#fb8072', original red
-            '#80b1d3',
             '#fdb462',
             '#b3de69'
         ];
