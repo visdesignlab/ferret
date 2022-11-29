@@ -34,6 +34,7 @@ export default class FerretCellRenderer implements ICellRendererFactory {
             template: `<div title="" class="ferretCell"></div>`,
             update: (n: HTMLElement, d: IDataRow) => {
                 const missing = renderMissingDOM(n, col, d);
+                if (missing) return;
                 let cellLabel = col.getLabel(d);
                 n.title = cellLabel;
 

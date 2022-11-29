@@ -36,8 +36,8 @@ export default class ExcelCellRenderer implements ICellRendererFactory {
             update: (n: HTMLElement, d: IDataRow) => {
                 n.innerHTML = '';
                 n.style.cssText = '';
-                // const missing = renderMissingDOM(n, col, d);
-                // if (missing) return;
+                const missing = renderMissingDOM(n, col, d);
+                if (missing) return;
                 const cell: Cell = col.getRawCell(d);
                 const styleHash = TabularData.getStyleHash(cell);
                 const styleGroup = TabularData.styleMap.get(styleHash);
