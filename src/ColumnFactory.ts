@@ -36,10 +36,9 @@ export class ColumnFactory {
                 key = cell.toString();
             } else {
                 let cellVal: string | number;
-                if (cell.type == ValueType.Null) {
+                if (cell.type == ValueType.Null || cell.value == '') {
                     cellVal = 0; // prioritize number columns
-                }
-                if (cell.type == ValueType.Formula) {
+                } else if (cell.type == ValueType.Formula) {
                     if (cell.result instanceof Date) {
                         cellVal = cell.result.toString();
                     } else {
