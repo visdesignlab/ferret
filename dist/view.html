@@ -37,10 +37,18 @@
                                 <button id='next-step' class="btn btn-outline-primary text-nowrap flex-grow-1 flex-basis-0">Next <i
                                         class="fas fa-chevron-right"></i></button>
                             </div>
-                            <div id="overallDist">
-                                <div class="item mt-1 chart-vd">
+                            <div id="formatting">
+                                <div class="item mt-1 chart-">
                                     <div class="current-index"></div>
-                                    <i id="val-dist-switch" class="fas fa-eye customButtonEyeIcon chart-vd"></i>
+                                    <i id="formatting-switch" class="fas fa-eye customButtonEyeIcon chart-"></i>
+                                    Formatting
+                                </div>
+                                <div class="item-option-container"></div>
+                            </div>
+                            <div id="overallDist">
+                                <div class="item mt-1 chart-">
+                                    <div class="current-index hide"></div>
+                                    <i id="val-dist-switch" class="fas fa-eye customButtonEyeIcon chart- hidden"></i>
                                     Value Distribution
                                 </div>
                                 <div class="item-option-container"></div>
@@ -49,7 +57,7 @@
                                 <div class="item mt-1 chart-fv">
                                     <div class="current-index hide"></div>
                                     <i id="freq-val-switch" class="fas fa-eye customButtonEyeIcon chart-fv hidden"></i>
-                                    Frequent Values
+                                    Duplicate Numbers
                                 </div>
                                 <div class="item-option-container d-none pt-2 pb-2">
                                     <div class="form-check">
@@ -76,7 +84,7 @@
                                 <div class="item mt-1 chart-ng">
                                     <div class="current-index hide"></div>
                                     <i id="n-gram-switch" class="fas fa-eye customButtonEyeIcon chart-ng hidden"></i>
-                                    N-Grams
+                                    Duplicate Digits
                                 </div>
                                 <div class="item-option-container d-none pt-2 pb-2">
                                     <div class="form-check form-check-inline">
@@ -103,16 +111,16 @@
                                     <div class="current-index hide"></div>
                                     <i id="leading-digit-switch"
                                         class="fas fa-eye customButtonEyeIcon chart-ldf hidden"></i>
-                                    Leading Digit Frequency
+                                    Leading Digits
                                 </div>
                                 <div class="item-option-container d-none"></div>
                             </div>
                             <div id="terminalDigit">
-                                <div class="item mt-1 chart-">
+                                <div class="item mt-1 chart-vd">
                                     <div class="current-index hide"></div>
                                     <i id="terminal-digit-switch"
-                                        class="fas fa-eye customButtonEyeIcon chart- hidden"></i>
-                                    Terminal Digit Frequency
+                                        class="fas fa-eye customButtonEyeIcon chart-vd hidden"></i>
+                                    Trailing Digits
                                 </div>
                                 <div class="item-option-container d-none"></div>
                             </div>
@@ -121,7 +129,7 @@
                                     <div class="current-index hide"></div>
                                     <i id="decimal-count-switch"
                                         class="fas fa-eye customButtonEyeIcon chart-dc hidden"></i>
-                                    Decimal Places
+                                    Precision
                                 </div>
                                 <div class="item-option-container d-none"></div>
                             </div>
@@ -130,7 +138,7 @@
                                     <div class="current-index hide"></div>
                                     <i id="sorting-switch"
                                         class="fas fa-eye customButtonEyeIcon chart- hidden"></i>
-                                    Sorting
+                                    Structural Overview
                                 </div>
                                 <div class="item-option-container d-none"></div>
                             </div>
@@ -198,7 +206,7 @@
                         <div class="lineupContainer d-none" id="lineupContainer">
 
                         </div>
-                        <div class="lineupContainer d-none" id="excelLineupContainer">
+                        <div class="lineupContainer" id="excelLineupContainer">
 
                         </div>
                     </div>

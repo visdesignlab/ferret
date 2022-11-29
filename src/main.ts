@@ -70,7 +70,8 @@ let init = async (data: string | ArrayBuffer, filename: string) => {
     }
     controlsDisplay.drawControls(tabularData);
     const defaultVizShown = [
-        true,
+        false,
+        false,
         false,
         false,
         false,

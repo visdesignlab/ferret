@@ -38,6 +38,7 @@ export class TableDisplay extends EventTarget {
         });
         document.addEventListener('toggleOverview', async (e: CustomEvent) => {
             this.lineup.setOverviewMode(e.detail.overviewMode);
+            this.excelLineup.setOverviewMode(e.detail.overviewMode);
         });
         document.addEventListener('highlightRows', (e: CustomEvent) => {
             this.onHighlightRows(e);

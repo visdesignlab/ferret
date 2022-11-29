@@ -11,6 +11,11 @@ export interface HTMLZeroMDElement extends HTMLElement {
 export class DescriptionDisplay {
     private descriptions: DescriptionMetadata[] = [
         {
+            key: 'formatting',
+            label: 'Formatting Artifacts',
+            color: 'null'
+        },
+        {
             key: 'value-distribution',
             label: 'Value Distribution',
             color: 'yellow'

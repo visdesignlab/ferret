@@ -2,10 +2,10 @@ import * as d3 from 'd3';
 import { TabularData } from './TabularData';
 import { Column } from './Column';
 import { DuplicateCountType, LINEUP_COL_COUNT } from './lib/constants';
-import { Collapse } from 'bootstrap';
 
 export class ControlsDisplay {
     charts = [
+        'formatting',
         'overallDist',
         'duplicateCount',
         'replicates',
@@ -250,6 +250,7 @@ export class ControlsDisplay {
         let leadingDigitSwitch = document.getElementById(
             'leading-digit-switch'
         );
+        let formattingSwitch = document.getElementById('formatting-switch');
         let frequentValueSwitch = document.getElementById('freq-val-switch');
         let valueDistSwitch = document.getElementById('val-dist-switch');
         let repSwitch = document.getElementById('rep-switch');
@@ -276,27 +277,28 @@ export class ControlsDisplay {
             this.showOnly(i);
         });
 
-        valueDistSwitch.addEventListener('click', e => this.toggleChart(0, e));
+        formattingSwitch.addEventListener('click', e => this.toggleChart(0, e));
+        valueDistSwitch.addEventListener('click', e => this.toggleChart(1, e));
         frequentValueSwitch.addEventListener('click', e => {
-            this.toggleChart(1, e);
+            this.toggleChart(2, e);
         });
-        repSwitch.addEventListener('click', e => this.toggleChart(2, e));
-        nGramSwitch.addEventListener('click', e => this.toggleChart(3, e));
+        repSwitch.addEventListener('click', e => this.toggleChart(3, e));
+        nGramSwitch.addEventListener('click', e => this.toggleChart(4, e));
         leadingDigitSwitch.addEventListener('click', e => {
-            this.toggleChart(4, e);
+            this.toggleChart(5, e);
         });
         terminalDigitSwitch.addEventListener('click', e => {
-            this.toggleChart(5, e);
+            this.toggleChart(6, e);
         });
 
         dcSwitch.addEventListener('click', e => {
-            this.toggleChart(6, e);
-        });
-        sortingSwitch.addEventListener('click', e => {
             this.toggleChart(7, e);
         });
-        generalSwitch.addEventListener('click', e => {
+        sortingSwitch.addEventListener('click', e => {
             this.toggleChart(8, e);
+        });
+        generalSwitch.addEventListener('click', e => {
+            this.toggleChart(9, e);
         });
 
         uniqueValuesSwitch.addEventListener('click', e => {
@@ -429,17 +431,29 @@ export class ControlsDisplay {
             .data(this.chartsShown)
             .classed('d-none', d => !d);
 
-        const sortingIndex = 7;
+        const formatIndex = 0;
+        this.toggleLineupVisibility(this.chartsShown[formatIndex]);
+
+        const sortingIndex = 8;
         document.dispatchEvent(
             new CustomEvent('toggleOverview', {
                 detail: { overviewMode: this.chartsShown[sortingIndex] }
             })
         );
-        const generalIndex = 8;
+        const generalIndex = 9;
         document.dispatchEvent(
             new CustomEvent('toggleVisualizations', {
                 detail: { visualizationsShown: this.chartsShown[generalIndex] }
             })
         );
+    }
+
+    private toggleLineupVisibility(showExcel: boolean): void {
+        document
+            .getElementById('lineupContainer')
+            .classList.toggle('d-none', showExcel);
+        document
+            .getElementById('excelLineupContainer')
+            .classList.toggle('d-none', !showExcel);
     }
 }
