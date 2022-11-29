@@ -64,7 +64,7 @@ let init = async (data: string | ArrayBuffer, filename: string) => {
     if (typeof data == 'string') {
         tabularData = TabularData.FromString(data);
     } else {
-        tabularData = await TabularData.FromExcel(data);
+        tabularData = await TabularData.FromExcel(data, true);
     }
     controlsDisplay.drawControls(tabularData);
     const defaultVizShown = [

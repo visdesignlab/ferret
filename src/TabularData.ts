@@ -12,7 +12,10 @@ export class TabularData {
         this._columnList = [];
     }
 
-    public static async FromExcel(data: ArrayBuffer): Promise<TabularData> {
+    public static async FromExcel(
+        data: ArrayBuffer,
+        stripFormatting = false
+    ): Promise<TabularData> {
         const tabularData = new TabularData();
 
         let workbook = new Workbook();
@@ -20,7 +23,12 @@ export class TabularData {
         const ws = workbook.worksheets[0];
         const numCols = ws.columnCount;
         for (let i = 1; i <= numCols; i++) {
-            const column = ColumnFactory.FromExcelColumn(ws.getColumn(i));
+            let column: Column<string | number> | Column<Cell>;
+            if (stripFormatting) {
+                column = ColumnFactory.FromExcelColumnStripped(ws.getColumn(i));
+            } else {
+                column = ColumnFactory.FromExcelColumn(ws.getColumn(i));
+            }
             tabularData.columnList.push(column);
         }
         tabularData._rowLength = ws.rowCount - 1; // subtract one because the first row is consumed as a label.

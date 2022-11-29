@@ -5,7 +5,7 @@ import { ColumnCategorical } from './ColumnCategorical';
 import { ColumnLabel } from './ColumnLabel';
 import { ColumnMixed } from './ColumnMixed';
 import { getColumnType } from './ColumnType';
-import { Cell, Column as ExcelColumn, Style } from 'exceljs';
+import { Cell, Column as ExcelColumn, Style, ValueType } from 'exceljs';
 
 // export interface CellWithStyle {
 //     value: any;
@@ -22,6 +22,37 @@ export class ColumnFactory {
                 key = cell.toString();
             } else {
                 valList.push(cell);
+            }
+        });
+        return this.fromValList(valList, key);
+    }
+
+    public static FromExcelColumnStripped(
+        data: ExcelColumn
+    ): Column<string | number> {
+        let valList: (string | number)[] = [];
+        let key: string = null;
+        data.eachCell((cell: Cell, num) => {
+            let style: Partial<Style> = cell.style;
+            if (key === null) {
+                key = cell.toString();
+            } else {
+                let cellVal: string | number;
+                if (cell.type == ValueType.Formula) {
+                    if (cell.result instanceof Date) {
+                        cellVal = cell.result.toString();
+                    } else {
+                        cellVal = cell.result;
+                    }
+                } else if (
+                    cell.type == ValueType.Number ||
+                    cell.type === ValueType.String
+                ) {
+                    cellVal = cell.value as number | string;
+                } else {
+                    cellVal = cell.toString();
+                }
+                valList.push(cellVal);
             }
         });
         return this.fromValList(valList, key);
