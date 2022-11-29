@@ -27,6 +27,7 @@ export class FileLoadUtil {
             this.parseText(text, filename);
         };
         reader.readAsText(inputFile);
+        // TODO load binary excel file
     }
 
     private parseText(text: string, filename: string): void {

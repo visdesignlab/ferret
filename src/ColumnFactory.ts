@@ -17,7 +17,6 @@ export class ColumnFactory {
         let valList: Cell[] = [];
         let key: string = null;
         data.eachCell((cell: Cell, num) => {
-            let style: Partial<Style> = cell.style;
             if (key === null) {
                 key = cell.toString();
             } else {
@@ -33,22 +32,23 @@ export class ColumnFactory {
         let valList: (string | number)[] = [];
         let key: string = null;
         data.eachCell((cell: Cell, num) => {
-            let style: Partial<Style> = cell.style;
             if (key === null) {
                 key = cell.toString();
             } else {
                 let cellVal: string | number;
+                if (cell.type == ValueType.Null) {
+                    cellVal = 0; // prioritize number columns
+                }
                 if (cell.type == ValueType.Formula) {
                     if (cell.result instanceof Date) {
                         cellVal = cell.result.toString();
                     } else {
                         cellVal = cell.result;
                     }
-                } else if (
-                    cell.type == ValueType.Number ||
-                    cell.type === ValueType.String
-                ) {
-                    cellVal = cell.value as number | string;
+                } else if (cell.type == ValueType.Number) {
+                    cellVal = (cell.value as number) ?? 0;
+                } else if (cell.type === ValueType.String) {
+                    cellVal = (cell.value as string) ?? '';
                 } else {
                     cellVal = cell.toString();
                 }
