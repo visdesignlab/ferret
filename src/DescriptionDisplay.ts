@@ -13,40 +13,44 @@ export class DescriptionDisplay {
         {
             key: 'formatting',
             label: 'Formatting Artifacts',
-            color: 'null'
+            color: 'chart-'
         },
         {
             key: 'value-distribution',
             label: 'Value Distribution',
-            color: 'yellow'
+            color: 'chart-'
         },
-        { key: 'frequent-values', label: 'Frequent Values', color: 'pink' },
-        { key: 'replicates', label: 'Replicates', color: 'sea-blue' },
-        { key: 'n-gram', label: 'N-Grams', color: 'orange' },
+        {
+            key: 'frequent-values',
+            label: 'Duplicate Numbers',
+            color: 'chart-fv'
+        },
+        { key: 'replicates', label: 'Replicates', color: 'chart-r' },
+        { key: 'n-gram', label: 'Duplicate Digits', color: 'chart-ng' },
         {
             key: 'leading-digit-frequency',
-            label: 'Leading Digit Frequency',
-            color: 'blue'
+            label: 'Leading Digits',
+            color: 'chart-ldf'
         },
         {
             key: 'terminal-digit-frequency',
-            label: 'Terminal Digit Frequency',
-            color: 'null'
+            label: 'Trailing Digits',
+            color: 'chart-td'
         },
         {
             key: 'decimal-count',
-            label: 'Decimal Places',
-            color: 'null'
+            label: 'Precision',
+            color: 'chart-dc'
         },
         {
             key: 'sorting',
-            label: 'Sorting',
-            color: 'null'
+            label: 'Structural Overview',
+            color: 'chart-'
         },
         {
             key: 'general',
             label: 'General',
-            color: 'null'
+            color: 'chart-'
         }
     ];
 
@@ -133,6 +137,12 @@ export class DescriptionDisplay {
         this.shortImage.src = folder + desc.key + '.svg';
         this.shortText.src = folder + desc.key + '-short.md';
         this.longText.src = folder + desc.key + '-long.md';
+
+        this.tabContainer.innerHTML = '';
+        let inner = document.createElement('span');
+        inner.innerHTML = desc.label;
+        inner.classList.add('p-2', 'rounded', desc.color);
+        this.tabContainer.appendChild(inner);
     }
 
     private onShowMoreLessClick(): void {
