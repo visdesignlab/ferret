@@ -61,10 +61,12 @@ let init = async (data: string | ArrayBuffer, filename: string) => {
     let fileLoadButton = new UploadFileButton(toolbarContainer, init, bigStyle);
 
     let tabularData: TabularData;
+    let tabularDataExcel: TabularData = null;
     if (typeof data == 'string') {
         tabularData = TabularData.FromString(data);
     } else {
         tabularData = await TabularData.FromExcel(data, true);
+        tabularDataExcel = await TabularData.FromExcel(data);
     }
     controlsDisplay.drawControls(tabularData);
     const defaultVizShown = [
@@ -79,7 +81,7 @@ let init = async (data: string | ArrayBuffer, filename: string) => {
         false
     ];
     controlsDisplay.SetData(tabularData, defaultVizShown);
-    tableDisplay.SetData(tabularData);
+    tableDisplay.SetData(tabularData, tabularDataExcel);
     visDisplay.SetData(tableDisplay.lineup);
     ignoreDropdown.SetData(tableDisplay.lineup);
     highlightDropdown.SetData(tableDisplay.lineup);

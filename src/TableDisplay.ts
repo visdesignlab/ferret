@@ -56,34 +56,56 @@ export class TableDisplay extends EventTarget {
         return this._data;
     }
 
+    private _excelData?: TabularData;
+    public get excelData(): TabularData {
+        return this._excelData;
+    }
+
     private _lineup: LineUp;
     public get lineup(): LineUp {
         return this._lineup;
+    }
+
+    private _excelLineup: LineUp;
+    public get excelLineup(): LineUp {
+        return this._excelLineup;
     }
 
     private _allColumns: Column[];
     public get allColumns(): Column[] {
         return this._allColumns;
     }
+    private _excelAllColumns: Column[];
+    public get excelAllColumns(): Column[] {
+        return this._excelAllColumns;
+    }
 
     private _ferretColumns: FerretColumn[];
     public get ferretColumns(): FerretColumn[] {
         return this._ferretColumns;
     }
-
-    public SetData(data: TabularData): void {
-        this._data = data;
-        this.onDataChanged(this._data);
+    private _excelFerretColumns: FerretColumn[];
+    public get excelFerretColumns(): FerretColumn[] {
+        return this._excelFerretColumns;
     }
 
-    private onDataChanged(data: TabularData): void {
+    public SetData(data: TabularData, excelData?: TabularData): void {
+        this._data = data;
+        this._excelData = excelData;
+        this.onDataChanged(this._data, this._excelData);
+    }
+
+    private onDataChanged(data: TabularData, excelData?: TabularData): void {
         document.dispatchEvent(
             new CustomEvent('onDataChange', { detail: { data: data } })
         );
         document.dispatchEvent(
             new CustomEvent('onLocalDataChange', { detail: { data: data } })
         );
-        this.initLineup(data);
+        this.initLineup(data, 'lineupContainer', false);
+        if (excelData) {
+            this.initLineup(excelData, 'excelLineupContainer', true);
+        }
     }
 
     public toggleColumnVisibilty(index: number, visible: boolean) {
@@ -92,7 +114,11 @@ export class TableDisplay extends EventTarget {
         col.setVisible(visible);
     }
 
-    public initLineup(data: TabularData): void {
+    public initLineup(
+        data: TabularData,
+        containerId: string,
+        excelVersion: boolean
+    ): void {
         const rowFirstData = data.getRowList();
         const builder = lineupBuilder(rowFirstData);
         builder.registerColumnType('FerretColumn', FerretColumn);
@@ -138,7 +164,7 @@ export class TableDisplay extends EventTarget {
             builder.column(columnBuilder.label(label).width(140));
         }
 
-        const lineupContainer = document.getElementById('lineupContainer');
+        const lineupContainer = document.getElementById(containerId);
 
         builder.disableAdvancedModelFeatures();
         builder.sidePanel(false);
@@ -148,17 +174,18 @@ export class TableDisplay extends EventTarget {
             new FerretCellRenderer()
         );
         builder.registerRenderer('ExcelCellRenderer', new ExcelCellRenderer());
-        this._lineup = builder.buildTaggle(
+        const lineup = builder.buildTaggle(
             lineupContainer
         ) as unknown as LineUp;
         // this._lineup = builder.build(lineupContainer);
         // get the first ranking from the data provider
-        const firstRanking = this.lineup.data.getFirstRanking();
-        this._allColumns = firstRanking.flatColumns;
-        this._ferretColumns = this.allColumns.filter(
+        const firstRanking = lineup.data.getFirstRanking();
+        const allColumns = firstRanking.flatColumns;
+        const ferretColumns = allColumns.filter(
             col => col instanceof FerretColumn
         ) as FerretColumn[];
-        for (let col of this.ferretColumns) {
+
+        for (let col of ferretColumns) {
             const extent = extentLookup.get(col.label);
             col.normalize = d3.scaleLinear().domain(extent).range([0, 1]);
 
@@ -176,12 +203,22 @@ export class TableDisplay extends EventTarget {
         }
 
         let firstRun = true;
-        this.lineup.data.on('busy', busy => {
+        lineup.data.on('busy', busy => {
             if (!busy && firstRun) {
                 firstRun = false;
                 this.updateFerretColumnMetaData();
             }
         });
+
+        if (excelVersion) {
+            this._excelLineup = lineup;
+            this._excelAllColumns = allColumns;
+            this._excelFerretColumns = ferretColumns;
+        } else {
+            this._lineup = lineup;
+            this._allColumns = allColumns;
+            this._ferretColumns = ferretColumns;
+        }
     }
 
     private async updateFerretColumnMetaData(): Promise<void> {
