@@ -39,8 +39,7 @@ export default class ExcelCellRenderer implements ICellRendererFactory {
                 const missing = renderMissingDOM(n, col, d);
                 if (missing) return;
                 const cell: Cell = col.getRawCell(d);
-                const styleHash = TabularData.getStyleHash(cell);
-                const styleGroup = TabularData.styleMap.get(styleHash);
+                const styleGroup = TabularData.getStyleGroup(cell);
                 n.style.cssText = ExcelCellRenderer.getFontStyleGroupCss(
                     styleGroup.rank
                 );
@@ -57,8 +56,7 @@ export default class ExcelCellRenderer implements ICellRendererFactory {
             render: (ctx: CanvasRenderingContext2D, d: IDataRow) => {
                 const cell: Cell = col.getRawCell(d);
                 if (cell == null) return;
-                const styleHash = TabularData.getStyleHash(cell);
-                const styleGroup = TabularData.styleMap.get(styleHash);
+                const styleGroup = TabularData.getStyleGroup(cell);
                 let primaryColorHex: string = '#FFF';
                 if (styleGroup.rank >= 0) {
                     primaryColorHex = ExcelCellRenderer.getColor(
@@ -153,8 +151,8 @@ export default class ExcelCellRenderer implements ICellRendererFactory {
 
     private static buildStyleCount(cell: Cell): HTMLElement {
         const div = document.createElement('div');
-        const styleHash = TabularData.getStyleHash(cell);
-        const styleGroup = TabularData.styleMap.get(styleHash);
+        const styleGroup = TabularData.getStyleGroup(cell);
+
         div.style.cssText = ExcelCellRenderer.getFontStyleGroupCss(
             styleGroup.rank
         );

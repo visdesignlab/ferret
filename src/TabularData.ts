@@ -59,21 +59,44 @@ export class TabularData {
     }
 
     private buildStyleMap() {
-        const styleCounts = new Map<string, number>();
+        const styleCountsShort = new Map<string, number>();
+        const styleCountsLong = new Map<string, number>();
         for (let column of this.columnList) {
             if (column.type !== 'Excel') continue;
             for (let value of (column as Column<Cell>).values) {
-                const key = TabularData.getStyleHash(value);
-                if (styleCounts.has(key)) {
-                    styleCounts.set(key, styleCounts.get(key) + 1);
-                } else {
-                    styleCounts.set(key, 1);
-                }
+                const [longHash, shortHash] = TabularData.getStyleHashes(value);
+                TabularData.updateCounts(styleCountsShort, shortHash);
+                TabularData.updateCounts(styleCountsLong, longHash);
             }
         }
 
+        const entriesShort = TabularData.buildEntries(styleCountsShort);
+        const entriesLong = TabularData.buildEntries(styleCountsLong);
+
+        TabularData._styleMapShort = new Map<string, StyleCount>(
+            entriesShort as [string, StyleCount][]
+        );
+        TabularData._styleMapLong = new Map<string, StyleCount>(
+            entriesLong as [string, StyleCount][]
+        );
+    }
+
+    private static updateCounts(
+        counts: Map<string, number>,
+        key: string
+    ): void {
+        if (counts.has(key)) {
+            counts.set(key, counts.get(key) + 1);
+        } else {
+            counts.set(key, 1);
+        }
+    }
+
+    private static buildEntries(
+        counts: Map<string, number>
+    ): [string, number | StyleCount][] {
         const entries: [string, number | StyleCount][] = Array.from(
-            styleCounts.entries()
+            counts.entries()
         );
         entries.sort((a: [string, number], b: [string, number]) => {
             return b[1] - a[1];
@@ -85,12 +108,10 @@ export class TabularData {
                 rank: i - 1 // the default style of -1 will have no style
             };
         }
-        TabularData._styleMap = new Map<string, StyleCount>(
-            entries as [string, StyleCount][]
-        );
+        return entries;
     }
 
-    public static getStyleHash(cell: Cell): string {
+    public static getStyleHashes(cell: Cell): [string, string] {
         const t: number = cell.type; // cell type, number, string, etc
         const b: string = cell.font?.bold ? '1' : '0';
         const i: string = cell.font?.italic ? '1' : '0';
@@ -101,8 +122,24 @@ export class TabularData {
         // : '12'; // on the file I made on my machine the default is 12, on another file, the default seems to be 11.
         // const font: string = cell.font?.name ?? 'Calibri'; // on my mac the default is Calibri
         const font: string = cell.font?.name ?? 'default'; // on my mac the default is Calibri
-        return `${t}_${b}_${i}_${u}_${size}_${font}`;
-        // return `${b}_${i}_${u}_${size}_${font}`;
+        return [
+            `${t}_${b}_${i}_${u}_${size}_${font}`,
+            `${b}_${i}_${u}_${size}_${font}`
+        ];
+    }
+
+    public static getStyleGroup(cell: Cell): StyleCount {
+        const [longHash, shortHash] = TabularData.getStyleHashes(cell);
+        let styleGroup: StyleCount;
+        if (globalThis.includeDataFormat) {
+            styleGroup = TabularData.styleMapLong.get(longHash);
+        } else {
+            styleGroup = TabularData.styleMapShort.get(shortHash);
+        }
+        if (styleGroup == null) {
+            console.log('null style group');
+        }
+        return styleGroup;
     }
 
     private _columnList: Column<string | number | Cell>[];
@@ -114,9 +151,14 @@ export class TabularData {
         this._columnList = columnList;
     }
 
-    private static _styleMap: Map<string, StyleCount>;
-    public static get styleMap(): Map<string, StyleCount> {
-        return TabularData._styleMap;
+    private static _styleMapShort: Map<string, StyleCount>;
+    public static get styleMapShort(): Map<string, StyleCount> {
+        return TabularData._styleMapShort;
+    }
+
+    private static _styleMapLong: Map<string, StyleCount>;
+    public static get styleMapLong(): Map<string, StyleCount> {
+        return TabularData._styleMapLong;
     }
 
     private _rowLength: number;
