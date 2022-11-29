@@ -1,3 +1,4 @@
+@import './variables.scss';
 .description-short-wrapper {
     display: flex;
     align-items: center;
@@ -5,7 +6,7 @@
 }
 
 #description-short-image {
-    height: 200px;
+    height: 120px;
 }
 
 #description-short-text {
@@ -16,4 +17,52 @@
 #description-show-more-less {
     padding: 8px;
     margin-top: 4px;
+}
+
+.desc-title {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    align-content: center;
+}
+
+.desc-title > span {
+    border: solid black 1px;
+    flex-grow: 1;
+    text-align: center;
+}
+
+.desc-title > .chart- {
+    background-color: #d3d3d3;
+    border-color: #777;
+}
+.desc-title > .chart-td {
+    background-color: $chart-td-light;
+    border-color: $chart-td;
+}
+.desc-title > .chart-fv {
+    background-color: $chart-fv-light;
+    border-color: $chart-fv;
+}
+.desc-title > .chart-r {
+    background-color: $chart-r-light;
+    border-color: $chart-r;
+}
+.desc-title > .chart-ng {
+    background-color: $chart-ng-light;
+    border-color: $chart-ng;
+}
+.desc-title > .chart-ldf {
+    background-color: $chart-ldf-light;
+    border-color: $chart-ldf;
+}
+
+.desc-title > .chart-dc {
+    background-color: $chart-dc-light;
+    border-color: $chart-dc;
+}
+
+.desc-title > .chart-ldf {
+    background-color: $chart-ldf-light;
+    border-color: $chart-ldf;
 }

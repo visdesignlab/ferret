@@ -10,6 +10,7 @@ import {
     ValueColumn
 } from 'lineupjs';
 import FerretColumn from './FerretColumn';
+import ExcelColumn from './ExcelColumn';
 
 export class VisDisplay {
     constructor(container: HTMLElement) {
@@ -76,7 +77,7 @@ export class VisDisplay {
 
         const cols: VisColumn[] = [];
         for (const c of ranking.flatColumns) {
-            if (c instanceof FerretColumn) {
+            if (c instanceof FerretColumn || c instanceof ExcelColumn) {
                 cols.push({
                     info: getColumnInfo(c),
                     values: () => getColumnValue(c),

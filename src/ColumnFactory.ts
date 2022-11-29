@@ -1,11 +1,62 @@
+import { ColumnExcelData } from './ColumnExcelData';
 import { Column } from './Column';
 import { ColumnNumeric } from './ColumnNumeric';
 import { ColumnCategorical } from './ColumnCategorical';
 import { ColumnLabel } from './ColumnLabel';
 import { ColumnMixed } from './ColumnMixed';
 import { getColumnType } from './ColumnType';
+import { Cell, Column as ExcelColumn, Style, ValueType } from 'exceljs';
+
+// export interface CellWithStyle {
+//     value: any;
+//     style: Partial<Style>;
+// }
 
 export class ColumnFactory {
+    public static FromExcelColumn(data: ExcelColumn): Column<Cell> {
+        let valList: Cell[] = [];
+        let key: string = null;
+        data.eachCell((cell: Cell, num) => {
+            if (key === null) {
+                key = cell.toString();
+            } else {
+                valList.push(cell);
+            }
+        });
+        return this.fromValList(valList, key);
+    }
+
+    public static FromExcelColumnStripped(
+        data: ExcelColumn
+    ): Column<string | number> {
+        let valList: (string | number)[] = [];
+        let key: string = null;
+        data.eachCell((cell: Cell, num) => {
+            if (key === null) {
+                key = cell.toString();
+            } else {
+                let cellVal: string | number;
+                if (cell.type == ValueType.Null || cell.value == '') {
+                    cellVal = 0; // prioritize number columns
+                } else if (cell.type == ValueType.Formula) {
+                    if (cell.result instanceof Date) {
+                        cellVal = cell.result.toString();
+                    } else {
+                        cellVal = cell.result;
+                    }
+                } else if (cell.type == ValueType.Number) {
+                    cellVal = (cell.value as number) ?? 0;
+                } else if (cell.type === ValueType.String) {
+                    cellVal = (cell.value as string) ?? '';
+                } else {
+                    cellVal = cell.toString();
+                }
+                valList.push(cellVal);
+            }
+        });
+        return this.fromValList(valList, key);
+    }
+
     public static FromDSVRowArray(
         data: d3.DSVRowArray<string>,
         key: string,
@@ -21,9 +72,16 @@ export class ColumnFactory {
             valList.push(val);
         }
 
-        let col: Column<string | number>;
+        return this.fromValList(valList, key);
+    }
+
+    private static fromValList(valList: any[], key: string): Column<any> {
+        let col: Column<string | number | Cell>;
 
         switch (getColumnType(valList)) {
+            case 'Excel':
+                col = new ColumnExcelData(valList as Cell[]);
+                break;
             case 'Categorical':
                 col = new ColumnCategorical(valList as string[]);
                 break;

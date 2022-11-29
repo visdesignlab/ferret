@@ -1,3 +1,4 @@
+import { Popover } from 'bootstrap';
 import * as d3 from 'd3';
 import { UploadFileButton } from './lib/UploadFileButton';
 import { TabularData } from './TabularData';
@@ -46,7 +47,7 @@ let clear = (): void => {
     toolbarContainer.innerHTML = '';
 };
 
-let init = (data: string, filename: string) => {
+let init = async (data: string | ArrayBuffer, filename: string) => {
     clear(); // clearing all the existing elements.
     const bigStyle = false;
 
@@ -58,10 +59,19 @@ let init = (data: string, filename: string) => {
     toolbarContainer.appendChild(navigateHomeLink);
 
     let fileLoadButton = new UploadFileButton(toolbarContainer, init, bigStyle);
-    let tabularData: TabularData = TabularData.FromString(data);
+
+    let tabularData: TabularData;
+    let tabularDataExcel: TabularData = null;
+    if (typeof data == 'string') {
+        tabularData = TabularData.FromString(data);
+    } else {
+        tabularData = await TabularData.FromExcel(data, true);
+        tabularDataExcel = await TabularData.FromExcel(data);
+    }
     controlsDisplay.drawControls(tabularData);
     const defaultVizShown = [
-        true,
+        false,
+        false,
         false,
         false,
         false,
@@ -72,7 +82,7 @@ let init = (data: string, filename: string) => {
         false
     ];
     controlsDisplay.SetData(tabularData, defaultVizShown);
-    tableDisplay.SetData(tabularData);
+    tableDisplay.SetData(tabularData, tabularDataExcel);
     visDisplay.SetData(tableDisplay.lineup);
     ignoreDropdown.SetData(tableDisplay.lineup);
     highlightDropdown.SetData(tableDisplay.lineup);
@@ -82,12 +92,20 @@ let init = (data: string, filename: string) => {
     document.title = filename;
     uploadOnlyContainerOuter.classList.add('d-none');
     outerContainer.classList.remove('d-none');
+
+    // Update bootstrap popover sanitation allow-list
+    const myDefaultAllowList = Popover.Default.allowList;
+    myDefaultAllowList['*'].push('style');
 };
 
 let urlParams = new URLSearchParams(document.location.search);
 if (urlParams.has('data_path')) {
     let filename = urlParams.get('data_path');
-    d3.text(filename).then(data => {
+    // d3.text(filename).then(data => {
+    //     init(data, filename);
+    // });
+
+    d3.buffer(filename).then(data => {
         init(data, filename);
     });
 } else {

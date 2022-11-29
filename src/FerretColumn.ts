@@ -388,6 +388,10 @@ export default class FerretColumn extends ValueColumn<number> {
         };
 
         const thisValue: number = this.getValue(row);
+        if (typeof thisValue === 'undefined') {
+            console.log('empty row error');
+            console.log({ row });
+        }
 
         // value filter
         if (global.values.has(thisValue)) {

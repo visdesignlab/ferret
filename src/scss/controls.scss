@@ -25,9 +25,9 @@
     background-color: #b3b3b3;
     border-color: #3a3939;
 }
-.customButtonEyeIcon.chart-vd {
-    background-color: $chart-vd;
-    border-color: $chart-vd;
+.customButtonEyeIcon.chart-td {
+    background-color: $chart-td;
+    border-color: $chart-td;
 }
 .customButtonEyeIcon.chart-fv {
     background-color: $chart-fv;
@@ -69,11 +69,11 @@
 .item.chart-:hover {
     background-color: #d3d3d3;
 }
-.item.chart-vd {
-    border: 1px solid $chart-vd;
+.item.chart-td {
+    border: 1px solid $chart-td;
 }
-.item.chart-vd:hover {
-    background-color: $chart-vd-light;
+.item.chart-td:hover {
+    background-color: $chart-td-light;
 }
 .item.chart-fv {
     border: 1px solid $chart-fv;

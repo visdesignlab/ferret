@@ -68,6 +68,32 @@
     border-radius: 5px;
 }
 
+.excelCell {
+    display: flex;
+}
+
+.excelCell > span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.excelCell > i {
+    flex-shrink: 0;
+    display: none;
+    opacity: 0.6;
+}
+
+.excelCell:hover > i {
+    display: flex;
+    margin-left: 4px;
+    margin-right: 4px;
+    margin-top: 1px;
+}
+
+.excelCell > i:hover {
+    opacity: 1;
+}
+
 /* LINEUP OVERWRITES */
 
 /* change orange outline bar into grey */

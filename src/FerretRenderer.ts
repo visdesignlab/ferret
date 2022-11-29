@@ -45,28 +45,29 @@ export default class FerretRenderer implements ICellRendererFactory {
             template: `
             <div class="vizContainer">
                 <div class="${this.shownClass(0)} innerVizContainer"></div>
+                <div class="${this.shownClass(1)} innerVizContainer"></div>
                 <div class="${this.shownClass(
-                    1
+                    2
                 )} duplicateCountViz" data-show-all="false">
                     <div class="innerVizContainer"></div><div class="d-flex flex-column textButton"></div>
                 </div>
                 <div class="${this.shownClass(
-                    2
+                    3
                 )} replicatesViz" data-show-all="false">
                     <div class="innerVizContainer"></div><div class="d-flex flex-column textButton"></div>
                 </div>
                 <div class="${this.shownClass(
-                    3
+                    4
                 )} nGramViz" data-show-all="false">
                     <div class="innerVizContainer"></div><div class="d-flex flex-column textButton"></div>
                 </div>
-                <div class="${this.shownClass(4)} innerVizContainer"></div>
                 <div class="${this.shownClass(5)} innerVizContainer"></div>
                 <div class="${this.shownClass(6)} innerVizContainer"></div>
                 <div class="${this.shownClass(7)} innerVizContainer"></div>
+                <div class="${this.shownClass(8)} innerVizContainer"></div>
             </div>`,
             update: (container: HTMLElement) => {
-                let childIndex = 0;
+                let childIndex = 1;
                 let vizContainer = container.children[
                     childIndex++
                 ] as HTMLElement;
@@ -193,7 +194,7 @@ export default class FerretRenderer implements ICellRendererFactory {
                     title: null
                 },
                 color: {
-                    value: CHART_VD
+                    value: 'black'
                 },
                 y: {
                     field: 'value',
@@ -704,7 +705,7 @@ export default class FerretRenderer implements ICellRendererFactory {
                 },
                 y: { field: 'frequency', type: 'quantitative', title: null },
                 color: {
-                    value: 'black'
+                    value: CHART_VD
                 },
                 opacity: {
                     condition: {
