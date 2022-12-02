@@ -802,7 +802,7 @@ export default class FerretRenderer implements ICellRendererFactory {
             }
         };
 
-        vegaEmbed('#' + elementID, yourVlSpec, { actions: true })
+        vegaEmbed('#' + elementID, yourVlSpec, { actions: false })
             .then(result => {
                 result.view.addEventListener('contextmenu', (event, value) => {
                     if (!value || !value.datum) {
