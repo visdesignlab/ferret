@@ -38,6 +38,7 @@ export class ChartCalculations {
         let acknowledged = new Map<number, number>();
         let ignored = new Map<number, number>();
 
+        // todo fix this
         for (let i = 0; i <= 9; i++) {
             acknowledged.set(i, 0);
             ignored.set(i, 0);
