@@ -97,6 +97,7 @@
         }
 
         .big-link {
+            display: none !important;
             /* border: solid black 1px; */
             padding: 20px;
             margin-top: 10px;
@@ -124,17 +125,18 @@
         }
 
         .grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            min-height: 100vh;
+            display: flex;
+            /* grid-template-columns: repeat(2, 1fr); */
+            /* grid-template-columns: 1fr; */
+            /* min-height: 100vh; */
+            flex-direction: column;
         }
 
-        @media (max-width: 1300px) {
-            .grid {
-                display: grid;
-                grid-template-columns: 1fr;
-            }
-        }
+        /* @media (max-width: 1300px) { */
+        /* .grid {
+            display: grid;
+        } */
+        /* } */
 
         .col {
             display: flex;
@@ -149,6 +151,21 @@
 
         .icon-container {
             width: 100px;
+        }
+
+        table {
+            margin: 20px;
+        }
+
+        table th:nth-child(4), table td:nth-child(4) {
+            background-color: red;
+            display:none;
+        }
+
+
+        table th:nth-child(5), table td:nth-child(5) {
+            background-color: red;
+            display:none;
         }
     </style>
 </head>
@@ -438,12 +455,214 @@
                 manipulation in tabular datasets salient.
             </p>
 
-            <div class="upload-link">
+            <p>
+                The following datasets are examples of real datasets that are
+                associated with papers that have been retracted due to concerns
+                with the data.
+            </p>
+
+            <div class="upload-link noDisp">
                 <p class="description">Upload dataset.</p>
                 <a class="big button-link" href="./view.html"
                     ><i class="fas fa-upload"></i> Data</a
                 >
             </div>
+
+            <style type="text/css">
+                .tg {
+                    border-collapse: collapse;
+                    border-spacing: 0;
+                }
+                .tg td {
+                    border-color: black;
+                    border-style: solid;
+                    border-width: 1px;
+                    font-family: Arial, sans-serif;
+                    font-size: 14px;
+                    overflow: hidden;
+                    padding: 10px 5px;
+                    word-break: normal;
+                }
+                .tg th {
+                    border-color: black;
+                    border-style: solid;
+                    border-width: 1px;
+                    font-family: Arial, sans-serif;
+                    font-size: 14px;
+                    font-weight: normal;
+                    overflow: hidden;
+                    padding: 10px 5px;
+                    word-break: normal;
+                }
+                .tg .tg-fymr {
+                    border-color: inherit;
+                    font-weight: bold;
+                    text-align: left;
+                    vertical-align: top;
+                }
+                .tg .tg-0pky {
+                    border-color: inherit;
+                    text-align: left;
+                    vertical-align: top;
+                }
+            </style>
+            <table class="tg">
+                <thead>
+                    <tr>
+                        <th class="tg-fymr">Name</th>
+                        <th class="tg-fymr">Status</th>
+                        <th class="tg-fymr">Statement</th>
+                        <th class="tg-fymr">Domain</th>
+                        <th class="tg-fymr">Blog</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="tg-0pky">
+                            <a href="/view.html?data_path=./assets/data/priming"
+                                >DS-Priming</a
+                            >
+                        </td>
+                        <td class="tg-0pky">Retracted</td>
+                        <td class="tg-0pky">
+                            <!-- \cite{chatterjee_retraction_2016} -->
+                            <a href="https://doi.org/10.1007/s11002-016-9401-6">10.1007/s11002-016-9401-6</a>
+                        </td>
+                        <td class="tg-0pky">Mrkt.</td>
+                        <td class="tg-0pky">
+                            \cite{charlton_retracted_2021}<br />\cite{pashler_social_2016}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="tg-0pky">
+                            <a
+                                href="/view.html?data_path=./assets/data/driving.xlsx"
+                                >DS-Driving</a
+                            >
+                        </td>
+                        <td class="tg-0pky">Retracted</td>
+                        <td class="tg-0pky"><a href="https://doi.org/10.1073/pnas.2115397118">10.1073/pnas.2115397118</td>
+                        <td class="tg-0pky">Psy.</td>
+                        <td class="tg-0pky">\cite{simonsohn_98_2021}</td>
+                    </tr>
+                    <tr>
+                        <td class="tg-0pky">
+                            <a
+                                href="/view.html?data_path=./assets/data/covid.xlsx"
+                                >DS-Covid</a
+                            >
+                        </td>
+                        <td class="tg-0pky">Withdrawn</td>
+                        <td class="tg-0pky"><a href="https://grftr.news/why-was-a-major-study-on-ivermectin-for-covid-19-just-retracted/">grftr.news</a></td>
+                        <td class="tg-0pky">Med.</td>
+                        <td class="tg-0pky">\cite{brown_problems_2021}</td>
+                    </tr>
+                    <tr>
+                        <td class="tg-0pky">
+                            <a
+                                href="/view.html?data_path=./assets/data/gaming.xlsx"
+                                >DS-Gaming</a
+                            >
+                        </td>
+                        <td class="tg-0pky">Retracted</td>
+                        <td class="tg-0pky"><a href="https://doi.org/10.1038/s41598-020-66798-w">10.1038/s41598-020-66798-w</td>
+                        <td class="tg-0pky">Med.</td>
+                        <td class="tg-0pky">\cite{brown_issues_2020}</td>
+                    </tr>
+                    <tr>
+                        <td class="tg-0pky">
+                            <a
+                                href="/view.html?data_path=./assets/data/spider-persistent.xlsx"
+                                >DS-Spider-P</a
+                            >
+                        </td>
+                        <td class="tg-0pky">Retracted</td>
+                        <td class="tg-0pky">
+                            <a href="https://doi.org/10.1098/rsbl.2020.0062">10.1098/rsbl.2020.0062</a>
+                            <!-- \cite{laskowski_retraction_2020-2} -->
+                        </td>
+                        <td class="tg-0pky">Bio.</td>
+                        <td class="tg-0pky" rowspan="3">
+                            \cite{laskowski_what_2020}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="tg-0pky">
+                            <a
+                                href="/view.html?data_path=./assets/data/spider-evidence.xlsx"
+                                >DS-Spider-E</a
+                            >
+                        </td>
+                        <td class="tg-0pky">Retracted</td>
+                        <td class="tg-0pky">
+                            <!-- \cite{laskowski_retraction_2020} -->
+                            <a href="https://doi.org/10.1098/rspb.2020.0077">10.1098/rspb.2020.0077</a>
+                        </td>
+                        <td class="tg-0pky">Bio.</td>
+                    </tr>
+                    <tr>
+                        <td class="tg-0pky">
+                            <a
+                                href="/view.html?data_path=./assets/data/spider-individual_1.xlsx"
+                                >DS-Spider-I</a
+                            >
+                        </td>
+                        <td class="tg-0pky">Retracted</td>
+                        <td class="tg-0pky">
+                            <!-- \cite{laskowski_retraction_2020-1} -->
+                            <a href="https://doi.org/10.1086/708066">10.1086/708066</a>
+                        </td>
+                        <td class="tg-0pky">Bio.</td>
+                    </tr>
+                    <tr>
+                        <td class="tg-0pky">
+                            <a
+                                href="/view.html?data_path=./assets/data/glioma.xlsx"
+                                >DS-Glioma</a
+                            >
+                        </td>
+                        <td class="tg-0pky">Retracted</td>
+                        <td class="tg-0pky">
+                            <!-- \cite{lee_retraction_2019} -->
+                            <a href="https://doi.org/10.1021/acs.molpharmaceut.9b00837">10.1021/acs.molpharmaceut.9b00837</a>
+                        </td>
+                        <td class="tg-0pky">Med.</td>
+                        <td class="tg-0pky"></td>
+                    </tr>
+                    <tr>
+                        <td class="tg-0pky">
+                            <a
+                                href="/view.html?data_path=./assets/data/fly_2.xlsx"
+                                >DS-Fly</a
+                            >
+                        </td>
+                        <td class="tg-0pky">Expression of Concern</td>
+                        <td class="tg-0pky">
+                            <!-- \cite{editorialboard_editor_2021} -->
+
+                            <a href="https://doi.org/10.1098/rspb.2021.0505">10.1098/rspb.2021.0505</a>
+                        </td>
+                        <td class="tg-0pky">Bio.</td>
+                        <td class="tg-0pky">\cite{anon_pubpeer_2020}</td>
+                    </tr>
+                    <tr>
+                        <td class="tg-0pky">
+                            <a
+                                href="/view.html?data_path=./assets/data/fish.xlsx"
+                                >DS-Fish</a
+                            >
+                        </td>
+                        <td class="tg-0pky">Retracted</td>
+                        <td class="tg-0pky">
+                            <!-- \cite{thorp_editorial_2022} -->
+
+                            <a href="https://doi.org/10.1126/science.ade2691">10.1126/science.ade2691</a>
+                        </td>
+                        <td class="tg-0pky">Bio.</td>
+                        <td class="tg-0pky">\cite{enserink_sea_2021}</td>
+                    </tr>
+                </tbody>
+            </table>
 
             <div class="big-link">
                 <p class="description">
