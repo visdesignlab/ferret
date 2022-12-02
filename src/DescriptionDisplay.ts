@@ -49,7 +49,7 @@ export class DescriptionDisplay {
         },
         {
             key: 'general',
-            label: 'General',
+            label: 'Check Domain Expectations',
             color: 'chart-'
         }
     ];
