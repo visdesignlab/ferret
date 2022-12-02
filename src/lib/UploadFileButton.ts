@@ -42,6 +42,7 @@ export class UploadFileButton {
 
         let labelEl: HTMLLabelElement = document.createElement('label');
         labelEl.classList.add('btn', 'btn-outline-primary');
+        labelEl.classList.add('d-none'); // todo
         labelEl.htmlFor = uniqueId;
 
         let icon = document.createElement('i');

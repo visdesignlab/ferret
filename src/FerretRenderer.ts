@@ -765,8 +765,9 @@ export default class FerretRenderer implements ICellRendererFactory {
         container.classList.add(elementID);
         container.id = elementID;
 
+        // todo dynamic width
         var yourVlSpec: VisualizationSpec = {
-            width: 85,
+            width: 150, // 50
             height: 50,
             $schema: 'https://vega.github.io/schema/vega-lite/v4.json',
             description: 'Text Precision',
@@ -801,7 +802,7 @@ export default class FerretRenderer implements ICellRendererFactory {
             }
         };
 
-        vegaEmbed('#' + elementID, yourVlSpec, { actions: false })
+        vegaEmbed('#' + elementID, yourVlSpec, { actions: true })
             .then(result => {
                 result.view.addEventListener('contextmenu', (event, value) => {
                     if (!value || !value.datum) {
