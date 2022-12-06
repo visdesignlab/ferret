@@ -1,4 +1,10 @@
-This can be helpful for scenarios where Benford's Law applies. **However**, there are many scenarios where you wouldn't expect Benford's Law to apply. For instance, the plot above doesn't adhere to Benford's Law because the data does not span more than one order of magnitude, so you are only seeing the distribution of data.
+##### What to look for:
+
+Analyzing the frequency of leading digits can reveal unexpected patterns. Notably, a divergence from Benford's law can be seen.
+
+##### Caveats:
+
+There are **many scenarios** where Benford's Law **does not apply**. For instance, if data does not span more than one order of magnitude, the leading digit frequency mirrors the distribution of values.
 
 ##### External References
 
