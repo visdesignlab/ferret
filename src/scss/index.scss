@@ -1,0 +1,16 @@
+@import './bootstrapVariables.scss';
+
+@include media-breakpoint-down(sm) {
+    .my-btn-sm {
+        // @extend .btn-sm;
+        // Copied from .btn-sm, the above does not work with media :(
+        padding: 0.25rem 0.5rem;
+        font-size: 0.75rem;
+        border-radius: 0.2rem;
+    }
+
+    .my-table-sm > :not(caption) > * > * {
+        // copied from .table-sm
+        padding: 0.25rem 0.25rem;
+    }
+}

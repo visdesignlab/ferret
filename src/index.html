@@ -22,6 +22,11 @@
         .ferret-icon {
    max-height: 60px;
         }
+
+        .noClick {
+            cursor: default !important;
+        }
+
         table td:nth-child(1) {
             white-space: nowrap;
         }
@@ -48,7 +53,7 @@
             </div>
         </div>
         <!-- <span class="d-none d-sm-block">Statement</span><span class="d-block d-sm-none">St.</span> -->
-        <div class="row align-items-center justify-content-center mb-3 d-none d-sm-flex">
+        <div class="row align-items-center justify-content-center mb-5 d-none d-sm-flex">
             <div class="col-3 text-center fs-4">
                 <a href="https://www.devinlange.com/">Devin Lange</a>
             </div>
@@ -62,7 +67,7 @@
                 <a href="https://vdl.sci.utah.edu/team/lex/">Alexander Lex</a>
             </div>
         </div>
-        <div class="row align-items-center justify-content-center mb-3 d-flex d-sm-none">
+        <div class="row align-items-center justify-content-center mb-5 d-flex d-sm-none">
             <div class="col-3 text-center fs-6">
                 <a href="https://www.devinlange.com/">Devin Lange</a>
             </div>
@@ -82,18 +87,18 @@
                 Ferret is a visualization tool, designed to make artifacts of manipulation in tabular datasets salient.
             </div>
         </div>
-        <div class="row align-items-center justify-content-center mb-3">
+        <div class="row align-items-center justify-content-center mb-5">
             <div class="col-12 text-center">
                 The following datasets are examples of real datasets that are associated with papers that have been retracted due to concerns with the data.
             </div>
         </div>
-        <div class="row align-items-center justify-content-center mb-2">
-            <div class="col-12 text-center fst-italic">
-                Click any of the datasets below to open them in Ferret.
+        <div class="row align-items-center justify-content-center mb-3">
+            <div class="col-12 text-center fw-bold">
+                Click any <span class="btn btn-primary noClick my-btn-sm">dataset</span> below to open it in Ferret.
             </div>
         </div>
 
-        <table class="tg table align-middle">
+        <table class="tg table align-middle my-table-sm">
             <thead>
                 <tr>
                     <th class="tg-fymr">Name</th>
@@ -109,8 +114,8 @@
             <tbody>
                 <tr>
                     <td class="tg-0pky">
-                        <a href="/view.html?data_path=./assets/data/priming.xlsx"
-                            >DS-Priming</a
+                        <a class="btn btn-primary my-btn-sm" href="/view.html?data_path=./assets/data/priming.xlsx"
+                            >DS-Priming <i class="fas fa-external-link-alt d-none d-sm-inline-block" aria-hidden="true"></i></a
                         >
                     </td>
                     <td class="tg-0pky">Retracted</td>
@@ -133,8 +138,8 @@
                 <tr>
                     <td class="tg-0pky">
                         <a
-                            href="/view.html?data_path=./assets/data/driving.xlsx"
-                            >DS-Driving</a
+                        class="btn btn-primary my-btn-sm" href="/view.html?data_path=./assets/data/driving.xlsx"
+                            >DS-Driving <i class="fas fa-external-link-alt d-none d-sm-inline-block" aria-hidden="true"></i></a
                         >
                     </td>
                     <td class="tg-0pky">Retracted</td>
@@ -149,8 +154,8 @@
                 <tr>
                     <td class="tg-0pky">
                         <a
-                            href="/view.html?data_path=./assets/data/covid.xlsx"
-                            >DS-Covid</a
+                        class="btn btn-primary my-btn-sm" href="/view.html?data_path=./assets/data/covid.xlsx"
+                            >DS-Covid <i class="fas fa-external-link-alt d-none d-sm-inline-block" aria-hidden="true"></i></a
                         >
                     </td>
                     <td class="tg-0pky">Withdrawn</td>
@@ -167,8 +172,8 @@
                 <tr>
                     <td class="tg-0pky">
                         <a
-                            href="/view.html?data_path=./assets/data/gaming.xlsx"
-                            >DS-Gaming</a
+                        class="btn btn-primary my-btn-sm" href="/view.html?data_path=./assets/data/gaming.xlsx"
+                            >DS-Gaming <i class="fas fa-external-link-alt d-none d-sm-inline-block" aria-hidden="true"></i></a
                         >
                     </td>
                     <td class="tg-0pky">Retracted</td>
@@ -182,8 +187,8 @@
                 <tr>
                     <td class="tg-0pky">
                         <a
-                            href="/view.html?data_path=./assets/data/spider-persistent.xlsx"
-                            >DS-Spider-P</a
+                        class="btn btn-primary my-btn-sm" href="/view.html?data_path=./assets/data/spider-persistent.xlsx"
+                            >DS-Spider-P <i class="fas fa-external-link-alt d-none d-sm-inline-block" aria-hidden="true"></i></a
                         >
                     </td>
                     <td class="tg-0pky">Retracted</td>
@@ -203,8 +208,8 @@
                 <tr>
                     <td class="tg-0pky">
                         <a
-                            href="/view.html?data_path=./assets/data/spider-evidence.xlsx"
-                            >DS-Spider-E</a
+                        class="btn btn-primary my-btn-sm" href="/view.html?data_path=./assets/data/spider-evidence.xlsx"
+                            >DS-Spider-E <i class="fas fa-external-link-alt d-none d-sm-inline-block" aria-hidden="true"></i></a
                         >
                     </td>
                     <td class="tg-0pky">Retracted</td>
@@ -219,8 +224,8 @@
                 <tr>
                     <td class="tg-0pky">
                         <a
-                            href="/view.html?data_path=./assets/data/spider-individual_1.xlsx"
-                            >DS-Spider-I</a
+                        class="btn btn-primary my-btn-sm" href="/view.html?data_path=./assets/data/spider-individual_1.xlsx"
+                            >DS-Spider-I <i class="fas fa-external-link-alt d-none d-sm-inline-block" aria-hidden="true"></i></a
                         >
                     </td>
                     <td class="tg-0pky">Retracted</td>
@@ -235,8 +240,8 @@
                 <tr>
                     <td class="tg-0pky">
                         <a
-                            href="/view.html?data_path=./assets/data/glioma.xlsx"
-                            >DS-Glioma</a
+                        class="btn btn-primary my-btn-sm" href="/view.html?data_path=./assets/data/glioma.xlsx"
+                            >DS-Glioma <i class="fas fa-external-link-alt d-none d-sm-inline-block" aria-hidden="true"></i></a
                         >
                     </td>
                     <td class="tg-0pky">Retracted</td>
@@ -252,11 +257,11 @@
                 <tr>
                     <td class="tg-0pky">
                         <a
-                            href="/view.html?data_path=./assets/data/fly_2.xlsx"
-                            >DS-Fly</a
+                        class="btn btn-primary my-btn-sm" href="/view.html?data_path=./assets/data/fly_2.xlsx"
+                            >DS-Fly <i class="fas fa-external-link-alt d-none d-sm-inline-block" aria-hidden="true"></i></a
                         >
                     </td>
-                    <td class="tg-0pky">Expression of Concern</td>
+                    <td class="tg-0pky"><span class="d-none d-sm-inline-block">Expression</span><span class="d-inline-block d-sm-none">Expr.</span> of Concern</td>
                     <td class="tg-0pky">
                         <!-- \cite{editorialboard_editor_2021} -->
 
@@ -270,8 +275,8 @@
                 <tr>
                     <td class="tg-0pky">
                         <a
-                            href="/view.html?data_path=./assets/data/fish.xlsx"
-                            >DS-Fish</a
+                        class="btn btn-primary my-btn-sm" href="/view.html?data_path=./assets/data/fish.xlsx"
+                            >DS-Fish <i class="fas fa-external-link-alt d-none d-sm-inline-block" aria-hidden="true"></i></a
                         >
                     </td>
                     <td class="tg-0pky">Retracted</td>
