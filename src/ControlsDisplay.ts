@@ -467,6 +467,7 @@ export class ControlsDisplay {
                 detail: { visualizationsShown: this.chartsShown[generalIndex] }
             })
         );
+        this.updateLineUp();
     }
 
     private toggleLineupVisibility(showExcel: boolean): void {
