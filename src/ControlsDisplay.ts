@@ -251,6 +251,11 @@ export class ControlsDisplay {
             'leading-digit-switch'
         );
         let formattingSwitch = document.getElementById('formatting-switch');
+        let formattingDataSwitch =
+            document.getElementById('format-data-switch');
+        let formattingOverviewSwitch = document.getElementById(
+            'format-overview-switch'
+        );
         let frequentValueSwitch = document.getElementById('freq-val-switch');
         let valueDistSwitch = document.getElementById('val-dist-switch');
         let repSwitch = document.getElementById('rep-switch');
@@ -299,6 +304,22 @@ export class ControlsDisplay {
         });
         generalSwitch.addEventListener('click', e => {
             this.toggleChart(9, e);
+        });
+
+        formattingDataSwitch.addEventListener('click', e => {
+            globalThis.includeDataFormat = !globalThis.includeDataFormat;
+            this.updateLineUp();
+        });
+        formattingOverviewSwitch.addEventListener('click', e => {
+            let overviewMode = (formattingOverviewSwitch as HTMLInputElement)
+                .checked;
+            document.dispatchEvent(
+                new CustomEvent('toggleOverviewExcel', {
+                    detail: { overviewMode }
+                })
+            );
+
+            this.updateLineUp();
         });
 
         uniqueValuesSwitch.addEventListener('click', e => {
@@ -436,7 +457,7 @@ export class ControlsDisplay {
 
         const sortingIndex = 8;
         document.dispatchEvent(
-            new CustomEvent('toggleOverview', {
+            new CustomEvent('toggleOverviewLineup', {
                 detail: { overviewMode: this.chartsShown[sortingIndex] }
             })
         );
