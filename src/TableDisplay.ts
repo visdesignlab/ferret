@@ -35,11 +35,20 @@ export class TableDisplay extends EventTarget {
         document.addEventListener('updateLineup', async (e: CustomEvent) => {
             await this.updateFerretColumnMetaData();
             this.lineup.update();
+            this.excelLineup.update();
         });
-        document.addEventListener('toggleOverview', async (e: CustomEvent) => {
-            this.lineup.setOverviewMode(e.detail.overviewMode);
-            this.excelLineup.setOverviewMode(e.detail.overviewMode);
-        });
+        document.addEventListener(
+            'toggleOverviewLineup',
+            async (e: CustomEvent) => {
+                this.lineup.setOverviewMode(e.detail.overviewMode);
+            }
+        );
+        document.addEventListener(
+            'toggleOverviewExcel',
+            async (e: CustomEvent) => {
+                this.excelLineup.setOverviewMode(e.detail.overviewMode);
+            }
+        );
         document.addEventListener('highlightRows', (e: CustomEvent) => {
             this.onHighlightRows(e);
         });
