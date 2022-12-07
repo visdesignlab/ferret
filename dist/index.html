@@ -4,6 +4,7 @@
     <title>Ferret</title>
     <!-- <link rel="icon" type="image/png" href="/static/assets/vdl-logo.svg"> -->
     <!-- <link rel="shortcut icon" href="/static/assets/favicon.ico" /> -->
+    <script src="https://kit.fontawesome.com/de8d467ef5.js"></script>
     <link
         href="https://fonts.googleapis.com/css2?family=Josefin+Sans&display=swap"
         rel="stylesheet"
@@ -25,6 +26,9 @@
             white-space: nowrap;
         }
 
+        table td:nth-child(5) {
+            word-break: break-all;
+        }
     </style>
 </head>
 
@@ -79,8 +83,8 @@
                     <th class="tg-fymr">Name</th>
                     <th class="tg-fymr">Status</th>
                     <th class="tg-fymr">Statement</th>
-                    <th class="tg-fymr d-none d-sm-table-cell">Domain</th>
-                    <th class="tg-fymr d-none d-md-table-cell">Blog</th>
+                    <th class="tg-fymr">Domain</th>
+                    <th class="tg-fymr">Blog</th>
                 </tr>
             </thead>
             <tbody>
@@ -93,11 +97,18 @@
                     <td class="tg-0pky">Retracted</td>
                     <td class="tg-0pky">
                         <!-- \cite{chatterjee_retraction_2016} -->
-                        <a href="https://doi.org/10.1007/s11002-016-9401-6">10.1007/s11002-016-9401-6</a>
+                        <a href="https://doi.org/10.1007/s11002-016-9401-6">
+                            <span class="d-none d-md-block">10.1007/s11002-016-9401-6</span><span class="d-block d-md-none"><i class="fas fa-external-link-alt" aria-hidden="true"></i></span>
+                        </a>
                     </td>
-                    <td class="tg-0pky d-none d-sm-table-cell">Marketing</td>
-                    <td class="tg-0pky  d-none d-md-table-cell">
-                        <a href="https://blog.openmktg.org/2021/07/retracted-article-why-money-meanings.html">blog.openmktg.org/2021/07/retracted-article-why-money-meanings.html </a><br /><br /><a href="https://doi.org/10.1080/01973533.2015.1124767">10.1080/01973533.2015.1124767</a>
+                    <td class="tg-0pky">
+                        <span class="d-none d-md-block">Marketing</span><span class="d-block d-md-none">Mrkt.</span>
+                    </td>
+                    <td class="tg-0pky ">
+                        <a href="https://blog.openmktg.org/2021/07/retracted-article-why-money-meanings.html">
+                            <span class="d-none d-lg-block">blog.openmktg.org/2021/07/retracted-article-why-money-meanings.html</span><span class="d-block d-lg-none"><i class="fas fa-external-link-alt" aria-hidden="true"></i></span>
+                        </a><br /><br />
+                        <a href="https://doi.org/10.1080/01973533.2015.1124767"><span class="d-none d-lg-block">10.1080/01973533.2015.1124767</span><span class="d-block d-lg-none"><i class="fas fa-external-link-alt" aria-hidden="true"></i></span></a>
                     </td>
                 </tr>
                 <tr>
@@ -108,9 +119,13 @@
                         >
                     </td>
                     <td class="tg-0pky">Retracted</td>
-                    <td class="tg-0pky"><a href="https://doi.org/10.1073/pnas.2115397118">10.1073/pnas.2115397118</td>
-                    <td class="tg-0pky d-none d-sm-table-cell">Psychology</td>
-                    <td class="tg-0pky d-none d-md-table-cell"><a href="http://datacolada.org/98">datacolada.org/98</td>
+                    <td class="tg-0pky"><a href="https://doi.org/10.1073/pnas.2115397118">
+                        <span class="d-none d-md-block">10.1073/pnas.2115397118</span><span class="d-block d-md-none"><i class="fas fa-external-link-alt" aria-hidden="true"></i></span>
+                    </td>
+                    <td class="tg-0pky"><span class="d-none d-md-block">Psychology</span><span class="d-block d-md-none">Psy.</span></td>
+                    <td class="tg-0pky"><a href="http://datacolada.org/98">
+                        <span class="d-none d-lg-block">datacolada.org/98</span><span class="d-block d-lg-none"><i class="fas fa-external-link-alt" aria-hidden="true"></i></span>
+                    </td>
                 </tr>
                 <tr>
                     <td class="tg-0pky">
@@ -120,10 +135,15 @@
                         >
                     </td>
                     <td class="tg-0pky">Withdrawn</td>
-                    <td class="tg-0pky"><a href="https://grftr.news/why-was-a-major-study-on-ivermectin-for-covid-19-just-retracted/">grftr.news</a></td>
-                    <td class="tg-0pky d-none d-sm-table-cell">Medicine</td>
-                    <td class="tg-0pky d-none d-md-table-cell">
-                        <a href="http://steamtraen.blogspot.com/2021/07/Some-problems-with-the-data-from-a-Covid-study.html">steamtraen.blogspot.com/2021/07/Some-problems-with-the-data-from-a-Covid-study.html</a></td>
+                    <td class="tg-0pky"><a href="https://grftr.news/why-was-a-major-study-on-ivermectin-for-covid-19-just-retracted/">
+                        <span class="d-none d-md-block">grftr.news</span><span class="d-block d-md-none"><i class="fas fa-external-link-alt" aria-hidden="true"></i></span>
+                    </a></td>
+                    <td class="tg-0pky"><span class="d-none d-md-block">Medicine</span><span class="d-block d-md-none">Med.</span></td>
+                    <td class="tg-0pky">
+                        <a href="http://steamtraen.blogspot.com/2021/07/Some-problems-with-the-data-from-a-Covid-study.html">
+
+                            <span class="d-none d-lg-block">steamtraen.blogspot.com/2021/07/Some-problems-with-the-data-from-a-Covid-study.html</span><span class="d-block d-lg-none"><i class="fas fa-external-link-alt" aria-hidden="true"></i></span>
+                        </a></td>
                 </tr>
                 <tr>
                     <td class="tg-0pky">
@@ -133,9 +153,12 @@
                         >
                     </td>
                     <td class="tg-0pky">Retracted</td>
-                    <td class="tg-0pky"><a href="https://doi.org/10.1038/s41598-020-66798-w">10.1038/s41598-020-66798-w</td>
-                    <td class="tg-0pky d-none d-sm-table-cell">Medicine</td>
-                    <td class="tg-0pky d-none d-md-table-cell"><a href="http://steamtraen.blogspot.com/2020/04/some-issues-in-recent-gaming-research.html">teamtraen.blogspot.com/2020/04/some-issues-in-recent-gaming-research.html</td>
+                    <td class="tg-0pky"><a href="https://doi.org/10.1038/s41598-020-66798-w">
+                        <span class="d-none d-md-block">10.1038/s41598-020-66798-w</span><span class="d-block d-md-none"><i class="fas fa-external-link-alt" aria-hidden="true"></i></span>
+                    </td>
+                    <td class="tg-0pky"><span class="d-none d-md-block">Medicine</span><span class="d-block d-md-none">Med.</span></td>
+                    <td class="tg-0pky"><a href="http://steamtraen.blogspot.com/2020/04/some-issues-in-recent-gaming-research.html">
+                        <span class="d-none d-lg-block">teamtraen.blogspot.com/2020/04/some-issues-in-recent-gaming-research.html</span><span class="d-block d-lg-none"><i class="fas fa-external-link-alt" aria-hidden="true"></i></span></td>
                 </tr>
                 <tr>
                     <td class="tg-0pky">
@@ -146,12 +169,16 @@
                     </td>
                     <td class="tg-0pky">Retracted</td>
                     <td class="tg-0pky">
-                        <a href="https://doi.org/10.1098/rsbl.2020.0062">10.1098/rsbl.2020.0062</a>
+                        <a href="https://doi.org/10.1098/rsbl.2020.0062">
+                            <span class="d-none d-md-block">10.1098/rsbl.2020.0062</span><span class="d-block d-md-none"><i class="fas fa-external-link-alt" aria-hidden="true"></i></span>
+                        </a>
                         <!-- \cite{laskowski_retraction_2020-2} -->
                     </td>
-                    <td class="tg-0pky d-none d-sm-table-cell">Biology</td>
-                    <td class="tg-0pky d-none d-md-table-cell" rowspan="3">
-                        <a href="https://laskowskilab.faculty.ucdavis.edu/2020/01/29/retractions/">laskowskilab.faculty.ucdavis.edu/2020/01/29/retractions/</a>
+                    <td class="tg-0pky"><span class="d-none d-md-block">Biology</span><span class="d-block d-md-none">Bio.</span></td>
+                    <td class="tg-0pky" rowspan="3">
+                        <a href="https://laskowskilab.faculty.ucdavis.edu/2020/01/29/retractions/">
+                            <span class="d-none d-lg-block">laskowskilab.faculty.ucdavis.edu/2020/01/29/retractions/</span><span class="d-block d-lg-none"><i class="fas fa-external-link-alt" aria-hidden="true"></i></span>
+                        </a>
                     </td>
                 </tr>
                 <tr>
@@ -164,9 +191,11 @@
                     <td class="tg-0pky">Retracted</td>
                     <td class="tg-0pky">
                         <!-- \cite{laskowski_retraction_2020} -->
-                        <a href="https://doi.org/10.1098/rspb.2020.0077">10.1098/rspb.2020.0077</a>
+                        <a href="https://doi.org/10.1098/rspb.2020.0077">
+                            <span class="d-none d-md-block">10.1098/rspb.2020.0077</span><span class="d-block d-md-none"><i class="fas fa-external-link-alt" aria-hidden="true"></i></span>
+                        </a>
                     </td>
-                    <td class="tg-0pky d-none d-sm-table-cell">Biology</td>
+                    <td class="tg-0pky"><span class="d-none d-md-block">Biology</span><span class="d-block d-md-none">Bio.</span></td>
                 </tr>
                 <tr>
                     <td class="tg-0pky">
@@ -178,9 +207,11 @@
                     <td class="tg-0pky">Retracted</td>
                     <td class="tg-0pky">
                         <!-- \cite{laskowski_retraction_2020-1} -->
-                        <a href="https://doi.org/10.1086/708066">10.1086/708066</a>
+                        <a href="https://doi.org/10.1086/708066">
+                            <span class="d-none d-md-block">10.1086/708066</span><span class="d-block d-md-none"><i class="fas fa-external-link-alt" aria-hidden="true"></i></span>
+                        </a>
                     </td>
-                    <td class="tg-0pky d-none d-sm-table-cell">Biology</td>
+                    <td class="tg-0pky"><span class="d-none d-md-block">Biology</span><span class="d-block d-md-none">Bio.</span></td>
                 </tr>
                 <tr>
                     <td class="tg-0pky">
@@ -192,10 +223,12 @@
                     <td class="tg-0pky">Retracted</td>
                     <td class="tg-0pky">
                         <!-- \cite{lee_retraction_2019} -->
-                        <a href="https://doi.org/10.1021/acs.molpharmaceut.9b00837">10.1021/acs.molpharmaceut.9b00837</a>
+                        <a href="https://doi.org/10.1021/acs.molpharmaceut.9b00837">
+                            <span class="d-none d-md-block">10.1021/acs.molpharmaceut.9b00837</span><span class="d-block d-md-none"><i class="fas fa-external-link-alt" aria-hidden="true"></i></span>
+                        </a>
                     </td>
-                    <td class="tg-0pky d-none d-sm-table-cell">Medicine</td>
-                    <td class="tg-0pky d-none d-md-table-cell"></td>
+                    <td class="tg-0pky"><span class="d-none d-md-block">Medicine</span><span class="d-block d-md-none">Med.</span></td>
+                    <td class="tg-0pky"></td>
                 </tr>
                 <tr>
                     <td class="tg-0pky">
@@ -208,10 +241,12 @@
                     <td class="tg-0pky">
                         <!-- \cite{editorialboard_editor_2021} -->
 
-                        <a href="https://doi.org/10.1098/rspb.2021.0505">10.1098/rspb.2021.0505</a>
+                        <a href="https://doi.org/10.1098/rspb.2021.0505">
+                            <span class="d-none d-md-block">10.1098/rspb.2021.0505</span><span class="d-block d-md-none"><i class="fas fa-external-link-alt" aria-hidden="true"></i></span>
+                        </a>
                     </td>
-                    <td class="tg-0pky d-none d-sm-table-cell">Biology</td>
-                    <td class="tg-0pky  d-none d-md-table-cell"><a href="https://pubpeer.com/publications/70DDAFDEA32DD2D9181998DBF1EECB">pubpeer.com/publications/70DDAFDEA32DD2D9181998DBF1EECB</td>
+                    <td class="tg-0pky"><span class="d-none d-md-block">Biology</span><span class="d-block d-md-none">Bio.</span></td>
+                    <td class="tg-0pky"><a href="https://pubpeer.com/publications/70DDAFDEA32DD2D9181998DBF1EECB"><span class="d-none d-lg-block">pubpeer.com/publications/70DDAFDEA32DD2D9181998DBF1EECB</span><span class="d-block d-lg-none"><i class="fas fa-external-link-alt" aria-hidden="true"></i></span></td>
                 </tr>
                 <tr>
                     <td class="tg-0pky">
@@ -224,10 +259,12 @@
                     <td class="tg-0pky">
                         <!-- \cite{thorp_editorial_2022} -->
 
-                        <a href="https://doi.org/10.1126/science.ade2691">10.1126/science.ade2691</a>
+                        <a href="https://doi.org/10.1126/science.ade2691">
+                            <span class="d-none d-md-block">10.1126/science.ade2691</span><span class="d-block d-md-none"><i class="fas fa-external-link-alt" aria-hidden="true"></i></span>
+                        </a>
                     </td>
-                    <td class="tg-0pky d-none d-sm-table-cell">Biology</td>
-                    <td class="tg-0pky d-none d-md-table-cell"><a href="https://doi.org/10.1126/science.372.6542.560">10.1126/science.372.6542.560</a></td>
+                    <td class="tg-0pky"><span class="d-none d-md-block">Biology</span><span class="d-block d-md-none">Bio.</span></td>
+                    <td class="tg-0pky"><a href="https://doi.org/10.1126/science.372.6542.560"><span class="d-none d-lg-block">10.1126/science.372.6542.560</span><span class="d-block d-lg-none"><i class="fas fa-external-link-alt" aria-hidden="true"></i></span></a></td>
                 </tr>
             </tbody>
         </table>
