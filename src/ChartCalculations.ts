@@ -39,7 +39,8 @@ export class ChartCalculations {
         let ignored = new Map<number, number>();
 
         // todo fix this
-        for (let i = 0; i <= 17; i++) {
+        const maxPrecision = 32;
+        for (let i = 0; i <= maxPrecision; i++) {
             acknowledged.set(i, 0);
             ignored.set(i, 0);
         }
@@ -56,6 +57,17 @@ export class ChartCalculations {
                 : acknowledged;
             let oldVal = relevantMap.get(precisionCount);
             relevantMap.set(precisionCount, oldVal + 1);
+        }
+
+        let thisMaxPrecision = 0;
+        for (let i = 0; i <= maxPrecision; i++) {
+            if (acknowledged.get(i) > 0 || ignored.get(i) > 0) {
+                thisMaxPrecision = i;
+            }
+        }
+        for (let i = thisMaxPrecision + 1; i <= maxPrecision; i++) {
+            acknowledged.delete(i);
+            ignored.delete(i);
         }
 
         return { acknowledged, ignored };

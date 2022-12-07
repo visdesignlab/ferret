@@ -765,9 +765,9 @@ export default class FerretRenderer implements ICellRendererFactory {
         container.classList.add(elementID);
         container.id = elementID;
 
-        // todo dynamic width
+        const vizWidth = 50 + 5 * dataValues.length;
         var yourVlSpec: VisualizationSpec = {
-            width: 150, // 50
+            width: vizWidth,
             height: 50,
             $schema: 'https://vega.github.io/schema/vega-lite/v4.json',
             description: 'Text Precision',
