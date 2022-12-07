@@ -4,6 +4,6 @@ We assume inconspicuous data has similar precision for similar observations. Tim
 
 ##### Caveats:
 
-A large variation of precision could also arise in innocent ways, like in converting between fractions and decimals. For instance, if the length of an animal is recorded in inches, then converted to feet, it would be expected to see high-precision decimals like X.33333333 and X.58333333 as well as low-precision numbers like X.5 and X.25.
+A large variation of precision could also arise in innocent ways, like in converting between fractions and decimals. For instance, if the length of an animal is recorded in inches, then converted to feet, it would be expected to see high-precision decimals like X.33333333 and X.58333333 as well as low-precision numbers like X.5 and X.25. Also, sometimes floating point representations of numbers can cause very high precision. For instance, 3.1 may appear as 3.0999999999999 or 3.1000000000001.
 
 <!-- ##### Useful Resources: -->
