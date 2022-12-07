@@ -89,7 +89,10 @@ let init = async (data: string | ArrayBuffer, filename: string) => {
 
     descriptionDisplay.init();
 
-    document.title = filename;
+    let filePath = filename.split('/');
+    const baseFilename = filePath[filePath.length - 1].split('.')[0];
+
+    document.title = baseFilename;
     uploadOnlyContainerOuter.classList.add('d-none');
     outerContainer.classList.remove('d-none');
 
