@@ -109,6 +109,13 @@ export function ScatterVis({
                 Plotly.Plots.resize(document.getElementById(`plotlyDiv${id}`));
             });
         }
+
+        document.addEventListener(
+            'toggleVisualizations',
+            (_event: CustomEvent) => {
+                Plotly.Plots.resize(document.getElementById(`plotlyDiv${id}`));
+            }
+        );
     }, []);
 
     const mergedOptionsConfig = React.useMemo(() => {
@@ -144,6 +151,7 @@ export function ScatterVis({
                 itemdoubleclick: false
             },
             autosize: true,
+            width: 10,
             grid: {
                 rows: traces.rows,
                 columns: traces.cols,
@@ -164,7 +172,7 @@ export function ScatterVis({
             style={{ minHeight: '0px' }}
         >
             <div
-                className={`position-relative d-flex justify-content-center align-items-center flex-grow-1 ${
+                className={`min-width-0 position-relative d-flex justify-content-center align-items-center flex-grow-1 ${
                     traceStatus === 'pending' ? 'tdp-busy-partial-overlay' : ''
                 }`}
             >
@@ -243,7 +251,7 @@ export function ScatterVis({
                 </div>
                 {mergedExtensions.postPlot}
             </div>
-            <div className="position-relative h-100 flex-shrink-1 bg-light overflow-auto">
+            <div className="position-relative h-100 flex-shrink-1 bg-light">
                 <button
                     className="btn btn-primary-outline"
                     type="button"
@@ -255,7 +263,7 @@ export function ScatterVis({
                     <i className="fas fa-bars" />
                 </button>
                 <div
-                    className="collapse show collapse-horizontal"
+                    className="collapse show collapse-horizontal overflow-y-auto max-height-100"
                     id={`generalVisBurgerMenu${id}`}
                 >
                     <div className="container pb-3" style={{ width: '20rem' }}>

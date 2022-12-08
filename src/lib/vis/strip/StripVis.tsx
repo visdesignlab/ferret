@@ -119,7 +119,7 @@ export function StripVis({
             style={{ minHeight: '0px' }}
         >
             <div
-                className={`position-relative d-flex justify-content-center align-items-center flex-grow-1 ${
+                className={`min-width-0 position-relative d-flex justify-content-center align-items-center flex-grow-1 ${
                     traceStatus === 'pending' ? 'tdp-busy-partial-overlay' : ''
                 }`}
             >
@@ -158,7 +158,7 @@ export function StripVis({
                 ) : null}
                 {mergedExtensions.postPlot}
             </div>
-            <div className="position-relative h-100 flex-shrink-1 bg-light overflow-auto">
+            <div className="position-relative h-100 flex-shrink-1 bg-light ">
                 <button
                     className="btn btn-primary-outline"
                     type="button"
@@ -170,7 +170,7 @@ export function StripVis({
                     <i className="fas fa-bars" />
                 </button>
                 <div
-                    className="collapse show collapse-horizontal"
+                    className="collapse show collapse-horizontal overflow-y-auto max-height-100"
                     id={`generalVisBurgerMenu${uniqueId}`}
                 >
                     <div className="container pb-3" style={{ width: '20rem' }}>

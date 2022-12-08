@@ -229,14 +229,7 @@ export class ControlsDisplay {
 
     private toggleVisualizations(show: boolean): void {
         const panel = document.getElementById('visualizations');
-
-        if (show) {
-            panel.classList.remove('d-none');
-            panel.classList.add('d-flex');
-        } else {
-            panel.classList.remove('d-flex');
-            panel.classList.add('d-none');
-        }
+        panel.classList.toggle('d-none', !show);
     }
 
     private static toggleElementClass(id: string, cssClass: string): boolean {
