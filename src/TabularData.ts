@@ -29,7 +29,9 @@ export class TabularData {
             } else {
                 column = ColumnFactory.FromExcelColumn(ws.getColumn(i));
             }
-            tabularData.columnList.push(column);
+            if (column.id !== '') {
+                tabularData.columnList.push(column);
+            }
         }
         tabularData._rowLength = ws.rowCount - 1; // subtract one because the first row is consumed as a label.
         const rowColumn = ColumnFactory.Count(tabularData.rowLength, 'ROW');
