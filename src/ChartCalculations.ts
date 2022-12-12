@@ -196,6 +196,7 @@ export class ChartCalculations {
     public static getLeadingDigit(
         val: number
     ): 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | null {
+        if (typeof val == 'undefined') return null;
         let leadingDigitIndex = ChartCalculations.getLeadingDigitIndex(val);
         if (leadingDigitIndex === null) {
             return null;
@@ -215,6 +216,7 @@ export class ChartCalculations {
     public static getTerminalDigit(
         val: number
     ): 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | null {
+        if (typeof val == 'undefined') return null;
         let valString = val.toString();
         let terminalDigitIndex = valString.length - 1;
         return +valString[terminalDigitIndex] as
@@ -334,6 +336,8 @@ export class ChartCalculations {
         for (let i of indices) {
             const dataRow = await provider.getRow(i);
             const val = column.getRaw(dataRow);
+
+            if (typeof val == 'undefined') continue;
 
             let valString = val.toString();
             if (valString.length < n || (lsd && valString.indexOf('.') == -1))

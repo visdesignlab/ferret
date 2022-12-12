@@ -153,6 +153,8 @@ export default class ExcelColumn extends ValueColumn<number> {
 
     public getRaw(row: IDataRow): number {
         let cell: Cell = this.getRawCell(row);
+
+        if (typeof cell == 'undefined') return null;
         if (cell.type == ValueType.Number) {
             return cell.value as number;
         }
