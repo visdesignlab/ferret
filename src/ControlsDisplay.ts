@@ -177,7 +177,7 @@ export class ControlsDisplay {
             input.classList.add('form-check-input');
 
             let label = document.createElement('label');
-            label.innerHTML = column.id;
+            label.innerHTML = column.label;
             label.htmlFor = uniqueId;
             label.classList.add(
                 'controlsLabel',

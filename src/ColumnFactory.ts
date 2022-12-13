@@ -6,6 +6,7 @@ import { ColumnLabel } from './ColumnLabel';
 import { ColumnMixed } from './ColumnMixed';
 import { getColumnType } from './ColumnType';
 import { Cell, Column as ExcelColumn, Style, ValueType } from 'exceljs';
+import { uniqueId } from 'lodash';
 
 // export interface CellWithStyle {
 //     value: any;
@@ -13,12 +14,15 @@ import { Cell, Column as ExcelColumn, Style, ValueType } from 'exceljs';
 // }
 
 export class ColumnFactory {
-    public static FromExcelColumn(data: ExcelColumn): Column<Cell> {
+    public static FromExcelColumn(
+        data: ExcelColumn,
+        existingKeys: Set<string>
+    ): Column<Cell> {
         let valList: Cell[] = [];
         let key: string = null;
         data.eachCell((cell: Cell, num) => {
             if (key === null) {
-                key = cell.toString();
+                key = ColumnFactory.getUniqueKey(cell, existingKeys);
             } else {
                 valList.push(cell);
             }
@@ -27,13 +31,14 @@ export class ColumnFactory {
     }
 
     public static FromExcelColumnStripped(
-        data: ExcelColumn
+        data: ExcelColumn,
+        existingKeys: Set<string>
     ): Column<string | number> {
         let valList: (string | number)[] = [];
         let key: string = null;
         data.eachCell((cell: Cell, num) => {
             if (key === null) {
-                key = cell.toString();
+                key = ColumnFactory.getUniqueKey(cell, existingKeys);
             } else {
                 let cellVal: string | number;
                 if (cell.type == ValueType.Null || cell.value == '') {
@@ -57,11 +62,26 @@ export class ColumnFactory {
         return this.fromValList(valList, key);
     }
 
+    private static getUniqueKey(cell: Cell, existingKeys: Set<string>): string {
+        let newKey = cell.toString();
+        if (newKey == '') {
+            newKey = '[blank]';
+        }
+        let key = newKey;
+        let dupNum = 2;
+        while (existingKeys.has(key)) {
+            key = `${newKey} [${dupNum++}]`;
+        }
+        existingKeys.add(key);
+        return key;
+    }
+
     public static FromDSVRowArray(
         data: d3.DSVRowArray<string>,
         key: string,
         noHeader = false
     ): Column<string | number> {
+        // todo - deduplicate keys
         let valList: (string | number)[] = [];
 
         if (noHeader) {
@@ -96,7 +116,8 @@ export class ColumnFactory {
                 break;
         }
 
-        col.id = key;
+        col.label = key;
+        col.id = key + '_' + uniqueId();
         return col;
     }
 
@@ -105,7 +126,8 @@ export class ColumnFactory {
             .fill(null)
             .map((_d, i) => i + 1);
         const col: Column<number> = new ColumnNumeric(data);
-        col.id = name;
+        col.label = name;
+        col.id = name + '_' + uniqueId();
         return col;
     }
 

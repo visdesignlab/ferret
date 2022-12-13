@@ -22,14 +22,22 @@ export class TabularData {
         await workbook.xlsx.load(data);
         const ws = workbook.worksheets[0];
         const numCols = ws.columnCount;
+        let existingKeys = new Set<string>();
         for (let i = 1; i <= numCols; i++) {
             let column: Column<string | number> | Column<Cell>;
             if (stripFormatting) {
-                column = ColumnFactory.FromExcelColumnStripped(ws.getColumn(i));
+                column = ColumnFactory.FromExcelColumnStripped(
+                    ws.getColumn(i),
+                    existingKeys
+                );
             } else {
-                column = ColumnFactory.FromExcelColumn(ws.getColumn(i));
+                column = ColumnFactory.FromExcelColumn(
+                    ws.getColumn(i),
+                    existingKeys
+                );
             }
-            if (column.id !== '') {
+            if (column.label !== '') {
+                // skip empty columns
                 tabularData.columnList.push(column);
             }
         }

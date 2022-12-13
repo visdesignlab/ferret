@@ -21,7 +21,6 @@ import FerretColumn, {
     SelectionType,
     SelectionTypeString
 } from './FerretColumn';
-import { uniqueId } from 'lodash';
 
 export default class FerretRenderer implements ICellRendererFactory {
     readonly title: string = 'Ferret Visualizations';

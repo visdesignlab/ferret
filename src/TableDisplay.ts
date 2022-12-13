@@ -171,7 +171,11 @@ export class TableDisplay extends EventTarget {
             } else {
                 columnBuilder = buildStringColumn(key);
             }
-            builder.column(columnBuilder.label(label).width(140));
+            columnBuilder
+                .custom('ferretKey', column.id)
+                .label(column.label)
+                .width(140);
+            builder.column(columnBuilder);
         }
 
         const lineupContainer = document.getElementById(containerId);
@@ -196,7 +200,7 @@ export class TableDisplay extends EventTarget {
         ) as FerretColumn[];
 
         for (let col of ferretColumns) {
-            const extent = extentLookup.get(col.label);
+            const extent = extentLookup.get(col.desc.ferretKey);
             col.normalize = d3.scaleLinear().domain(extent).range([0, 1]);
 
             col.on('filterChanged', async () => {

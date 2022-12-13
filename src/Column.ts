@@ -19,6 +19,14 @@ export abstract class Column<T> {
         this._id = v;
     }
 
+    private _label: string;
+    public get label(): string {
+        return this._label;
+    }
+    public set label(v: string) {
+        this._label = v;
+    }
+
     protected _values: T[];
     public get values(): T[] {
         return this._values;
