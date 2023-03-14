@@ -25,6 +25,19 @@
     padding-left: 8px;
 }
 
+.uploadOnlyContainerInner.big {
+    width: 50vw;
+    height: 50vh;
+    display: flex;
+}
+
+.btn.btn-lg.custom-big-upload-button {
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 .dropdown-item {
     padding: 4px;
     cursor: pointer;

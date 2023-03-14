@@ -38,17 +38,21 @@ export class UploadFileButton {
 
         this.fileInputElement.id = uniqueId;
         this.fileInputElement.type = 'file';
-        this.fileInputElement.accept = 'text/plain, .csv, .xlsx';
+        this.fileInputElement.accept = '.xlsx';
 
         let labelEl: HTMLLabelElement = document.createElement('label');
-        labelEl.classList.add('btn', 'btn-outline-primary');
-        labelEl.classList.add('d-none'); // todo
+        labelEl.classList.add(
+            'btn-lg',
+            'btn',
+            'btn-outline-primary',
+            'custom-big-upload-button'
+        );
         labelEl.htmlFor = uniqueId;
 
         let icon = document.createElement('i');
         icon.classList.add('fas', 'fa-upload', 'customButtonIcon'); // font-awesome
         labelEl.appendChild(icon);
-        labelEl.append('Data');
+        labelEl.append('Select .xlsx file to upload');
         this.container.appendChild(this.fileInputElement);
         this.container.appendChild(labelEl);
     }

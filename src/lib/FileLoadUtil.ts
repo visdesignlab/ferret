@@ -1,4 +1,4 @@
-export type CallbackFunction = (data: string, filename: string) => void;
+export type CallbackFunction = (data: ArrayBuffer, filename: string) => void;
 
 export class FileLoadUtil {
     constructor(fileLoadCallback: CallbackFunction) {
@@ -20,17 +20,16 @@ export class FileLoadUtil {
 
         let reader: FileReader = new FileReader();
         reader.onload = () => {
-            if (typeof reader.result !== 'string') {
-                throw 'Warning: this should be parsed as a string, not an ArrayBuffer';
+            if (typeof reader.result === 'string') {
+                throw 'Warning: this should be parsed as a ArrayBuffer, not a string';
             }
-            let text: string = reader.result;
-            this.parseText(text, filename);
+            let data: ArrayBuffer = reader.result;
+            this.parseArrayBuffer(data, filename);
         };
-        reader.readAsText(inputFile);
-        // TODO load binary excel file
+        reader.readAsArrayBuffer(inputFile);
     }
 
-    private parseText(text: string, filename: string): void {
-        this.FileLoadCallback(text, filename);
+    private parseArrayBuffer(data: ArrayBuffer, filename: string): void {
+        this.FileLoadCallback(data, filename);
     }
 }
