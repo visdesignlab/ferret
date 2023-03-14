@@ -58,7 +58,14 @@ let init = async (data: string | ArrayBuffer, filename: string) => {
         '<i class="fas fa-home customButtonIcon"></i>Home';
     toolbarContainer.appendChild(navigateHomeLink);
 
-    let fileLoadButton = new UploadFileButton(toolbarContainer, init, bigStyle);
+    let uploadDataLink = document.createElement('a');
+    uploadDataLink.classList.add('btn', 'btn-outline-primary');
+    uploadDataLink.href = './view.html';
+    uploadDataLink.innerHTML =
+        '<i class="fas fa-upload customButtonIcon"></i>Upload';
+    toolbarContainer.appendChild(uploadDataLink);
+
+    // let fileLoadButton = new UploadFileButton(toolbarContainer, init, bigStyle);
 
     let tabularData: TabularData;
     let tabularDataExcel: TabularData = null;
