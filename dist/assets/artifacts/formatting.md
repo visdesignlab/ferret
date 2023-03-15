@@ -1,0 +1,1 @@
+Formatting refers to metadata assigned to cells by spreadsheet tools like Excel or Google Sheets. This includes font, font size, methods of text emphasis such as bold, italics, and underlining, as well as background colors. In addition, a user can change the data format, e.g. changing a cell to a date format will alter how it is displayed.
