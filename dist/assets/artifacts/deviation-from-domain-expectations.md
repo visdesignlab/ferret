@@ -1,7 +1,3 @@
-##### What to look for:
-
-So far, we have assumed that artifacts are visible in the formatting, structure, or values of the data. However, authors may use more sophisticated techniques for generating fabricated data that cannot be detected with the aforementioned methods. In these situations, analyzing the data in a variety of ways helps verify if there are any deviations from domain expectations.
-
 ###### Single-Dimensional
 
 In the case of a single dimension of data, there is often prior knowledge about how that data should look, at least in the aggregate. For instance, many natural measurements, such as the weight of an animal, will exhibit a normal distribution. We consider drastic variations from these expectations, such as a uniform distribution occurring when a normal distribution is expected, or a normal distribution with an obviously clipped tail, to be a single-dimensional domain artifact.

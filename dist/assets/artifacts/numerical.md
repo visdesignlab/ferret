@@ -1,0 +1,1 @@
+The variety of possible numerical artifacts left behind by bad actors is considerable. Here we describe common types that we have observed. All of these artifacts occur both in individual columns and across columns.

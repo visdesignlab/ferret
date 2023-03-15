@@ -1,0 +1,1 @@
+So far, we have assumed that artifacts are visible in the formatting, structure, or values of the data. However, authors may use more sophisticated techniques for generating fabricated data that cannot be detected with the aforementioned methods. In these situations, analyzing the data in a variety of ways helps verify if there are any deviations from domain expectations.
