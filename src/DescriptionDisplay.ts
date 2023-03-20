@@ -96,7 +96,11 @@ export class DescriptionDisplay {
 
     constructor(container: HTMLDivElement) {
         this._container = container;
-        this._expanded = false;
+        if (localStorage && localStorage.getItem('expanded')) {
+            this._expanded = localStorage.getItem('expanded') === 'true';
+        } else {
+            this._expanded = true;
+        }
 
         this._tabContainer = document.getElementById(
             'description-tab-row'
@@ -110,10 +114,14 @@ export class DescriptionDisplay {
         this._longText = document.getElementById(
             'description-long-text'
         ) as HTMLZeroMDElement;
+
+        this._longText.classList.toggle('show', this._expanded);
+
         this._showMoreLessButton = document.getElementById(
             'description-show-more-less'
         ) as HTMLButtonElement;
 
+        this.setShowMoreLessButtonText();
         this.showMoreLessButton.onclick = (ev: MouseEvent) => {
             this.onShowMoreLessClick();
         };
@@ -147,12 +155,16 @@ export class DescriptionDisplay {
 
     private onShowMoreLessClick(): void {
         this._expanded = !this.expanded;
+        if (localStorage) {
+            localStorage.setItem('expanded', `${this._expanded}`);
+        }
+        this.setShowMoreLessButtonText();
+    }
+    private setShowMoreLessButtonText(): void {
         if (this.expanded) {
             this.showMoreLessButton.innerText = 'Show less.';
-            // this.longText.classList.remove('d-none');
         } else {
             this.showMoreLessButton.innerText = 'Show more.';
-            // this.longText.classList.add('d-none');
         }
     }
 }
