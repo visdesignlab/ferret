@@ -62,6 +62,11 @@ export class ControlsDisplay {
         return this._data;
     }
 
+    private _showDescriptions: boolean;
+    public get showDescriptions(): boolean {
+        return this._showDescriptions;
+    }
+
     private initGlobalChartExpandedMap(): void {
         let chartExpandedMap = new Map<string, Map<string, boolean>>();
         chartExpandedMap.set('duplicateCountViz', new Map<string, boolean>());
@@ -97,6 +102,18 @@ export class ControlsDisplay {
                 this.toggleDescriptions();
             }
         );
+
+        if (localStorage && localStorage.getItem('showDescriptions')) {
+            this._showDescriptions =
+                localStorage.getItem('showDescriptions') === 'true';
+        } else {
+            this._showDescriptions = true;
+        }
+        descriptionsButton.classList.toggle('selected', this.showDescriptions);
+        document
+            .getElementById('descriptions')
+            .classList.toggle('show', this.showDescriptions);
+
         this._toolbarContainer.appendChild(descriptionsButton);
 
         // const visualizationsButton = this.createToolbarButton(
@@ -224,7 +241,11 @@ export class ControlsDisplay {
     }
 
     private toggleDescriptions(): void {
-        ControlsDisplay.toggleElementClass('descriptionsButton', 'selected');
+        this._showDescriptions = ControlsDisplay.toggleElementClass(
+            'descriptionsButton',
+            'selected'
+        );
+        localStorage.setItem('showDescriptions', `${this.showDescriptions}`);
     }
 
     private toggleVisualizations(show: boolean): void {
