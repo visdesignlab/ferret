@@ -1,10 +1,23 @@
-# Ferret: Data Forensics
+# Ferret: Reviewing Tabular Datasets for Manipulation
+Devin Lange, Shaurya Sahai, Jeff M. Phillips, Alexander Lex
+
+Pre-print: [10.31219/osf.io/anj8v](https://doi.org/10.31219/osf.io/anj8v)
+
+## About
+
+Ferret is a a visualization tool designed to help review tabular datasets for signs that the data has been manipulated. The tool is based on a [living document](https://ferret.sci.utah.edu/artifacts.html) of artifacts of manipulation.
+
+The tool is deployed with ten example datasets at https://ferret.sci.utah.edu. Users can also upload their own excel files to view in the tool.
+
+![ferret_teaser](https://user-images.githubusercontent.com/6709955/226423673-08ff04aa-a892-40f8-b740-75e433c419b0.png)
+
+## Developer Information
 
 This site is deployed on Netlify.
 
 [![Netlify Status](https://api.netlify.com/api/v1/badges/d33e3e53-0a69-4a44-89b3-7db16d7706d1/deploy-status)](https://app.netlify.com/sites/vdl-ferret/deploys)
 
-# Developer Docs
+### Build instructions
 
 Prereqs:
 
