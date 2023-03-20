@@ -18,6 +18,11 @@
             type="module"
             src="https://cdn.jsdelivr.net/gh/zerodevx/zero-md@2/dist/zero-md.min.js"
         ></script>
+        <script
+            src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+            crossorigin="anonymous"
+        ></script>
         <style>
             .hover-target:hover .show-on-hover {
                 visibility: visible;
@@ -26,7 +31,47 @@
                 visibility: hidden;
                 text-decoration: none;
             }
+
+            .card:has(.collapse) {
+                border-bottom-width: 0px;
+            }
+
+            .card:has(.collapse):has(.show) {
+                border-bottom-width: 1px;
+            }
+
+            /* .card:has(.collapse.show) { */
+            /* border-width: 0px; */
+            /* } */
         </style>
+        <script>
+            function getAllCollapsable() {
+                // modified from https://getbootstrap.com/docs/5.0/components/collapse/
+                const collapseElementList = [].slice.call(
+                    document.querySelectorAll('.collapse')
+                );
+                const collapsableList = collapseElementList.map(function (
+                    collapseEl
+                ) {
+                    return new bootstrap.Collapse(collapseEl, {
+                        toggle: false
+                    });
+                });
+                return collapsableList;
+            }
+
+            function expandAll() {
+                for (const el of getAllCollapsable()) {
+                    el.show();
+                }
+            }
+
+            function collapseAll() {
+                for (const el of getAllCollapsable()) {
+                    el.hide();
+                }
+            }
+        </script>
     </head>
 
     <body>
@@ -53,106 +98,239 @@
                 that helps find these artifacts efficiently.
             </h5>
             <hr />
+            <button class="btn btn-primary" onclick="expandAll()">
+                Expand All
+            </button>
+            <button class="btn btn-primary" onclick="collapseAll()">
+                Collapse All
+            </button>
             <h3 class="hover-target mt-2" id="formatting">
                 Formatting <a class="show-on-hover" href="#formatting">#</a>
             </h3>
             <zero-md src="./assets/artifacts/formatting.md"></zero-md>
 
-            <h4 class="hover-target mt-2" id="unexpected-formatting">
-                Unexpected Formatting
-                <a class="show-on-hover" href="#unexpected-formatting">#</a>
-            </h4>
-            <zero-md
-                src="./assets/artifacts/unexpected-formatting.md"
-            ></zero-md>
+            <div class="card mt-2">
+                <div class="card-header hover-target">
+                    <span class="mt-2" id="unexpected-formatting">
+                        <button
+                            class="btn btn-outline-primary"
+                            data-bs-toggle="collapse"
+                            href="#unexpected-formatting-body"
+                        >
+                            Unexpected Formatting
+                        </button>
+                        <a class="show-on-hover" href="#unexpected-formatting"
+                            >#</a
+                        >
+                    </span>
+                </div>
+                <div class="collapse" id="unexpected-formatting-body">
+                    <div class="card-body">
+                        <zero-md
+                            src="./assets/artifacts/unexpected-formatting.md"
+                        ></zero-md>
+                    </div>
+                </div>
+            </div>
 
-            <hr />
-            <h3 class="hover-target mt-2" id="numerical">
+            <!-- <hr /> -->
+            <h3 class="hover-target mt-4" id="numerical">
                 Numerical <a class="show-on-hover" href="#numerical">#</a>
             </h3>
             <zero-md src="./assets/artifacts/numerical.md"></zero-md>
 
-            <h4 class="hover-target mt-2" id="duplicate-numbers-and-digits">
-                Duplicate Numbers and Digits
-                <a class="show-on-hover" href="#duplicate-numbers-and-digits"
-                    >#</a
+            <div class="card mt-2">
+                <div class="card-header hover-target">
+                    <span class="mt-2" id="duplicate-numbers-and-digits">
+                        <button
+                            class="btn btn-outline-primary"
+                            data-bs-toggle="collapse"
+                            href="#duplicate-numbers-and-digits-body"
+                        >
+                            Duplicate Numbers and Digits
+                        </button>
+                        <a
+                            class="show-on-hover"
+                            href="#duplicate-numbers-and-digits"
+                            >#</a
+                        >
+                    </span>
+                </div>
+                <div class="collapse" id="duplicate-numbers-and-digits-body">
+                    <div class="card-body">
+                        <zero-md
+                            src="./assets/artifacts/duplicate-numbers-and-digits.md"
+                        ></zero-md>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mt-1">
+                <div class="card-header hover-target">
+                    <span class="mt-2" id="unexpected-leading-digits">
+                        <button
+                            class="btn btn-outline-primary"
+                            data-bs-toggle="collapse"
+                            href="#unexpected-leading-digits-body"
+                        >
+                            Unexpected Leading Digits
+                        </button>
+                        <a
+                            class="show-on-hover"
+                            href="#unexpected-leading-digits"
+                            >#</a
+                        >
+                    </span>
+                </div>
+                <div class="collapse" id="unexpected-leading-digits-body">
+                    <div class="card-body">
+                        <zero-md
+                            src="./assets/artifacts/unexpected-leading-digits.md"
+                        ></zero-md>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mt-1">
+                <div class="card-header hover-target">
+                    <span class="mt-2" id="unexpected-trailing-digits">
+                        <button
+                            class="btn btn-outline-primary"
+                            data-bs-toggle="collapse"
+                            href="#unexpected-trailing-digits-body"
+                        >
+                            Unexpected Trailing Digits
+                        </button>
+                        <a
+                            class="show-on-hover"
+                            href="#unexpected-trailing-digits"
+                            >#</a
+                        >
+                    </span>
+                </div>
+                <div class="collapse" id="unexpected-trailing-digits-body">
+                    <div class="card-body">
+                        <zero-md
+                            src="./assets/artifacts/unexpected-trailing-digits.md"
+                        ></zero-md>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mt-1">
+                <div class="card-header hover-target">
+                    <span class="mt-2" id="unexpected-variation-of-precision">
+                        <button
+                            class="btn btn-outline-primary"
+                            data-bs-toggle="collapse"
+                            href="#unexpected-variation-of-precision-body"
+                        >
+                            Unexpected Variation of Precision
+                        </button>
+                        <a
+                            class="show-on-hover"
+                            href="#unexpected-variation-of-precision"
+                            >#</a
+                        >
+                    </span>
+                </div>
+                <div
+                    class="collapse"
+                    id="unexpected-variation-of-precision-body"
                 >
-            </h4>
-            <zero-md
-                src="./assets/artifacts/duplicate-numbers-and-digits.md"
-            ></zero-md>
+                    <div class="card-body">
+                        <zero-md
+                            src="./assets/artifacts/unexpected-variation-of-precision.md"
+                        ></zero-md>
+                    </div>
+                </div>
+            </div>
 
-            <h4 class="hover-target mt-2" id="unexpected-leading-digits">
-                Unexpected Leading Digits
-                <a class="show-on-hover" href="#unexpected-leading-digits">#</a>
-            </h4>
-            <zero-md
-                src="./assets/artifacts/unexpected-leading-digits.md"
-            ></zero-md>
-
-            <h4 class="hover-target mt-2" id="unexpected-trailing-digits">
-                Unexpected Trailing Digits
-                <a class="show-on-hover" href="#unexpected-trailing-digits"
-                    >#</a
-                >
-            </h4>
-            <zero-md
-                src="./assets/artifacts/unexpected-trailing-digits.md"
-            ></zero-md>
-
-            <h4
-                class="hover-target mt-2"
-                id="unexpected-variation-of-precision"
-            >
-                Unexpected Variation of Precision
-                <a
-                    class="show-on-hover"
-                    href="#unexpected-variation-of-precision"
-                    >#</a
-                >
-            </h4>
-            <zero-md
-                src="./assets/artifacts/unexpected-variation-of-precision.md"
-            ></zero-md>
-
-            <hr />
-            <h3 class="hover-target mt-2" id="structural">
+            <!-- <hr /> -->
+            <h3 class="hover-target mt-4" id="structural">
                 Structural <a class="show-on-hover" href="#structural">#</a>
             </h3>
             <zero-md src="./assets/artifacts/structural.md"></zero-md>
 
-            <h4 class="hover-target mt-2" id="repeated-regions">
-                Repeated Regions
-                <a class="show-on-hover" href="#repeated-regions">#</a>
-            </h4>
-            <zero-md src="./assets/artifacts/repeated-regions.md"></zero-md>
+            <div class="card mt-2">
+                <div class="card-header hover-target">
+                    <span class="mt-2" id="repeated-regions">
+                        <button
+                            class="btn btn-outline-primary"
+                            data-bs-toggle="collapse"
+                            href="#repeated-regions-body"
+                        >
+                            Repeated Regions
+                        </button>
+                        <a class="show-on-hover" href="#repeated-regions">#</a>
+                    </span>
+                </div>
+                <div class="collapse" id="repeated-regions-body">
+                    <div class="card-body">
+                        <zero-md
+                            src="./assets/artifacts/repeated-regions.md"
+                        ></zero-md>
+                    </div>
+                </div>
+            </div>
 
-            <h4 class="hover-target mt-2" id="ordering-artifacts">
-                Ordering Artifacts
-                <a class="show-on-hover" href="#ordering-artifacts">#</a>
-            </h4>
-            <zero-md src="./assets/artifacts/ordering-artifacts.md"></zero-md>
+            <div class="card mt-1">
+                <div class="card-header hover-target">
+                    <span class="mt-2" id="ordering-artifacts">
+                        <button
+                            class="btn btn-outline-primary"
+                            data-bs-toggle="collapse"
+                            href="#ordering-artifacts-body"
+                        >
+                            Ordering Artifacts
+                        </button>
+                        <a class="show-on-hover" href="#ordering-artifacts"
+                            >#</a
+                        >
+                    </span>
+                </div>
+                <div class="collapse" id="ordering-artifacts-body">
+                    <div class="card-body">
+                        <zero-md
+                            src="./assets/artifacts/ordering-artifacts.md"
+                        ></zero-md>
+                    </div>
+                </div>
+            </div>
 
-            <hr />
-            <h3 class="hover-target mt-2" id="domain">
+            <h3 class="hover-target mt-4" id="domain">
                 Domain <a class="show-on-hover" href="#domain">#</a>
             </h3>
             <zero-md src="./assets/artifacts/domain.md"></zero-md>
 
-            <h4
-                class="hover-target mt-2"
-                id="deviation-from-domain-expectations"
-            >
-                Deviation From Domain Expectations
-                <a
-                    class="show-on-hover"
-                    href="#deviation-from-domain-expectations"
-                    >#</a
+            <div class="card mt-2">
+                <div class="card-header hover-target">
+                    <span class="mt-2" id="deviation-from-domain-expectations">
+                        <button
+                            class="btn btn-outline-primary"
+                            data-bs-toggle="collapse"
+                            href="#deviation-from-domain-expectations-body"
+                        >
+                            Deviation From Domain Expectations
+                        </button>
+                        <a
+                            class="show-on-hover"
+                            href="#deviation-from-domain-expectations"
+                            >#</a
+                        >
+                    </span>
+                </div>
+                <div
+                    class="collapse"
+                    id="deviation-from-domain-expectations-body"
                 >
-            </h4>
-            <zero-md
-                src="./assets/artifacts/deviation-from-domain-expectations.md"
-            ></zero-md>
+                    <div class="card-body">
+                        <zero-md
+                            src="./assets/artifacts/deviation-from-domain-expectations.md"
+                        ></zero-md>
+                    </div>
+                </div>
+            </div>
         </div>
     </body>
 </html>
