@@ -31,6 +31,9 @@
                 visibility: hidden;
                 text-decoration: none;
             }
+            *:target .show-on-hover {
+                visibility: visible;
+            }
 
             .card:has(.collapse) {
                 border-bottom-width: 0px;
@@ -41,6 +44,9 @@
             }
             *:target {
                 background-color: bisque !important;
+                /* font-weight: bold; */
+                /* text-decoration: underline; */
+                padding: 10px;
             }
 
             /* .card:has(.collapse.show) { */
@@ -108,7 +114,10 @@
                 Collapse All
             </button>
             <h3 class="hover-target mt-2" id="formatting">
-                Formatting <a class="show-on-hover" href="#formatting">#</a>
+                Formatting
+                <a class="show-on-hover" href="#formatting"
+                    ><i class="fas fa-hashtag"></i
+                ></a>
             </h3>
             <zero-md src="./assets/artifacts/formatting.md"></zero-md>
 
@@ -126,8 +135,8 @@
                             Unexpected Formatting
                         </button>
                         <a class="show-on-hover" href="#unexpected-formatting"
-                            >#</a
-                        >
+                            ><i class="fas fa-hashtag"></i
+                        ></a>
                     </span>
                 </div>
                 <div class="collapse" id="unexpected-formatting-body">
@@ -141,7 +150,10 @@
 
             <!-- <hr /> -->
             <h3 class="hover-target mt-4" id="numerical">
-                Numerical <a class="show-on-hover" href="#numerical">#</a>
+                Numerical
+                <a class="show-on-hover" href="#numerical"
+                    ><i class="fas fa-hashtag"></i
+                ></a>
             </h3>
             <zero-md src="./assets/artifacts/numerical.md"></zero-md>
 
@@ -161,8 +173,8 @@
                         <a
                             class="show-on-hover"
                             href="#duplicate-numbers-and-digits"
-                            >#</a
-                        >
+                            ><i class="fas fa-hashtag"></i
+                        ></a>
                     </span>
                 </div>
                 <div class="collapse" id="duplicate-numbers-and-digits-body">
@@ -190,8 +202,8 @@
                         <a
                             class="show-on-hover"
                             href="#unexpected-leading-digits"
-                            >#</a
-                        >
+                            ><i class="fas fa-hashtag"></i
+                        ></a>
                     </span>
                 </div>
                 <div class="collapse" id="unexpected-leading-digits-body">
@@ -219,8 +231,8 @@
                         <a
                             class="show-on-hover"
                             href="#unexpected-trailing-digits"
-                            >#</a
-                        >
+                            ><i class="fas fa-hashtag"></i
+                        ></a>
                     </span>
                 </div>
                 <div class="collapse" id="unexpected-trailing-digits-body">
@@ -248,8 +260,8 @@
                         <a
                             class="show-on-hover"
                             href="#unexpected-variation-of-precision"
-                            >#</a
-                        >
+                            ><i class="fas fa-hashtag"></i
+                        ></a>
                     </span>
                 </div>
                 <div
@@ -266,7 +278,10 @@
 
             <!-- <hr /> -->
             <h3 class="hover-target mt-4" id="structural">
-                Structural <a class="show-on-hover" href="#structural">#</a>
+                Structural
+                <a class="show-on-hover" href="#structural"
+                    ><i class="fas fa-hashtag"></i
+                ></a>
             </h3>
             <zero-md src="./assets/artifacts/structural.md"></zero-md>
 
@@ -280,7 +295,9 @@
                         >
                             Repeated Regions
                         </button>
-                        <a class="show-on-hover" href="#repeated-regions">#</a>
+                        <a class="show-on-hover" href="#repeated-regions"
+                            ><i class="fas fa-hashtag"></i
+                        ></a>
                     </span>
                 </div>
                 <div class="collapse" id="repeated-regions-body">
@@ -303,8 +320,8 @@
                             Ordering Artifacts
                         </button>
                         <a class="show-on-hover" href="#ordering-artifacts"
-                            >#</a
-                        >
+                            ><i class="fas fa-hashtag"></i
+                        ></a>
                     </span>
                 </div>
                 <div class="collapse" id="ordering-artifacts-body">
@@ -317,7 +334,10 @@
             </div>
 
             <h3 class="hover-target mt-4" id="domain">
-                Domain <a class="show-on-hover" href="#domain">#</a>
+                Domain
+                <a class="show-on-hover" href="#domain"
+                    ><i class="fas fa-hashtag"></i
+                ></a>
             </h3>
             <zero-md src="./assets/artifacts/domain.md"></zero-md>
 
@@ -337,8 +357,8 @@
                         <a
                             class="show-on-hover"
                             href="#deviation-from-domain-expectations"
-                            >#</a
-                        >
+                            ><i class="fas fa-hashtag"></i
+                        ></a>
                     </span>
                 </div>
                 <div
