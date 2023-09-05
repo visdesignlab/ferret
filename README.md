@@ -3,9 +3,9 @@ Devin Lange, Shaurya Sahai, Jeff M. Phillips, Alexander Lex
 
 Publication: [10.1111/cgf.14822](https://dx.doi.org/10.1111/cgf.14822)
 
-Project Site: [ferret.sci.utah.edu](https://ferret.sci.utah.edu)
+Project Site (demo): [ferret.sci.utah.edu](https://ferret.sci.utah.edu)
 
-Additional Info: [vdl.sci.utah.edu/publications/2023_eurovis_ferret/](https://vdl.sci.utah.edu/publications/2023_eurovis_ferret/)
+Additional Info (videos, supplemental): [vdl.sci.utah.edu/publications/2023_eurovis_ferret/](https://vdl.sci.utah.edu/publications/2023_eurovis_ferret/)
 
 ## About
 
