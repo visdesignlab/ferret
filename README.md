@@ -1,7 +1,7 @@
 # Ferret: Reviewing Tabular Datasets for Manipulation
 Devin Lange, Shaurya Sahai, Jeff M. Phillips, Alexander Lex
 
-Pre-print: [10.31219/osf.io/anj8v](https://doi.org/10.31219/osf.io/anj8v)
+Publication: [10.1111/cgf.14822](https://dx.doi.org/10.1111/cgf.14822)
 
 ## About
 
