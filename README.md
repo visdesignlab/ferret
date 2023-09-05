@@ -3,6 +3,10 @@ Devin Lange, Shaurya Sahai, Jeff M. Phillips, Alexander Lex
 
 Publication: [10.1111/cgf.14822](https://dx.doi.org/10.1111/cgf.14822)
 
+Project Site: [ferret.sci.utah.edu](https://ferret.sci.utah.edu)
+
+Additional Info: [vdl.sci.utah.edu/publications/2023_eurovis_ferret/](https://vdl.sci.utah.edu/publications/2023_eurovis_ferret/)
+
 ## About
 
 Ferret is a a visualization tool designed to help review tabular datasets for signs that the data has been manipulated. The tool is based on a [living document](https://ferret.sci.utah.edu/artifacts.html) of artifacts of manipulation.
